@@ -20,7 +20,12 @@ type Textarea struct {
 	Required    bool
 	Autofocus   bool
 	Rows        int
-	Error       Error
+
+	// Monospace indicates whether to use a monospace font for the textarea
+	// by adding the appropriate classes.
+	Monospace bool
+
+	Error Error
 }
 
 // GetRows returns the Rows prop as a string with a default if not present
