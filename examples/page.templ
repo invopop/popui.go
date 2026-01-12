@@ -1,0 +1,322 @@
+package examples
+
+import (
+	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/alpine"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+)
+
+// Page provides the main wrapper around content.
+templ Page() {
+	@popui.PopupLayout(props.PopupLayout{Title: "Invopop - Popui"}) {
+		<div
+			style="padding: 16px;"
+			x-data="{
+				inputText: {
+					errorText: '',
+					disabled: false,
+					value: ''
+				},
+				checkbox: {
+					value: ''
+				},
+				select: {
+					errorText: '',
+					disabled: false,
+					value: '',
+					options: ['', 'Sam', 'Juan', 'Javi', 'Luismi']
+				},
+				textarea: {
+					errorText: '',
+					disabled: false,
+					value: '',
+				},
+				defaultButton: {
+					disabled: false,
+				},
+				primaryButton: {
+					disabled: false,
+				},
+				tags: [
+					'One',
+					'Two'
+				],
+				tagRemoved(tag) {
+					alert(`Removed tag: ${tag}`)
+				},
+				tagAdded(tag) {
+					alert(`Added tag: ${tag}`)
+				}
+			}"
+		>
+			// Info
+			@fieldConfig(&config{
+				Title: "Info Text",
+			})
+			<div>
+				@popui.Info() {
+					The Silo Entry ID of the new document will be available in the 
+					@popui.Mark() {
+						connected-silo-entry-id
+					}
+					shared meta field.
+				}
+			</div>
+			// Title
+			@fieldConfig(&config{
+				Title: "Title Text",
+			})
+			<div>
+				@popui.Title() {
+					This is a main section
+				}
+			</div>
+			// Subtitle
+			@fieldConfig(&config{
+				Title: "Subtitle Text",
+			})
+			<div>
+				@popui.Subtitle() {
+					This is a secondary section
+				}
+			</div>
+			// Tags
+			@fieldConfig(&config{
+				Title: "Tags",
+			})
+			<div>
+				@alpine.Tags(props.Tags{
+					Label:    "Tags",
+					Tags:     "tags",
+					OnRemove: "tagRemoved",
+					OnAdd:    "tagAdded",
+				})
+			</div>
+			// Avatar
+			@fieldConfig(&config{
+				Title: "Avatar with image",
+			})
+			<div>
+				@popui.Avatar(props.Avatar{}) {
+					@popui.Image(props.Image{
+						Src: "https://picsum.photos/200",
+						Alt: "Random Image",
+					})
+				}
+			</div>
+			@fieldConfig(&config{
+				Title: "Avatar with initial",
+			})
+			<div>
+				@popui.Avatar(props.Avatar{
+					Initial: "I",
+				})
+			</div>
+			// Popover
+			@fieldConfig(&config{
+				Title: "Popover",
+			})
+			<div>
+				@popui.Popover(props.Popover{
+					ID:          "popover",
+					ButtonLabel: "Do Stuff",
+				}) {
+					<ul>
+						@popui.PopoverItem() {
+							<button class="w-full text-left" @click="alert('1')">1</button>
+						}
+						@popui.PopoverItem() {
+							<button class="w-full text-left" @click="alert('2')">2</button>
+						}
+					</ul>
+				}
+			</div>
+			// Input Text
+			@fieldConfig(&config{
+				Title:  "Input Text",
+				XModel: "inputText.value",
+				Inputs: []input{
+					input{
+						Label:  "Error Text",
+						Type:   "text",
+						Xmodel: "inputText.errorText",
+					},
+					input{
+						Label:  "Disabled",
+						Type:   "checkbox",
+						Xmodel: "inputText.disabled",
+					},
+				},
+			})
+			<div class="max-w-md">
+				@popui.Input(
+					props.Input{
+						Label: "Name",
+						Error: props.Error{Attributes: templ.Attributes{"x-text": "inputText.errorText"}},
+						Attributes: templ.Attributes{
+							"x-model":   "inputText.value",
+							":disabled": "inputText.disabled",
+							":class":    "{ '" + classes.FormFieldError() + "': inputText.errorText }",
+						},
+					})
+			</div>
+			// Checkbox
+			@fieldConfig(&config{
+				Title:  "Checkbox",
+				XModel: "checkbox.value",
+			})
+			<div class="max-w-md">
+				@popui.Checkbox(
+					props.Checkbox{
+						Label: "This is the label for the checbox",
+						Attributes: templ.Attributes{
+							"x-model": "checkbox.value",
+						},
+					})
+			</div>
+			// Select
+			@fieldConfig(&config{
+				Title:  "Select",
+				XModel: "select.value",
+				Inputs: []input{
+					input{
+						Label:  "Error Text",
+						Type:   "text",
+						Xmodel: "select.errorText",
+					},
+					input{
+						Label:  "Disabled",
+						Type:   "checkbox",
+						Xmodel: "select.disabled",
+					},
+				},
+			})
+			<div class="max-w-md">
+				@popui.Select(
+					props.Select{
+						Label: "Name",
+						Error: props.Error{Attributes: templ.Attributes{"x-text": "select.errorText"}},
+						Attributes: templ.Attributes{
+							"x-model":   "select.value",
+							":disabled": "select.disabled",
+						},
+					}) {
+					<template x-for="row in select.options" :key="row">
+						<option
+							:value="row"
+							x-text="row"
+						></option>
+					</template>
+				}
+			</div>
+			// Textarea
+			@fieldConfig(&config{
+				Title:  "Textarea",
+				XModel: "textarea.value",
+				Inputs: []input{
+					input{
+						Label:  "Error Text",
+						Type:   "text",
+						Xmodel: "textarea.errorText",
+					},
+					input{
+						Label:  "Disabled",
+						Type:   "checkbox",
+						Xmodel: "textarea.disabled",
+					},
+				},
+			})
+			<div class="max-w-md">
+				@popui.Textarea(
+					props.Textarea{
+						Label: "Name",
+						Class: "font-mono",
+						Error: props.Error{Attributes: templ.Attributes{"x-text": "textarea.errorText"}},
+						Rows:  8,
+						Attributes: templ.Attributes{
+							"x-model":   "textarea.value",
+							":disabled": "textarea.disabled",
+						},
+					})
+			</div>
+			// Default Button
+			@fieldConfig(&config{
+				Title: "Default Button",
+				Inputs: []input{
+					input{
+						Label:  "Disabled",
+						Type:   "checkbox",
+						Xmodel: "defaultButton.disabled",
+					},
+				},
+			})
+			<div class="max-w-md">
+				@popui.Button(
+					props.Button{
+						Attributes: templ.Attributes{"@click": "alert('Default button clicked')", ":disabled": "defaultButton.disabled"},
+					}) {
+					Click Me
+				}
+			</div>
+			// Primary Button
+			@fieldConfig(&config{
+				Title: "Primary Button",
+				Inputs: []input{
+					input{
+						Label:  "Disabled",
+						Type:   "checkbox",
+						Xmodel: "primaryButton.disabled",
+					},
+				},
+			})
+			<div class="max-w-md">
+				@popui.Button(
+					props.Button{
+						Variant:    "primary",
+						Attributes: templ.Attributes{"@click": "alert('Primary button clicked')", ":disabled": "primaryButton.disabled"},
+					}) {
+					Click Me
+				}
+			</div>
+		</div>
+	}
+}
+
+type input struct {
+	Label  string
+	Type   string
+	Xmodel string
+}
+
+type config struct {
+	Title  string
+	XModel string
+	Inputs []input
+}
+
+templ fieldConfig(conf *config) {
+	<hr style="margin-top: 16px;"/>
+	<h2 style="margin-top: 16px; margin-bottom: 16px;">
+		{ conf.Title }:
+		if conf.XModel != "" {
+			<span x-text={ conf.XModel }></span>
+		}
+	</h2>
+	if conf.Inputs != nil {
+		<div class="space-y-2 border border-black p-4 mb-4">
+			<h3>Props</h3>
+			for _, i := range conf.Inputs {
+				<label class="text-sm inline-flex items-center gap-2 whitespace-nowrap mr-2">
+					{ i.Label } <input
+	type={ i.Type }
+	if i.Type == "text" || i.Type == "number" {
+		class="py-1.5 px-2.5 border w-full rounded-md"
+	}
+	x-model={ i.Xmodel }
+/>
+				</label>
+			}
+		</div>
+	}
+}

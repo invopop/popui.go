@@ -1,146 +1,63 @@
-# Popui
-
-Popui is a set of reusable components to be used inside Console UI and other Invopop Apps.
-
-Currently we provide different libraries and examples for
-
-- Svelte
-- Go
-
 ## Go
 
-Please see the go/README.md file for details.
+This Go packages uses Templ for creating template wrappers to define Popui components and use as much as possible the shared styles with the base popui svelte components.
 
-## Svelte
-
-### Runing Storybook for development
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development storybook server:
-
-```bash
-npm run storybook
-```
-
-> For using a different `accent` color for some components you can set the `--workspace-accent-color:` CSS variable placed in `.storybook/variables.css` file.
-
-### Publishing the Svelte Library
-
-To publish the library to [npm](https://www.npmjs.com) you only need to manually increase the version of package.json and make a PR to `main` branch. Once merged, it will automatically relase a new version of the library.
-
-### Using the Svelte Library in your app
-
-```
-import { InputText } from '@invopop/popui'
-
-<div>
-  <InputText
-    label="Name"
-    placeholder="Company's legal name"
-    on:input={(event) => {
-      console.log(event.detail)
-    }}
-  />
-</div>
-```
-
-A complete catalogue of examples is availabe on [Storybook](https://popui-svelte.netlify.app/)
+NOTE: ensure that all commands listed in this readme are run from the `./go` path.
 
 
-## Web Components
+### Building
 
-Some of the Svelte components have a wrapper for making it work using Web Components
-
-### Building the Web Components Library
-
-To build the Web Components library:
+Go requires the CSS with all the Tailwind components to be built independently. To do this, run the go generate command and check any potential errors with your node installation:
 
 ```bash
-npm run build-web-components
+go generate ./...
 ```
 
-This will generate a `/dist/index.js` file that you can include on any HTML to test. There is a ready-to-use HTML file with an example of any of the components located in `/src/wbc-preview/index.html`
+### Documentation site
 
-### Publishing the Web Components Library
-
-To publish the Web Components library to [npm](https://www.npmjs.com):
+Use the popui utility to compile the project into the `public` directory with a single `index.html` for the development site.
 
 ```bash
-npm publish-wbc
+go build ./cmd/popui && ./popui build
 ```
 
-### Using the Web Components Library in your app
+Run a development server to be able to quickly test changes to the templates using the air utility, this will ensure the Tailwind classes, generated code, and binary are correctly prepared.
 
-Include the CDN script in your HTML file
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/@invopop/web-components@0.0.13/index.js" defer></script>
+```bash
+air
 ```
 
-Use any of the components available
+### Using the Go Package
 
-```html
-<popui-button>Default Button</popui-button>
+Ensure the public assets are loaded using something like the following example for the go echo library:
+
+```go
+e.StaticFS(popui.AssetPath, popui.Assets)
 ```
 
-You can pass props and listen to events
+Build your own layout using the `popui.App` as a base:
 
-```html
-<popui-button onClick="alert('button click')" type="primary">Primary Button</popui-button>
+```go
+import (
+	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ Page() {
+    @popui.App(props.App{Title: "Test App"}) {
+        @popui.Main() {
+            @popui.Article() {
+                @popui.Button(
+                    props.Button{
+                        Variant: "primary",
+                        Small: true,
+                    }) {
+                    Click Me
+                }
+            }
+        }
+    }
+}
 ```
 
-### Available Web Components
-
-> NOTE: Due to web component limitations booleans need to be passed as strings ie: "true", other structures like objects or arrays need to be passed as JSON.stringify()
-
-| Component             | Events Emitted | Props Accepted                                                                     |
-| --------------------- | -------------- | ---------------------------------------------------------------------------------- |
-| `popui-button`        | `@click`       | `type`: 'default', 'primary', 'secondary', 'danger', 'dark'` (default: 'default')  |
-|                       |                | `disabled`: boolean (default: false)                                               |
-|                       |                | `small`: boolean (default: false)                                                  |
-|                       |                | `icon`: Cog6Tooth (Heroicons library name) (default: undefined)                    |
-|                       |                | `iconPosition`: 'right', 'left' (default: left)                                    |
-|                       |                |                                                                                    |
-| `popui-button-file`   | `@click`       | `type`: 'default', 'primary', 'secondary', 'danger', 'dark'` (default: 'default')  |
-|                       |                | `disabled`: boolean (default: false)                                               |
-|                       |                | `name`: string (default: '')                                                       |
-|                       |                | `fullwidth`: boolean (default: false)                                              |
-|                       |                |                                                                                    |
-| `popui-checkbox`      | `@change`      | `checked`: boolean (default: false)                                                |
-|                       |                |                                                                                    |
-| `popui-input-search`  | `@input`       | `placeholder`: string (default: '')                                                |
-|                       |                | `shortcut`: string (default: '')                                                   |
-|                       |                |                                                                                    |
-| `popui-input-text`    | `@input`       | `id`: string (default: '')                                                         |
-|                       |                | `label`: string (default: '')                                                      |
-|                       |                | `placeholder`: string (default: '')                                                |
-|                       |                | `errorText`: string (default: '')                                                  |
-|                       |                | `disabled`: boolean (default: 'false')                                             |
-|                       |                |                                                                                    |
-| `popui-list-item`     | `@input`       | `value`: string (default: '')                                                      |
-|                       |                | `label`: string (default: '')                                                      |
-|                       |                |                                                                                    |
-| `popui-radio`         | `@change`      | `checked`: boolean (default: false)                                                |
-|                       |                |                                                                                    |
-| `popui-section`       |                | `title`: string (default: '')                                                      |
-|                       |                |                                                                                    |
-| `popui-select`        | `@change`      | `id`: string (default: '')                                                         |
-|                       |                | `name`: string (default: '')                                                       |
-|                       |                | `label`: string (default: '')                                                      |
-|                       |                | `placeholder`: string (default: '')                                                |
-|                       |                | `value`: string (default: '')                                                      |
-|                       |                | `icon`: Cog6Tooth (Heroicons library name) (default: undefined)                    |
-|                       |                | `disabled`: boolean (default: 'false')                                             |
-|                       |                | `disablePlaceholder`: boolean (default: 'false')                                   |
-|                       |                | `options`: string (default: '[]')                                                  |
-|                       |                |                                                                                    |
-| `popui-tag-search`    | `@clear`       | `label`: string (default: '')                                                      |
-|                       |                | `icon`: Cog6Tooth (Heroicons library name) (default: undefined)                    |
-|                       |                |                                                                                    |
-| `popui-tag-status`    |                | `label`: string (default: '')                                                      |
-|                       |                | `status`: 'default', 'success', 'warning', 'danger', 'orange' (default: 'default') |
-|                       |                |                                                                                    |
-| `popui-title-main`    |                | `title`: string (default: '')                                                      |
-|                       |                |                                                                                    |
-| `popui-title-section` |                | `title`: string (default: '')                                                      |
-|                       |                |                                                                                    |
-| `popui-toggle`        | `@change`      | `checked`: boolean (default: false)                                                |
+You can check out examples of each component in `examples` path and documentation project.
