@@ -1,13 +1,12 @@
-## Go
+## PopUI Go
 
-This Go packages uses Templ for creating template wrappers to define Popui components and use as much as possible the shared styles with the base popui svelte components.
+This Go package uses Templ for creating template wrappers to define Popui components and use as much as possible the shared styles with the base popui svelte components.
 
-NOTE: ensure that all commands listed in this readme are run from the `./go` path.
-
+See the [live demo site](https://popui-go.netlify.app/) for code examples and usage details.
 
 ### Building
 
-Go requires the CSS with all the Tailwind components to be built independently. To do this, run the go generate command and check any potential errors with your node installation:
+In order to generate the CSS, the `tailwindcss` application must be installed in your system, and the base [popui](https://github.com/invopop/popui) package must be present in the parent directory of this repo. To generate all the resources, run:
 
 ```bash
 go generate ./...
@@ -39,7 +38,7 @@ Build your own layout using the `popui.App` as a base:
 
 ```go
 import (
-	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
 
