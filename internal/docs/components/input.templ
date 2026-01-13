@@ -48,6 +48,13 @@ templ Input() {
 	}) {
 		@examples.InputWithErrorExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Dynamic Error",
+		Description: "Input can display dynamic error messages for validation feedback when using frameworks like Alpine.js.",
+		Code:        examples.LoadExample("input_with_dynamic_error.templ"),
+	}) {
+		@examples.InputWithDynamicErrorExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Input",

@@ -1,0 +1,36 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+)
+
+templ InputWithDynamicErrorExample() {
+	<div
+		x-data={ `
+			{
+				email: 'bad@email.com',
+				errors: {
+					email: "Invalid email address"
+				}
+			}
+		` }
+	>
+		@popui.Input(props.Input{
+			ID:          "email-with-dynamic-error",
+			Label:       "Email",
+			Type:        "email",
+			Placeholder: "email@example.com",
+			Attributes: templ.Attributes{
+				"x-model": "email",
+				":class":  "{ '" + classes.FormFieldError() + "': errors.email }",
+			},
+			Error: props.Error{
+				Attributes: templ.Attributes{
+					"x-text": "errors.email",
+				},
+			},
+		})
+	</div>
+}
