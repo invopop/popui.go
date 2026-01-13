@@ -17,10 +17,9 @@ templ Fieldset(p ...props.Fieldset) {
 		}
 		class={
 			tailwind.Merge(
-				"space-y-4 relative w-full",
+				"relative w-full flex-1 flex flex-col gap-4",
 				classes.Join(map[string]bool{
 					"border border-border-default-secondary rounded-md bg-background p-4": fieldset.Variant == props.FieldsetVariantCard,
-					"pt-14": fieldset.Legend != "",
 				}),
 				fieldset.Class,
 			),
@@ -28,7 +27,7 @@ templ Fieldset(p ...props.Fieldset) {
 		{ fieldset.Attributes... }
 	>
 		if fieldset.Legend != "" {
-			<legend class="absolute top-4 text-lg font-medium text-foreground">
+			<legend class="float-left text-lg font-medium text-foreground">
 				{ fieldset.Legend }
 			</legend>
 		}

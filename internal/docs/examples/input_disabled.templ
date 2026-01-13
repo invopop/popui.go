@@ -6,14 +6,12 @@ import (
 )
 
 templ InputDisabledExample() {
-	<div class="space-y-4">
-		@popui.Input(props.Input{
-			Placeholder: "This input is disabled",
-			Disabled:    true,
-		})
-		@popui.Input(props.Input{
-			Value:    "Read-only value",
-			Readonly: true,
-		})
-	</div>
+	@popui.Input(props.Input{
+		Placeholder: "This input is disabled",
+		Disabled:    true,
+	})
+	@popui.Input(props.Input{
+		Value:    "Read-only value",
+		Readonly: true,
+	})
 }

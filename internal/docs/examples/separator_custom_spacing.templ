@@ -6,15 +6,13 @@ import (
 )
 
 templ SeparatorCustomSpacingExample() {
-	<div>
-		@popui.P() {
-			Content above 
-		}
-		@popui.Separator(props.Separator{
-			Class: "my-8",
-		})
-		@popui.P() {
-			Content below 
-		}
-	</div>
+	@popui.P() {
+		Content above 
+	}
+	@popui.Separator(props.Separator{
+		Class: "my-8",
+	})
+	@popui.P() {
+		Content below 
+	}
 }

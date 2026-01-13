@@ -6,10 +6,10 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Buttons provides a wrapper around a set of horizontal buttons
+// ButtonGroup provides a wrapper around a set of horizontal buttons
 // with a consistent gap between them, useful for actions in headers
 // or footers.
-templ Buttons(opts ...props.Buttons) {
+templ ButtonGroup(opts ...props.ButtonGroup) {
 	{{ btns := props.First(opts) }}
 	<div
 		if btns.ID != "" {

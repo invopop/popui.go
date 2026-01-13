@@ -40,10 +40,9 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		fieldset := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"space-y-4 relative w-full",
+			"relative w-full flex-1 flex flex-col gap-4",
 			classes.Join(map[string]bool{
 				"border border-border-default-secondary rounded-md bg-background p-4": fieldset.Variant == props.FieldsetVariantCard,
-				"pt-14": fieldset.Legend != "",
 			}),
 			fieldset.Class,
 		),
@@ -101,14 +100,14 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if fieldset.Legend != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<legend class=\"absolute top-4 text-lg font-medium text-foreground\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<legend class=\"float-left text-lg font-medium text-foreground\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fieldset.Legend)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 32, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 31, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

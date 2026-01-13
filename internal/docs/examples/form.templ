@@ -1,0 +1,35 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ FormExample() {
+	@popui.Form(props.Form{
+		Action: "/submit",
+		Method: "POST",
+	}) {
+		@popui.Input(props.Input{
+			ID:          "email",
+			Name:        "email",
+			Label:       "Email",
+			Placeholder: "Enter your email",
+		})
+		@popui.Input(props.Input{
+			ID:          "password",
+			Name:        "password",
+			Type:        "password",
+			Label:       "Password",
+			Placeholder: "Enter your password",
+		})
+		@popui.ButtonGroup() {
+			@popui.Button(props.Button{
+				Type:    "submit",
+				Variant: props.ButtonVariantPrimary,
+			}) {
+				Submit
+			}
+		}
+	}
+}

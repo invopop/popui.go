@@ -109,12 +109,6 @@ form {
 .uppercase {
   text-transform: uppercase;
 }
-.w-full {
-  width: 100% !important;
-}
-.h-full {
-  height: 100% !important;
-}
 .text-danger {
   @apply text-foreground-critical;
 }

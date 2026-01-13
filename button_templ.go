@@ -14,10 +14,10 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Buttons provides a wrapper around a set of horizontal buttons
+// ButtonGroup provides a wrapper around a set of horizontal buttons
 // with a consistent gap between them, useful for actions in headers
 // or footers.
-func Buttons(opts ...props.Buttons) templ.Component {
+func ButtonGroup(opts ...props.ButtonGroup) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

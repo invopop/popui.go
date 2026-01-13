@@ -1,0 +1,44 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Form() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("form.templ"),
+	}) {
+		@examples.FormExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "File Upload Form",
+		Description: "Form with multipart encoding for file uploads.",
+		Code:        examples.LoadExample("form_file_upload.templ"),
+	}) {
+		@examples.FormFileUploadExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Form",
+			Description: "Groups form fields together with proper spacing and handles form submission.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the form element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with form styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Variant", Type: "string", Default: "", Description: "Visual variant: \"card\" for bordered card style"},
+				{Name: "Action", Type: "string", Default: "", Description: "URL where form data will be submitted"},
+				{Name: "Method", Type: "string", Default: "", Description: "HTTP method to use (GET, POST, etc.)"},
+				{Name: "Enctype", Type: "string", Default: "", Description: "Encoding type for form data (e.g., \"multipart/form-data\")"},
+				{Name: "Target", Type: "string", Default: "", Description: "Where to display response (_self, _blank, etc.)"},
+				{Name: "Autocomplete", Type: "string", Default: "", Description: "Whether form should have autocomplete on or off"},
+				{Name: "Novalidate", Type: "bool", Default: "false", Description: "Disable form validation when true"},
+				{Name: "AcceptCharset", Type: "string", Default: "", Description: "Character encodings for form submission"},
+				{Name: "Name", Type: "string", Default: "", Description: "Name of the form"},
+				{Name: "Rel", Type: "string", Default: "", Description: "Relationship between current and linked document"},
+			},
+		})
+	}
+}

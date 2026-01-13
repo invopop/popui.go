@@ -3,13 +3,11 @@ package examples
 import "github.com/invopop/popui.go"
 
 templ SeparatorExample() {
-	<div>
-		@popui.P() {
-			Content above 
-		}
-		@popui.Separator()
-		@popui.P() {
-			Content below 
-		}
-	</div>
+	@popui.P() {
+		Content above 
+	}
+	@popui.Separator()
+	@popui.P() {
+		Content below 
+	}
 }

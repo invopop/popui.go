@@ -6,17 +6,15 @@ import (
 )
 
 templ InputTypesExample() {
-	<div class="space-y-4">
-		@popui.Input(props.Input{
-			Type:        "email",
-			Placeholder: "email@example.com",
-		})
-		@popui.Input(props.Input{
-			Type:        "password",
-			Placeholder: "Enter password",
-		})
-		@popui.Input(props.Input{
-			Type: "date",
-		})
-	</div>
+	@popui.Input(props.Input{
+		Type:        "email",
+		Placeholder: "email@example.com",
+	})
+	@popui.Input(props.Input{
+		Type:        "password",
+		Placeholder: "Enter password",
+	})
+	@popui.Input(props.Input{
+		Type: "date",
+	})
 }

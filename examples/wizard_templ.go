@@ -14,7 +14,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-const articleClasses = "w-full lg:max-w-[840px]"
+const articleClasses = "justify-center w-full lg:max-w-[840px]"
 
 func wizardLayout() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -263,7 +263,7 @@ func Wizard() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = popui.Article(props.Article{Class: articleClasses}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.Article().Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -7,7 +7,7 @@ import (
 )
 
 templ ButtonWithIconsExample() {
-	<div class="flex gap-2">
+	@popui.ButtonGroup() {
 		@popui.Button(props.Button{Variant: props.ButtonVariantPrimary}) {
 			Save
 		}
@@ -15,5 +15,5 @@ templ ButtonWithIconsExample() {
 			@icons.Delete()
 			Delete
 		}
-	</div>
+	}
 }

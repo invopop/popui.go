@@ -6,7 +6,7 @@ import (
 )
 
 templ ButtonAnchorExample() {
-	<div class="flex gap-2">
+	@popui.ButtonGroup() {
 		@popui.Button(props.Button{
 			Variant: props.ButtonVariantPrimary,
 			Href:    "/docs",
@@ -20,5 +20,5 @@ templ ButtonAnchorExample() {
 		}) {
 			Open in New Tab
 		}
-	</div>
+	}
 }

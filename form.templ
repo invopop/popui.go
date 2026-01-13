@@ -1,0 +1,54 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Form groups a set of form fields together with correct vertical spacing and padding
+// between fields. If the Variant is set to "card" it will also add a border and background
+// to the form to visually separate it from the rest of the content.
+templ Form(p ...props.Form) {
+	{{ form := props.First(p) }}
+	<form
+		if form.ID != "" {
+			id={ form.ID }
+		}
+		if form.Action != "" {
+			action={ form.Action }
+		}
+		if form.Method != "" {
+			method={ form.Method }
+		}
+		if form.Enctype != "" {
+			enctype={ form.Enctype }
+		}
+		if form.Target != "" {
+			target={ form.Target }
+		}
+		if form.Autocomplete != "" {
+			autocomplete={ form.Autocomplete }
+		}
+		if form.Novalidate {
+			novalidate
+		}
+		if form.AcceptCharset != "" {
+			accept-charset={ form.AcceptCharset }
+		}
+		if form.Name != "" {
+			name={ form.Name }
+		}
+		if form.Rel != "" {
+			rel={ form.Rel }
+		}
+		class={
+			tailwind.Merge(
+				"relative w-full flex-1 flex flex-col gap-4",
+				form.Class,
+			),
+		}
+		{ form.Attributes... }
+	>
+		{ children... }
+	</form>
+}

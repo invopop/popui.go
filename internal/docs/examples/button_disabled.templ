@@ -6,7 +6,7 @@ import (
 )
 
 templ ButtonDisabledExample() {
-	<div class="flex gap-2">
+	@popui.ButtonGroup() {
 		@popui.Button(props.Button{Disabled: true}) {
 			Disabled Default
 		}
@@ -16,5 +16,5 @@ templ ButtonDisabledExample() {
 		@popui.Button(props.Button{Variant: props.ButtonVariantDanger, Disabled: true}) {
 			Disabled Danger
 		}
-	</div>
+	}
 }

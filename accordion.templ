@@ -17,7 +17,7 @@ templ Accordion(p ...props.Accordion) {
 		}
 		class={
 			tailwind.Merge(
-				"w-full group rounded-lg border border-border-default-secondary bg-background-default-secondary p-2 backdrop-blur-[2px] table [&>:not(summary)]:block overflow-hidden",
+				"w-full group rounded-lg border border-border-default-secondary bg-background-default-secondary p-2 backdrop-blur-[2px] [&>:not(summary)]:block overflow-hidden",
 				prp.Class,
 			),
 		}
@@ -60,13 +60,13 @@ templ AccordionContent(p ...props.AccordionContent) {
 		}
 		class={
 			tailwind.Merge(
-				"mt-4 grid transition-[grid-template-rows] duration-300 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]",
+				"grid transition-[grid-template-rows] duration-300 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]",
 				prp.Class,
 			),
 		}
 		{ prp.Attributes... }
 	>
-		<div class="overflow-hidden flex flex-col gap-4 p-2 min-h-0 w-max">
+		<div class="flex flex-col gap-4 p-2 min-h-0">
 			{ children... }
 		</div>
 	</div>

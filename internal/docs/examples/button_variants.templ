@@ -7,7 +7,7 @@ import (
 )
 
 templ ButtonVariantsExample() {
-	<div class="flex gap-2">
+	@popui.ButtonGroup() {
 		@popui.Button() {
 			@icons.User()
 			Default
@@ -43,5 +43,5 @@ templ ButtonVariantsExample() {
 		@popui.Button(props.Button{Variant: props.ButtonVariantTransparent, Size: props.ButtonSizeIcon}) {
 			@icons.Lock()
 		}
-	</div>
+	}
 }

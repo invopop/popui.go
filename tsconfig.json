@@ -13,13 +13,6 @@
 		"sourceMap": true,
 		"strict": true
 	},
-	"include": [
-		"svelte/**/*.d.ts",
-		"svelte/**/*.ts",
-		"svelte/**/*.js",
-		"svelte/**/*.svelte",
-		"web-components/**/*.ts"
-	],
 	"exclude": [
 		"node_modules",
 		".svelte-kit",

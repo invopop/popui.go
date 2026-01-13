@@ -37,7 +37,7 @@ func Accordion(p ...props.Accordion) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		var prp = props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"w-full group rounded-lg border border-border-default-secondary bg-background-default-secondary p-2 backdrop-blur-[2px] table [&>:not(summary)]:block overflow-hidden",
+			"w-full group rounded-lg border border-border-default-secondary bg-background-default-secondary p-2 backdrop-blur-[2px] [&>:not(summary)]:block overflow-hidden",
 			prp.Class,
 		),
 		}
@@ -232,7 +232,7 @@ func AccordionContent(p ...props.AccordionContent) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		var prp = props.First(p)
 		var templ_7745c5c3_Var10 = []any{tailwind.Merge(
-			"mt-4 grid transition-[grid-template-rows] duration-300 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]",
+			"grid transition-[grid-template-rows] duration-300 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]",
 			prp.Class,
 		),
 		}
@@ -284,7 +284,7 @@ func AccordionContent(p ...props.AccordionContent) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "><div class=\"overflow-hidden flex flex-col gap-4 p-2 min-h-0 w-max\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "><div class=\"flex flex-col gap-4 p-2 min-h-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -193,8 +193,8 @@ func Main(opts ...props.Main) templ.Component {
 		var templ_7745c5c3_Var7 = []any{tailwind.Merge(
 			"overflow-auto col-start-2 row-start-2 flex flex-col gap-4",
 			classes.Join(map[string]bool{
-				"justify-between":             !p.Center,
-				"justify-center items-center": p.Center,
+				"justify-between": !p.Center,
+				"items-center":    p.Center,
 			}),
 			p.Class,
 		),
@@ -333,7 +333,7 @@ func Article(opts ...props.Article) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var13 = []any{tailwind.Merge(
-			"p-4 flex-1 w-full",
+			"flex flex-col p-4 flex-1 w-full gap-4",
 			classes.Join(map[string]bool{
 				"lg:w-200": !p.FullWidth,
 			}),

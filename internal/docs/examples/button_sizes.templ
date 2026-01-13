@@ -6,7 +6,7 @@ import (
 )
 
 templ ButtonSizesExample() {
-	<div class="flex gap-2 items-center">
+	@popui.ButtonGroup() {
 		@popui.Button(props.Button{
 			Variant: props.ButtonVariantPrimary,
 			Size:    props.ButtonSizeSmall,
@@ -30,5 +30,5 @@ templ ButtonSizesExample() {
 		}) {
 			+
 		}
-	</div>
+	}
 }

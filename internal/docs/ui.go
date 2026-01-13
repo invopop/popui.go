@@ -81,6 +81,12 @@ var groups = []*Group{
 				Template: components.File(),
 			},
 			{
+				Title:    "Form",
+				Desc:     "Form element with proper spacing and standard HTML form attributes for handling submissions.",
+				Path:     "form",
+				Template: components.Form(),
+			},
+			{
 				Title:    "Input",
 				Desc:     "Text input field for capturing user data with various types and validation.",
 				Path:     "input",
