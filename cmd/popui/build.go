@@ -60,11 +60,6 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 		log.Fatalf("Error: %v", err)
 	}
 	log.Printf("CSS file published")
-	err = copyFile(path.Join(buildAssetsPath, "popui-full.css"), path.Join(publicAssetPath, "popui-full.css"))
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-	log.Printf("Full CSS file published")
 	err = copyFile(path.Join(buildAssetsPath, "popui.js"), path.Join(publicAssetPath, "popui.js"))
 	if err != nil {
 		log.Fatalf("Error: %v", err)
