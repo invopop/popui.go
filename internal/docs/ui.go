@@ -45,10 +45,10 @@ var groups = []*Group{
 				Template: components.Card(),
 			},
 			{
-				Title:    "Empty State",
-				Desc:     "Layout for displaying empty states with illustrations and call-to-action.",
-				Path:     "empty-state",
-				Template: components.EmptyState(),
+				Title:    "Page State",
+				Desc:     "Layout for displaying page states with illustrations and call-to-action.",
+				Path:     "page-state",
+				Template: components.PageState(),
 			},
 			{
 				Title:    "Separator",

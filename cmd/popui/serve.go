@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
-	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/examples"
 	"github.com/invopop/popui.go/internal/docs"
 	"github.com/invopop/popui.go/internal/docs/assets"

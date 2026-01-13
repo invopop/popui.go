@@ -69,8 +69,8 @@ templ Main(opts ...props.Main) {
 			tailwind.Merge(
 				"overflow-auto col-start-2 row-start-2 flex flex-col gap-4",
 				classes.Join(map[string]bool{
-					"justify-between": !p.Center,
-					"items-center":    p.Center,
+					"justify-between":             !p.Center,
+					"justify-center items-center": p.Center,
 				}),
 				p.Class,
 			),

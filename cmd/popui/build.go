@@ -8,7 +8,7 @@ import (
 	"path"
 
 	"github.com/a-h/templ"
-	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/internal/docs"
 	"github.com/spf13/cobra"
 )

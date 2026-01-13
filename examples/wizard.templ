@@ -1,10 +1,12 @@
 package examples
 
 import (
-	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/props"
 )
+
+const articleClasses = "w-full lg:max-w-[840px]"
 
 templ wizardLayout() {
 	@popui.App(props.App{Title: "Invopop - Wizard", AccentColor: "black"}) {
@@ -25,7 +27,7 @@ templ verifactuTitle(text string) {
 templ Wizard() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article() {
+			@popui.Article(props.Article{Class: articleClasses}) {
 				@popui.Title() {
 					Registro VERI*FACTU
 				}
@@ -61,7 +63,7 @@ templ Wizard() {
 templ WizardStepOne() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article() {
+			@popui.Article(props.Article{Class: articleClasses}) {
 				@popui.Title() {
 					Revisa y completa los datos
 				}
@@ -163,7 +165,7 @@ templ WizardStepOne() {
 templ WizardStepTwo() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article() {
+			@popui.Article(props.Article{Class: articleClasses}) {
 				@popui.Title() {
 					Descarga y firma el acuerdo
 				}
@@ -206,7 +208,7 @@ templ WizardStepTwo() {
 templ WizardStepThree() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article() {
+			@popui.Article(props.Article{Class: articleClasses}) {
 				@popui.Title() {
 					Sube el acuerdo firmado
 				}
@@ -278,7 +280,7 @@ templ WizardStepThree() {
 templ WizardStepFour() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article() {
+			@popui.Article(props.Article{Class: articleClasses}) {
 				@popui.Title() {
 					Sube tu documento de identidad
 				}
@@ -361,7 +363,7 @@ templ WizardStepFour() {
 templ WizardConfirm() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article() {
+			@popui.Article(props.Article{Class: articleClasses}) {
 				@popui.Title() {
 					Revisa tus datos
 				}
@@ -522,17 +524,11 @@ templ WizardConfirm() {
 templ WizardSuccess() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			<div class="w-full flex justify-center items-center flex-col">
-				@popui.SuccessIcon()
-				<div class="mt-3 mb-1">
-					@popui.Subtitle() {
-						Información enviada
-					}
-				</div>
-				@popui.Description() {
-					Verificaremos la documentación enviada.
-				}
-			</div>
+			@popui.PageState(props.PageState{
+				Illustration: popui.SuccessIcon(),
+				Title:        "Información enviada",
+				Description:  "Verificaremos la documentación enviada.",
+			})
 		}
 	}
 }
@@ -540,24 +536,17 @@ templ WizardSuccess() {
 templ WizardError() {
 	@wizardLayout() {
 		@popui.Main(props.Main{Center: true}) {
-			<div class="w-full flex justify-center items-center flex-col">
-				@popui.ErrorIcon()
-				<div class="mt-3">
-					@popui.Subtitle() {
-						Algo ha salido mal
-					}
-				</div>
-				<div class="mt-1 mb-6">
-					@popui.Description() {
-						Por favor intenta de nuevo
-					}
-				</div>
+			@popui.PageState(props.PageState{
+				Illustration: popui.ErrorIcon(),
+				Title:        "Algo ha salido mal",
+				Description:  "Por favor intenta de nuevo",
+			}) {
 				<form action="confirm" method="GET">
 					@popui.Button(props.Button{Variant: "primary"}) {
 						Enviar nuevamente
 					}
 				</form>
-			</div>
+			}
 		}
 	}
 }

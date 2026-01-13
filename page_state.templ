@@ -3,8 +3,9 @@ package popui
 import "github.com/invopop/popui.go/props"
 import "github.com/invopop/popui.go/tailwind"
 
-// EmptyState provides a layout for displaying an empty state illustration with some call to action
-templ EmptyState(opts ...props.EmptyState) {
+// PageState provides a layout for displaying a page state with a centered, illustration,
+// text information, and a call to action that is commonly used for empty states or error states.
+templ PageState(opts ...props.PageState) {
 	{{ p := props.First(opts) }}
 	<div
 		if p.ID != "" {
@@ -12,13 +13,13 @@ templ EmptyState(opts ...props.EmptyState) {
 		}
 		class={
 			tailwind.Merge(
-				"flex flex-col items-center justify-center text-foreground-accent",
+				"flex flex-col items-center justify-center text-foreground-accent gap-4",
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		@EmptyStateIcon()
+		@p.Illustration
 		<div class="flex flex-col items-center justify-center space-y-0.5 mb-4">
 			@Subtitle() {
 				{ p.Title }
