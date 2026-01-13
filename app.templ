@@ -70,7 +70,7 @@ templ Main(opts ...props.Main) {
 				"overflow-auto col-start-2 row-start-2 flex flex-col gap-4",
 				classes.Join(map[string]bool{
 					"justify-between": !p.Center,
-					"items-center":    p.Center,
+					"justify-center items-center": p.Center,
 				}),
 				p.Class,
 			),
@@ -80,7 +80,13 @@ templ Main(opts ...props.Main) {
 		}
 		{ p.Attributes... }
 	>
-		{ children... }
+		if p.Center {
+			<div class="w-full lg:max-w-[840px]">
+				{ children... }
+			</div>
+		} else {
+			{ children... }
+		}
 	</main>
 }
 
