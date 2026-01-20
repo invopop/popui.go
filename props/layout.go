@@ -10,6 +10,8 @@ type Head struct {
 
 	// HTMX when true loads the htmx library
 	HTMX bool
+	// Axios when true loads the axios javascript library
+	Axios bool
 
 	// Scripts is a list of additional script paths to include.
 	Scripts []Script

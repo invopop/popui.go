@@ -193,6 +193,22 @@ func App() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "Block",
+				Description: "Block component for grouping related content within apps. Provides the same flex model as for Articles.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the block element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with block styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Nav",
 				Description: "Navigation component for apps.",
 				Items: []modules.APITableItem{

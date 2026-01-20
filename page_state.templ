@@ -19,7 +19,9 @@ templ PageState(opts ...props.PageState) {
 		}
 		{ p.Attributes... }
 	>
-		@p.Illustration
+		if p.Illustration != nil {
+			@p.Illustration
+		}
 		<div class="flex flex-col items-center justify-center space-y-0.5 mb-4">
 			@Subtitle() {
 				{ p.Title }

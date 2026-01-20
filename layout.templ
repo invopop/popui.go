@@ -1,6 +1,7 @@
 package popui
 
 import (
+	"github.com/invopop/popui.go/htmx"
 	"github.com/invopop/popui.go/props"
 	"path"
 )
@@ -28,7 +29,10 @@ templ Head(p ...props.Head) {
 			@AlpineJS()
 		}
 		if h.HTMX {
-			@HTMX()
+			@htmx.Script()
+		}
+		if h.Axios {
+			@AxiosJS()
 		}
 		for _, sheet := range h.Stylesheets {
 			<link href={ sheet.Href } rel={ sheet.RelOrStylesheet() }/>
@@ -74,9 +78,9 @@ templ AlpineJS() {
 	<script src="https://cdn.jsdelivr.net/npm/alpinejs/dist/cdn.min.js" defer></script>
 }
 
-// HTMX loads the HTMX library from a CDN.
-templ HTMX() {
-	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+// AxiosJS loads the default Axios library from a CDN.
+templ AxiosJS() {
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 }
 
 // AlpineStoreContenteditable provides the JS to include in an Alpine component
