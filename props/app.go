@@ -20,6 +20,12 @@ type App struct {
 	// HTMX when true loads the htmx javascript library
 	HTMX bool
 
+	// Axios when true loads the axios javascript library
+	Axios bool
+
+	// Auth when true enables authentication token handling in included scripts.
+	Auth bool
+
 	// Scripts is a list of additional script paths to include as an alternative
 	// to defining in the head property.
 	Scripts []Script
@@ -55,6 +61,13 @@ type Article struct {
 	// main content area while maintaining padding.
 	FullWidth bool
 
+	Attributes templ.Attributes
+}
+
+// Block for configuring the App block component.
+type Block struct {
+	ID         string
+	Class      string
 	Attributes templ.Attributes
 }
 

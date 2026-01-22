@@ -13,7 +13,7 @@ templ ButtonCopy(opts ...props.ButtonCopy) {
 	{{
 		buttonAttrs := templ.Attributes{
 			"data-button-copy": true,
-			"onclick":          "copyButtonValue(this)",
+			"onclick":          "popui.copyButtonValue(this)",
 		}
 	}}
 	@Button(props.Button{
