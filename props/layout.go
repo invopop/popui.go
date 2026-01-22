@@ -8,9 +8,14 @@ type Head struct {
 	// AlpineJS when true includes Alpine.js in the head.
 	AlpineJS bool
 
-	// HTMX when true loads the htmx library
+	// Auth when true enables authentication token handling in included scripts.
+	Auth bool
+
+	// HTMX when true loads the htmx library including special authentication
+	// token handling.
 	HTMX bool
-	// Axios when true loads the axios javascript library
+	// Axios when true loads the axios javascript library alongside an interceptor
+	// to add authentication tokens to requests automatically.
 	Axios bool
 
 	// Scripts is a list of additional script paths to include.

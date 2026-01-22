@@ -66,6 +66,11 @@ type Button struct {
 	// Download when true indicates that the linked resource is intended to be
 	// downloaded rather than displayed in the browser.
 	Download bool
+
+	/* Special JavaScript behavior */
+
+	// ShowSpinnerOnClick when true shows a loading spinner on the button when clicked.
+	ShowSpinnerOnClick bool
 }
 
 // IsAnchor returns true if the button is configured as an anchor.

@@ -23,6 +23,9 @@ type App struct {
 	// Axios when true loads the axios javascript library
 	Axios bool
 
+	// Auth when true enables authentication token handling in included scripts.
+	Auth bool
+
 	// Scripts is a list of additional script paths to include as an alternative
 	// to defining in the head property.
 	Scripts []Script
