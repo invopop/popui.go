@@ -1,0 +1,109 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TablePaginationAlpineExample() {
+	<div
+		x-data="{
+			currentPage: 1,
+			totalPages: 260,
+			totalItems: 25991,
+			rowsPerPage: 100,
+			itemsLabel: 'invoices',
+			goToPage(page) {
+				const pageNum = parseInt(page);
+				if (pageNum >= 1 && pageNum <= this.totalPages) {
+					this.currentPage = pageNum;
+					// Here you would typically fetch new data from your API
+					console.log('Navigating to page:', pageNum);
+				}
+			},
+			changeRowsPerPage(value) {
+				this.rowsPerPage = parseInt(value);
+				this.currentPage = 1;
+				// Recalculate total pages based on new rows per page
+				console.log('Changed rows per page to:', value);
+			}
+		}"
+		class="border border-border rounded-lg overflow-hidden"
+	>
+		@popui.Table() {
+			<thead>
+				<tr>
+					<th>Invoice ID</th>
+					<th>Customer</th>
+					<th>Amount</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>INV-001</td>
+					<td>Acme Corp</td>
+					<td>$1,234.56</td>
+					<td>Paid</td>
+				</tr>
+				<tr>
+					<td>INV-002</td>
+					<td>Tech Solutions</td>
+					<td>$987.65</td>
+					<td>Pending</td>
+				</tr>
+				<tr>
+					<td>INV-003</td>
+					<td>Global Inc</td>
+					<td>$2,345.67</td>
+					<td>Paid</td>
+				</tr>
+			</tbody>
+		}
+		@popui.TablePagination(props.TablePagination{
+			CurrentPage:        1,
+			TotalPages:         260,
+			TotalItems:         25991,
+			RowsPerPage:        100,
+			RowsPerPageOptions: []int{10, 25, 50, 100, 250},
+			ShowRowsPerPage:    true,
+			ItemsLabel:         "invoices",
+			FirstPageURL:       "#",
+			PrevPageURL:        "#",
+			NextPageURL:        "#",
+			LastPageURL:        "#",
+			Elements: props.TablePaginationElements{
+				First: templ.Attributes{
+					"@click.prevent":       "goToPage(1)",
+					"x-bind:data-disabled": "currentPage === 1",
+				},
+				Prev: templ.Attributes{
+					"@click.prevent":       "goToPage(currentPage - 1)",
+					"x-bind:data-disabled": "currentPage === 1",
+				},
+				Next: templ.Attributes{
+					"@click.prevent":       "goToPage(currentPage + 1)",
+					"x-bind:data-disabled": "currentPage === totalPages",
+				},
+				Last: templ.Attributes{
+					"@click.prevent":       "goToPage(totalPages)",
+					"x-bind:data-disabled": "currentPage === totalPages",
+				},
+				Page: templ.Attributes{
+					"x-model.number": "currentPage",
+					"@input":         "goToPage($event.target.value)",
+				},
+				Select: templ.Attributes{
+					"x-model": "rowsPerPage",
+					"@change": "changeRowsPerPage($event.target.value)",
+				},
+				TotalPages: templ.Attributes{
+					"x-text": "totalPages",
+				},
+				TotalItems: templ.Attributes{
+					"x-text": "`${totalItems} ${itemsLabel}`",
+				},
+			},
+		})
+	</div>
+}

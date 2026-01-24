@@ -1,0 +1,22 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SelectWithOptionsExample() {
+	@popui.Select(props.Select{
+		ID:    "country-with-options",
+		Name:  "country",
+		Label: "Country",
+		Options: []props.SelectOption{
+			{Value: "", Label: "Choose a country"},
+			{Value: "es", Label: "Spain", Selected: true},
+			{Value: "fr", Label: "France"},
+			{Value: "de", Label: "Germany"},
+			{Value: "it", Label: "Italy"},
+			{Value: "pt", Label: "Portugal", Disabled: true},
+		},
+	})
+}

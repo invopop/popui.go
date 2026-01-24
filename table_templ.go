@@ -250,12 +250,14 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			Href:    prp.FirstPageURL,
 			Size:    props.ButtonSizeIcon,
 			Variant: props.ButtonVariantTransparent,
-			Class: classes.Join(map[string]bool{
-				"pointer-events-none opacity-30": prp.CurrentPage == 1,
-			}),
-			Attributes: templ.Attributes{
-				"aria-label": "First page",
-			},
+			Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"aria-label":    "First page",
+					"data-disabled": paginationButtonDisabled(prp.Elements.First, prp.CurrentPage == 1),
+				},
+				prp.Elements.First,
+			),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -282,12 +284,14 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			Href:    prp.PrevPageURL,
 			Size:    props.ButtonSizeIcon,
 			Variant: props.ButtonVariantTransparent,
-			Class: classes.Join(map[string]bool{
-				"pointer-events-none opacity-30": prp.CurrentPage == 1,
-			}),
-			Attributes: templ.Attributes{
-				"aria-label": "Previous page",
-			},
+			Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"aria-label":    "Previous page",
+					"data-disabled": paginationButtonDisabled(prp.Elements.Prev, prp.CurrentPage == 1),
+				},
+				prp.Elements.Prev,
+			),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -300,28 +304,39 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			Type:  "number",
 			Value: currentPageStr,
 			Class: "w-12",
-			Attributes: templ.Attributes{
-				"min": "1",
-				"max": totalPagesStr,
-			},
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"min": "1",
+					"max": totalPagesStr,
+				},
+				prp.Elements.Page,
+			),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<span class=\"text-sm text-foreground-default-secondary whitespace-nowrap\">/ ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<span class=\"text-sm text-foreground-default-secondary whitespace-nowrap\">/ <span")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, mergeAttributes(prp.Elements.TotalPages))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(totalPagesStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 111, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 118, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span></div><div class=\"flex items-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span></span></div><div class=\"flex items-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -347,12 +362,14 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			Href:    prp.NextPageURL,
 			Size:    props.ButtonSizeIcon,
 			Variant: props.ButtonVariantTransparent,
-			Class: classes.Join(map[string]bool{
-				"pointer-events-none opacity-30": prp.CurrentPage == prp.TotalPages,
-			}),
-			Attributes: templ.Attributes{
-				"aria-label": "Next page",
-			},
+			Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"aria-label":    "Next page",
+					"data-disabled": paginationButtonDisabled(prp.Elements.Next, prp.CurrentPage == prp.TotalPages),
+				},
+				prp.Elements.Next,
+			),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -379,17 +396,19 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			Href:    prp.LastPageURL,
 			Size:    props.ButtonSizeIcon,
 			Variant: props.ButtonVariantTransparent,
-			Class: classes.Join(map[string]bool{
-				"pointer-events-none opacity-30": prp.CurrentPage == prp.TotalPages,
-			}),
-			Attributes: templ.Attributes{
-				"aria-label": "Last page",
-			},
+			Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"aria-label":    "Last page",
+					"data-disabled": paginationButtonDisabled(prp.Elements.Last, prp.CurrentPage == prp.TotalPages),
+				},
+				prp.Elements.Last,
+			),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -408,43 +427,43 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 				ctx = templ.InitializeContext(ctx)
 				for _, option := range paginationRowsPerPageOptions(prp.RowsPerPageOptions) {
 					optionStr := fmt.Sprintf("%d", option)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<option value=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<option value=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 152, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 164, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					if option == prp.RowsPerPage {
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " selected")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " selected")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 153, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 165, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " rows</option>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " rows</option>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -453,51 +472,60 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			})
 			templ_7745c5c3_Err = Select(props.Select{
 				Class: "w-[105px]",
-				Attributes: templ.Attributes{
-					"aria-label": "Rows per page",
-				},
+				Attributes: mergeAttributes(
+					templ.Attributes{"aria-label": "Rows per page"},
+					prp.Elements.Select,
+				),
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if prp.TotalItems > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<span class=\"text-sm text-foreground-default-secondary\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<span class=\"text-sm text-foreground-default-secondary\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, mergeAttributes(prp.Elements.TotalItems))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, ">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(totalItemsStr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 161, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 173, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(itemsLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 161, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 173, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -505,7 +533,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -525,6 +553,29 @@ func paginationRowsPerPageOptions(options []int) []int {
 		return []int{10, 25, 50, 100}
 	}
 	return options
+}
+
+func mergeAttributes(attrs ...templ.Attributes) templ.Attributes {
+	result := make(templ.Attributes)
+	for _, attr := range attrs {
+		for k, v := range attr {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+func paginationButtonDisabled(elementAttrs templ.Attributes, serverSideDisabled bool) string {
+	// If custom attributes are provided, don't set disabled state server-side
+	// Let the JS framework handle it
+	if len(elementAttrs) > 0 {
+		return ""
+	}
+	// Otherwise use server-side state
+	if serverSideDisabled {
+		return "true"
+	}
+	return "false"
 }
 
 var _ = templruntime.GeneratedTemplate

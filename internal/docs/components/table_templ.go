@@ -201,6 +201,32 @@ func Table() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TablePaginationAlpineExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Pagination with Alpine.js",
+			Description: "Use the Elements prop to add Alpine.js directives for client-side pagination. Bind data-disabled to control the disabled state. The component automatically applies disabled styles via data attributes without needing to know internal CSS classes.",
+			Code:        examples.LoadExample("table_pagination_alpine.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
 				Description: "A table component with automatic styling for borders, spacing, and typography. The table wrapper provides rounded corners and overflow handling.",
@@ -236,7 +262,28 @@ func Table() templ.Component {
 					{Name: "PrevPageURL", Type: "templ.SafeURL", Default: "", Description: "URL for the previous page navigation button"},
 					{Name: "NextPageURL", Type: "templ.SafeURL", Default: "", Description: "URL for the next page navigation button"},
 					{Name: "LastPageURL", Type: "templ.SafeURL", Default: "", Description: "URL for the last page navigation button"},
-					{Name: "PageInputAttributes", Type: "templ.Attributes", Default: "", Description: "Additional attributes for the page number input field"},
+					{Name: "Elements", Type: "TablePaginationElements", Default: "", Description: "Custom attributes for interactive elements. Use this to add Alpine.js or other JS framework directives. When provided, disables server-side conditional classes to allow JS framework control"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "TablePaginationElements",
+				Description: "Defines custom attributes for each interactive element in table pagination. Allows integration with Alpine.js or other JavaScript frameworks while maintaining component styling. Buttons automatically style based on data-disabled attribute.",
+				Items: []modules.APITableItem{
+					{Name: "First", Type: "templ.Attributes", Default: "", Description: "Attributes for the first page button. Use x-bind:data-disabled for dynamic state"},
+					{Name: "Prev", Type: "templ.Attributes", Default: "", Description: "Attributes for the previous page button. Use x-bind:data-disabled for dynamic state"},
+					{Name: "Next", Type: "templ.Attributes", Default: "", Description: "Attributes for the next page button. Use x-bind:data-disabled for dynamic state"},
+					{Name: "Last", Type: "templ.Attributes", Default: "", Description: "Attributes for the last page button. Use x-bind:data-disabled for dynamic state"},
+					{Name: "Page", Type: "templ.Attributes", Default: "", Description: "Attributes for the page number input field (e.g., x-model for two-way binding)"},
+					{Name: "Select", Type: "templ.Attributes", Default: "", Description: "Attributes for the rows per page select dropdown"},
+					{Name: "TotalPages", Type: "templ.Attributes", Default: "", Description: "Attributes for the total pages text span (e.g., x-text for dynamic updates)"},
+					{Name: "TotalItems", Type: "templ.Attributes", Default: "", Description: "Attributes for the total items count span"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -244,7 +291,7 @@ func Table() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

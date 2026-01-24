@@ -10,21 +10,33 @@ type Table struct {
 	Variant    string // "card" adds outer border
 }
 
+// TablePaginationElements defines custom attributes for pagination interactive elements
+type TablePaginationElements struct {
+	First      templ.Attributes
+	Prev       templ.Attributes
+	Next       templ.Attributes
+	Last       templ.Attributes
+	Page       templ.Attributes
+	Select     templ.Attributes
+	TotalPages templ.Attributes
+	TotalItems templ.Attributes
+}
+
 // TablePagination Templ component props
 type TablePagination struct {
-	ID                  string
-	Class               string
-	Attributes          templ.Attributes
-	CurrentPage         int
-	TotalPages          int
-	TotalItems          int
-	RowsPerPage         int
-	RowsPerPageOptions  []int
-	ShowRowsPerPage     bool
-	ItemsLabel          string
-	FirstPageURL        templ.SafeURL
-	PrevPageURL         templ.SafeURL
-	NextPageURL         templ.SafeURL
-	LastPageURL         templ.SafeURL
-	PageInputAttributes templ.Attributes
+	ID                 string
+	Class              string
+	Attributes         templ.Attributes
+	CurrentPage        int
+	TotalPages         int
+	TotalItems         int
+	RowsPerPage        int
+	RowsPerPageOptions []int
+	ShowRowsPerPage    bool
+	ItemsLabel         string
+	FirstPageURL       templ.SafeURL
+	PrevPageURL        templ.SafeURL
+	NextPageURL        templ.SafeURL
+	LastPageURL        templ.SafeURL
+	Elements           TablePaginationElements
 }
