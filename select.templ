@@ -10,7 +10,8 @@ import (
 // with custom styling.
 //
 // If the Label property is provided, a simple label will be rendered above the select.
-// The children slot is used for the option elements.
+// Options can be provided either via the Options property in props.Select or by using
+// the children slot for option elements.
 templ Select(p ...props.Select) {
 	{{ prp := props.First(p) }}
 	<div class="flex flex-col space-y-2">
@@ -48,7 +49,23 @@ templ Select(p ...props.Select) {
 			}
 			{ prp.Attributes... }
 		>
-			{ children... }
+			if prp.Options != nil {
+				for _, option := range prp.Options {
+					<option
+						value={ option.Value }
+						if option.Selected {
+							selected
+						}
+						if option.Disabled {
+							disabled
+						}
+					>
+						{ option.Label }
+					</option>
+				}
+			} else {
+				{ children... }
+			}
 		</select>
 		if !prp.Error.Empty() {
 			@InputError(prp.Error)

@@ -74,12 +74,14 @@ templ TablePagination(p ...props.TablePagination) {
 							Href:    prp.FirstPageURL,
 							Size:    props.ButtonSizeIcon,
 							Variant: props.ButtonVariantTransparent,
-							Class: classes.Join(map[string]bool{
-								"pointer-events-none opacity-30": prp.CurrentPage == 1,
-							}),
-							Attributes: templ.Attributes{
-								"aria-label": "First page",
-							},
+							Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+							Attributes: mergeAttributes(
+								templ.Attributes{
+									"aria-label":    "First page",
+									"data-disabled": paginationButtonDisabled(prp.Elements.First, prp.CurrentPage == 1),
+								},
+								prp.Elements.First,
+							),
 						}) {
 							@icons.ScrollLeft()
 						}
@@ -87,12 +89,14 @@ templ TablePagination(p ...props.TablePagination) {
 							Href:    prp.PrevPageURL,
 							Size:    props.ButtonSizeIcon,
 							Variant: props.ButtonVariantTransparent,
-							Class: classes.Join(map[string]bool{
-								"pointer-events-none opacity-30": prp.CurrentPage == 1,
-							}),
-							Attributes: templ.Attributes{
-								"aria-label": "Previous page",
-							},
+							Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+							Attributes: mergeAttributes(
+								templ.Attributes{
+									"aria-label":    "Previous page",
+									"data-disabled": paginationButtonDisabled(prp.Elements.Prev, prp.CurrentPage == 1),
+								},
+								prp.Elements.Prev,
+							),
 						}) {
 							@icons.ArrowLeft()
 						}
@@ -102,13 +106,16 @@ templ TablePagination(p ...props.TablePagination) {
 							Type:  "number",
 							Value: currentPageStr,
 							Class: "w-12",
-							Attributes: templ.Attributes{
-								"min": "1",
-								"max": totalPagesStr,
-							},
+							Attributes: mergeAttributes(
+								templ.Attributes{
+									"min": "1",
+									"max": totalPagesStr,
+								},
+								prp.Elements.Page,
+							),
 						})
 						<span class="text-sm text-foreground-default-secondary whitespace-nowrap">
-							/ { totalPagesStr }
+							/ <span { mergeAttributes(prp.Elements.TotalPages)... }>{ totalPagesStr }</span>
 						</span>
 					</div>
 					<div class="flex items-center">
@@ -116,12 +123,14 @@ templ TablePagination(p ...props.TablePagination) {
 							Href:    prp.NextPageURL,
 							Size:    props.ButtonSizeIcon,
 							Variant: props.ButtonVariantTransparent,
-							Class: classes.Join(map[string]bool{
-								"pointer-events-none opacity-30": prp.CurrentPage == prp.TotalPages,
-							}),
-							Attributes: templ.Attributes{
-								"aria-label": "Next page",
-							},
+							Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+							Attributes: mergeAttributes(
+								templ.Attributes{
+									"aria-label":    "Next page",
+									"data-disabled": paginationButtonDisabled(prp.Elements.Next, prp.CurrentPage == prp.TotalPages),
+								},
+								prp.Elements.Next,
+							),
 						}) {
 							@icons.ArrowRight()
 						}
@@ -129,12 +138,14 @@ templ TablePagination(p ...props.TablePagination) {
 							Href:    prp.LastPageURL,
 							Size:    props.ButtonSizeIcon,
 							Variant: props.ButtonVariantTransparent,
-							Class: classes.Join(map[string]bool{
-								"pointer-events-none opacity-30": prp.CurrentPage == prp.TotalPages,
-							}),
-							Attributes: templ.Attributes{
-								"aria-label": "Last page",
-							},
+							Class:   "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-30",
+							Attributes: mergeAttributes(
+								templ.Attributes{
+									"aria-label":    "Last page",
+									"data-disabled": paginationButtonDisabled(prp.Elements.Last, prp.CurrentPage == prp.TotalPages),
+								},
+								prp.Elements.Last,
+							),
 						}) {
 							@icons.ScrollRight()
 						}
@@ -143,9 +154,10 @@ templ TablePagination(p ...props.TablePagination) {
 				if prp.ShowRowsPerPage {
 					@Select(props.Select{
 						Class: "w-[105px]",
-						Attributes: templ.Attributes{
-							"aria-label": "Rows per page",
-						},
+						Attributes: mergeAttributes(
+							templ.Attributes{"aria-label": "Rows per page"},
+							prp.Elements.Select,
+						),
 					}) {
 						for _, option := range paginationRowsPerPageOptions(prp.RowsPerPageOptions) {
 							{{ optionStr := fmt.Sprintf("%d", option) }}
@@ -157,7 +169,7 @@ templ TablePagination(p ...props.TablePagination) {
 				}
 			</div>
 			if prp.TotalItems > 0 {
-				<span class="text-sm text-foreground-default-secondary">
+				<span class="text-sm text-foreground-default-secondary" { mergeAttributes(prp.Elements.TotalItems)... }>
 					{ totalItemsStr } { itemsLabel }
 				</span>
 			}
@@ -178,4 +190,26 @@ func paginationRowsPerPageOptions(options []int) []int {
 		return []int{10, 25, 50, 100}
 	}
 	return options
+}
+
+func mergeAttributes(attrs ...templ.Attributes) templ.Attributes {
+	result := make(templ.Attributes)
+	for _, attr := range attrs {
+		for k, v := range attr {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+func paginationButtonDisabled(elementAttrs templ.Attributes, serverSideDisabled bool) string {
+	// If custom attributes are provided, default to false and let JS framework override
+	if len(elementAttrs) > 0 {
+		return "false"
+	}
+	// Otherwise use server-side state
+	if serverSideDisabled {
+		return "true"
+	}
+	return "false"
 }

@@ -14,6 +14,13 @@ templ Select() {
 		@examples.SelectExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "With Options",
+		Description: "Options can be defined in the props.Select Options field instead of using child option elements. This is useful for dynamic option generation.",
+		Code:        examples.LoadExample("select_with_options.templ"),
+	}) {
+		@examples.SelectWithOptionsExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "With Label",
 		Description: "Use the Label prop for a simple text label above the select.",
 		Code:        examples.LoadExample("select_with_label.templ"),
@@ -56,6 +63,17 @@ templ Select() {
 				{Name: "Multiple", Type: "bool", Default: "false", Description: "Enables multiple option selection"},
 				{Name: "Required", Type: "bool", Default: "false", Description: "Marks the select as required for form validation"},
 				{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the select"},
+				{Name: "Options", Type: "[]SelectOption", Default: "", Description: "Array of options to render. When provided, child option elements are ignored"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SelectOption",
+			Description: "Configuration for individual select options when using the Options property.",
+			Items: []modules.APITableItem{
+				{Name: "Value", Type: "string", Default: "", Description: "The value attribute of the option element"},
+				{Name: "Label", Type: "string", Default: "", Description: "The text displayed for the option"},
+				{Name: "Selected", Type: "bool", Default: "false", Description: "Whether the option is initially selected"},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Whether the option is disabled"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
