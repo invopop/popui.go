@@ -18,12 +18,48 @@ import (
 templ Table(p ...props.Table) {
 	{{ prp := props.First(p) }}
 	<div
+		if prp.ResizableColumns {
+			x-data={
+				`{
+					columnWidths: [],
+					resizing: false,
+					resizeColumn: -1,
+					startX: 0,
+					startWidth: 0,
+					init() {
+						this.$nextTick(() => {
+							const headers = this.$el.querySelectorAll('th');
+							this.columnWidths = Array.from(headers).map(th => th.offsetWidth);
+						});
+					},
+					startResize(event, columnIndex) {
+						this.resizing = true;
+						this.resizeColumn = columnIndex;
+						this.startX = event.pageX;
+						this.startWidth = this.columnWidths[columnIndex];
+						event.preventDefault();
+					},
+					resize(event) {
+						if (!this.resizing) return;
+						const diff = event.pageX - this.startX;
+						const newWidth = Math.max(50, this.startWidth + diff);
+						this.columnWidths[this.resizeColumn] = newWidth;
+					},
+					stopResize() {
+						this.resizing = false;
+						this.resizeColumn = -1;
+					}
+				}`
+			}
+			x-on:mousemove.window="resize($event)"
+			x-on:mouseup.window="stopResize()"
+		}
 		class={
 			tailwind.Merge(
 				classes.Join(map[string]bool{
 					"overflow-x-auto":                     prp.ScrollHorizontal,
-					"overflow-hidden":                     !prp.ScrollHorizontal,
-					"has-[[role=menu]]:overflow-visible":  !prp.ScrollHorizontal,
+					"overflow-hidden":                     !prp.ScrollHorizontal && !prp.ResizableColumns,
+					"has-[[role=menu]]:overflow-visible":  !prp.ScrollHorizontal && !prp.ResizableColumns,
 					"border border-border rounded-lg":     prp.Variant == "card",
 				}),
 			),
@@ -33,10 +69,23 @@ templ Table(p ...props.Table) {
 			if prp.ID != "" {
 				id={ prp.ID }
 			}
+			if prp.ResizableColumns {
+				x-on:mousedown="
+					const th = $event.target.closest('th');
+					if (!th) return;
+					const rect = th.getBoundingClientRect();
+					const isNearRightEdge = $event.clientX > rect.right - 10;
+					if (isNearRightEdge) {
+						const headers = Array.from(th.closest('tr').querySelectorAll('th'));
+						const columnIndex = headers.indexOf(th);
+						startResize($event, columnIndex);
+					}
+				"
+			}
 			class={ tailwind.Merge(
 				classes.Join(map[string]bool{
-					"table-fixed": !prp.ScrollHorizontal,
-					"table-auto":  prp.ScrollHorizontal,
+					"table-fixed": !prp.ScrollHorizontal || prp.ResizableColumns,
+					"table-auto":  prp.ScrollHorizontal && !prp.ResizableColumns,
 				}),
 				"w-full border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background",
 				"[&_tr]:data-[state=disabled]:opacity-30 [&_tr:last-child_td]:border-b-0",
@@ -44,10 +93,22 @@ templ Table(p ...props.Table) {
 				"[&_th]:border-b [&_th]:border-border [&_th]:text-left [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th:last-child]:pr-4",
 				"[&_td]:border-b [&_td]:border-border [&_td]:text-left [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4",
 				"[&_td:has([role=menu])]:py-1.5 [&_th:has([role=menu])]:py-1.5",
+				classes.Join(map[string]bool{
+					"[&_th]:relative [&_th]:select-none": prp.ResizableColumns,
+					"[&_th::after]:content-[''] [&_th::after]:absolute [&_th::after]:right-0 [&_th::after]:top-0 [&_th::after]:h-full [&_th::after]:w-1 [&_th::after]:cursor-col-resize [&_th::after]:hover:bg-primary [&_th::after]:transition-colors": prp.ResizableColumns,
+					"[&_th:last-child::after]:content-none": prp.ResizableColumns,
+				}),
 				prp.Class,
 			) }
 			{ prp.Attributes... }
 		>
+			if prp.ResizableColumns {
+				<colgroup>
+					<template x-for="(width, index) in columnWidths" :key="index">
+						<col :style="`width: ${width}px`"/>
+					</template>
+				</colgroup>
+			}
 			{ children... }
 		</table>
 	</div>

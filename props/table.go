@@ -9,6 +9,7 @@ type Table struct {
 	Attributes       templ.Attributes
 	Variant          string // "card" adds outer border
 	ScrollHorizontal bool   // Enable horizontal scrolling for wide tables
+	ResizableColumns bool   // Enable interactive column resizing with mouse drag
 }
 
 // TablePaginationElements defines custom attributes for pagination interactive elements
