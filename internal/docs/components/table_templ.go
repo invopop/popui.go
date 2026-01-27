@@ -234,8 +234,8 @@ func Table() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Resizable & Scrollable Columns",
-			Description: "Enable horizontal scrolling for wide tables and interactive column resizing. Drag column borders to adjust widths. Both features work together for tables with many columns.",
+			Title:       "Scrollable Columns",
+			Description: "Enable horizontal scrolling for wide tables. Useful for tables with many columns that exceed the viewport width.",
 			Code:        examples.LoadExample("table_resizable_scrollable.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -255,14 +255,13 @@ func Table() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
-				Description: "A table component with automatic styling for borders, spacing, and typography. The table wrapper provides rounded corners and overflow handling. Supports horizontal scrolling and interactive column resizing.",
+				Description: "A table component with automatic styling for borders, spacing, and typography. The table wrapper provides rounded corners and overflow handling. Supports horizontal scrolling.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the table element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles. Use Tailwind's arbitrary variants like [&_tr:hover_td]:bg-gray-100 for advanced styling"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the table element"},
 					{Name: "Variant", Type: "string", Default: "", Description: "Visual style: 'card' adds outer border and rounded corners"},
 					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Enable horizontal scrolling when table content exceeds container width. Useful for tables with many columns"},
-					{Name: "ResizableColumns", Type: "bool", Default: "false", Description: "Enable interactive column resizing with mouse drag. Requires Alpine.js. Users can drag column borders to adjust widths"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

@@ -1,5 +1,7 @@
 package props
 
+import "github.com/a-h/templ"
+
 // Head Templ component properties.
 type Head struct {
 	Title       string
@@ -22,6 +24,17 @@ type Head struct {
 	Scripts []Script
 	// Stylesheets is a list of additional stylesheet links to include.
 	Stylesheets []Link
+}
+
+// Body Templ component props.
+type Body struct {
+	ID    string
+	Class string
+
+	// Data adds the x-data attribute to the application body's contents.
+	Data string
+
+	Attributes templ.Attributes
 }
 
 // PopupLayout Templ component props

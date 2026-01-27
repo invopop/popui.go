@@ -34,10 +34,6 @@ func TableResizableScrollableExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-4\"><p class=\"text-sm text-foreground-default-secondary\">Try dragging the column borders to resize, and scroll horizontally when columns exceed the viewport width.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -50,7 +46,7 @@ func TableResizableScrollableExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<thead><tr><th>Product ID</th><th>Product Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Supplier</th><th>Location</th><th>Last Updated</th></tr></thead> <tbody><tr><td>PRD-001</td><td>Wireless Mouse</td><td>Electronics</td><td>$29.99</td><td>156</td><td>TechCorp Inc</td><td>Warehouse A</td><td>2024-01-15</td></tr><tr><td>PRD-002</td><td>Mechanical Keyboard</td><td>Electronics</td><td>$89.99</td><td>87</td><td>KeyMasters Ltd</td><td>Warehouse B</td><td>2024-01-14</td></tr><tr><td>PRD-003</td><td>USB-C Hub</td><td>Accessories</td><td>$45.50</td><td>203</td><td>ConnectPro</td><td>Warehouse A</td><td>2024-01-16</td></tr><tr><td>PRD-004</td><td>Laptop Stand</td><td>Accessories</td><td>$34.99</td><td>142</td><td>ErgoSupply Co</td><td>Warehouse C</td><td>2024-01-13</td></tr><tr><td>PRD-005</td><td>Webcam HD 1080p</td><td>Electronics</td><td>$67.99</td><td>98</td><td>VisionTech</td><td>Warehouse B</td><td>2024-01-17</td></tr></tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<colgroup><col style=\"width: 150px;\"> <col style=\"width: 200px;\"> <col style=\"width: 150px;\"> <col style=\"width: 120px;\"> <col style=\"width: 100px;\"> <col style=\"width: 200px;\"> <col style=\"width: 150px;\"> <col style=\"width: 180px;\"></colgroup> <thead><tr><th>Product ID</th><th>Product Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Supplier</th><th>Location</th><th>Last Updated</th></tr></thead> <tbody><tr><td>PRD-001</td><td>Wireless Mouse</td><td>Electronics</td><td>$29.99</td><td>156</td><td>TechCorp Inc</td><td>Warehouse A</td><td>2024-01-15</td></tr><tr><td>PRD-002</td><td>Mechanical Keyboard</td><td>Electronics</td><td>$89.99</td><td>87</td><td>KeyMasters Ltd</td><td>Warehouse B</td><td>2024-01-14</td></tr><tr><td>PRD-003</td><td>USB-C Hub</td><td>Accessories</td><td>$45.50</td><td>203</td><td>ConnectPro</td><td>Warehouse A</td><td>2024-01-16</td></tr><tr><td>PRD-004</td><td>Laptop Stand</td><td>Accessories</td><td>$34.99</td><td>142</td><td>ErgoSupply Co</td><td>Warehouse C</td><td>2024-01-13</td></tr><tr><td>PRD-005</td><td>Webcam HD 1080p</td><td>Electronics</td><td>$67.99</td><td>98</td><td>VisionTech</td><td>Warehouse B</td><td>2024-01-17</td></tr></tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -58,13 +54,8 @@ func TableResizableScrollableExample() templ.Component {
 		})
 		templ_7745c5c3_Err = popui.Table(props.Table{
 			ScrollHorizontal: true,
-			ResizableColumns: true,
 			Variant:          "card",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
