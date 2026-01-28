@@ -18,7 +18,12 @@ templ Checkbox(p ...props.Checkbox) {
 				@checkboxInput(checkbox)
 				<span class="absolute cursor-pointer inset-0 bg-border-default-secondary-hover rounded-md transition-all duration-[0.4s] before:content-[''] before:absolute before:h-4 before:w-4 before:left-0.5 before:bottom-0.5 before:bg-background before:rounded before:transition-all before:duration-[0.4s]"></span>
 			</div>
-			if checkbox.Label != "" {
+			if checkbox.Description != "" {
+				<div class="flex flex-col">
+					{ checkbox.Label }
+					<span class="text-sm text-foreground-default-secondary">{ checkbox.Description }</span>
+				</div>
+			} else if checkbox.Label != "" {
 				{ checkbox.Label }
 			} else {
 				{ children... }
@@ -31,7 +36,12 @@ templ Checkbox(p ...props.Checkbox) {
 				for={ checkbox.ID }
 				class="font-sans text-base text-foreground"
 			>
-				if checkbox.Label != "" {
+				if checkbox.Description != "" {
+					<div class="flex flex-col">
+						{ checkbox.Label }
+						<span class="text-sm text-foreground-default-secondary">{ checkbox.Description }</span>
+					</div>
+				} else if checkbox.Label != "" {
 					{ checkbox.Label }
 				} else {
 					{ children... }
