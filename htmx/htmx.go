@@ -119,11 +119,10 @@ func RelocateTo(c echo.Context, code int, path string) error {
 }
 
 // Relocate provides a response with the HX-Location header that instructs HTMX
-// to replace the current page segment with the content from the new path.
+// to replace the current page segment with the content from the new path. Response
+// codes should be in the 200 range (e.g., 200 OK, 204 No Content) to ensure
+// correct behavior with HTMX.
 func Relocate(c echo.Context, code int, loc Location) error {
-	if code < 300 || code > 308 {
-		return echo.ErrInvalidRedirectCode
-	}
 	var out string
 	if loc.IsSimple() {
 		out = loc.Path

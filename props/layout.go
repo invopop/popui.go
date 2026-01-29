@@ -31,7 +31,7 @@ type Body struct {
 	ID    string
 	Class string
 
-	// Data adds the x-data attribute to the application body's contents.
+	// Data adds the x-data attribute to the body element.
 	Data string
 
 	Attributes templ.Attributes
