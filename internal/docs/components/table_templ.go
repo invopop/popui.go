@@ -227,16 +227,16 @@ func Table() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.TableResizableScrollableExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.TableScrollHorizontalExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Scrollable Columns",
+			Title:       "Horizontal Scroll",
 			Description: "Enable horizontal scrolling for wide tables. Useful for tables with many columns that exceed the viewport width.",
-			Code:        examples.LoadExample("table_resizable_scrollable.templ"),
+			Code:        examples.LoadExample("table_scroll_horizontal.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
