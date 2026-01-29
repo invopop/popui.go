@@ -46,9 +46,11 @@ func Table(p ...props.Table) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		prp := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"overflow-hidden has-[[role=menu]]:overflow-visible",
 			classes.Join(map[string]bool{
-				"border border-border rounded-lg": prp.Variant == "card",
+				"overflow-x-auto":                    prp.ScrollHorizontal,
+				"overflow-hidden":                    !prp.ScrollHorizontal,
+				"has-[[role=menu]]:overflow-visible": !prp.ScrollHorizontal,
+				"border border-border rounded-lg":    prp.Variant == "card",
 			}),
 		),
 		}
@@ -74,7 +76,17 @@ func Table(p ...props.Table) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 = []any{tailwind.Merge(
-			"table-fixed w-full border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background [&_tr]:data-[state=disabled]:opacity-30 [&_td>div]:flex [&_td>div]:items-center [&_td>div]:gap-2 [&_th]:border-b [&_th]:border-border [&_th]:text-left [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th:last-child]:pr-4 [&_td]:border-b [&_td]:border-border [&_td]:text-left [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4 [&_tr:last-child_td]:border-b-0 [&_td:has([role=menu])]:py-1.5 [&_th:has([role=menu])]:py-1.5",
+			classes.Join(map[string]bool{
+				"table-fixed": true,
+				"w-full":      !prp.ScrollHorizontal,
+				"w-max":       prp.ScrollHorizontal,
+			}),
+			"border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background",
+			"[&_tr]:data-[state=disabled]:opacity-30 [&_tr:last-child_td]:border-b-0",
+			"[&_td>div]:flex [&_td>div]:items-center [&_td>div]:gap-2",
+			"[&_th]:border-b [&_th]:border-border [&_th]:text-left [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th:last-child]:pr-4",
+			"[&_td]:border-b [&_td]:border-border [&_td]:text-left [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4",
+			"[&_td:has([role=menu])]:py-1.5 [&_th:has([role=menu])]:py-1.5",
 			prp.Class,
 		)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
@@ -93,7 +105,7 @@ func Table(p ...props.Table) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 32, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 34, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -192,7 +204,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 59, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 71, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -330,7 +342,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(totalPagesStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 118, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 130, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -434,7 +446,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 164, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 176, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -457,7 +469,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 165, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 177, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -501,7 +513,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(totalItemsStr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 173, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 185, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -514,7 +526,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(itemsLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 173, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 185, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {

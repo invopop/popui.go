@@ -14,7 +14,8 @@ type App struct {
 	// component.
 	Head templ.Component
 
-	// Data adds the x-data attribute to the application body's contents.
+	// Data adds the x-data attribute to the application body wrapper's
+	// contents. When used with HTMX, this data will also be replaced.
 	Data string
 
 	// HTMX when true loads the htmx javascript library

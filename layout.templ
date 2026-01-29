@@ -48,8 +48,20 @@ templ Head(p ...props.Head) {
 }
 
 // Body provides the standard `<body>` section for an HTML document.
-templ Body() {
-	<body>
+templ Body(opts ...props.Body) {
+	{{ p := props.First(opts) }}
+	<body
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Class != "" {
+			class={ p.Class }
+		}
+		if p.Data != "" {
+			x-data={ p.Data }
+		}
+		{ p.Attributes... }
+	>
 		{ children... }
 	</body>
 }

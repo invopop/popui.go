@@ -34,7 +34,9 @@ templ App(opts ...props.App) {
 	{{ p := props.First(opts) }}
 	if p.HTMX && htmx.IsRequest(ctx) {
 		// HTMX request, only render the inner contents.
-		{ children... }
+		@appBody(p) {
+			{ children... }
+		}
 	} else {
 		@HTML() {
 			@Head(props.Head{
@@ -58,20 +60,25 @@ templ App(opts ...props.App) {
 					</style>
 				}
 			}
-			@Body() {
-				// Main app container uses universal ID for HTMX targeting.
-				<div
-					id={ AppID }
-					if p.Data != "" {
-						x-data={ p.Data }
-					}
-					class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full"
-				>
+			@Body(props.Body{ID: AppID}) {
+				@appBody(p) {
 					{ children... }
-				</div>
+				}
 			}
 		}
 	}
+}
+
+templ appBody(p props.App) {
+	// Main app container uses universal ID for HTMX targeting.
+	<div
+		if p.Data != "" {
+			x-data={ p.Data }
+		}
+		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full"
+	>
+		{ children... }
+	</div>
 }
 
 // Main provides a wrapper for the main content area of apps.
