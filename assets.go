@@ -10,7 +10,9 @@ import (
 	"path"
 )
 
-//go:generate npx tailwindcss -i ./styles.css -o ./assets/popui.css --minify
+// We use the tailwindcss CLI directly here for performance and to avoid
+// needing to install the NodeJS toolchain.
+//go:generate tailwindcss -i ./styles.css -o ./assets/popui.css --minify
 
 const (
 	// AssetPath determines where assets should be served from.
