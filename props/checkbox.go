@@ -14,17 +14,16 @@ const (
 
 // Checkbox defines the properties for checkbox inputs.
 type Checkbox struct {
-	ID          string
-	Class       string
-	Attributes  templ.Attributes
-	Label       string
-	Description string
-	Variant     string // "switch" for toggle switch style
-	Name        string
-	Value       string
-	Checked     bool
-	Autofocus   bool
-	Disabled    bool
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Label      string
+	Variant    string // "switch" for toggle switch style
+	Name       string
+	Value      string
+	Checked    bool
+	Autofocus  bool
+	Disabled   bool
 }
 
 // GenerateID returns a new Checkbox instance with either the existing ID

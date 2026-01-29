@@ -10,7 +10,7 @@ import (
 	"path"
 )
 
-//go:generate npx tailwindcss -i ./styles.css -o ./assets/popui.css --minify
+//go:generate tailwindcss -i ./styles.css -o ./assets/popui.css --minify
 
 const (
 	// AssetPath determines where assets should be served from.

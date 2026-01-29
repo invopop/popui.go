@@ -566,9 +566,10 @@ func mergeAttributes(attrs ...templ.Attributes) templ.Attributes {
 }
 
 func paginationButtonDisabled(elementAttrs templ.Attributes, serverSideDisabled bool) string {
-	// If custom attributes are provided, default to false and let JS framework override
+	// If custom attributes are provided, don't set disabled state server-side
+	// Let the JS framework handle it
 	if len(elementAttrs) > 0 {
-		return "false"
+		return ""
 	}
 	// Otherwise use server-side state
 	if serverSideDisabled {
