@@ -1,5 +1,6 @@
 @import "tailwindcss" source("./**/*.{templ,go}");
-@import "./tailwind.theme.css";
+/* Assume main popui repo is available */
+@import "../popui/svelte/src/lib/tailwind.theme.css";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
