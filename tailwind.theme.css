@@ -799,7 +799,10 @@
 
   /* Font Family */
   --font-sans: Inter, sans-serif;
-  --font-mono: CommitMono, ui-monospace, Menlo, Monaco, Consolas, "Ubuntu Mono", "Roboto Mono", "DejaVu Sans Mono", monospace;
+  --font-mono: "Geist Mono", CommitMono, ui-monospace, Menlo, Monaco, Consolas, "Ubuntu Mono", "Roboto Mono", "DejaVu Sans Mono", monospace;
+
+  /* Font Features for Monospace */
+  --font-mono-features: "ss02" on, "ss08" on, "ss09" on;
 
   /* Typography */
   --text-2xl: 24px;
@@ -884,7 +887,7 @@
     --color-background-selected-default-hover: var(--color-accent-alpha-30);
     --color-background-selected-default-press: var(--color-accent-alpha-40);
     --color-background-selected-inverse: var(--color-white-10);
-    --color-background-selected-inverse-hover: var(--color-nwhite-20);
+    --color-background-selected-inverse-hover: var(--color-white-20);
     --color-background-selected-inverse-press: var(--color-white-30);
 
     --color-background-accent-default: var(--color-accent-60);
@@ -985,4 +988,11 @@
     --color-icon-status-rejected: var(--color-personalization-magenta-40);
     --color-icon-status-void: var(--color-neutral-40);
   }
+}
+
+/* Custom utility for monospace font with OpenType features */
+@utility font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: var(--font-mono-features);
 }
