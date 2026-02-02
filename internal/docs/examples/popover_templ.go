@@ -8,10 +8,7 @@ package examples
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
-)
+import "github.com/invopop/popui.go"
 
 func PopoverExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -122,10 +119,7 @@ func PopoverExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Popover(props.Popover{
-			ID:          "popover-default",
-			ButtonLabel: "···",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Popover().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

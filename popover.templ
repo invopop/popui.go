@@ -1,6 +1,7 @@
 package popui
 
 import (
+	"fmt"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
@@ -9,9 +10,10 @@ import (
 // Popover provides a Button that can be clicked for displaying a context menu.
 // Menu content will render the html passed as slot.
 templ Popover(opts ...props.Popover) {
-	{{ p := props.First(opts) }}
+	{{ p := props.First(opts).GenerateID() }}
 	<div
 		role="menu"
+		style={ fmt.Sprintf("anchor-name: --popover-%s", p.ID) }
 		class={
 			tailwind.Merge(
 				"relative inline-block",
@@ -24,14 +26,21 @@ templ Popover(opts ...props.Popover) {
 			Size:       "icon",
 			Variant:    p.ButtonVariant,
 		}) {
-			{ p.ButtonLabel }
+			if p.ButtonLabel != "" {
+				{ p.ButtonLabel }
+			} else {
+				···
+			}
 		}
-		<div popover id={ p.ID }></div>
 		<div
+			popover
+			id={ p.ID }
+			style={ fmt.Sprintf("position-anchor: --popover-%s", p.ID) }
 			class={
 				tailwind.Merge(
-					"hidden absolute left-0 top-8 border border-border rounded-xl p-1 w-fit min-w-48 bg-background z-[9999] popover-menu",
-					classes.Join(map[string]bool{"!left-[unset] !right-0": p.RightAlign}),
+					"popover-menu",
+					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background",
+					classes.Join(map[string]bool{"popover-right-align": p.RightAlign}),
 					p.Class,
 				),
 			}

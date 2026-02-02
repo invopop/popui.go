@@ -1,15 +1,9 @@
 package examples
 
-import (
-	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
-)
+import "github.com/invopop/popui.go"
 
 templ PopoverExample() {
-	@popui.Popover(props.Popover{
-		ID:          "popover-default",
-		ButtonLabel: "···",
-	}) {
+	@popui.Popover() {
 		@popui.PopoverItem() {
 			Edit
 		}

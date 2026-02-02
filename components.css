@@ -45,18 +45,32 @@ body {
 }
 
 /* Popover */
-[popover] {
-  inset: unset;
-  width: auto;
-  height: auto;
-  padding: 0;
-  background: transparent;
-  border: none;
+
+[popover].popover-menu {
   position: fixed;
-  top: 0px;
-  right: 0px;
-  pointer-events: none;
-  overlay: none;
+  inset: unset;
+  overflow: visible;
+  top: anchor(bottom);
+  left: anchor(left);
+  width: fit-content;
+  height: fit-content;
+}
+[popover].popover-menu:not(:popover-open) {
+  display: none;
+}
+[popover].popover-menu.popover-right-align {
+  left: unset;
+  right: anchor(right);
+}
+
+/* Fallback for browsers without anchor positioning support */
+@supports not (anchor-name: --test) {
+  [popover].popover-menu {
+    position: absolute;
+    top: auto;
+    left: auto;
+    margin: 0.5rem;
+  }
 }
 [popover]:popover-open + .popover-menu {
   display: block !important;

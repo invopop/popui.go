@@ -219,4 +219,51 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       button.classList.remove(LOADING_CLASS)
     })
   })
+
+  // Polyfill for anchor positioning on browsers that don't support it
+  if (!CSS.supports('anchor-name', '--test')) {
+    const positionPopover = (popover, trigger) => {
+      const triggerRect = trigger.getBoundingClientRect()
+      const isRightAlign = popover.classList.contains('popover-right-align')
+
+      popover.style.position = 'fixed'
+      popover.style.top = `${triggerRect.bottom + 8}px`
+
+      if (isRightAlign) {
+        popover.style.left = 'auto'
+        popover.style.right = `${window.innerWidth - triggerRect.right}px`
+      } else {
+        popover.style.left = `${triggerRect.left}px`
+        popover.style.right = 'auto'
+      }
+    }
+
+    document.addEventListener('toggle', (e) => {
+      const popover = e.target
+      if (!popover.matches('[popover].popover-menu')) return
+
+      // Find the trigger button
+      const trigger = document.querySelector(`[popovertarget="${popover.id}"]`)
+      if (!trigger) return
+
+      if (e.newState === 'open') {
+        // Position initially
+        positionPopover(popover, trigger)
+
+        // Update position on scroll
+        const updatePosition = () => positionPopover(popover, trigger)
+        window.addEventListener('scroll', updatePosition, true)
+        window.addEventListener('resize', updatePosition)
+
+        // Clean up listeners when popover closes
+        popover.addEventListener('toggle', function cleanup(e) {
+          if (e.newState === 'closed') {
+            window.removeEventListener('scroll', updatePosition, true)
+            window.removeEventListener('resize', updatePosition)
+            popover.removeEventListener('toggle', cleanup)
+          }
+        })
+      }
+    }, true)
+  }
 })();
