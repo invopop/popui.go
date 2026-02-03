@@ -222,45 +222,45 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
   // Polyfill for anchor positioning on browsers that don't support it
   if (!CSS.supports('anchor-name', '--test')) {
-    const positionPopover = (popover, trigger) => {
+    const positionContextMenu = (contextMenu, trigger) => {
       const triggerRect = trigger.getBoundingClientRect()
-      const isRightAlign = popover.classList.contains('popover-right-align')
+      const isRightAlign = contextMenu.classList.contains('context-menu-right-align')
 
-      popover.style.position = 'fixed'
-      popover.style.top = `${triggerRect.bottom + 8}px`
+      contextMenu.style.position = 'fixed'
+      contextMenu.style.top = `${triggerRect.bottom + 8}px`
 
       if (isRightAlign) {
-        popover.style.left = 'auto'
-        popover.style.right = `${window.innerWidth - triggerRect.right}px`
+        contextMenu.style.left = 'auto'
+        contextMenu.style.right = `${window.innerWidth - triggerRect.right}px`
       } else {
-        popover.style.left = `${triggerRect.left}px`
-        popover.style.right = 'auto'
+        contextMenu.style.left = `${triggerRect.left}px`
+        contextMenu.style.right = 'auto'
       }
     }
 
     document.addEventListener('toggle', (e) => {
-      const popover = e.target
-      if (!popover.matches('[popover].popover-menu')) return
+      const contextMenu = e.target
+      if (!contextMenu.matches('[popover].context-menu')) return
 
       // Find the trigger button
-      const trigger = document.querySelector(`[popovertarget="${popover.id}"]`)
+      const trigger = document.querySelector(`[popovertarget="${contextMenu.id}"]`)
       if (!trigger) return
 
       if (e.newState === 'open') {
         // Position initially
-        positionPopover(popover, trigger)
+        positionContextMenu(contextMenu, trigger)
 
         // Update position on scroll
-        const updatePosition = () => positionPopover(popover, trigger)
+        const updatePosition = () => positionContextMenu(contextMenu, trigger)
         window.addEventListener('scroll', updatePosition, true)
         window.addEventListener('resize', updatePosition)
 
-        // Clean up listeners when popover closes
-        popover.addEventListener('toggle', function cleanup(e) {
+        // Clean up listeners when context menu closes
+        contextMenu.addEventListener('toggle', function cleanup(e) {
           if (e.newState === 'closed') {
             window.removeEventListener('scroll', updatePosition, true)
             window.removeEventListener('resize', updatePosition)
-            popover.removeEventListener('toggle', cleanup)
+            contextMenu.removeEventListener('toggle', cleanup)
           }
         })
       }

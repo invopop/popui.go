@@ -1,17 +1,34 @@
 package examples
 
-import "github.com/invopop/popui.go"
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
 
 templ PopoverExample() {
-	@popui.Popover() {
-		@popui.PopoverItem() {
-			Edit
-		}
-		@popui.PopoverItem() {
-			Duplicate
-		}
-		@popui.PopoverItem() {
-			Delete
+	@popui.Button(props.Button{
+		PopoverTarget: "example-popover",
+	}) {
+		Open Modal
+	}
+	@popui.Popover(props.Popover{
+		ID: "example-popover",
+	}) {
+		@popui.Block() {
+			<h2>Modal Title</h2>
+			<p>
+				This is a centered modal popover using the HTML popover API.
+				It displays content in the center of the screen with a backdrop overlay.
+			</p>
+			@popui.ButtonGroup(props.ButtonGroup{Align: "right"}) {
+				@popui.Button(props.Button{
+					Variant:             props.ButtonVariantSecondary,
+					PopoverTarget:       "example-popover",
+					PopoverTargetAction: "hide",
+				}) {
+					Close
+				}
+			}
 		}
 	}
 }

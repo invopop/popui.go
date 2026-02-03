@@ -1,0 +1,17 @@
+package examples
+
+import "github.com/invopop/popui.go"
+
+templ ContextMenuExample() {
+	@popui.ContextMenu() {
+		@popui.ContextMenuItem() {
+			Edit
+		}
+		@popui.ContextMenuItem() {
+			Duplicate
+		}
+		@popui.ContextMenuItem() {
+			Delete
+		}
+	}
+}

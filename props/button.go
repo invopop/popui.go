@@ -17,12 +17,23 @@ const (
 	ButtonVariantTransparent string = "transparent"
 )
 
+// ButtonGroup Alignments
+const (
+	ButtonGroupAlignLeft   string = "left"
+	ButtonGroupAlignCenter string = "center"
+	ButtonGroupAlignRight  string = "right"
+)
+
 // ButtonGroup is used with buttons components that usually contain
 // multiple buttons in a row.
 type ButtonGroup struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+
+	// Align defines the horizontal alignment of buttons within the group.
+	// Valid values are "left" (default), "center", or "right".
+	Align string
 }
 
 // Button defines the properties for a button component. Either regular form
@@ -71,6 +82,15 @@ type Button struct {
 
 	// ShowSpinnerOnClick when true shows a loading spinner on the button when clicked.
 	ShowSpinnerOnClick bool
+
+	/* Popover behavior */
+
+	// PopoverTarget specifies the ID of a popover element to control.
+	// When set, clicking the button will show/hide the associated popover.
+	PopoverTarget string
+	// PopoverTargetAction specifies the action to perform on the popover.
+	// Valid values are "toggle" (default), "show", or "hide".
+	PopoverTargetAction string
 }
 
 // IsAnchor returns true if the button is configured as an anchor.

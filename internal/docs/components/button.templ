@@ -48,7 +48,24 @@ templ Button() {
 	}) {
 		@examples.ButtonAnchorExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Button Group Alignment",
+		Description: "ButtonGroup can align buttons to the left (default), center, or right using the Align property.",
+		Code:        examples.LoadExample("button_group_align.templ"),
+	}) {
+		@examples.ButtonGroupAlignExample()
+	}
 	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "ButtonGroup",
+			Description: "Container component for grouping multiple buttons horizontally with consistent spacing.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with button group styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Align", Type: "string", Default: "left", Description: "Horizontal alignment: 'left' (default), 'center', or 'right'"},
+			},
+		})
 		@modules.APITable(modules.APITableProps{
 			Title:       "Button",
 			Description: "Button component that can render as either a <button> or <a> element. When Href is set, renders as an anchor link styled as a button.",
