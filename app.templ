@@ -75,7 +75,7 @@ templ appBody(p props.App) {
 		if p.Data != "" {
 			x-data={ p.Data }
 		}
-		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full"
+		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full bg-background"
 	>
 		{ children... }
 	</div>
