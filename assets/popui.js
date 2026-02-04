@@ -1,6 +1,6 @@
 
 // Global access to the Console UI SDK URL
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.9/index.js';
+const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
 
 (function() {
   'use strict';
