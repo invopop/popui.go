@@ -72,9 +72,6 @@ body {
     margin: 0.5rem;
   }
 }
-[popover]:popover-open + .context-menu {
-  display: block !important;
-}
 
 /* Popover Modal */
 

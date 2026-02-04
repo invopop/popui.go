@@ -103,7 +103,7 @@ func ContextMenu() templ.Component {
 				Title:       "ContextMenu",
 				Description: "The main context menu component that displays a context menu.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the context menu element", Required: true},
+					{Name: "ID", Type: "string", Default: "", Description: "Optional identifier for the container. If not provided, Alpine.js x-id generates unique IDs automatically for each instance", Required: false},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
 					{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},

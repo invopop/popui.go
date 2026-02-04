@@ -243,7 +243,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       if (!contextMenu.matches('[popover].context-menu')) return
 
       // Find the trigger button
-      const trigger = document.querySelector(`[popovertarget="${contextMenu.id}"]`)
+      // First try the standard attribute (works after Alpine binds it)
+      let trigger = document.querySelector(`[popovertarget="${contextMenu.id}"]`)
+
+      // If not found, traverse up from the popover to find the button in the same container
+      if (!trigger && contextMenu.parentElement) {
+        trigger = contextMenu.parentElement.querySelector('button')
+      }
+
       if (!trigger) return
 
       if (e.newState === 'open') {
