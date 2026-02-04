@@ -18,6 +18,7 @@ templ ButtonGroup(opts ...props.ButtonGroup) {
 		class={
 			tailwind.Merge(
 				"flex items-center gap-2",
+				buttonGroupAlignmentClasses(btns.Align),
 				btns.Class,
 			),
 		}
@@ -49,6 +50,12 @@ templ Button(p ...props.Button) {
 			}
 			if btn.Download {
 				download
+			}
+			if btn.PopoverTarget != "" {
+				popovertarget={ btn.PopoverTarget }
+			}
+			if btn.PopoverTargetAction != "" {
+				popovertargetaction={ btn.PopoverTargetAction }
 			}
 			class={
 				tailwind.Merge(
@@ -83,6 +90,12 @@ templ Button(p ...props.Button) {
 			}
 			if btn.Autofocus {
 				autofocus
+			}
+			if btn.PopoverTarget != "" {
+				popovertarget={ btn.PopoverTarget }
+			}
+			if btn.PopoverTargetAction != "" {
+				popovertargetaction={ btn.PopoverTargetAction }
 			}
 			class={
 				tailwind.Merge(
@@ -119,6 +132,16 @@ func buttonClasses(variant string, size string) string {
 			"[&_svg]:text-icon-inverse":       size != props.ButtonSizeIcon && variant == props.ButtonVariantPrimary,
 			"[&_svg]:text-foreground":         size == props.ButtonSizeIcon && variant != props.ButtonVariantPrimary,
 			"[&_svg]:text-foreground-inverse": size == props.ButtonSizeIcon && variant == props.ButtonVariantPrimary,
+		},
+	)
+}
+
+func buttonGroupAlignmentClasses(alignment string) string {
+	return classes.Join(
+		map[string]bool{
+			"justify-start":  alignment == props.ButtonGroupAlignLeft || alignment == "",
+			"justify-center": alignment == props.ButtonGroupAlignCenter,
+			"justify-end":    alignment == props.ButtonGroupAlignRight,
 		},
 	)
 }

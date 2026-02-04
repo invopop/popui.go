@@ -44,23 +44,59 @@ body {
   text-align: right;
 }
 
-/* Popover */
-[popover] {
-  inset: unset;
-  width: auto;
-  height: auto;
-  padding: 0;
-  background: transparent;
-  border: none;
+/* Context Menu */
+
+[popover].context-menu {
   position: fixed;
-  top: 0px;
-  right: 0px;
-  pointer-events: none;
-  overlay: none;
+  inset: unset;
+  overflow: visible;
+  top: anchor(bottom);
+  left: anchor(left);
+  width: fit-content;
+  height: fit-content;
 }
-[popover]:popover-open + .popover-menu {
-  display: block !important;
+[popover].context-menu:not(:popover-open) {
+  display: none;
 }
+[popover].context-menu.context-menu-right-align {
+  left: unset;
+  right: anchor(right);
+}
+
+/* Fallback for browsers without anchor positioning support */
+@supports not (anchor-name: --test) {
+  [popover].context-menu {
+    position: absolute;
+    top: auto;
+    left: auto;
+    margin: 0.5rem;
+  }
+}
+
+/* Popover Modal */
+
+[popover].popover-modal {
+  position: fixed;
+  inset: unset;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  width: fit-content;
+  height: fit-content;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+[popover].popover-modal:not(:popover-open) {
+  display: none;
+}
+/*
+[popover].popover-modal::backdrop {
+  background-color: rgb(0 0 0 / 0.5);
+}
+*/
 
 /* Generic selectors */
 div[contenteditable='true'] .tag {

@@ -1,0 +1,48 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ButtonGroupAlignExample() {
+	<div class="space-y-4">
+		<div>
+			<p class="text-sm text-foreground-secondary mb-2">Left (default)</p>
+			@popui.ButtonGroup() {
+				@popui.Button(props.Button{Variant: props.ButtonVariantPrimary}) {
+					@icons.Save()
+					Save
+				}
+				@popui.Button(props.Button{Variant: props.ButtonVariantSecondary}) {
+					Cancel
+				}
+			}
+		</div>
+		<div>
+			<p class="text-sm text-foreground-secondary mb-2">Center</p>
+			@popui.ButtonGroup(props.ButtonGroup{Align: props.ButtonGroupAlignCenter}) {
+				@popui.Button(props.Button{Variant: props.ButtonVariantPrimary}) {
+					@icons.Save()
+					Save
+				}
+				@popui.Button(props.Button{Variant: props.ButtonVariantSecondary}) {
+					Cancel
+				}
+			}
+		</div>
+		<div>
+			<p class="text-sm text-foreground-secondary mb-2">Right</p>
+			@popui.ButtonGroup(props.ButtonGroup{Align: props.ButtonGroupAlignRight}) {
+				@popui.Button(props.Button{Variant: props.ButtonVariantPrimary}) {
+					@icons.Save()
+					Save
+				}
+				@popui.Button(props.Button{Variant: props.ButtonVariantSecondary}) {
+					Cancel
+				}
+			}
+		</div>
+	</div>
+}

@@ -113,20 +113,20 @@ templ Page() {
 					Initial: "I",
 				})
 			</div>
-			// Popover
+			// Context Menu
 			@fieldConfig(&config{
-				Title: "Popover",
+				Title: "Context Menu",
 			})
 			<div>
-				@popui.Popover(props.Popover{
-					ID:          "popover",
+				@popui.ContextMenu(props.ContextMenu{
+					ID:          "context-menu",
 					ButtonLabel: "Do Stuff",
 				}) {
 					<ul>
-						@popui.PopoverItem() {
+						@popui.ContextMenuItem() {
 							<button class="w-full text-left" @click="alert('1')">1</button>
 						}
-						@popui.PopoverItem() {
+						@popui.ContextMenuItem() {
 							<button class="w-full text-left" @click="alert('2')">2</button>
 						}
 					</ul>

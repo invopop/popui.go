@@ -135,8 +135,14 @@ var groups = []*Group{
 				Template: components.Breadcrumbs(),
 			},
 			{
-				Title:    "Popover",
+				Title:    "Context Menu",
 				Desc:     "A context menu that displays when a button is clicked.",
+				Path:     "context-menu",
+				Template: components.ContextMenu(),
+			},
+			{
+				Title:    "Popover",
+				Desc:     "A centered modal dialog using the HTML popover API with backdrop overlay.",
 				Path:     "popover",
 				Template: components.Popover(),
 			},

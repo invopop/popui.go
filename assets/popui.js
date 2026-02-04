@@ -1,6 +1,6 @@
 
 // Global access to the Console UI SDK URL
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.9/index.js';
+const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
 
 (function() {
   'use strict';
@@ -219,4 +219,58 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       button.classList.remove(LOADING_CLASS)
     })
   })
+
+  // Polyfill for anchor positioning on browsers that don't support it
+  if (!CSS.supports('anchor-name', '--test')) {
+    const positionContextMenu = (contextMenu, trigger) => {
+      const triggerRect = trigger.getBoundingClientRect()
+      const isRightAlign = contextMenu.classList.contains('context-menu-right-align')
+
+      contextMenu.style.position = 'fixed'
+      contextMenu.style.top = `${triggerRect.bottom + 8}px`
+
+      if (isRightAlign) {
+        contextMenu.style.left = 'auto'
+        contextMenu.style.right = `${window.innerWidth - triggerRect.right}px`
+      } else {
+        contextMenu.style.left = `${triggerRect.left}px`
+        contextMenu.style.right = 'auto'
+      }
+    }
+
+    document.addEventListener('toggle', (e) => {
+      const contextMenu = e.target
+      if (!contextMenu.matches('[popover].context-menu')) return
+
+      // Find the trigger button
+      // First try the standard attribute (works after Alpine binds it)
+      let trigger = document.querySelector(`[popovertarget="${contextMenu.id}"]`)
+
+      // If not found, traverse up from the popover to find the button in the same container
+      if (!trigger && contextMenu.parentElement) {
+        trigger = contextMenu.parentElement.querySelector('button')
+      }
+
+      if (!trigger) return
+
+      if (e.newState === 'open') {
+        // Position initially
+        positionContextMenu(contextMenu, trigger)
+
+        // Update position on scroll
+        const updatePosition = () => positionContextMenu(contextMenu, trigger)
+        window.addEventListener('scroll', updatePosition, true)
+        window.addEventListener('resize', updatePosition)
+
+        // Clean up listeners when context menu closes
+        contextMenu.addEventListener('toggle', function cleanup(e) {
+          if (e.newState === 'closed') {
+            window.removeEventListener('scroll', updatePosition, true)
+            window.removeEventListener('resize', updatePosition)
+            contextMenu.removeEventListener('toggle', cleanup)
+          }
+        })
+      }
+    }, true)
+  }
 })();
