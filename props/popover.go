@@ -11,6 +11,7 @@ import (
 type Popover struct {
 	ID         string
 	Class      string
+	Backdrop   bool // Enable greyed background backdrop
 	Attributes templ.Attributes
 }
 
