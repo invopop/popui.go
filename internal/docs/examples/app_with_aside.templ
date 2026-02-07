@@ -1,0 +1,52 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/popui.go/props"
+)
+
+templ AppWithAsideExample() {
+	@popui.App(props.App{Title: "Application with Aside"}) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{{Label: "Example"}},
+		}) {
+			@popui.Button(props.Button{Variant: "primary"}) {
+				@icons.Add()
+				<span>New Item</span>
+			}
+		}
+		@popui.Main(props.Main{Center: false}) {
+			@popui.Article() {
+				@popui.Block() {
+					<h2>
+						Main Content Area
+					</h2>
+					<p>
+						This is the main content area. The aside panel appears on the right side with a fixed width of 400px.
+					</p>
+					<p>
+						The aside is optional - if not included, the main content area will take up the full width as usual.
+					</p>
+				}
+			}
+		}
+		@popui.Aside() {
+			@popui.Block(props.Block{Class: "p-4"}) {
+				<h3>
+					Aside Panel
+				</h3>
+				<p>
+					This is the aside content. It appears on the right side with a fixed width of 400px.
+				</p>
+				@popui.Separator()
+				<p>
+					Use this for supplementary information, navigation, or contextual actions.
+				</p>
+			}
+		}
+		@popui.Footer() {
+			&copy; 2025 Invopop Inc.
+		}
+	}
+}
