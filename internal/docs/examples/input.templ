@@ -7,6 +7,17 @@ import (
 
 templ InputExample() {
 	@popui.Input(props.Input{
+		ID:          "name-size-default",
 		Placeholder: "Enter your name",
+	})
+	@popui.Input(props.Input{
+		ID:          "name-size-small",
+		Size:        props.InputSizeSmall,
+		Placeholder: "Enter your name (small)",
+	})
+	@popui.Input(props.Input{
+		ID:          "name-size-large",
+		Size:        props.InputSizeLarge,
+		Placeholder: "Enter your name (large)",
 	})
 }

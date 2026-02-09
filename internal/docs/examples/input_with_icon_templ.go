@@ -10,10 +10,11 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/props"
 )
 
-func InputExample() templ.Component {
+func InputWithIconExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,24 +36,33 @@ func InputExample() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = popui.Input(props.Input{
-			ID:          "name-size-default",
-			Placeholder: "Enter your name",
+			ID:          "email-with-icon",
+			Label:       "Email",
+			Type:        "email",
+			Placeholder: "email@example.com",
+			Icon:        icons.Envelope(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
-			ID:          "name-size-small",
+			ID:          "email-with-icon-small",
 			Size:        props.InputSizeSmall,
-			Placeholder: "Enter your name (small)",
+			Label:       "Email (Small)",
+			Type:        "email",
+			Placeholder: "email@example.com",
+			Icon:        icons.Envelope(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
-			ID:          "name-size-large",
+			ID:          "email-with-icon-large",
 			Size:        props.InputSizeLarge,
-			Placeholder: "Enter your name (large)",
+			Label:       "Email (Large)",
+			Type:        "email",
+			Placeholder: "email@example.com",
+			Icon:        icons.Envelope(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

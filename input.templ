@@ -30,11 +30,16 @@ templ Input(p ...props.Input) {
 				{ prp.Label }
 			}
 		}
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-2 relative">
 			if prp.Prefix != "" {
 				@Description() {
 					{ prp.Prefix }
 				}
+			}
+			if prp.Icon != nil {
+				<div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-foreground-default-secondary">
+					@prp.Icon
+				</div>
 			}
 			<input
 				id={ prp.ID }
@@ -43,6 +48,7 @@ templ Input(p ...props.Input) {
 					tailwind.Merge(
 						classes.FormField(),
 						classes.FormFieldState(!prp.Error.Empty()),
+						inputSizeClasses(prp),
 						prp.Class,
 					),
 				}
@@ -74,6 +80,25 @@ templ Input(p ...props.Input) {
 			@InputError(prp.Error)
 		}
 	</div>
+}
+
+func inputSizeClasses(p props.Input) string {
+	switch p.Size {
+	case props.InputSizeSmall:
+		return classes.Join(map[string]bool{
+			"py-1 pl-1.5 pr-1.5": true,
+			"pl-7":               p.Icon != nil,
+		})
+	case props.InputSizeLarge:
+		return classes.Join(map[string]bool{
+			"py-2 pl-3 pr-3": true,
+			"pl-7":           p.Icon != nil,
+		})
+	default:
+		return classes.Join(map[string]bool{
+			"pl-7": p.Icon != nil,
+		})
+	}
 }
 
 // InputError provides a nicely formatted error text

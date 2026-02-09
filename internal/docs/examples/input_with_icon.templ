@@ -1,0 +1,33 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/popui.go/props"
+)
+
+templ InputWithIconExample() {
+	@popui.Input(props.Input{
+		ID:          "email-with-icon",
+		Label:       "Email",
+		Type:        "email",
+		Placeholder: "email@example.com",
+		Icon:        icons.Envelope(),
+	})
+	@popui.Input(props.Input{
+		ID:          "email-with-icon-small",
+		Size:        props.InputSizeSmall,
+		Label:       "Email (Small)",
+		Type:        "email",
+		Placeholder: "email@example.com",
+		Icon:        icons.Envelope(),
+	})
+	@popui.Input(props.Input{
+		ID:          "email-with-icon-large",
+		Size:        props.InputSizeLarge,
+		Label:       "Email (Large)",
+		Type:        "email",
+		Placeholder: "email@example.com",
+		Icon:        icons.Envelope(),
+	})
+}
