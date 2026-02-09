@@ -75,7 +75,7 @@ templ appBody(p props.App) {
 		if p.Data != "" {
 			x-data={ p.Data }
 		}
-		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full bg-background"
+		class="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full bg-background"
 	>
 		{ children... }
 	</div>
@@ -172,7 +172,7 @@ templ Header(opts ...props.Header) {
 		}
 		class={
 			tailwind.Merge(
-				"bg-background z-[2] h-12 sticky inset-0 flex px-4 justify-between items-center border-b border-border transition-[left] duration-300 ease-in-out col-start-2 row-start-1",
+				"bg-background z-[2] h-12 sticky inset-0 flex px-4 justify-between items-center border-b border-border transition-[left] duration-300 ease-in-out col-start-2 col-span-2 row-start-1",
 				p.Class,
 			),
 		}
@@ -206,6 +206,30 @@ templ Header(opts ...props.Header) {
 	</header>
 }
 
+// Aside provides a fixed-width sidebar on the right side of the app
+// next to the Main content area, between the Header and Footer.
+// It has a fixed width of 400px.
+templ Aside(opts ...props.Aside) {
+	{{ p := props.First(opts) }}
+	<aside
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Data != "" {
+			x-data={ p.Data }
+		}
+		class={
+			tailwind.Merge(
+				"col-start-3 row-start-2 w-[400px] overflow-auto border-l border-border bg-background",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</aside>
+}
+
 // Footer provides a footer to be used inside the App with contents
 // justified to the end. This should be used directly inside the App
 // component.
@@ -220,7 +244,7 @@ templ Footer(opts ...props.Footer) {
 		}
 		class={
 			tailwind.Merge(
-				"flex flex-col justify-end w-full col-start-2 row-start-3",
+				"flex flex-col justify-end w-full col-start-2 col-span-2 row-start-3",
 				p.Class,
 			),
 		}

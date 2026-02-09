@@ -87,6 +87,16 @@ func App() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:         "App with Aside Panel",
+			Description:   "App layout with an optional aside panel on the right side. The aside has a fixed width of 400px and appears between the header and footer.",
+			Code:          examples.LoadExample("app_with_aside.templ"),
+			IframeContent: examples.AppWithAsideExample(),
+			IframeHeight:  "500px",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -214,6 +224,23 @@ func App() templ.Component {
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the nav element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with nav styles"},
+					{Name: "Data", Type: "string", Default: "", Description: "Alpine.js x-data attribute value for reactive state"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "Aside",
+				Description: "Optional fixed-width sidebar component that appears on the right side of the app, next to the Main content area and between the Header and Footer. Has a fixed width of 400px with overflow scrolling.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the aside element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with aside styles"},
 					{Name: "Data", Type: "string", Default: "", Description: "Alpine.js x-data attribute value for reactive state"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				},

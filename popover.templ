@@ -1,6 +1,7 @@
 package popui
 
 import (
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -15,6 +16,7 @@ templ Popover(opts ...props.Popover) {
 		class={
 			tailwind.Merge(
 				"popover-modal",
+				classes.Join(map[string]bool{"popover-modal-backdrop": p.Backdrop}),
 				"border border-border rounded-xl p-6 bg-background w-fit h-fit",
 				p.Class,
 			),

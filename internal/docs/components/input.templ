@@ -55,6 +55,13 @@ templ Input() {
 	}) {
 		@examples.InputWithDynamicErrorExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Icon",
+		Description: "Input can include an icon inside the input field using the Icon prop.",
+		Code:        examples.LoadExample("input_with_icon.templ"),
+	}) {
+		@examples.InputWithIconExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Input",

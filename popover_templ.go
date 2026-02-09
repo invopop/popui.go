@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -39,6 +40,7 @@ func Popover(opts ...props.Popover) templ.Component {
 		p := props.First(opts).GenerateID()
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"popover-modal",
+			classes.Join(map[string]bool{"popover-modal-backdrop": p.Backdrop}),
 			"border border-border rounded-xl p-6 bg-background w-fit h-fit",
 			p.Class,
 		),
@@ -54,7 +56,7 @@ func Popover(opts ...props.Popover) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `popover.templ`, Line: 14, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `popover.templ`, Line: 15, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

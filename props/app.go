@@ -110,3 +110,12 @@ type Nav struct {
 	Data       string
 	Attributes templ.Attributes
 }
+
+// Aside for configuring the App aside component.
+type Aside struct {
+	ID    string
+	Class string
+	// Data adds the x-data attribute to the aside element.
+	Data       string
+	Attributes templ.Attributes
+}
