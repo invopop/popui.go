@@ -25,5 +25,6 @@ document.addEventListener("alpine:init", () => {
       this.page = id;
     }
   }));
+
 });
 

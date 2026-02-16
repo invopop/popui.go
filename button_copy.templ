@@ -13,7 +13,9 @@ templ ButtonCopy(opts ...props.ButtonCopy) {
 	{{
 		buttonAttrs := templ.Attributes{
 			"data-button-copy": true,
-			"onclick":          "popui.copyButtonValue(this)",
+			"x-data":           "{ copied: false }",
+			"x-init":           "$el.querySelector('[data-copy-text]').textContent = $el.querySelector('[data-copy-value]').value",
+			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 1000) })",
 		}
 	}}
 	@Button(props.Button{
@@ -38,10 +40,10 @@ templ ButtonCopy(opts ...props.ButtonCopy) {
 			data-copy-text
 			class="font-mono"
 		></span>
-		<span data-copy-icon-duplicate>
+		<span x-show="!copied" data-copy-icon-duplicate>
 			@icons.Duplicate()
 		</span>
-		<span class="hidden" data-copy-icon-success>
+		<span x-show="copied" x-cloak class="text-positive" data-copy-icon-success>
 			@icons.Tick()
 		</span>
 	}

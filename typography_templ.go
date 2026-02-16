@@ -406,7 +406,7 @@ func Info(opts ...props.Info) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var18 = []any{tailwind.Merge(
-			"font-sans text-sm text-foreground-default-secondary flex items-center gap-1",
+			"font-sans text-base text-foreground-default-secondary flex items-center gap-1",
 			p.Class,
 		),
 		}
