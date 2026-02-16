@@ -22,11 +22,19 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // Internal helper functions
   function prepareAccentColor() {
     const urlParams = new URLSearchParams(window.location.search)
-    const accentColor = urlParams.get('accent')
+    let accentColor = urlParams.get('accent')
+
+    if (!accentColor) {
+      const el = document.querySelector('[data-accent-color]')
+      if (el) {
+        accentColor = el.dataset.accentColor
+      }
+    }
 
     if (accentColor) {
       const root = document.querySelector(':root')
       root.style.setProperty('--workspace-accent-color', accentColor)
+      root.style.setProperty('--color-base-accent', accentColor)
     }
   }
 
