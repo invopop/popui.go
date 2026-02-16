@@ -52,13 +52,6 @@ templ App(opts ...props.App) {
 				if p.Head != nil {
 					@p.Head
 				}
-				if p.AccentColor != "" {
-					<style>
-						:root {
-							--workspace-accent-color: { p.AccentColor };
-						}
-					</style>
-				}
 			}
 			@Body(props.Body{ID: AppID}) {
 				@appBody(p) {
@@ -74,6 +67,9 @@ templ appBody(p props.App) {
 	<div
 		if p.Data != "" {
 			x-data={ p.Data }
+		}
+		if p.AccentColor != "" {
+			data-accent-color={ p.AccentColor }
 		}
 		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full bg-background"
 	>
