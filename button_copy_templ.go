@@ -42,7 +42,7 @@ func ButtonCopy(opts ...props.ButtonCopy) templ.Component {
 			"data-button-copy": true,
 			"x-data":           "{ copied: false }",
 			"x-init":           "$el.querySelector('[data-copy-text]').textContent = $el.querySelector('[data-copy-value]').value",
-			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 1000) })",
+			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 2000) })",
 		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

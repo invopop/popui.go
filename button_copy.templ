@@ -15,7 +15,7 @@ templ ButtonCopy(opts ...props.ButtonCopy) {
 			"data-button-copy": true,
 			"x-data":           "{ copied: false }",
 			"x-init":           "$el.querySelector('[data-copy-text]').textContent = $el.querySelector('[data-copy-value]').value",
-			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 1000) })",
+			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 2000) })",
 		}
 	}}
 	@Button(props.Button{
