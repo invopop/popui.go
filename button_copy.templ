@@ -14,8 +14,8 @@ templ ButtonCopy(opts ...props.ButtonCopy) {
 		buttonAttrs := templ.Attributes{
 			"data-button-copy": true,
 			"x-data":           "{ copied: false }",
-			"x-init":           "$el.querySelector('[data-copy-text]').textContent = $el.querySelector('[data-copy-value]').value",
-			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 2000) })",
+			"x-init":           "(() => { const input = $el.querySelector('[data-copy-value]'); const target = $el.querySelector('[data-copy-text]'); if (!input || !target) { return; } const value = input.value || ''; const prefixLen = parseInt(input.dataset.prefixLength || '0', 10); const suffixLen = parseInt(input.dataset.suffixLength || '0', 10); if ((prefixLen > 0 || suffixLen > 0) && (prefixLen + suffixLen < value.length)) { const prefix = value.slice(0, prefixLen); const suffix = value.slice(value.length - suffixLen); target.textContent = prefix + '...' + suffix; } else { target.textContent = value; } })()",
+			"@click":           "navigator.clipboard.writeText($el.querySelector('[data-copy-value]').value).then(() => { copied = true; setTimeout(() => copied = false, 1000) })",
 		}
 	}}
 	@Button(props.Button{
