@@ -3346,7 +3346,7 @@ func Team() templ.Component {
 	})
 }
 
-func Tick() templ.Component {
+func Theme() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -3367,7 +3367,36 @@ func Tick() templ.Component {
 			templ_7745c5c3_Var116 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 116, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M13.61 2.687a.5.5 0 0 1 .78.625l-8 10a.5.5 0 0 1-.744.041l-4-4a.5.5 0 0 1 .708-.707l3.604 3.605 7.651-9.564Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 116, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1m0 3.995a3 3 0 1 0 0 6V14A6 6 0 0 0 8 2zm0 0a3 3 0 1 1 0 6z\"></path></svg></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func Tick() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var117 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var117 == nil {
+			templ_7745c5c3_Var117 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 117, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M13.61 2.687a.5.5 0 0 1 .78.625l-8 10a.5.5 0 0 1-.744.041l-4-4a.5.5 0 0 1 .708-.707l3.604 3.605 7.651-9.564Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3391,12 +3420,12 @@ func Unarchive() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var117 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var117 == nil {
-			templ_7745c5c3_Var117 = templ.NopComponent
+		templ_7745c5c3_Var118 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var118 == nil {
+			templ_7745c5c3_Var118 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 117, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M12.5 10a.5.5 0 0 1 .5.5v2.793l1.146-1.146a.5.5 0 1 1 .707.707l-2 2a.5.5 0 0 1-.707 0l-2-2a.5.5 0 1 1 .707-.707L12 13.293V10.5a.5.5 0 0 1 .5-.5Zm.495-7.995a1.5 1.5 0 0 1 1.5 1.5v1.5A1.5 1.5 0 0 1 13 6.504V8a.5.5 0 0 1-1 0V6.505H4V11.5l.008.153A1.5 1.5 0 0 0 5.5 13h3a.5.5 0 0 1 0 1h-3a2.5 2.5 0 0 1-2.487-2.244L3 11.5V6.505h-.005a1.5 1.5 0 0 1-1.5-1.5v-1.5a1.5 1.5 0 0 1 1.5-1.5h10Zm-10 1a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 .5.5h.455c.017-.002.033-.005.05-.005s.033.003.05.005h8.9c.017-.002.033-.005.05-.005s.033.003.05.005h.445a.5.5 0 0 0 .5-.5v-1.5a.5.5 0 0 0-.5-.5h-10Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 118, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M12.5 10a.5.5 0 0 1 .5.5v2.793l1.146-1.146a.5.5 0 1 1 .707.707l-2 2a.5.5 0 0 1-.707 0l-2-2a.5.5 0 1 1 .707-.707L12 13.293V10.5a.5.5 0 0 1 .5-.5Zm.495-7.995a1.5 1.5 0 0 1 1.5 1.5v1.5A1.5 1.5 0 0 1 13 6.504V8a.5.5 0 0 1-1 0V6.505H4V11.5l.008.153A1.5 1.5 0 0 0 5.5 13h3a.5.5 0 0 1 0 1h-3a2.5 2.5 0 0 1-2.487-2.244L3 11.5V6.505h-.005a1.5 1.5 0 0 1-1.5-1.5v-1.5a1.5 1.5 0 0 1 1.5-1.5h10Zm-10 1a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 .5.5h.455c.017-.002.033-.005.05-.005s.033.003.05.005h8.9c.017-.002.033-.005.05-.005s.033.003.05.005h.445a.5.5 0 0 0 .5-.5v-1.5a.5.5 0 0 0-.5-.5h-10Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3420,12 +3449,12 @@ func User() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var118 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var118 == nil {
-			templ_7745c5c3_Var118 = templ.NopComponent
+		templ_7745c5c3_Var119 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var119 == nil {
+			templ_7745c5c3_Var119 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 118, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M7.905 8c2.85 0 4.855 1.695 5.914 3.773h-.001c.563 1.084-.173 2.23-1.285 2.53l-.001-.001c-1.645.449-2.885.707-4.63.698-1.474-.007-2.548-.205-3.853-.544l-.575-.154C2.37 14 1.642 12.855 2.19 11.774v-.001C3.24 9.715 5.037 8 7.906 8Zm0 1C5.53 9 4.019 10.383 3.08 12.225c-.192.38.006.935.657 1.113 1.546.422 2.611.654 4.169.662 1.62.008 2.762-.225 4.364-.662l.001-.001c.665-.18.853-.732.658-1.106l-.003-.004C12 10.405 10.298 9 7.905 9ZM8 1a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 1a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 119, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M7.905 8c2.85 0 4.855 1.695 5.914 3.773h-.001c.563 1.084-.173 2.23-1.285 2.53l-.001-.001c-1.645.449-2.885.707-4.63.698-1.474-.007-2.548-.205-3.853-.544l-.575-.154C2.37 14 1.642 12.855 2.19 11.774v-.001C3.24 9.715 5.037 8 7.906 8Zm0 1C5.53 9 4.019 10.383 3.08 12.225c-.192.38.006.935.657 1.113 1.546.422 2.611.654 4.169.662 1.62.008 2.762-.225 4.364-.662l.001-.001c.665-.18.853-.732.658-1.106l-.003-.004C12 10.405 10.298 9 7.905 9ZM8 1a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 1a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3449,12 +3478,12 @@ func Van() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var119 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var119 == nil {
-			templ_7745c5c3_Var119 = templ.NopComponent
+		templ_7745c5c3_Var120 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var120 == nil {
+			templ_7745c5c3_Var120 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 119, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M8.924 2C10.07 2 11 2.93 11 4.076V4.5h1.309c.437 0 .846.223 1.083.59l1.402 2.181c.136.209.206.451.206.698v2.455c0 1.147-.93 2.076-2.076 2.076h-.49a1.999 1.999 0 0 1-3.869 0H6.5c-.022 0-.043-.004-.064-.007a1.998 1.998 0 0 1-3.89-.064A2.074 2.074 0 0 1 1 10.424V4.076C1 2.93 1.93 2 3.076 2h5.848ZM4.5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM3.076 3C2.482 3 2 3.482 2 4.076v6.348c0 .422.243.785.597.962a1.998 1.998 0 0 1 3.839.12c.02-.003.042-.006.064-.006h2.065A2 2 0 0 1 10 10.065V4.076C10 3.482 9.518 3 8.924 3H3.076ZM11 10.065a2 2 0 0 1 1.435 1.435h.489c.594 0 1.076-.482 1.076-1.076V8.5h-2.94c-.02 0-.04-.004-.06-.007v1.572Zm0-2.56c.02-.002.04-.005.06-.005h2.693L12.55 5.632a.289.289 0 0 0-.242-.132H11v2.006Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 120, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M8.924 2C10.07 2 11 2.93 11 4.076V4.5h1.309c.437 0 .846.223 1.083.59l1.402 2.181c.136.209.206.451.206.698v2.455c0 1.147-.93 2.076-2.076 2.076h-.49a1.999 1.999 0 0 1-3.869 0H6.5c-.022 0-.043-.004-.064-.007a1.998 1.998 0 0 1-3.89-.064A2.074 2.074 0 0 1 1 10.424V4.076C1 2.93 1.93 2 3.076 2h5.848ZM4.5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM3.076 3C2.482 3 2 3.482 2 4.076v6.348c0 .422.243.785.597.962a1.998 1.998 0 0 1 3.839.12c.02-.003.042-.006.064-.006h2.065A2 2 0 0 1 10 10.065V4.076C10 3.482 9.518 3 8.924 3H3.076ZM11 10.065a2 2 0 0 1 1.435 1.435h.489c.594 0 1.076-.482 1.076-1.076V8.5h-2.94c-.02 0-.04-.004-.06-.007v1.572Zm0-2.56c.02-.002.04-.005.06-.005h2.693L12.55 5.632a.289.289 0 0 0-.242-.132H11v2.006Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3478,12 +3507,12 @@ func Warning() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var120 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var120 == nil {
-			templ_7745c5c3_Var120 = templ.NopComponent
+		templ_7745c5c3_Var121 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var121 == nil {
+			templ_7745c5c3_Var121 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 120, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"#ec6d1b\" d=\"M6.698 2.28a1.5 1.5 0 0 1 2.604 0l5.416 9.476A1.5 1.5 0 0 1 13.415 14H2.585a1.5 1.5 0 0 1-1.303-2.244z\"></path> <path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1.195\" d=\"M8 11.598c.084 0 .152.068.152.152a.153.153 0 0 1-.152.152.153.153 0 0 1-.152-.152c0-.084.069-.152.152-.152Z\"></path> <path stroke=\"#fff\" d=\"M8 5v5\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 121, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"#ec6d1b\" d=\"M6.698 2.28a1.5 1.5 0 0 1 2.604 0l5.416 9.476A1.5 1.5 0 0 1 13.415 14H2.585a1.5 1.5 0 0 1-1.303-2.244z\"></path> <path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1.195\" d=\"M8 11.598c.084 0 .152.068.152.152a.153.153 0 0 1-.152.152.153.153 0 0 1-.152-.152c0-.084.069-.152.152-.152Z\"></path> <path stroke=\"#fff\" d=\"M8 5v5\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3507,12 +3536,12 @@ func Workflow() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var121 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var121 == nil {
-			templ_7745c5c3_Var121 = templ.NopComponent
+		templ_7745c5c3_Var122 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var122 == nil {
+			templ_7745c5c3_Var122 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 121, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M3.5 1a.5.5 0 0 1 .5.5v4.05a2.5 2.5 0 0 1 1.268 4.218c-.35.349-.791.582-1.268.68V14.5a.5.5 0 0 1-1 0v-4.052a2.5 2.5 0 0 1 0-4.897V1.5a.5.5 0 0 1 .5-.5Zm10 8a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 7 13.5v-3A1.5 1.5 0 0 1 8.5 9h5Zm-5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-5Zm-5-3.5a1.5 1.5 0 0 0 0 3l.148-.008A1.5 1.5 0 0 0 3.5 6.5Zm10-5.5A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-5A1.5 1.5 0 0 1 7 5.5v-3A1.5 1.5 0 0 1 8.5 1h5Zm-5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-5Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 122, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M3.5 1a.5.5 0 0 1 .5.5v4.05a2.5 2.5 0 0 1 1.268 4.218c-.35.349-.791.582-1.268.68V14.5a.5.5 0 0 1-1 0v-4.052a2.5 2.5 0 0 1 0-4.897V1.5a.5.5 0 0 1 .5-.5Zm10 8a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 7 13.5v-3A1.5 1.5 0 0 1 8.5 9h5Zm-5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-5Zm-5-3.5a1.5 1.5 0 0 0 0 3l.148-.008A1.5 1.5 0 0 0 3.5 6.5Zm10-5.5A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-5A1.5 1.5 0 0 1 7 5.5v-3A1.5 1.5 0 0 1 8.5 1h5Zm-5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-5Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3536,12 +3565,12 @@ func Loader() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var122 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var122 == nil {
-			templ_7745c5c3_Var122 = templ.NopComponent
+		templ_7745c5c3_Var123 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var123 == nil {
+			templ_7745c5c3_Var123 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 122, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\" class=\"animate-spin\"><path fill=\"currentColor\" d=\"M8 1.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0V2a.5.5 0 0 1 .5-.5Zm0 10a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2a.5.5 0 0 1 .5-.5Zm6.5-3.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1h2ZM4 8a.5.5 0 0 1-.5.5H1.5a.5.5 0 0 1 0-1h2A.5.5 0 0 1 4 8Zm8.596-4.596a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0ZM5.525 10.475a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0Zm7.071 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707ZM5.525 5.525a.5.5 0 0 1-.707 0L3.404 4.111a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 123, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\" class=\"animate-spin\"><path fill=\"currentColor\" d=\"M8 1.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0V2a.5.5 0 0 1 .5-.5Zm0 10a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2a.5.5 0 0 1 .5-.5Zm6.5-3.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1h2ZM4 8a.5.5 0 0 1-.5.5H1.5a.5.5 0 0 1 0-1h2A.5.5 0 0 1 4 8Zm8.596-4.596a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0ZM5.525 10.475a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0Zm7.071 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707ZM5.525 5.525a.5.5 0 0 1-.707 0L3.404 4.111a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3565,12 +3594,12 @@ func Workspace() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var123 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var123 == nil {
-			templ_7745c5c3_Var123 = templ.NopComponent
+		templ_7745c5c3_Var124 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var124 == nil {
+			templ_7745c5c3_Var124 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 123, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M12.495 1.005a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-9a2.5 2.5 0 0 1-2.5-2.5v-9a2.5 2.5 0 0 1 2.5-2.5h9Zm-9 1a1.5 1.5 0 0 0-1.5 1.5v9a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9ZM5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z\"></path></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 124, "<div style=\"width: 16px; height: 16px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 16 16\"><path fill=\"currentColor\" d=\"M12.495 1.005a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-9a2.5 2.5 0 0 1-2.5-2.5v-9a2.5 2.5 0 0 1 2.5-2.5h9Zm-9 1a1.5 1.5 0 0 0-1.5 1.5v9a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9ZM5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z\"></path></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
