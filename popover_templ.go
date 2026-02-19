@@ -113,7 +113,7 @@ func Popover(opts ...props.Popover) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 = []any{tailwind.Merge(
-			"hidden absolute left-0 top-8 border border-border rounded-xl p-1 w-fit min-w-48 bg-background z-[9999] popover-menu",
+			"hidden absolute left-0 top-8 border border-border rounded-xl p-1 w-fit min-w-48 bg-background z-[9999] shadow-lg popover-menu",
 			classes.Join(map[string]bool{"!left-[unset] !right-0": p.RightAlign}),
 			p.Class,
 		),

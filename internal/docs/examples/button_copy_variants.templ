@@ -7,24 +7,34 @@ import (
 
 templ ButtonCopyVariantsExample() {
 	<div class="flex flex-col gap-2">
-		@popui.ButtonCopy(props.ButtonCopy{
-			Value: "e73d5d20834934588127389172381789bc2f275460",
-		})
-		@popui.ButtonCopy(props.ButtonCopy{
-			Variant: props.ButtonVariantPrimary,
-			Value:   "e73d5d20834934588127389172381789bc2f275460",
-		})
-		@popui.ButtonCopy(props.ButtonCopy{
-			Variant: props.ButtonVariantSecondary,
-			Value:   "e73d5d20834934588127389172381789bc2f275460",
-		})
-		@popui.ButtonCopy(props.ButtonCopy{
-			Variant: props.ButtonVariantDanger,
-			Value:   "e73d5d20834934588127389172381789bc2f275460",
-		})
-		@popui.ButtonCopy(props.ButtonCopy{
-			Variant: props.ButtonVariantTransparent,
-			Value:   "e73d5d20834934588127389172381789bc2f275460",
-		})
+		@popui.ButtonGroup() {
+			@popui.ButtonCopy(props.ButtonCopy{
+				Value: "e73d5d20834934588127389172381789bc2f275460",
+			})
+		}
+		@popui.ButtonGroup() {
+			@popui.ButtonCopy(props.ButtonCopy{
+				Variant: props.ButtonVariantPrimary,
+				Value:   "e73d5d20834934588127389172381789bc2f275460",
+			})
+		}
+		@popui.ButtonGroup() {
+			@popui.ButtonCopy(props.ButtonCopy{
+				Variant: props.ButtonVariantSecondary,
+				Value:   "e73d5d20834934588127389172381789bc2f275460",
+			})
+		}
+		@popui.ButtonGroup() {
+			@popui.ButtonCopy(props.ButtonCopy{
+				Variant: props.ButtonVariantDanger,
+				Value:   "e73d5d20834934588127389172381789bc2f275460",
+			})
+		}
+		@popui.ButtonGroup() {
+			@popui.ButtonCopy(props.ButtonCopy{
+				Variant: props.ButtonVariantTransparent,
+				Value:   "e73d5d20834934588127389172381789bc2f275460",
+			})
+		}
 	</div>
 }

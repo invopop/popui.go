@@ -107,7 +107,7 @@ func Button() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Sizes",
-			Description: "Buttons are available in small (sm), default (md), and icon sizes.",
+			Description: "Buttons are available in small (sm), default (md), and large (lg) sizes.",
 			Code:        examples.LoadExample("button_sizes.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
