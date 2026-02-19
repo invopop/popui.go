@@ -69,7 +69,7 @@ func Checkbox(p ...props.Checkbox) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 = []any{classes.Join(map[string]bool{
-				"relative inline-block w-8 h-5 shrink-0 [&>input:checked+span]:bg-background-accent [&>input:focus+span]:shadow-[0_0_1px_#169958] [&>input:checked+span:before]:translate-x-3": true,
+				"relative inline-block w-8 h-5 shrink-0 [&>input:checked+span]:bg-background-accent [&>input:focus+span]:shadow-[0_0_1px_var(--color-accent-50)] [&>input:checked+span:before]:translate-x-3": true,
 				"mt-0.5": checkbox.Description != "",
 			}),
 			}

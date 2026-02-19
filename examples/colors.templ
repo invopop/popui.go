@@ -1,0 +1,209 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ Colors() {
+	@popui.App(props.App{Title: "Invopop - Color Catalogue"}) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{Label: "Colors"},
+			},
+		})
+		@popui.Main(props.Main{Center: true}) {
+			@popui.Article() {
+				@popui.Title() {
+					Color Catalogue
+				}
+				<p class="text-foreground-default-secondary mb-8">
+					Application-specific color tokens from the PopUI design system.
+				</p>
+				@colorSectionTokens()
+			}
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Token Colors (Application-Specific)
+// ---------------------------------------------------------------------------
+
+templ colorSectionTokens() {
+	<section class="mb-12">
+		<h2 class="text-xl font-semibold mb-1 tracking-tighter">Token Colors</h2>
+		<p class="text-sm text-foreground-default-secondary mb-6">Application-specific tokens for foreground, background, border, and icon.</p>
+		@colorTokenGroup("Foreground", []colorTokenDef{
+			{"foreground-default-default", "neutral-100"},
+			{"foreground-default-secondary", "neutral-50"},
+			{"foreground-default-tertiary", "neutral-40"},
+			{"foreground-inverse-default", "white"},
+			{"foreground-inverse-secondary", "neutral-white-alpha-70"},
+			{"foreground-accent-default", "accent-60"},
+			{"foreground-accent-default-hover", "accent-70"},
+			{"foreground-selected-default", "accent-60"},
+			{"foreground-selected-default-hover", "accent-70"},
+			{"foreground-success-default", "positive-60"},
+			{"foreground-info-default", "info-50"},
+			{"foreground-attention-default", "attention-60"},
+			{"foreground-warning-default", "warning-60"},
+			{"foreground-critical-default", "critical-50"},
+			{"foreground-document-pdf", "documents-pdf-50"},
+			{"foreground-document-xml", "documents-xml-50"},
+			{"foreground-document-png", "documents-img-50"},
+		})
+		@colorTokenGroup("Foreground Status", []colorTokenDef{
+			{"foreground-status-invalid", "critical-50"},
+			{"foreground-status-empty", "neutral-alpha-50"},
+			{"foreground-status-draft", "warning-60"},
+			{"foreground-status-processing", "attention-60"},
+			{"foreground-status-registered", "personalization-60"},
+			{"foreground-status-sent", "info-60"},
+			{"foreground-status-received", "personalization-sky-60"},
+			{"foreground-status-paid", "positive-60"},
+			{"foreground-status-completed", "personalization-aqua-60"},
+			{"foreground-status-error", "critical-50"},
+			{"foreground-status-rejected", "personalization-magenta-60"},
+			{"foreground-status-void", "neutral-alpha-50"},
+		})
+		@colorTokenGroup("Background", []colorTokenDef{
+			{"background-default-default", "neutral-white-alpha-100"},
+			{"background-default-secondary", "neutral-alpha-5"},
+			{"background-default-tertiary", "neutral-alpha-10"},
+			{"background-default-tertiary-hover", "neutral-alpha-20"},
+			{"background-default-tertiary-press", "neutral-alpha-30"},
+			{"background-default-bold", "accent-80"},
+			{"background-default-accent", "brand-50"},
+			{"background-default-negative", "neutral-100"},
+			{"background-selected-default", "accent-alpha-10"},
+			{"background-selected-default-hover", "accent-alpha-20"},
+			{"background-selected-default-press", "accent-alpha-30"},
+			{"background-selected-inverse", "neutral-white-alpha-10"},
+			{"background-selected-inverse-hover", "neutral-white-alpha-20"},
+			{"background-selected-inverse-press", "neutral-white-alpha-30"},
+			{"background-accent-default", "accent-50"},
+			{"background-accent-default-hover", "accent-60"},
+			{"background-accent-default-press", "accent-70"},
+			{"background-info-default", "info-alpha-10"},
+			{"background-info-bold", "info-60"},
+			{"background-success-default", "positive-alpha-10"},
+			{"background-success-bold", "positive-50"},
+			{"background-attention-default", "attention-alpha-10"},
+			{"background-warning-default", "warning-alpha-10"},
+			{"background-warning-bold", "warning-60"},
+			{"background-warning-inverse", "warning-50"},
+			{"background-critical-default", "critical-alpha-10"},
+			{"background-critical-bold", "critical-50"},
+			{"background-critical-inverse", "critical-40"},
+			{"background-document-pdf", "documents-pdf-alpha-5"},
+			{"background-document-xml", "documents-xml-alpha-5"},
+			{"background-document-png", "documents-img-alpha-5"},
+		})
+		@colorTokenGroup("Background Status", []colorTokenDef{
+			{"background-status-invalid", "critical-alpha-10"},
+			{"background-status-empty", "neutral-white-alpha-100"},
+			{"background-status-draft", "warning-alpha-10"},
+			{"background-status-processing", "attention-alpha-10"},
+			{"background-status-registered", "personalization-alpha-10"},
+			{"background-status-sent", "info-alpha-10"},
+			{"background-status-received", "personalization-sky-alpha-10"},
+			{"background-status-paid", "positive-alpha-10"},
+			{"background-status-completed", "personalization-aqua-alpha-10"},
+			{"background-status-error", "critical-alpha-10"},
+			{"background-status-rejected", "personalization-magenta-alpha-10"},
+			{"background-status-void", "neutral-alpha-10"},
+		})
+		@colorTokenGroup("Border", []colorTokenDef{
+			{"border-default-default", "neutral-alpha-10"},
+			{"border-default-secondary", "neutral-alpha-20"},
+			{"border-default-secondary-hover", "neutral-alpha-30"},
+			{"border-default-tertiary", "neutral-alpha-40"},
+			{"border-inverse-default", "neutral-white-alpha-10"},
+			{"border-inverse-secondary", "neutral-white-alpha-20"},
+			{"border-selected-default", "accent-alpha-10"},
+			{"border-selected-bold", "accent-50"},
+			{"border-critical-bold", "critical-50"},
+			{"border-warning-default", "warning-alpha-10"},
+			{"border-warning-bold", "warning-50"},
+			{"border-document-pdf", "documents-pdf-alpha-10"},
+			{"border-document-xml", "documents-xml-alpha-10"},
+			{"border-document-png", "documents-img-alpha-10"},
+		})
+		@colorTokenGroup("Icon", []colorTokenDef{
+			{"icon-default-default", "neutral-alpha-50"},
+			{"icon-default-secondary", "neutral-alpha-30"},
+			{"icon-default-bold", "neutral-100"},
+			{"icon-inverse-default", "neutral-white-alpha-70"},
+			{"icon-inverse-secondary", "neutral-white-alpha-40"},
+			{"icon-inverse-bold", "neutral-white-alpha-100"},
+			{"icon-selected-default", "positive-50"},
+			{"icon-accent-default", "accent-50"},
+			{"icon-success-default", "positive-50"},
+			{"icon-info-default", "info-50"},
+			{"icon-attention-default", "attention-50"},
+			{"icon-warning-default", "warning-50"},
+			{"icon-warning-inverse", "warning-50"},
+			{"icon-critical-default", "critical-50"},
+			{"icon-critical-inverse", "critical-40"},
+			{"icon-document-pdf", "documents-pdf-50"},
+			{"icon-document-xml", "documents-xml-50"},
+			{"icon-document-png", "documents-img-50"},
+		})
+		@colorTokenGroup("Icon Status", []colorTokenDef{
+			{"icon-status-invalid", "critical-40"},
+			{"icon-status-empty", "neutral-20"},
+			{"icon-status-draft", "warning-50"},
+			{"icon-status-processing", "attention-50"},
+			{"icon-status-registered", "personalization-50"},
+			{"icon-status-sent", "info-50"},
+			{"icon-status-received", "personalization-sky-50"},
+			{"icon-status-paid", "positive-50"},
+			{"icon-status-completed", "personalization-aqua-50"},
+			{"icon-status-error", "critical-40"},
+			{"icon-status-rejected", "personalization-magenta-50"},
+			{"icon-status-void", "neutral-50"},
+		})
+	</section>
+}
+
+// ---------------------------------------------------------------------------
+// Helper types and components
+// ---------------------------------------------------------------------------
+
+type colorTokenDef struct {
+	name string
+	ref  string
+}
+
+templ colorTokenGroup(title string, tokens []colorTokenDef) {
+	<div class="mb-8">
+		<h3 class="text-lg font-medium mb-3 tracking-tight">{ title }</h3>
+		<div class="border border-border-default-default rounded-lg overflow-hidden divide-y divide-border-default-default">
+			for _, t := range tokens {
+				@colorTokenRow(t)
+			}
+		</div>
+	</div>
+}
+
+templ colorTokenRow(t colorTokenDef) {
+	<div class="flex items-center gap-3 px-3 py-2">
+		<div
+			class="h-8 w-8 rounded-md border border-border-default-default shrink-0 relative overflow-hidden"
+		>
+			<div
+				class="absolute inset-0"
+				style="background-image: repeating-conic-gradient(#e5e5e5 0% 25%, transparent 0% 50%); background-size: 8px 8px;"
+			></div>
+			<div
+				class="absolute inset-0"
+				style={ templ.SafeCSS("background-color: var(--color-" + t.name + ")") }
+			></div>
+		</div>
+		<div class="flex flex-col min-w-0">
+			<span class="text-sm font-medium text-foreground-default-default truncate">{ t.name }</span>
+			<span class="text-xs text-foreground-default-secondary font-mono truncate">{ t.ref }</span>
+		</div>
+	</div>
+}

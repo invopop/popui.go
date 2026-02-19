@@ -284,7 +284,7 @@ func FileUpload(p ...props.InputFile) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		file := props.First(p).GenerateID()
 		var templ_7745c5c3_Var13 = []any{tailwind.Merge(
-			"flex items-center gap-2 rounded-lg border border-border-default-secondary pl-1 py-1 pr-3 relative",
+			"flex items-center gap-2 rounded-lg border border-border-default-secondary bg-background pl-1 py-1 pr-3 relative",
 			file.Class,
 		),
 		}

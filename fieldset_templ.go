@@ -42,7 +42,7 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"relative w-full flex-1 flex flex-col gap-4",
 			classes.Join(map[string]bool{
-				"border border-border-default-secondary rounded-md bg-background p-4": fieldset.Variant == props.FieldsetVariantCard,
+				"rounded-md bg-background-default-secondary p-4": fieldset.Variant == props.FieldsetVariantCard,
 			}),
 			fieldset.Class,
 		),

@@ -18,7 +18,7 @@ templ CodeBlock(props CodeBlockProps) {
 				for i := range strings.Split(code, "\n") {
 					<span class="!leading-[1.4]">{ fmt.Sprint(i + 1) }</span>
 				}
-			</div><code class={ "!flex-1 !min-w-0 !text-white !overflow-x-auto !block !p-0 !bg-transparent !border-0 !rounded-none !inline-block !leading-[1.4] language-" + props.Language }>{ code }</code>
+			</div><code class={ "!flex-1 !min-w-0 !text-foreground-inverse !overflow-x-auto !block !p-0 !bg-transparent !border-0 !rounded-none !inline-block !leading-[1.4] language-" + props.Language }>{ code }</code>
 		</pre>
 	}
 }

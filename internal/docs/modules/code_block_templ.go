@@ -68,7 +68,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 = []any{"!flex-1 !min-w-0 !text-white !overflow-x-auto !block !p-0 !bg-transparent !border-0 !rounded-none !inline-block !leading-[1.4] language-" + props.Language}
+			var templ_7745c5c3_Var3 = []any{"!flex-1 !min-w-0 !text-foreground-inverse !overflow-x-auto !block !p-0 !bg-transparent !border-0 !rounded-none !inline-block !leading-[1.4] language-" + props.Language}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -93,7 +93,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(code)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 21, Col: 187}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 21, Col: 200}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

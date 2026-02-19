@@ -696,7 +696,7 @@ func fieldConfig(conf *config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if conf.Inputs != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"space-y-2 border border-black p-4 mb-4\"><h3>Props</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"space-y-2 border border-border-default-tertiary p-4 mb-4\"><h3>Props</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
