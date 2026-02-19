@@ -23,33 +23,23 @@ templ Example(props ExampleProps) {
 					<h3 class="text-base font-semibold tracking-[-0.16px] text-foreground">{ props.Title }</h3>
 				}
 				if props.Description != "" {
-					<p class="text-sm text-foreground-default-secondary">{ props.Description }</p>
+					<p class="text-base text-foreground-default-secondary">{ props.Description }</p>
 				}
 			</div>
 		}
-		<div class="flex flex-col">
-			if props.IframeContent != nil {
-				{{ height := props.IframeHeight }}
-				{{
-					if height == "" {
-						height = "600px"
-					}
-				}}
+		if props.IframeContent != nil {
+			<div class="flex flex-col lg:flex-row max-h-[800px] overflow-hidden rounded-xl border border-border-default-secondary">
 				<div
-					class={
-						"rounded-t-xl border border-b-0 border-border-default-secondary bg-background",
-						templ.KV("p-6", props.IframeContent == nil),
-					}
+					class="flex items-stretch bg-background flex-1 min-w-0"
 				>
 					<div
-						class="w-full rounded-lg overflow-hidden"
-						style={ "height: " + height }
+						class="flex items-stretch w-full h-full rounded-lg overflow-hidden"
 						x-data="{ renderIframe() { const iframe = this.$refs.iframe; const doc = iframe.contentDocument || iframe.contentWindow.document; doc.open(); doc.write(this.$refs.content.innerHTML); doc.close(); } }"
 						x-init="renderIframe()"
 					>
 						<iframe
 							x-ref="iframe"
-							class="w-full h-full border-0"
+							class="w-full border-0"
 							title={ props.Title }
 						></iframe>
 						<template x-ref="content">
@@ -57,15 +47,29 @@ templ Example(props ExampleProps) {
 						</template>
 					</div>
 				</div>
-			} else {
-				@PreviewBox() {
-					{ children... }
-				}
-			}
-			@CodeBlock(CodeBlockProps{
-				Language: language,
-				Code:     props.Code,
-			})
-		</div>
+				<div class="flex-1 min-w-0 lg:max-w-[50%]">
+					@CodeBlock(CodeBlockProps{
+						Language: language,
+						Code:     props.Code,
+						Side:     true,
+					})
+				</div>
+			</div>
+		} else {
+			<div class="flex flex-col lg:flex-row max-h-[800px] overflow-hidden rounded-xl border border-border-default-secondary">
+				<div class="flex-1 min-w-0">
+					@PreviewBox() {
+						{ children... }
+					}
+				</div>
+				<div class="flex-1 min-w-0 lg:max-w-[50%]">
+					@CodeBlock(CodeBlockProps{
+						Language: language,
+						Code:     props.Code,
+						Side:     true,
+					})
+				</div>
+			</div>
+		}
 	</div>
 }

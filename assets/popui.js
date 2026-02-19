@@ -105,6 +105,33 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       })
   };
 
+  // Public API: Copy code block content to clipboard
+  popui.copyCodeBlock = function(button) {
+    const pre = button.closest('pre')
+    if (!pre) return
+
+    const code = pre.querySelector('code')
+    if (!code) return
+
+    navigator.clipboard
+      .writeText(code.textContent)
+      .then(() => {
+        const duplicateIcon = button.querySelector('[data-copy-icon-duplicate]')
+        const successIcon = button.querySelector('[data-copy-icon-success]')
+        if (duplicateIcon && successIcon) {
+          duplicateIcon.classList.add('hidden')
+          successIcon.classList.remove('hidden')
+          setTimeout(() => {
+            duplicateIcon.classList.remove('hidden')
+            successIcon.classList.add('hidden')
+          }, 2000)
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to copy code: ', err)
+      })
+  };
+
   // Public API: Authentication token management
   popui.setAuthToken = function(token) {
     sessionStorage.setItem('_popui_auth_token', token);

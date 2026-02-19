@@ -20,16 +20,19 @@ templ ToastVariantsExample() {
 			Title:       "Error",
 			Icon:        true,
 		})
-		// No icon, with description
+		// With icon and description
 		@popui.Toast(props.Toast{
 			Variant:     "warning",
 			Title:       "Warning",
 			Description: "Please review your input.",
+			Icon:        true,
 		})
-		// No icon, no description
+		// With icon and description
 		@popui.Toast(props.Toast{
 			Variant:     "info",
 			Title:       "Info",
+			Description: "Your request is being processed.",
+			Icon:        true,
 		})
 	</div>
 }

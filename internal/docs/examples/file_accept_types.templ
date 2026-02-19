@@ -6,14 +6,12 @@ import (
 )
 
 templ FileAcceptTypesExample() {
-	<div class="space-y-4">
-		@popui.InputFile(props.InputFile{
-			Name:   "images",
-			Accept: "image/*",
-		})
-		@popui.InputFile(props.InputFile{
-			Name:   "documents",
-			Accept: ".pdf,.doc,.docx",
-		})
-	</div>
+	@popui.InputFile(props.InputFile{
+		Name:   "images",
+		Accept: "image/*",
+	})
+	@popui.InputFile(props.InputFile{
+		Name:   "documents",
+		Accept: ".pdf,.doc,.docx",
+	})
 }

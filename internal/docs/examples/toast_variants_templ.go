@@ -59,13 +59,16 @@ func ToastVariantsExample() templ.Component {
 			Variant:     "warning",
 			Title:       "Warning",
 			Description: "Please review your input.",
+			Icon:        true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Toast(props.Toast{
-			Variant: "info",
-			Title:   "Info",
+			Variant:     "info",
+			Title:       "Info",
+			Description: "Your request is being processed.",
+			Icon:        true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

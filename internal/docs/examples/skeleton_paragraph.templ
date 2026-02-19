@@ -6,10 +6,8 @@ import (
 )
 
 templ SkeletonParagraphExample() {
-	<div class="space-y-2 w-80">
-		@popui.Loading(props.Loading{Size: props.LoadingSizeLarge, Width: 60})
-		@popui.Loading()
-		@popui.Loading(props.Loading{Width: 92})
-		@popui.Loading(props.Loading{Width: 80})
-	</div>
+	@popui.Loading(props.Loading{Size: props.LoadingSizeLarge, Width: 60})
+	@popui.Loading()
+	@popui.Loading(props.Loading{Width: 92})
+	@popui.Loading(props.Loading{Width: 80})
 }

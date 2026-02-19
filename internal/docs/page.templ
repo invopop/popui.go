@@ -45,17 +45,76 @@ templ title() {
 
 templ headers() {
 	<!-- Prism.js for syntax highlighting -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+	<link href={ "/assets/" + assets.Versioned("prism-popui.css") } rel="stylesheet"/>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
 }
 
 templ getStarted() {
 	@article("getting-started", "Getting Started", "Learn how to install and use PopUI in your projects.") {
-		<p>Welcome to PopUI! This guide will help you get started with installing and using PopUI in your projects.</p>
-		<h2 class="text-xl font-semibold mt-8">Installation</h2>
-		<p>To install PopUI, you can use the following command:</p>
-		<pre class="language-bash"><code>go get github.com/invopop/popui.go</code></pre>
+		<p class="text-foreground-default-secondary">
+			PopUI Go uses <a href="https://templ.guide/" class="underline" target="_blank" rel="noopener noreferrer">Templ</a> to create template wrappers that define PopUI components, sharing styles with the base PopUI Svelte components.
+		</p>
+		<div class="flex flex-col gap-3 w-full">
+			<h2 class="text-xl font-semibold tracking-[-0.16px] text-foreground">Installation</h2>
+			<p class="text-foreground-default-secondary">Install the PopUI Go package:</p>
+			@popui.ButtonGroup() {
+				@popui.ButtonCopy(props.ButtonCopy{Value: "go get github.com/invopop/popui.go", Size: "lg"})
+			}
+		</div>
+		<div class="flex flex-col gap-3 w-full">
+			<h2 class="text-xl font-semibold tracking-[-0.16px] text-foreground">Building</h2>
+			<p class="text-foreground-default-secondary">
+				In order to generate the CSS, the <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">tailwindcss</code> application must be installed in your system. We recommend using brew:
+			</p>
+			@popui.ButtonGroup() {
+				@popui.ButtonCopy(props.ButtonCopy{Value: "brew install tailwindcss", Size: "lg"})
+			}
+			<p class="text-foreground-default-secondary">
+				To generate all the resources, run:
+			</p>
+			@popui.ButtonGroup() {
+				@popui.ButtonCopy(props.ButtonCopy{Value: "go generate ./...", Size: "lg"})
+			}
+		</div>
+		<div class="flex flex-col gap-3 w-full">
+			<h2 class="text-xl font-semibold tracking-[-0.16px] text-foreground">Documentation Site</h2>
+			<p class="text-foreground-default-secondary">
+				Compile the project into the <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">public</code> directory with a single <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">index.html</code>:
+			</p>
+			@popui.ButtonGroup() {
+				@popui.ButtonCopy(props.ButtonCopy{Value: "go build ./cmd/popui && ./popui build", Size: "lg"})
+			}
+			<p class="text-foreground-default-secondary">
+				Run a development server to quickly test template changes using the <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">air</code> utility. This ensures Tailwind classes, generated code, and the binary are correctly prepared:
+			</p>
+			@popui.ButtonGroup() {
+				@popui.ButtonCopy(props.ButtonCopy{Value: "air", Size: "lg"})
+			}
+		</div>
+		<div class="flex flex-col gap-3 w-full">
+			<h2 class="text-xl font-semibold tracking-[-0.16px] text-foreground">Examples</h2>
+			<p class="text-foreground-default-secondary">
+				The <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">examples</code> directory contains standalone projects that demonstrate how to use PopUI components in different scenarios. Run the development server and visit the links below:
+			</p>
+			<ul class="flex flex-col gap-2 text-foreground-default-secondary">
+				<li>
+					<a href="/examples/admin" class="underline" target="_blank">Admin</a> — An admin panel with sidebar navigation, tables, and action buttons.
+				</li>
+				<li>
+					<a href="/examples/app" class="underline" target="_blank">App</a> — A simple app layout with a header, main content area, and footer.
+				</li>
+				<li>
+					<a href="/examples/console" class="underline" target="_blank">Console</a> — A minimal console layout with basic content.
+				</li>
+				<li>
+					<a href="/examples/prose" class="underline" target="_blank">Prose</a> — A prose-styled article page showcasing typography and rich text formatting.
+				</li>
+				<li>
+					<a href="/examples/wizard" class="underline" target="_blank">Wizard</a> — A multi-step wizard flow with forms, file uploads, and confirmation screens.
+				</li>
+			</ul>
+		</div>
 	}
 }
 
@@ -68,7 +127,7 @@ templ article(id, title, description string) {
 			"x-show": "page == '" + id + "'",
 		},
 	}) {
-		<div class="w-full pb-16">
+		<div class="w-full max-w-[1200px] mx-auto pb-16">
 			<div class="space-y-8">
 				<div class="space-y-1.5">
 					<h1 class="text-2xl font-bold">{ title }</h1>

@@ -4,6 +4,7 @@ package examples
 
 import (
 	"embed"
+	"strings"
 )
 
 //go:embed *.templ
@@ -16,5 +17,5 @@ func LoadExample(name string) string {
 	if err != nil {
 		panic(err)
 	}
-	return string(out)
+	return strings.TrimRight(string(out), "\n")
 }

@@ -81,12 +81,11 @@ div[contenteditable='true'] .tag {
   line-height: 16px;
 }
 mark,
-pre,
 p > code {
   @apply font-sans border border-border-default-secondary bg-background-default-secondary rounded text-sm text-foreground-default-secondary px-1 py-0.5 inline-flex;
 }
-pre {
-  @apply overflow-x-auto;
+pre:not([class]) {
+  @apply font-sans border border-border-default-secondary bg-background-default-secondary rounded text-sm text-foreground-default-secondary px-1 py-0.5 inline-flex overflow-x-auto;
 }
 
 /* Form */
