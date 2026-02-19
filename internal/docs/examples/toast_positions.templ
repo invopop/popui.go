@@ -1,0 +1,76 @@
+package examples
+
+templ ToastPositionsExample() {
+	<div class="relative h-72 w-full border border-border rounded-xl overflow-hidden bg-background-default-secondary">
+		// Toast containers for each position
+		<div id="toast-pos-top-left" class="absolute z-50 flex flex-col gap-2 top-4 left-4"></div>
+		<div id="toast-pos-top-center" class="absolute z-50 flex flex-col gap-2 top-4 left-1/2 -translate-x-1/2"></div>
+		<div id="toast-pos-top-right" class="absolute z-50 flex flex-col gap-2 top-4 right-4"></div>
+		<div id="toast-pos-bottom-left" class="absolute z-50 flex flex-col gap-2 bottom-4 left-4"></div>
+		<div id="toast-pos-bottom-center" class="absolute z-50 flex flex-col gap-2 bottom-4 left-1/2 -translate-x-1/2"></div>
+		<div id="toast-pos-bottom-right" class="absolute z-50 flex flex-col gap-2 bottom-4 right-4"></div>
+		// Trigger buttons in center
+		<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-wrap gap-2 justify-center max-w-md z-20">
+			<button
+				type="button"
+				class="cursor-pointer inline-flex items-center justify-center font-medium px-2 py-1 text-sm rounded bg-background-default-tertiary hover:bg-background-default-tertiary-hover"
+				hx-post="/docs/toast/demo"
+				hx-target="#toast-pos-top-left"
+				hx-swap="beforeend"
+				hx-vals='{"variant": "success", "title": "Top Left", "description": "Position demo"}'
+			>
+				Top Left
+			</button>
+			<button
+				type="button"
+				class="cursor-pointer inline-flex items-center justify-center font-medium px-2 py-1 text-sm rounded bg-background-default-tertiary hover:bg-background-default-tertiary-hover"
+				hx-post="/docs/toast/demo"
+				hx-target="#toast-pos-top-center"
+				hx-swap="beforeend"
+				hx-vals='{"variant": "info", "title": "Top Center", "description": "Position demo"}'
+			>
+				Top Center
+			</button>
+			<button
+				type="button"
+				class="cursor-pointer inline-flex items-center justify-center font-medium px-2 py-1 text-sm rounded bg-background-default-tertiary hover:bg-background-default-tertiary-hover"
+				hx-post="/docs/toast/demo"
+				hx-target="#toast-pos-top-right"
+				hx-swap="beforeend"
+				hx-vals='{"variant": "warning", "title": "Top Right", "description": "Position demo"}'
+			>
+				Top Right
+			</button>
+			<button
+				type="button"
+				class="cursor-pointer inline-flex items-center justify-center font-medium px-2 py-1 text-sm rounded bg-background-default-tertiary hover:bg-background-default-tertiary-hover"
+				hx-post="/docs/toast/demo"
+				hx-target="#toast-pos-bottom-left"
+				hx-swap="beforeend"
+				hx-vals='{"variant": "error", "title": "Bottom Left", "description": "Position demo"}'
+			>
+				Bottom Left
+			</button>
+			<button
+				type="button"
+				class="cursor-pointer inline-flex items-center justify-center font-medium px-2 py-1 text-sm rounded bg-background-default-tertiary hover:bg-background-default-tertiary-hover"
+				hx-post="/docs/toast/demo"
+				hx-target="#toast-pos-bottom-center"
+				hx-swap="beforeend"
+				hx-vals='{"variant": "success", "title": "Bottom Center", "description": "Position demo"}'
+			>
+				Bottom Center
+			</button>
+			<button
+				type="button"
+				class="cursor-pointer inline-flex items-center justify-center font-medium px-2 py-1 text-sm rounded bg-background-default-tertiary hover:bg-background-default-tertiary-hover"
+				hx-post="/docs/toast/demo"
+				hx-target="#toast-pos-bottom-right"
+				hx-swap="beforeend"
+				hx-vals='{"variant": "info", "title": "Bottom Right", "description": "Position demo"}'
+			>
+				Bottom Right
+			</button>
+		</div>
+	</div>
+}

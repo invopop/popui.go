@@ -1,4 +1,4 @@
-@import "tailwindcss" source("./**/*.{templ,go}");
+@import "tailwindcss" source("./**/*.{templ,go,js}");
 @import "./tailwind.theme.css";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";

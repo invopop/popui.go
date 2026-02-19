@@ -113,20 +113,20 @@ templ Page() {
 					Initial: "I",
 				})
 			</div>
-			// Context Menu
+			// Popover
 			@fieldConfig(&config{
-				Title: "Context Menu",
+				Title: "Popover",
 			})
 			<div>
-				@popui.ContextMenu(props.ContextMenu{
-					ID:          "context-menu",
+				@popui.Popover(props.Popover{
+					ID:          "popover",
 					ButtonLabel: "Do Stuff",
 				}) {
 					<ul>
-						@popui.ContextMenuItem() {
+						@popui.PopoverItem() {
 							<button class="w-full text-left" @click="alert('1')">1</button>
 						}
-						@popui.ContextMenuItem() {
+						@popui.PopoverItem() {
 							<button class="w-full text-left" @click="alert('2')">2</button>
 						}
 					</ul>
@@ -304,7 +304,7 @@ templ fieldConfig(conf *config) {
 		}
 	</h2>
 	if conf.Inputs != nil {
-		<div class="space-y-2 border border-border-default-tertiary p-4 mb-4">
+		<div class="space-y-2 border border-black p-4 mb-4">
 			<h3>Props</h3>
 			for _, i := range conf.Inputs {
 				<label class="text-sm inline-flex items-center gap-2 whitespace-nowrap mr-2">

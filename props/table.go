@@ -4,11 +4,10 @@ import "github.com/a-h/templ"
 
 // Table Templ component props
 type Table struct {
-	ID               string
-	Class            string
-	Attributes       templ.Attributes
-	Variant          string // "card" adds outer border
-	ScrollHorizontal bool   // Enable horizontal scrolling for wide tables
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Variant    string // "card" adds outer border
 }
 
 // TablePaginationElements defines custom attributes for pagination interactive elements

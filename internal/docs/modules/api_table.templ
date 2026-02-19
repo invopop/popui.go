@@ -1,11 +1,6 @@
 // Package modules provides reusable UI modules for the PopUI documentation site.
 package modules
 
-import (
-	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
-)
-
 type APITableItem struct {
 	Name        string
 	Type        string
@@ -20,57 +15,54 @@ type APITableProps struct {
 	Items       []APITableItem
 }
 
-templ APITable(apiProps APITableProps) {
+templ APITable(props APITableProps) {
 	<div class="mb-8">
-		if apiProps.Title != "" {
-			@popui.Title() {
-				{ apiProps.Title }
-			}
+		if props.Title != "" {
+			<h3 class="text-xl font-semibold mb-2">{ props.Title }</h3>
 		}
-		if apiProps.Description != "" {
-			@popui.Description() {
-				{ apiProps.Description }
-			}
+		if props.Description != "" {
+			<p class="text-sm text-foreground-default-secondary mb-4">{ props.Description }</p>
 		}
-		@popui.Table(props.Table{Class: "w-full"}) {
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Type</th>
-					<th>Default</th>
-					<th class="w-1/2">Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				for _, item := range apiProps.Items {
-					<tr>
-						<td>
-							@popui.TagStatus(props.TagStatus{Label: item.Name, Status: "green", Class: "font-mono"}) {
-							}
-							if item.Required {
-								<span class="ml-2 text-xs text-foreground-critical">*</span>
-							}
-						</td>
-						<td>
-							<code class="text-base text-foreground-default-secondary">{ item.Type }</code>
-						</td>
-						<td>
-							if item.Default != "" {
-								<code class="text-base text-foreground-default-secondary">{ item.Default }</code>
-							} else {
-								<span class="text-foreground-default-secondary">-</span>
-							}
-						</td>
-						<td class="text-foreground-default-secondary">
-							if item.Description != "" {
-								{ item.Description }
-							} else {
-								<span class="text-foreground-default-secondary">-</span>
-							}
-						</td>
+		<div class="overflow-x-auto">
+			<table class="w-full text-sm">
+				<thead>
+					<tr class="border-b border-border-default-secondary">
+						<th class="text-left py-3 px-4 font-semibold">Name</th>
+						<th class="text-left py-3 px-4 font-semibold">Type</th>
+						<th class="text-left py-3 px-4 font-semibold">Default</th>
+						<th class="text-left py-3 px-4 font-semibold">Description</th>
 					</tr>
-				}
-			</tbody>
-		}
+				</thead>
+				<tbody>
+					for _, item := range props.Items {
+						<tr class="border-b border-border-default-secondary">
+							<td class="py-3 px-4">
+								<code class="text-xs bg-background-default-secondary px-2 py-1 rounded">{ item.Name }</code>
+								if item.Required {
+									<span class="ml-2 text-xs text-red-500">*</span>
+								}
+							</td>
+							<td class="py-3 px-4">
+								<code class="text-xs text-foreground-default-secondary">{ item.Type }</code>
+							</td>
+							<td class="py-3 px-4">
+								if item.Default != "" {
+									<code class="text-xs text-foreground-default-secondary">{ item.Default }</code>
+								} else {
+									<span class="text-foreground-default-secondary">-</span>
+								}
+							</td>
+							<td class="py-3 px-4 text-sm text-foreground-default-secondary">
+								if item.Description != "" {
+									{ item.Description }
+								} else {
+									<span class="text-foreground-default-secondary">-</span>
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
 	</div>
 }

@@ -1,0 +1,43 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ToastTriggerExample() {
+	<div class="flex gap-2 flex-wrap">
+		@popui.Button(props.Button{
+			Variant: "primary",
+			Attributes: templ.Attributes{
+				"@click": "popui.showToast({variant: 'success', title: 'Saved!', description: 'Your changes have been saved.'})",
+			},
+		}) {
+			Show Success
+		}
+		@popui.Button(props.Button{
+			Variant: "secondary",
+			Attributes: templ.Attributes{
+				"@click": "popui.showToast({variant: 'error', title: 'Error', description: 'Something went wrong.'})",
+			},
+		}) {
+			Show Error
+		}
+		@popui.Button(props.Button{
+			Variant: "secondary",
+			Attributes: templ.Attributes{
+				"@click": "popui.showToast({variant: 'warning', title: 'Warning', description: 'Please review your input.'})",
+			},
+		}) {
+			Show Warning
+		}
+		@popui.Button(props.Button{
+			Variant: "secondary",
+			Attributes: templ.Attributes{
+				"@click": "popui.showToast({variant: 'info', title: 'Info', description: 'A new version is available.'})",
+			},
+		}) {
+			Show Info
+		}
+	</div>
+}

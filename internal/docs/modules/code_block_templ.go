@@ -39,13 +39,12 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		code := strings.TrimSpace(props.Code)
-		if code != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<pre class=\"w-full !bg-background-default-negative !border !border-t-0 !border-border-default !rounded-b-xl !rounded-t-none overflow-hidden flex gap-[12px] !p-[12px] !font-mono !text-[13px] !tracking-[-0.039px] !m-0 !leading-[1.4]\"><div class=\"flex flex-col text-right w-[16px] text-foreground-default-secondary shrink-0 select-none !leading-[1.4]\">")
+		if props.Code != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<pre class=\"w-full !bg-background-default-negative !border !border-t-0 !border-border-default !rounded-b-xl !rounded-t-none overflow-hidden flex gap-[12px] !p-[12px] !font-mono !text-[13px] !tracking-[-0.039px] !m-0 !leading-[1.4]\"><div class=\"flex flex-col text-right w-[16px] text-[rgba(255,255,255,0.7)] shrink-0 select-none !leading-[1.4]\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for i := range strings.Split(code, "\n") {
+			for i := range strings.Split(props.Code, "\n") {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span class=\"!leading-[1.4]\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -53,7 +52,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i + 1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 19, Col: 53}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 18, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -68,7 +67,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 = []any{"!flex-1 !min-w-0 !text-foreground-inverse !overflow-x-auto !block !p-0 !bg-transparent !border-0 !rounded-none !inline-block !leading-[1.4] language-" + props.Language}
+			var templ_7745c5c3_Var3 = []any{"!flex-1 !min-w-0 !text-white !overflow-x-auto !block !p-0 !bg-transparent !border-0 !rounded-none !inline-block !leading-[1.4] language-" + props.Language}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -91,9 +90,9 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(code)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Code)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 21, Col: 200}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 20, Col: 193}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

@@ -270,7 +270,7 @@ func Page() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = fieldConfig(&config{
-				Title: "Context Menu",
+				Title: "Popover",
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -313,7 +313,7 @@ func Page() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = popui.ContextMenuItem().Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.PopoverItem().Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -335,7 +335,7 @@ func Page() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = popui.ContextMenuItem().Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.PopoverItem().Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -345,8 +345,8 @@ func Page() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = popui.ContextMenu(props.ContextMenu{
-				ID:          "context-menu",
+			templ_7745c5c3_Err = popui.Popover(props.Popover{
+				ID:          "popover",
 				ButtonLabel: "Do Stuff",
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -696,7 +696,7 @@ func fieldConfig(conf *config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if conf.Inputs != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"space-y-2 border border-border-default-tertiary p-4 mb-4\"><h3>Props</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"space-y-2 border border-black p-4 mb-4\"><h3>Props</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

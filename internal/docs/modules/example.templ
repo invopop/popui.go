@@ -1,7 +1,5 @@
 package modules
 
-import "github.com/invopop/popui.go"
-
 type ExampleProps struct {
 	Title         string
 	Description   string
@@ -22,14 +20,10 @@ templ Example(props ExampleProps) {
 		if props.Title != "" || props.Description != "" {
 			<div class="flex flex-col gap-1">
 				if props.Title != "" {
-					@popui.Title() {
-						{ props.Title }
-					}
+					<h3 class="text-base font-semibold tracking-[-0.16px] text-foreground">{ props.Title }</h3>
 				}
 				if props.Description != "" {
-					@popui.Description() {
-						{ props.Description }
-					}
+					<p class="text-sm text-foreground-default-secondary">{ props.Description }</p>
 				}
 			</div>
 		}

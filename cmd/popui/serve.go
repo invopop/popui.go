@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/popui.go/examples"
 	"github.com/invopop/popui.go/internal/docs"
 	"github.com/invopop/popui.go/internal/docs/assets"
+	"github.com/invopop/popui.go/props"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 )
@@ -49,12 +50,13 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	// Documentation routes (now at root)
 	e.GET("/", s.index)
 
+	// Toast demo endpoint for HTMX
+	e.POST("/docs/toast/demo", s.toastDemo)
+
 	// Older examples are provided here for testing
 	e.GET("/examples/admin", renderComponent(examples.Admin()))
 	e.GET("/examples/app", renderComponent(examples.App()))
-	e.GET("/examples/colors", renderComponent(examples.Colors()))
 	e.GET("/examples/console", renderComponent(examples.Console()))
-	e.GET("/examples/icons", renderComponent(examples.Icons()))
 	e.GET("/examples/prose", renderComponent(examples.Prose()))
 
 	// Wizard example
@@ -96,6 +98,31 @@ func renderComponent(tmp templ.Component) func(c echo.Context) error {
 
 func (s *serveOpts) index(c echo.Context) error {
 	return render(c, http.StatusOK, docs.Index())
+}
+
+func (s *serveOpts) toastDemo(c echo.Context) error {
+	variant := c.FormValue("variant")
+	if variant == "" {
+		variant = "success"
+	}
+	title := c.FormValue("title")
+	if title == "" {
+		title = "Toast"
+	}
+	description := c.FormValue("description")
+	if description == "" {
+		description = "This is a toast notification."
+	}
+
+	return render(c, http.StatusOK, popui.Toast(props.Toast{
+		Variant:     variant,
+		Title:       title,
+		Description: description,
+		Icon:        true,
+		Dismissible: true,
+		Duration:    3000,
+		Animated:    true, // Enable animation for HTMX-injected toasts
+	}))
 }
 
 // render provides a wrapper around the component to make it nice to render.

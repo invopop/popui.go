@@ -1,0 +1,33 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SkeletonInTableExample() {
+	@popui.Table(props.Table{Variant: "card"}) {
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			for i := 0; i < 3; i++ {
+				<tr>
+					<td>
+						@popui.Loading(props.Loading{Size: props.LoadingSizeSmall, Width: 70})
+					</td>
+					<td>
+						@popui.Loading(props.Loading{Size: props.LoadingSizeSmall, Width: 85})
+					</td>
+					<td>
+						@popui.Loading(props.Loading{Size: props.LoadingSizeSmall, Width: 50})
+					</td>
+				</tr>
+			}
+		</tbody>
+	}
+}
