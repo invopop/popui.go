@@ -2,9 +2,15 @@
 package components
 
 import (
+	"strings"
+
 	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
+
+func isInverse(name string) bool {
+	return strings.Contains(name, "inverse")
+}
 
 templ Tokens() {
 	<div class="flex flex-col gap-10">
@@ -13,7 +19,7 @@ templ Tokens() {
 			// Foreground tokens
 			<div class="mb-8">
 				<h3 class="text-base font-medium text-foreground mb-4">Foreground</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@tokenColorCard("foreground", "Default text color", "text-foreground", "--color-foreground")
 					@tokenColorCard("foreground-default-secondary", "Secondary text", "text-foreground-default-secondary", "--color-foreground-default-secondary")
 					@tokenColorCard("foreground-default-tertiary", "Tertiary text", "text-foreground-default-tertiary", "--color-foreground-default-tertiary")
@@ -32,7 +38,7 @@ templ Tokens() {
 			// Background tokens
 			<div class="mb-8">
 				<h3 class="text-base font-medium text-foreground mb-4">Background</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@tokenBgCard("background", "Default background", "bg-background", "--color-background")
 					@tokenBgCard("background-default-secondary", "Secondary background", "bg-background-default-secondary", "--color-background-default-secondary")
 					@tokenBgCard("background-default-tertiary", "Tertiary background", "bg-background-default-tertiary", "--color-background-default-tertiary")
@@ -58,7 +64,7 @@ templ Tokens() {
 			// Border tokens
 			<div class="mb-8">
 				<h3 class="text-base font-medium text-foreground mb-4">Border</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@tokenBorderCard("border", "Default border", "border-border", "--color-border")
 					@tokenBorderCard("border-default-secondary", "Secondary border", "border-border-default-secondary", "--color-border-default-secondary")
 					@tokenBorderCard("border-default-secondary-hover", "Secondary hover", "border-border-default-secondary-hover", "--color-border-default-secondary-hover")
@@ -76,7 +82,7 @@ templ Tokens() {
 			// Icon tokens
 			<div>
 				<h3 class="text-base font-medium text-foreground mb-4">Icon</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@tokenIconCard("icon", "Default icon color", "text-icon", "--color-icon-default-default")
 					@tokenIconCard("icon-default-secondary", "Secondary icon", "text-icon-default-secondary", "--color-icon-default-secondary")
 					@tokenIconCard("icon-default-bold", "Bold icon", "text-icon-default-bold", "--color-icon-default-bold")
@@ -95,7 +101,7 @@ templ Tokens() {
 			// Document type tokens
 			<div class="mb-8">
 				<h3 class="text-base font-medium text-foreground mb-4">Document Types</h3>
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@tokenColorCard("foreground-document-pdf", "PDF text", "text-foreground-document-pdf", "--color-foreground-document-pdf")
 					@tokenColorCard("foreground-document-xml", "XML text", "text-foreground-document-xml", "--color-foreground-document-xml")
 					@tokenColorCard("foreground-document-png", "Image text", "text-foreground-document-png", "--color-foreground-document-png")
@@ -114,7 +120,7 @@ templ Tokens() {
 			// Status tokens
 			<div>
 				<h3 class="text-base font-medium text-foreground mb-4">Status Colors</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@statusTokenCard("draft", "Draft status", "--color-foreground-status-draft", "--color-background-status-draft", "--color-icon-status-draft")
 					@statusTokenCard("processing", "Processing status", "--color-foreground-status-processing", "--color-background-status-processing", "--color-icon-status-processing")
 					@statusTokenCard("registered", "Registered status", "--color-foreground-status-registered", "--color-background-status-registered", "--color-icon-status-registered")
@@ -153,7 +159,7 @@ templ Tokens() {
 
 		// Shadows Section
 		@modules.Section("Shadows", "shadows") {
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+			<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 				@shadowCard("sm", "Subtle shadow")
 				@shadowCard("lg", "Large shadow")
 				@shadowCard("xl", "Extra large shadow")
@@ -173,7 +179,7 @@ templ Tokens() {
 		@modules.Section("Typography", "typography") {
 			<div class="mb-8">
 				<h3 class="text-base font-medium text-foreground mb-4">Font Family</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@fontCard("sans", "Inter, sans-serif", "The quick brown fox")
 					@fontCard("mono", "CommitMono, monospace", "const x = 42;")
 				</div>
@@ -193,7 +199,7 @@ templ Tokens() {
 
 			<div>
 				<h3 class="text-base font-medium text-foreground mb-4">Letter Spacing</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 					@trackingCard("tightest", "-0.29px", "For text-2xl")
 					@trackingCard("tighter", "-0.24px", "For text-xl")
 					@trackingCard("tight", "-0.16px", "For text-lg")
@@ -207,14 +213,23 @@ templ Tokens() {
 
 templ tokenColorCard(name, description, className, cssVar string) {
 	<div
-		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
 		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
 		@click="copy()"
 	>
-		<div
-			class="w-8 h-8 rounded-full flex-shrink-0"
-			style={ "background-color: var(" + cssVar + ")" }
-		></div>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 rounded-full flex-shrink-0"
+					style={ "background-color: var(" + cssVar + ")" }
+				></div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 rounded-full flex-shrink-0"
+				style={ "background-color: var(" + cssVar + ")" }
+			></div>
+		}
 		<div class="flex-1 min-w-0">
 			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
 			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
@@ -225,16 +240,27 @@ templ tokenColorCard(name, description, className, cssVar string) {
 
 templ tokenIconCard(name, description, className, cssVar string) {
 	<div
-		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
 		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
 		@click="copy()"
 	>
-		<div
-			class="w-8 h-8 flex items-center justify-center flex-shrink-0"
-			style={ "color: var(" + cssVar + ")" }
-		>
-			@icons.Placeholder()
-		</div>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 flex items-center justify-center flex-shrink-0"
+					style={ "color: var(" + cssVar + ")" }
+				>
+					@icons.Placeholder()
+				</div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 flex items-center justify-center flex-shrink-0"
+				style={ "color: var(" + cssVar + ")" }
+			>
+				@icons.Placeholder()
+			</div>
+		}
 		<div class="flex-1 min-w-0">
 			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
 			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
@@ -245,14 +271,23 @@ templ tokenIconCard(name, description, className, cssVar string) {
 
 templ tokenBgCard(name, description, className, cssVar string) {
 	<div
-		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
 		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
 		@click="copy()"
 	>
-		<div
-			class="w-8 h-8 rounded-lg flex-shrink-0 border border-border"
-			style={ "background-color: var(" + cssVar + ")" }
-		></div>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 rounded-lg flex-shrink-0 border border-border"
+					style={ "background-color: var(" + cssVar + ")" }
+				></div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 rounded-lg flex-shrink-0 border border-border"
+				style={ "background-color: var(" + cssVar + ")" }
+			></div>
+		}
 		<div class="flex-1 min-w-0">
 			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
 			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
@@ -263,14 +298,23 @@ templ tokenBgCard(name, description, className, cssVar string) {
 
 templ tokenBorderCard(name, description, className, cssVar string) {
 	<div
-		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
 		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
 		@click="copy()"
 	>
-		<div
-			class="w-8 h-8 rounded-lg flex-shrink-0 bg-background"
-			style={ "border: 3px solid var(" + cssVar + ")" }
-		></div>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 rounded-lg flex-shrink-0 bg-background"
+					style={ "border: 3px solid var(" + cssVar + ")" }
+				></div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 rounded-lg flex-shrink-0 bg-background"
+				style={ "border: 3px solid var(" + cssVar + ")" }
+			></div>
+		}
 		<div class="flex-1 min-w-0">
 			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
 			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
@@ -308,11 +352,17 @@ templ radiusCard(name, value string) {
 
 templ shadowCard(name, description string) {
 	<div
-		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
 		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('shadow-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
 		@click="copy()"
 	>
-		<div class={ "w-12 h-12 bg-background rounded-lg shadow-" + name }></div>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div class={ "w-12 h-12 bg-background rounded-lg shadow-" + name }></div>
+			</div>
+		} else {
+			<div class={ "w-12 h-12 bg-background rounded-lg shadow-" + name }></div>
+		}
 		<div class="flex-1">
 			<div class="text-sm font-medium text-foreground" x-show="!copied">shadow-{ name }</div>
 			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
