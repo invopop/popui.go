@@ -69,6 +69,10 @@ templ App(opts ...props.App) {
 				>
 					{ children... }
 				</div>
+				// Portal for fixed-positioned elements outside the grid
+				if p.Portal != nil {
+					@p.Portal
+				}
 			}
 		}
 	}

@@ -1,0 +1,163 @@
+package popui
+
+import (
+	"fmt"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// ToastContainer provides a container for toast notifications using Alpine.js.
+// Position options: top-right (default), top-left, top-center, bottom-right, bottom-left, bottom-center
+// Include this in your layout and use popui.showToast() or $store.toasts.add() to show toasts.
+templ ToastContainer(opts ...props.ToastContainer) {
+	{{ p := props.First(opts) }}
+	{{ id := p.ID }}
+	{{ if id == "" { id = "toast-container" } }}
+	<div
+		id={ id }
+		x-data
+		x-init="popui.initToastStore()"
+		class={
+			tailwind.Merge(
+				"fixed z-50 flex flex-col gap-2 pointer-events-none",
+				toastContainerPositionClasses(p.Position),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<template x-for={ fmt.Sprintf("toast in $store.toasts.getItems('%s')", id) } :key="toast.id">
+			<div
+				x-show="toast.show"
+				x-transition:enter="transition ease-out duration-300"
+				x-transition:enter-start="opacity-0 translate-x-4"
+				x-transition:enter-end="opacity-100 translate-x-0"
+				x-transition:leave="transition ease-in duration-200"
+				x-transition:leave-start="opacity-100 translate-x-0"
+				x-transition:leave-end="opacity-0 translate-x-4"
+				class="pointer-events-auto flex items-start gap-3 p-4 rounded-xl border shadow-lg bg-background max-w-sm w-80"
+				:class="{
+					'border-border': !toast.variant || toast.variant === 'default',
+					'border-border-success text-foreground-success': toast.variant === 'success',
+					'border-border-critical text-foreground-critical': toast.variant === 'error',
+					'border-border-warning text-foreground-warning': toast.variant === 'warning',
+					'border-border-info text-foreground-info': toast.variant === 'info'
+				}"
+			>
+				<template x-if="toast.variant === 'success'">
+					<div class="flex-shrink-0 mt-0.5">
+						@icons.Success()
+					</div>
+				</template>
+				<template x-if="toast.variant === 'error'">
+					<div class="flex-shrink-0 mt-0.5">
+						@icons.Failure()
+					</div>
+				</template>
+				<template x-if="toast.variant === 'warning'">
+					<div class="flex-shrink-0 mt-0.5">
+						@icons.Alert()
+					</div>
+				</template>
+				<template x-if="toast.variant === 'info'">
+					<div class="flex-shrink-0 mt-0.5">
+						@icons.InfoBold()
+					</div>
+				</template>
+				<div class="flex-1 min-w-0">
+					<p x-show="toast.title" x-text="toast.title" class="font-semibold text-sm text-foreground"></p>
+					<p x-show="toast.description" x-text="toast.description" class="text-sm text-foreground-default-secondary mt-0.5"></p>
+				</div>
+				<button
+					type="button"
+					class="flex-shrink-0 text-foreground-default-secondary hover:text-foreground transition-colors"
+					@click={ fmt.Sprintf("$store.toasts.remove('%s', toast.id)", id) }
+				>
+					@icons.Close()
+				</button>
+			</div>
+		</template>
+	</div>
+}
+
+// Toast provides a toast notification for user feedback.
+// Use with popui.showToast() JavaScript function to trigger toasts dynamically.
+// Valid variants are: default, success, error, warning, info
+templ Toast(opts ...props.Toast) {
+	{{ p := props.First(opts) }}
+	{{ duration := p.Duration }}
+	{{ if duration == 0 { duration = 3000 } }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Animated {
+			data-popui-toast
+			data-popui-toast-duration={ fmt.Sprintf("%d", duration) }
+		}
+		class={
+			tailwind.Merge(
+				// rounded-lg (8px), gap-2 (8px), py-2.5 (10px), px-3 (12px)
+				"pointer-events-auto flex gap-2 rounded-lg shadow-lg max-w-sm w-full transition-all duration-300 bg-background-default-negative py-2.5 px-3",
+				// Center icon with title when no description, align to top when there is description
+				classes.Join(map[string]bool{
+					"items-center": p.Description == "",
+					"items-start":  p.Description != "",
+				}),
+				p.Class,
+			),
+		}
+		if p.Animated {
+			style="opacity: 0; transform: translateY(10px);"
+		}
+		{ p.Attributes... }
+	>
+		if p.Icon {
+			<div class={ tailwind.Merge("flex-shrink-0", toastIconClass(p.Variant)) }>
+				if p.Variant == "success" {
+					@icons.Success()
+				} else if p.Variant == "error" {
+					@icons.Failure()
+				} else if p.Variant == "warning" {
+					@icons.Warning()
+				} else if p.Variant == "info" {
+					@icons.Info()
+				} else {
+					@icons.Notification()
+				}
+			</div>
+		}
+		<div class="flex-1 min-w-0">
+			if p.Title != "" {
+				<p class="text-base font-medium text-foreground-inverse">{ p.Title }</p>
+			}
+			if p.Description != "" {
+				<p class="text-base text-foreground-inverse-secondary">{ p.Description }</p>
+			}
+			{ children... }
+		</div>
+	</div>
+}
+
+func toastContainerPositionClasses(position string) string {
+	return classes.Join(
+		map[string]bool{
+			"top-4 right-4":                      position == "" || position == "top-right",
+			"top-4 left-4":                       position == "top-left",
+			"top-4 left-1/2 -translate-x-1/2":    position == "top-center",
+			"bottom-4 right-4":                   position == "bottom-right",
+			"bottom-4 left-4":                    position == "bottom-left",
+			"bottom-4 left-1/2 -translate-x-1/2": position == "bottom-center",
+		},
+	)
+}
+
+// toastIconClass returns the color class for the info icon (others have built-in colors)
+func toastIconClass(variant string) string {
+	if variant == "info" {
+		return "text-icon-inverse"
+	}
+	return ""
+}
