@@ -93,6 +93,40 @@ form {
   margin-block-end: 0;
 }
 
+/* Override @tailwindcss/forms hardcoded colors for dark mode */
+.dark input:where([type=text]),
+.dark input:where([type=email]),
+.dark input:where([type=url]),
+.dark input:where([type=password]),
+.dark input:where([type=number]),
+.dark input:where([type=date]),
+.dark input:where([type=datetime-local]),
+.dark input:where([type=month]),
+.dark input:where([type=search]),
+.dark input:where([type=tel]),
+.dark input:where([type=time]),
+.dark input:where([type=week]),
+.dark input:where(:not([type])),
+.dark textarea,
+.dark select,
+.dark input:where([type=checkbox]),
+.dark input:where([type=radio]),
+.dark .form-checkbox,
+.dark .form-radio {
+  background-color: var(--color-background-default-default);
+  border-color: var(--color-border-default-secondary);
+  color: var(--color-foreground-default-default);
+}
+.dark input:where([type=checkbox]):focus,
+.dark input:where([type=radio]):focus,
+.dark .form-checkbox:focus,
+.dark .form-radio:focus {
+  --tw-ring-offset-color: var(--color-background-default-default);
+}
+.dark select:not([multiple]) {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iNCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+CjxwYXRoIGQ9Ik02LjUgOC4yNTAwNEwxMCAxMS43NUwxMy41IDguMjUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjcpIiBzdHJva2Utd2lkdGg9IjEuMSIvPgo8L3N2Zz4K') !important;
+}
+
 [x-cloak] {
   display: none !important;
 }

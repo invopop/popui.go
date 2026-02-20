@@ -10,10 +10,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     hamburgerButton: '.popui-admin-page-title__wrapper > button',
     sidebar: '.popui-admin-sidebar',
     page: '.popui-admin-page',
-    buttonCopy: '.popui-button-copy',
+    buttonCopy: '[data-button-copy]',
     buttonCopyValue: '[data-copy-value]',
-    buttonCopyText: '.popui-button-copy__text',
-    buttonCopyPopover: '.popui-button-copy__popover'
+    buttonCopyText: '[data-copy-text]',
+    buttonCopyPopover: '[data-copy-popover]'
   }
   const ACTIVE_MENU_CLASS = 'menu--active'
   const LOADING_CLASS = 'popui-button--loading'
@@ -224,8 +224,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       containerId = 'toast-container',
       position
     } = opts;
-
-    console.log('Creating toast:', { variant, title, description, containerId });
 
     // Vanilla JS implementation (always use this for reliability)
     let container = document.getElementById(containerId);

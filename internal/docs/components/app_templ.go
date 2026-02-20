@@ -73,6 +73,7 @@ func App() templ.Component {
 			Code:          examples.LoadExample("app_with_sidebar.templ"),
 			IframeContent: examples.AppWithSidebarExample(),
 			IframeHeight:  "500px",
+			Stacked:       true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

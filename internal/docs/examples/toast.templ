@@ -6,15 +6,13 @@ import (
 )
 
 templ ToastExample() {
-	<div class="flex flex-col gap-2">
-		// With description
-		@popui.Toast(props.Toast{
-			Title:       "Notification",
-			Description: "Your action was completed.",
-		})
-		// Without description
-		@popui.Toast(props.Toast{
-			Title:       "Changes saved",
-		})
-	</div>
+	// With description
+	@popui.Toast(props.Toast{
+		Title:       "Notification",
+		Description: "Your action was completed.",
+	})
+	// Without description
+	@popui.Toast(props.Toast{
+		Title:       "Changes saved",
+	})
 }

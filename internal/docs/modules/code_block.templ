@@ -16,7 +16,7 @@ templ CodeBlock(props CodeBlockProps) {
 	if props.Code != "" {
 		<pre
 			class={
-			"w-full bg-grey-5 overflow-hidden flex gap-[12px] p-[12px] font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative",
+			"w-full bg-background-default-secondary overflow-hidden flex gap-[12px] p-[12px] font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative",
 			}
 		>
 			<button
@@ -31,7 +31,7 @@ templ CodeBlock(props CodeBlockProps) {
 					@icons.Tick()
 				</span>
 			</button>
-			<div class="flex flex-col text-right w-[16px] text-grey-30 shrink-0 select-none">
+			<div class="flex flex-col text-right w-[16px] text-foreground-default-tertiary shrink-0 select-none">
 				for i := range strings.Split(props.Code, "\n") {
 					<span>{ fmt.Sprint(i + 1) }</span>
 				}

@@ -6,19 +6,17 @@ import (
 )
 
 templ ToastWithIconExample() {
-	<div class="flex flex-col gap-2">
-		// With icon and description
-		@popui.Toast(props.Toast{
-			Variant:     "success",
-			Title:       "Invoice sent",
-			Description: "The invoice has been sent to the customer.",
-			Icon:        true,
-		})
-		// With icon, no description (icon centers with title)
-		@popui.Toast(props.Toast{
-			Variant:     "error",
-			Title:       "Payment failed",
-			Icon:        true,
-		})
-	</div>
+	// With icon and description
+	@popui.Toast(props.Toast{
+		Variant:     "success",
+		Title:       "Invoice sent",
+		Description: "The invoice has been sent to the customer.",
+		Icon:        true,
+	})
+	// With icon, no description (icon centers with title)
+	@popui.Toast(props.Toast{
+		Variant:     "error",
+		Title:       "Payment failed",
+		Icon:        true,
+	})
 }

@@ -1,6 +1,7 @@
 package docs
 
 import (
+	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/internal/docs/assets"
 	"github.com/invopop/popui.go/props"
 	"path"
@@ -21,7 +22,9 @@ templ Index() {
 		Data: "docs",
 	}) {
 		@sidebar()
-		@popui.Header(props.Header{Title: title()})
+		@popui.Header(props.Header{Title: title()}) {
+			@darkModeToggle()
+		}
 		@popui.Main(props.Main{Cloak: true}) {
 			@getStarted()
 			for _, group := range groups {
@@ -44,6 +47,12 @@ templ title() {
 }
 
 templ headers() {
+	<!-- Restore dark mode preference before paint -->
+	<script>
+		if (localStorage.getItem('popui-dark-mode') === 'true') {
+			document.documentElement.classList.add('dark');
+		}
+	</script>
 	<!-- Prism.js for syntax highlighting -->
 	<link href={ "/assets/" + assets.Versioned("prism-popui.css") } rel="stylesheet"/>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -178,6 +187,19 @@ templ sidebarItem(href, title string) {
 	}) {
 		{ title }
 	}
+}
+
+templ darkModeToggle() {
+	<button
+		type="button"
+		class="size-7 p-[5px] flex items-center justify-center opacity-30 hover:opacity-100 cursor-pointer"
+		style="transition: opacity 0.3s, rotate 0.3s"
+		x-data="{ dark: document.documentElement.classList.contains('dark') }"
+		x-effect="$el.style.rotate = dark ? '180deg' : '0deg'"
+		@click="document.documentElement.classList.toggle('dark'); dark = !dark; localStorage.setItem('popui-dark-mode', dark)"
+	>
+		@icons.Theme()
+	</button>
 }
 
 func slugify(path string) string {

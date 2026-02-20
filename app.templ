@@ -3,6 +3,7 @@ package popui
 import (
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/htmx"
+	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -178,12 +179,16 @@ templ Header(opts ...props.Header) {
 		}
 		{ p.Attributes... }
 	>
-		/* TODO: add menu button
-			<button class="block p-[5px] mr-2 md:hidden">
+		<div class="flex items-center gap-1">
+			<button
+				class="flex items-center justify-center size-7 p-[5px] -ml-1 mr-1 cursor-pointer md:hidden"
+				x-data
+				x-show="document.getElementById('popui-sidebar')"
+				@click="$dispatch('popui-sidebar-toggle')"
+				aria-label="Toggle sidebar"
+			>
 				@icons.Menu()
 			</button>
-        */
-		<div class="flex items-center gap-1">
 			if p.Title != nil {
 				@p.Title
 			}

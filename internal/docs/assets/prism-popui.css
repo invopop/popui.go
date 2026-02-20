@@ -107,3 +107,73 @@ pre[class*="language-"] {
 .token.namespace {
   opacity: 0.8;
 }
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+.dark code[class*="language-"],
+.dark pre[class*="language-"] {
+  color: var(--color-neutral-30);
+}
+
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.cdata {
+  color: var(--color-grey-50);
+}
+
+.dark .token.doctype {
+  color: var(--color-grey-50);
+}
+
+.dark .token.punctuation {
+  color: var(--color-grey-40);
+}
+
+.dark .token.operator {
+  color: var(--color-grey-40);
+}
+
+.dark .token.keyword,
+.dark .token.atrule,
+.dark .token.boolean,
+.dark .token.constant {
+  color: var(--color-violet-40);
+}
+
+.dark .token.function {
+  color: var(--color-indigo-40);
+}
+
+.dark .token.string,
+.dark .token.attr-value,
+.dark .token.char,
+.dark .token.regex,
+.dark .token.builtin,
+.dark .token.inserted {
+  color: var(--color-green-40);
+}
+
+.dark .token.number,
+.dark .token.hexcode,
+.dark .token.unit {
+  color: var(--color-orange-40);
+}
+
+.dark .token.tag,
+.dark .token.selector,
+.dark .token.deleted {
+  color: var(--color-red-40);
+}
+
+.dark .token.property,
+.dark .token.attr-name,
+.dark .token.class-name {
+  color: var(--color-sky-40);
+}
+
+.dark .token.symbol,
+.dark .token.variable {
+  color: var(--color-red-40);
+}

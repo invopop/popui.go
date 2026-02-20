@@ -6,33 +6,31 @@ import (
 )
 
 templ ToastVariantsExample() {
-	<div class="flex flex-col gap-2">
-		// With icon and description
-		@popui.Toast(props.Toast{
-			Variant:     "success",
-			Title:       "Success",
-			Description: "Your changes have been saved.",
-			Icon:        true,
-		})
-		// With icon, no description
-		@popui.Toast(props.Toast{
-			Variant:     "error",
-			Title:       "Error",
-			Icon:        true,
-		})
-		// With icon and description
-		@popui.Toast(props.Toast{
-			Variant:     "warning",
-			Title:       "Warning",
-			Description: "Please review your input.",
-			Icon:        true,
-		})
-		// With icon and description
-		@popui.Toast(props.Toast{
-			Variant:     "info",
-			Title:       "Info",
-			Description: "Your request is being processed.",
-			Icon:        true,
-		})
-	</div>
+	// With icon and description
+	@popui.Toast(props.Toast{
+		Variant:     "success",
+		Title:       "Success",
+		Description: "Your changes have been saved.",
+		Icon:        true,
+	})
+	// With icon, no description
+	@popui.Toast(props.Toast{
+		Variant:     "error",
+		Title:       "Error",
+		Icon:        true,
+	})
+	// With icon and description
+	@popui.Toast(props.Toast{
+		Variant:     "warning",
+		Title:       "Warning",
+		Description: "Please review your input.",
+		Icon:        true,
+	})
+	// With icon and description
+	@popui.Toast(props.Toast{
+		Variant:     "info",
+		Title:       "Info",
+		Description: "Your request is being processed.",
+		Icon:        true,
+	})
 }

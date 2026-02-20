@@ -42,7 +42,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if props.Code != "" {
-			var templ_7745c5c3_Var2 = []any{"w-full bg-grey-5 overflow-hidden flex gap-[12px] p-[12px] font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative"}
+			var templ_7745c5c3_Var2 = []any{"w-full bg-background-default-secondary overflow-hidden flex gap-[12px] p-[12px] font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -76,7 +76,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></button><div class=\"flex flex-col text-right w-[16px] text-grey-30 shrink-0 select-none\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></button><div class=\"flex flex-col text-right w-[16px] text-foreground-default-tertiary shrink-0 select-none\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

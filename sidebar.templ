@@ -2,30 +2,65 @@ package popui
 
 import (
 	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Sidebar provides a wrapper for sidebars on admin panels
+// Sidebar provides a wrapper for sidebars on admin panels.
+// On screens smaller than md, the sidebar is hidden and can be toggled
+// open/closed via a menu button in the Header. The toggle is driven by
+// an Alpine.js event "popui-sidebar-toggle" dispatched from the Header.
 templ Sidebar(opts ...props.Sidebar) {
 	{{ p := props.First(opts) }}
-	<nav
-		id="popui-sidebar"
-		class={
-			tailwind.Merge(
-				"h-full w-0 md:w-[240px] invisible md:visible bg-background flex flex-col items-center gap-0 transition-[width] ease-in-out duration-300 border-r border-border [&_ul_li_a]:whitespace-nowrap [&_ul_li_a]:overflow-hidden [&_ul_li_a_div]:shrink-0",
-				p.Class,
-			),
-		}
-		{ p.Attrs... }
+	<div
+		x-data="{ open: false }"
+		@popui-sidebar-toggle.window="open = !open"
+		@keydown.escape.window="open = false"
+		class="contents"
 	>
-		{ children... }
-	</nav>
+		<nav
+			id="popui-sidebar"
+			class={
+				tailwind.Merge(
+					"z-[11] h-full w-0 md:w-[240px] invisible md:visible bg-background flex flex-col items-center gap-0 transition-[width] ease-in-out duration-300 border-r border-border [&_ul_li_a]:whitespace-nowrap [&_ul_li_a]:overflow-hidden [&_ul_li_a_div]:shrink-0",
+					p.Class,
+				),
+			}
+			:class="open && 'max-md:!fixed max-md:!w-[240px] max-md:!visible max-md:!inset-y-0 max-md:!left-0'"
+			{ p.Attrs... }
+		>
+			{ children... }
+		</nav>
+		<div
+			class="fixed inset-0 z-[10] bg-black/30 md:hidden"
+			x-show="open"
+			x-transition:enter="transition ease-out duration-200"
+			x-transition:enter-start="opacity-0"
+			x-transition:enter-end="opacity-100"
+			x-transition:leave="transition ease-in duration-150"
+			x-transition:leave-start="opacity-100"
+			x-transition:leave-end="opacity-0"
+			@click="open = false"
+			x-cloak
+		></div>
+	</div>
 }
 
-// SidebarHeader provides a header for the sidebar
+// SidebarHeader provides a header for the sidebar.
+// On desktop it is always visible. On mobile it is hidden when the sidebar
+// is collapsed and shown when the sidebar is toggled open. A close button
+// appears to the left of the content on mobile.
 templ SidebarHeader() {
-	<div class="w-full flex p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7">
+	<div class="w-full flex max-md:hidden p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7" :class="open && 'max-md:!flex'">
+		<button
+			class="hidden items-center justify-center size-7 p-[5px] mt-2 cursor-pointer text-foreground-default-secondary hover:text-foreground"
+			:class="open && 'max-md:!flex'"
+			@click="open = false"
+			aria-label="Close sidebar"
+		>
+			@icons.Close()
+		</button>
 		{ children... }
 	</div>
 }
@@ -44,7 +79,7 @@ templ SidebarSection(opts ...props.SidebarSection) {
 	<div
 		class={
 			tailwind.Merge(
-				"w-full flex flex-col items-start gap-2 [&_p]:text-foreground-default-secondary [&_p]:font-sans [&_p]:text-sm [&_p]:font-medium [&_p]:indent-2 [&_ul]:flex [&_ul]:flex-col [&_ul]:items-start [&_ul]:w-full [&_ul]:gap-1.5 [&_ul_li]:w-full [&_a]:w-full [&_a]:flex [&_a]:py-1.5 [&_a]:px-2 [&_a]:items-center [&_a]:gap-1.5 [&_a]:rounded-lg [&_a]:text-foreground [&_a]:font-sans [&_a]:text-base [&_a]:font-medium [&_a:hover]:bg-background-default-secondary [&_svg_*[stroke]]:stroke-[var(--color-icon-default-default)] [&_svg_*[fill]]:fill-[var(--color-icon-default-default)]",
+				"w-full flex flex-col items-start gap-2 [&_p]:text-foreground-default-tertiary [&_p]:font-sans [&_p]:text-sm [&_p]:font-medium [&_p]:indent-2 [&_p]:mt-2 [&_ul]:flex [&_ul]:flex-col [&_ul]:items-start [&_ul]:w-full [&_ul]:gap-1.5 [&_ul_li]:w-full [&_a]:w-full [&_a]:flex [&_a]:py-1.5 [&_a]:px-2 [&_a]:items-center [&_a]:gap-1.5 [&_a]:rounded-lg [&_a]:text-foreground [&_a]:font-sans [&_a]:text-base [&_a]:font-medium [&_a:hover]:bg-background-default-secondary [&_svg_*[stroke]]:stroke-[var(--color-icon-default-default)] [&_svg_*[fill]]:fill-[var(--color-icon-default-default)]",
 				p.Class,
 			),
 		}
