@@ -1,0 +1,65 @@
+package components
+
+import (
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Loading() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("skeleton.templ"),
+	}) {
+		@examples.SkeletonExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Sizes",
+		Description: "Loading skeleton comes in five sizes: xs (12px), sm (16px), md (20px, default), lg (24px), and xl (32px).",
+		Code:        examples.LoadExample("skeleton_sizes.templ"),
+	}) {
+		@examples.SkeletonSizesExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "In a Table",
+		Description: "Use skeletons to represent loading data in table cells. Control width with the Width prop.",
+		Code:        examples.LoadExample("skeleton_in_table.templ"),
+	}) {
+		@examples.SkeletonInTableExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Paragraph Placeholder",
+		Description: "Combine multiple skeletons to simulate loading text content. Use the Width prop to set different widths as percentages.",
+		Code:        examples.LoadExample("skeleton_paragraph.templ"),
+	}) {
+		@examples.SkeletonParagraphExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Spinner Variant",
+		Description: "Use the spinner variant for general loading indicators.",
+		Code:        examples.LoadExample("loading.templ"),
+	}) {
+		@examples.LoadingExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Spinner with Label",
+		Description: "You can add a label to provide context about what is loading.",
+		Code:        examples.LoadExample("loading_with_label.templ"),
+	}) {
+		@examples.LoadingWithLabelExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Loading",
+			Description: "Displays a loading indicator. Defaults to skeleton (shimmer) variant.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the loading element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the div element"},
+				{Name: "Variant", Type: "string", Default: "\"skeleton\"", Description: "Loading style: \"skeleton\" (shimmer bar) or \"spinner\" (rotating icon)"},
+				{Name: "Size", Type: "string", Default: "\"md\"", Description: "Height variant: \"xs\", \"sm\", \"md\" (default), \"lg\", \"xl\". Only applies to skeleton variant."},
+				{Name: "Width", Type: "int", Default: "100", Description: "Width as a percentage (0-100). Only applies to skeleton variant."},
+				{Name: "Rounded", Type: "bool", Default: "false", Description: "Apply full border-radius for circular/pill shapes. Only applies to skeleton variant."},
+				{Name: "Label", Type: "string", Default: "", Description: "Optional text to display alongside the spinner. Only applies to spinner variant."},
+			},
+		})
+	}
+}

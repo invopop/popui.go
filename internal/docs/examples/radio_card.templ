@@ -6,28 +6,26 @@ import (
 )
 
 templ RadioCardExample() {
-	<div class="space-y-3">
-		@popui.Radio(props.Radio{
-			Name:        "plan-card",
-			Value:       "starter",
-			Label:       "Starter",
-			Description: "Perfect for individuals and small projects.",
-			Variant:     "card",
-			Checked:     true,
-		})
-		@popui.Radio(props.Radio{
-			Name:        "plan-card",
-			Value:       "professional",
-			Label:       "Professional",
-			Description: "Best for growing teams and businesses.",
-			Variant:     "card",
-		})
-		@popui.Radio(props.Radio{
-			Name:        "plan-card",
-			Value:       "enterprise",
-			Label:       "Enterprise",
-			Description: "Custom solutions for large organizations.",
-			Variant:     "card",
-		})
-	</div>
+	@popui.Radio(props.Radio{
+		Name:        "plan-card",
+		Value:       "starter",
+		Label:       "Starter",
+		Description: "Perfect for individuals and small projects.",
+		Variant:     "card",
+		Checked:     true,
+	})
+	@popui.Radio(props.Radio{
+		Name:        "plan-card",
+		Value:       "professional",
+		Label:       "Professional",
+		Description: "Best for growing teams and businesses.",
+		Variant:     "card",
+	})
+	@popui.Radio(props.Radio{
+		Name:        "plan-card",
+		Value:       "enterprise",
+		Label:       "Enterprise",
+		Description: "Custom solutions for large organizations.",
+		Variant:     "card",
+	})
 }

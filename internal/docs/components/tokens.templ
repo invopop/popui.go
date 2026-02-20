@@ -1,0 +1,441 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	"strings"
+
+	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+func isInverse(name string) bool {
+	return strings.Contains(name, "inverse")
+}
+
+templ Tokens() {
+	<div class="flex flex-col gap-10">
+		// Token Colors Section
+		@modules.Section("Token Colors", "token-colors") {
+			// Foreground tokens
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Foreground</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@tokenColorCard("foreground", "Default text color", "text-foreground", "--color-foreground")
+					@tokenColorCard("foreground-default-secondary", "Secondary text", "text-foreground-default-secondary", "--color-foreground-default-secondary")
+					@tokenColorCard("foreground-default-tertiary", "Tertiary text", "text-foreground-default-tertiary", "--color-foreground-default-tertiary")
+					@tokenColorCard("foreground-inverse", "Inverse (on dark bg)", "text-foreground-inverse", "--color-foreground-inverse")
+					@tokenColorCard("foreground-inverse-secondary", "Inverse secondary", "text-foreground-inverse-secondary", "--color-foreground-inverse-secondary")
+					@tokenColorCard("foreground-accent", "Accent text", "text-foreground-accent", "--color-foreground-accent")
+					@tokenColorCard("foreground-selected", "Selected state text", "text-foreground-selected", "--color-foreground-selected")
+					@tokenColorCard("foreground-success", "Success text", "text-foreground-success", "--color-foreground-success")
+					@tokenColorCard("foreground-warning", "Warning text", "text-foreground-warning", "--color-foreground-warning")
+					@tokenColorCard("foreground-critical", "Critical/error text", "text-foreground-critical", "--color-foreground-critical")
+					@tokenColorCard("foreground-info", "Info text", "text-foreground-info", "--color-foreground-info")
+					@tokenColorCard("foreground-attention", "Attention text", "text-foreground-attention", "--color-foreground-attention")
+				</div>
+			</div>
+
+			// Background tokens
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Background</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@tokenBgCard("background", "Default background", "bg-background", "--color-background")
+					@tokenBgCard("background-default-secondary", "Secondary background", "bg-background-default-secondary", "--color-background-default-secondary")
+					@tokenBgCard("background-default-tertiary", "Tertiary background", "bg-background-default-tertiary", "--color-background-default-tertiary")
+					@tokenBgCard("background-default-tertiary-hover", "Tertiary hover", "bg-background-default-tertiary-hover", "--color-background-default-tertiary-hover")
+					@tokenBgCard("background-default-bold", "Bold background", "bg-background-default-bold", "--color-background-default-bold")
+					@tokenBgCard("background-default-negative", "Negative background", "bg-background-default-negative", "--color-background-default-negative")
+					@tokenBgCard("background-accent", "Accent background", "bg-background-accent", "--color-background-accent")
+					@tokenBgCard("background-accent-hover", "Accent hover", "bg-background-accent-hover", "--color-background-accent-hover")
+					@tokenBgCard("background-selected", "Selected state", "bg-background-selected", "--color-background-selected")
+					@tokenBgCard("background-selected-hover", "Selected hover", "bg-background-selected-hover", "--color-background-selected-hover")
+					@tokenBgCard("background-success", "Success background", "bg-background-success", "--color-background-success")
+					@tokenBgCard("background-success-bold", "Success bold", "bg-background-success-bold", "--color-background-success-bold")
+					@tokenBgCard("background-warning", "Warning background", "bg-background-warning", "--color-background-warning")
+					@tokenBgCard("background-warning-bold", "Warning bold", "bg-background-warning-bold", "--color-background-warning-bold")
+					@tokenBgCard("background-critical", "Critical background", "bg-background-critical", "--color-background-critical")
+					@tokenBgCard("background-critical-bold", "Critical bold", "bg-background-critical-bold", "--color-background-critical-bold")
+					@tokenBgCard("background-info", "Info background", "bg-background-info", "--color-background-info")
+					@tokenBgCard("background-info-bold", "Info bold", "bg-background-info-bold", "--color-background-info-bold")
+					@tokenBgCard("background-attention", "Attention background", "bg-background-attention", "--color-background-attention")
+				</div>
+			</div>
+
+			// Border tokens
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Border</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@tokenBorderCard("border", "Default border", "border-border", "--color-border")
+					@tokenBorderCard("border-default-secondary", "Secondary border", "border-border-default-secondary", "--color-border-default-secondary")
+					@tokenBorderCard("border-default-secondary-hover", "Secondary hover", "border-border-default-secondary-hover", "--color-border-default-secondary-hover")
+					@tokenBorderCard("border-default-tertiary", "Tertiary border", "border-border-default-tertiary", "--color-border-default-tertiary")
+					@tokenBorderCard("border-inverse", "Inverse border", "border-border-inverse", "--color-border-inverse")
+					@tokenBorderCard("border-inverse-secondary", "Inverse secondary", "border-border-inverse-secondary", "--color-border-inverse-secondary")
+					@tokenBorderCard("border-selected", "Selected border", "border-border-selected", "--color-border-selected")
+					@tokenBorderCard("border-selected-bold", "Selected bold border", "border-border-selected-bold", "--color-border-selected-bold")
+					@tokenBorderCard("border-warning", "Warning border", "border-border-warning", "--color-border-warning")
+					@tokenBorderCard("border-warning-bold", "Warning bold", "border-border-warning-bold", "--color-border-warning-bold")
+					@tokenBorderCard("border-critical-bold", "Critical border", "border-border-critical-bold", "--color-border-critical-bold")
+				</div>
+			</div>
+
+			// Icon tokens
+			<div>
+				<h3 class="text-base font-medium text-foreground mb-4">Icon</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@tokenIconCard("icon", "Default icon color", "text-icon", "--color-icon-default-default")
+					@tokenIconCard("icon-default-secondary", "Secondary icon", "text-icon-default-secondary", "--color-icon-default-secondary")
+					@tokenIconCard("icon-default-bold", "Bold icon", "text-icon-default-bold", "--color-icon-default-bold")
+					@tokenIconCard("icon-inverse", "Inverse icon", "text-icon-inverse", "--color-icon-inverse-default")
+					@tokenIconCard("icon-inverse-secondary", "Inverse secondary", "text-icon-inverse-secondary", "--color-icon-inverse-secondary")
+					@tokenIconCard("icon-accent", "Accent icon", "text-icon-accent", "--color-icon-accent-default")
+					@tokenIconCard("icon-selected", "Selected icon", "text-icon-selected", "--color-icon-selected-default")
+					@tokenIconCard("icon-success", "Success icon", "text-icon-success", "--color-icon-success-default")
+					@tokenIconCard("icon-warning", "Warning icon", "text-icon-warning", "--color-icon-warning-default")
+					@tokenIconCard("icon-critical", "Critical icon", "text-icon-critical", "--color-icon-critical-default")
+					@tokenIconCard("icon-info", "Info icon", "text-icon-info", "--color-icon-info-default")
+					@tokenIconCard("icon-attention", "Attention icon", "text-icon-attention", "--color-icon-attention-default")
+				</div>
+			</div>
+
+			// Document type tokens
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Document Types</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@tokenColorCard("foreground-document-pdf", "PDF text", "text-foreground-document-pdf", "--color-foreground-document-pdf")
+					@tokenColorCard("foreground-document-xml", "XML text", "text-foreground-document-xml", "--color-foreground-document-xml")
+					@tokenColorCard("foreground-document-png", "Image text", "text-foreground-document-png", "--color-foreground-document-png")
+					@tokenBgCard("background-document-pdf", "PDF background", "bg-background-document-pdf", "--color-background-document-pdf")
+					@tokenBgCard("background-document-xml", "XML background", "bg-background-document-xml", "--color-background-document-xml")
+					@tokenBgCard("background-document-png", "Image background", "bg-background-document-png", "--color-background-document-png")
+					@tokenBorderCard("border-document-pdf", "PDF border", "border-border-document-pdf", "--color-border-document-pdf")
+					@tokenBorderCard("border-document-xml", "XML border", "border-border-document-xml", "--color-border-document-xml")
+					@tokenBorderCard("border-document-png", "Image border", "border-border-document-png", "--color-border-document-png")
+					@tokenIconCard("icon-document-pdf", "PDF icon", "text-icon-document-pdf", "--color-icon-document-pdf")
+					@tokenIconCard("icon-document-xml", "XML icon", "text-icon-document-xml", "--color-icon-document-xml")
+					@tokenIconCard("icon-document-png", "Image icon", "text-icon-document-png", "--color-icon-document-png")
+				</div>
+			</div>
+
+			// Status tokens
+			<div>
+				<h3 class="text-base font-medium text-foreground mb-4">Status Colors</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@statusTokenCard("draft", "Draft status", "--color-foreground-status-draft", "--color-background-status-draft", "--color-icon-status-draft")
+					@statusTokenCard("processing", "Processing status", "--color-foreground-status-processing", "--color-background-status-processing", "--color-icon-status-processing")
+					@statusTokenCard("registered", "Registered status", "--color-foreground-status-registered", "--color-background-status-registered", "--color-icon-status-registered")
+					@statusTokenCard("sent", "Sent status", "--color-foreground-status-sent", "--color-background-status-sent", "--color-icon-status-sent")
+					@statusTokenCard("received", "Received status", "--color-foreground-status-received", "--color-background-status-received", "--color-icon-status-received")
+					@statusTokenCard("paid", "Paid status", "--color-foreground-status-paid", "--color-background-status-paid", "--color-icon-status-paid")
+					@statusTokenCard("completed", "Completed status", "--color-foreground-status-completed", "--color-background-status-completed", "--color-icon-status-completed")
+					@statusTokenCard("error", "Error status", "--color-foreground-status-error", "--color-background-status-error", "--color-icon-status-error")
+					@statusTokenCard("rejected", "Rejected status", "--color-foreground-status-rejected", "--color-background-status-rejected", "--color-icon-status-rejected")
+					@statusTokenCard("void", "Void status", "--color-foreground-status-void", "--color-background-status-void", "--color-icon-status-void")
+					@statusTokenCard("invalid", "Invalid status", "--color-foreground-status-invalid", "--color-background-status-invalid", "--color-icon-status-invalid")
+					@statusTokenCard("empty", "Empty status", "--color-foreground-status-empty", "--color-background-status-empty", "--color-icon-status-empty")
+				</div>
+			</div>
+		}
+
+		// Spacing & Layout Section
+		@modules.Section("Spacing & Layout", "spacing") {
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Custom Spacing</h3>
+				<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+					@spacingCard("1.25", "5px")
+					@spacingCard("18", "4.5rem (72px)")
+					@spacingCard("128", "32rem (512px)")
+				</div>
+			</div>
+
+			<div>
+				<h3 class="text-base font-medium text-foreground mb-4">Border Radius</h3>
+				<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+					@radiusCard("xl", "0.625rem (10px)")
+					@radiusCard("2xl", "12px")
+				</div>
+			</div>
+		}
+
+		// Shadows Section
+		@modules.Section("Shadows", "shadows") {
+			<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+				@shadowCard("sm", "Subtle shadow")
+				@shadowCard("lg", "Large shadow")
+				@shadowCard("xl", "Extra large shadow")
+				@shadowCard("active", "Focus ring")
+				@shadowCard("button-default", "Default button shadow")
+				@shadowCard("button-primary", "Primary button shadow")
+				@shadowCard("button-pressed", "Pressed button shadow")
+				@shadowCard("button-dark-pressed", "Dark pressed button")
+				@shadowCard("avatar", "Avatar shadow")
+				@shadowCard("avatar-inverse", "Avatar inverse shadow")
+				@shadowCard("shortcut", "Shortcut key shadow")
+				@shadowCard("shortcut-inverse", "Shortcut inverse shadow")
+			</div>
+		}
+
+		// Typography Section
+		@modules.Section("Typography", "typography") {
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Font Family</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@fontCard("sans", "Inter, sans-serif", "The quick brown fox")
+					@fontCard("mono", "CommitMono, monospace", "const x = 42;")
+				</div>
+			</div>
+
+			<div class="mb-8">
+				<h3 class="text-base font-medium text-foreground mb-4">Text Sizes</h3>
+				<div class="flex flex-col gap-3">
+					@textSizeCard("2xl", "24px", "32px")
+					@textSizeCard("xl", "20px", "28px")
+					@textSizeCard("lg", "16px", "24px")
+					@textSizeCard("base", "14px", "20px")
+					@textSizeCard("sm", "12px", "16px")
+					@textSizeCard("xs", "10px", "12px")
+				</div>
+			</div>
+
+			<div>
+				<h3 class="text-base font-medium text-foreground mb-4">Letter Spacing</h3>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+					@trackingCard("tightest", "-0.29px", "For text-2xl")
+					@trackingCard("tighter", "-0.24px", "For text-xl")
+					@trackingCard("tight", "-0.16px", "For text-lg")
+					@trackingCard("normal", "-0.07px", "For text-base")
+					@trackingCard("wide", "-0.036px", "For text-sm/xs")
+				</div>
+			</div>
+		}
+	</div>
+}
+
+templ tokenColorCard(name, description, className, cssVar string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 rounded-full flex-shrink-0"
+					style={ "background-color: var(" + cssVar + ")" }
+				></div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 rounded-full flex-shrink-0"
+				style={ "background-color: var(" + cssVar + ")" }
+			></div>
+		}
+		<div class="flex-1 min-w-0">
+			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary truncate">{ description }</div>
+		</div>
+	</div>
+}
+
+templ tokenIconCard(name, description, className, cssVar string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 flex items-center justify-center flex-shrink-0"
+					style={ "color: var(" + cssVar + ")" }
+				>
+					@icons.Placeholder()
+				</div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 flex items-center justify-center flex-shrink-0"
+				style={ "color: var(" + cssVar + ")" }
+			>
+				@icons.Placeholder()
+			</div>
+		}
+		<div class="flex-1 min-w-0">
+			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary truncate">{ description }</div>
+		</div>
+	</div>
+}
+
+templ tokenBgCard(name, description, className, cssVar string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 rounded-lg flex-shrink-0 border border-border"
+					style={ "background-color: var(" + cssVar + ")" }
+				></div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 rounded-lg flex-shrink-0 border border-border"
+				style={ "background-color: var(" + cssVar + ")" }
+			></div>
+		}
+		<div class="flex-1 min-w-0">
+			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary truncate">{ description }</div>
+		</div>
+	</div>
+}
+
+templ tokenBorderCard(name, description, className, cssVar string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div
+					class="w-8 h-8 rounded-lg flex-shrink-0 bg-background"
+					style={ "border: 3px solid var(" + cssVar + ")" }
+				></div>
+			</div>
+		} else {
+			<div
+				class="w-8 h-8 rounded-lg flex-shrink-0 bg-background"
+				style={ "border: 3px solid var(" + cssVar + ")" }
+			></div>
+		}
+		<div class="flex-1 min-w-0">
+			<div class="text-sm font-medium text-foreground truncate" x-show="!copied">{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary truncate">{ description }</div>
+		</div>
+	</div>
+}
+
+templ spacingCard(name, value string) {
+	<div
+		class="flex flex-col gap-2 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('gap-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class="text-sm font-medium text-foreground" x-show="!copied">{ name }</div>
+		<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+		<div class="text-xs text-foreground-default-secondary">{ value }</div>
+	</div>
+}
+
+templ radiusCard(name, value string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('rounded-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class={ "w-10 h-10 bg-background-default-tertiary border border-border rounded-" + name }></div>
+		<div class="flex-1">
+			<div class="text-sm font-medium text-foreground" x-show="!copied">{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary">{ value }</div>
+		</div>
+	</div>
+}
+
+templ shadowCard(name, description string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('shadow-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		if isInverse(name) {
+			<div class="bg-background-default-tertiary -m-4 mr-0 p-4 rounded-l-xl flex items-center">
+				<div class={ "w-12 h-12 bg-background rounded-lg shadow-" + name }></div>
+			</div>
+		} else {
+			<div class={ "w-12 h-12 bg-background rounded-lg shadow-" + name }></div>
+		}
+		<div class="flex-1">
+			<div class="text-sm font-medium text-foreground" x-show="!copied">shadow-{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary">{ description }</div>
+		</div>
+	</div>
+}
+
+templ fontCard(name, value, sample string) {
+	<div
+		class="flex flex-col gap-2 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('font-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class="flex items-center justify-between">
+			<div class="text-sm font-medium text-foreground" x-show="!copied">font-{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary">{ value }</div>
+		</div>
+		<div class={ "text-lg text-foreground font-" + name }>{ sample }</div>
+	</div>
+}
+
+templ textSizeCard(name, size, lineHeight string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('text-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class="w-20 flex-shrink-0">
+			<div class="text-sm font-medium text-foreground" x-show="!copied">text-{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+		</div>
+		<div class="text-xs text-foreground-default-secondary w-24 flex-shrink-0">
+			{ size } / { lineHeight }
+		</div>
+		<div class={ "text-foreground text-" + name }>The quick brown fox</div>
+	</div>
+}
+
+templ trackingCard(name, value, usage string) {
+	<div
+		class="flex flex-col gap-1 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('tracking-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class="flex items-center justify-between">
+			<div class="text-sm font-medium text-foreground" x-show="!copied">tracking-{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary">{ value }</div>
+		</div>
+		<div class="text-xs text-foreground-default-secondary">{ usage }</div>
+	</div>
+}
+
+templ statusTokenCard(name, description, fgVar, bgVar, iconVar string) {
+	<div
+		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('status-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class="flex items-center gap-2 flex-shrink-0">
+			<div
+				class="w-6 h-6 rounded-full flex items-center justify-center"
+				style={ "background-color: var(" + bgVar + "); color: var(" + iconVar + ")" }
+			>
+				@icons.Placeholder()
+			</div>
+		</div>
+		<div class="flex-1 min-w-0">
+			<div class="text-sm font-medium truncate" style={ "color: var(" + fgVar + ")" } x-show="!copied">{ name }</div>
+			<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied!</div>
+			<div class="text-xs text-foreground-default-secondary truncate">{ description }</div>
+		</div>
+	</div>
+}

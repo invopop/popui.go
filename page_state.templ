@@ -23,7 +23,7 @@ templ PageState(opts ...props.PageState) {
 			@p.Illustration
 		}
 		<div class="flex flex-col items-center justify-center space-y-0.5 mb-4">
-			@Subtitle() {
+			@Subtitle(props.Subtitle{Class: "font-semibold"}) {
 				{ p.Title }
 			}
 			@Description() {

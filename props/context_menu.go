@@ -1,43 +1,37 @@
 package props
 
 import (
-	"fmt"
-	"math/rand"
-
 	"github.com/a-h/templ"
+	"github.com/google/uuid"
 )
 
-// ContextMenu Templ component props
+// ContextMenu provides props for the context menu component.
 type ContextMenu struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
 
-	// ButtonLabel will be the text shown on the context menu button, the
-	// default if not provided is "···" (three mid-dots)
-	ButtonLabel string
-	// ButtonVariant sets the button style, see the button component
-	// for available variants.
-	ButtonVariant string
-	// RightAlign determines if the context menu is aligned to the right
-	// of the button, default is left aligned. This will also change the
-	// location of the context menu.
+	// RightAlign aligns the menu to the right of the button.
 	RightAlign bool
+
+	// ButtonVariant defines the style of the trigger button.
+	ButtonVariant string
+
+	// ButtonLabel sets a text label on the trigger button instead of the default dots icon.
+	ButtonLabel string
 }
 
-// ContextMenuItem menu item component props
+// GenerateID ensures the context menu has a unique ID and returns itself.
+func (c ContextMenu) GenerateID() ContextMenu {
+	if c.ID == "" {
+		c.ID = "ctx-" + uuid.New().String()[:8]
+	}
+	return c
+}
+
+// ContextMenuItem provides props for individual items within a context menu.
 type ContextMenuItem struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-}
-
-// GenerateID generates a unique ID for the ContextMenu if none is provided.
-func (cm ContextMenu) GenerateID() ContextMenu {
-	if cm.ID != "" {
-		return cm
-	}
-	// generate a short random identifier
-	cm.ID = fmt.Sprintf("context-menu-%06d", rand.Intn(100000))
-	return cm
 }

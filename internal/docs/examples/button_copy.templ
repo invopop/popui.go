@@ -12,9 +12,11 @@ templ ButtonCopyExample() {
 			@scripts.ButtonCopy()
 		</head>
 		<body>
-			@popui.ButtonCopy(props.ButtonCopy{
-				Value: "e73d5d20834934588127389172381789bc2f275460",
-			})
+			@popui.ButtonGroup() {
+				@popui.ButtonCopy(props.ButtonCopy{
+					Value: "e73d5d20834934588127389172381789bc2f275460",
+				})
+			}
 		</body>
 	</html>
 }

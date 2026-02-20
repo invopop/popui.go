@@ -25,6 +25,24 @@ type Group struct {
 // DocsIndex is the index of all documentation pages.
 var groups = []*Group{
 	{
+		Title: "Design System",
+		Path:  "design-system",
+		Pages: []*Page{
+			{
+				Title:    "Icons",
+				Desc:     "A comprehensive library of SVG icons for common UI actions and concepts.",
+				Path:     "icons",
+				Template: components.Icons(),
+			},
+			{
+				Title:    "Tokens",
+				Desc:     "Tailwind CSS design tokens including colors, spacing, shadows, and typography.",
+				Path:     "tokens",
+				Template: components.Tokens(),
+			},
+		},
+	},
+	{
 		Title: "Layout",
 		Path:  "layout",
 		Pages: []*Page{
@@ -135,14 +153,8 @@ var groups = []*Group{
 				Template: components.Breadcrumbs(),
 			},
 			{
-				Title:    "Context Menu",
-				Desc:     "A context menu that displays when a button is clicked.",
-				Path:     "context-menu",
-				Template: components.ContextMenu(),
-			},
-			{
 				Title:    "Popover",
-				Desc:     "A centered modal dialog using the HTML popover API with backdrop overlay.",
+				Desc:     "A context menu that displays when a button is clicked.",
 				Path:     "popover",
 				Template: components.Popover(),
 			},
@@ -231,10 +243,22 @@ var groups = []*Group{
 				Template: components.FlashMessage(),
 			},
 			{
+				Title:    "Loading",
+				Desc:     "Loading indicators with skeleton and spinner variants.",
+				Path:     "loading",
+				Template: components.Loading(),
+			},
+			{
 				Title:    "Notification",
 				Desc:     "Feedback messages with different severity types and icons.",
 				Path:     "notification",
 				Template: components.Notification(),
+			},
+			{
+				Title:    "Toast",
+				Desc:     "Temporary notification messages that appear and auto-dismiss.",
+				Path:     "toast",
+				Template: components.Toast(),
 			},
 			{
 				Title:    "Tag Status",

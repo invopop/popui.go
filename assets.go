@@ -10,8 +10,6 @@ import (
 	"path"
 )
 
-// We use the tailwindcss CLI directly here for performance and to avoid
-// needing to install the NodeJS toolchain.
 //go:generate tailwindcss -i ./styles.css -o ./assets/popui.css --minify
 
 const (

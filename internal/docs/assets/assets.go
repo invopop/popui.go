@@ -9,7 +9,7 @@ import (
 	"path"
 )
 
-//go:embed scripts/*
+//go:embed scripts/* prism-popui.css
 
 // Content holds the embedded assets.
 var Content embed.FS

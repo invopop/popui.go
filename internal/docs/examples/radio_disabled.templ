@@ -6,19 +6,17 @@ import (
 )
 
 templ RadioDisabledExample() {
-	<div class="space-y-3">
-		@popui.Radio(props.Radio{
-			Name:     "option",
-			Value:    "1",
-			Label:    "Disabled radio",
-			Disabled: true,
-		})
-		@popui.Radio(props.Radio{
-			Name:     "option",
-			Value:    "2",
-			Label:    "Disabled checked radio",
-			Checked:  true,
-			Disabled: true,
-		})
-	</div>
+	@popui.Radio(props.Radio{
+		Name:     "option",
+		Value:    "1",
+		Label:    "Disabled radio",
+		Disabled: true,
+	})
+	@popui.Radio(props.Radio{
+		Name:     "option",
+		Value:    "2",
+		Label:    "Disabled checked radio",
+		Checked:  true,
+		Disabled: true,
+	})
 }

@@ -1,0 +1,179 @@
+/*
+ * PopUI Prism.js Theme
+ *
+ * Maps Prism syntax token classes to PopUI design tokens
+ * defined in tailwind.theme.css. Only handles token coloring;
+ * container layout is managed by code_block.templ.
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: var(--color-neutral-80);
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: inherit;
+  tab-size: 2;
+  hyphens: none;
+}
+
+/* Comments */
+.token.comment,
+.token.prolog,
+.token.cdata {
+  color: var(--color-grey-40);
+  font-style: italic;
+}
+
+.token.doctype {
+  color: var(--color-grey-40);
+}
+
+/* Punctuation and operators */
+.token.punctuation {
+  color: var(--color-grey-50);
+}
+
+.token.operator {
+  color: var(--color-grey-50);
+}
+
+/* Keywords and control flow */
+.token.keyword,
+.token.atrule,
+.token.boolean,
+.token.constant {
+  color: var(--color-violet-50);
+}
+
+/* Functions */
+.token.function {
+  color: var(--color-indigo-50);
+}
+
+/* Strings and values */
+.token.string,
+.token.attr-value,
+.token.char,
+.token.regex,
+.token.builtin,
+.token.inserted {
+  color: var(--color-green-50);
+}
+
+/* Numbers */
+.token.number,
+.token.hexcode,
+.token.unit {
+  color: var(--color-orange-50);
+}
+
+/* Tags, selectors, deleted */
+.token.tag,
+.token.selector,
+.token.deleted {
+  color: var(--color-red-50);
+}
+
+/* Properties, attributes, class names */
+.token.property,
+.token.attr-name,
+.token.class-name {
+  color: var(--color-sky-50);
+}
+
+/* Symbols and variables */
+.token.symbol,
+.token.variable {
+  color: var(--color-red-50);
+}
+
+/* Important and bold */
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.namespace {
+  opacity: 0.8;
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+.dark code[class*="language-"],
+.dark pre[class*="language-"] {
+  color: var(--color-neutral-30);
+}
+
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.cdata {
+  color: var(--color-grey-50);
+}
+
+.dark .token.doctype {
+  color: var(--color-grey-50);
+}
+
+.dark .token.punctuation {
+  color: var(--color-grey-40);
+}
+
+.dark .token.operator {
+  color: var(--color-grey-40);
+}
+
+.dark .token.keyword,
+.dark .token.atrule,
+.dark .token.boolean,
+.dark .token.constant {
+  color: var(--color-violet-40);
+}
+
+.dark .token.function {
+  color: var(--color-indigo-40);
+}
+
+.dark .token.string,
+.dark .token.attr-value,
+.dark .token.char,
+.dark .token.regex,
+.dark .token.builtin,
+.dark .token.inserted {
+  color: var(--color-green-40);
+}
+
+.dark .token.number,
+.dark .token.hexcode,
+.dark .token.unit {
+  color: var(--color-orange-40);
+}
+
+.dark .token.tag,
+.dark .token.selector,
+.dark .token.deleted {
+  color: var(--color-red-40);
+}
+
+.dark .token.property,
+.dark .token.attr-name,
+.dark .token.class-name {
+  color: var(--color-sky-40);
+}
+
+.dark .token.symbol,
+.dark .token.variable {
+  color: var(--color-red-40);
+}

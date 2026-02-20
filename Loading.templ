@@ -1,0 +1,113 @@
+package popui
+
+import (
+	"fmt"
+
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Loading displays a loading indicator.
+// By default it renders a skeleton shimmer placeholder.
+// Use Variant: props.LoadingSpinner for a spinning loader icon.
+templ Loading(p ...props.Loading) {
+	{{ loading := props.First(p) }}
+	if loading.Variant == props.LoadingSpinner {
+		@loadingSpinner(loading)
+	} else {
+		@loadingSkeleton(loading)
+	}
+}
+
+// loadingSpinner displays a spinning loader icon with an optional label.
+templ loadingSpinner(loading props.Loading) {
+	<div
+		data-loading
+		data-variant="spinner"
+		if loading.ID != "" {
+			id={ loading.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex items-center gap-2 text-foreground-default-secondary",
+				loading.Class,
+			),
+		}
+		{ loading.Attributes... }
+	>
+		@icons.Loader()
+		if loading.Label != "" {
+			<span>{ loading.Label }</span>
+		}
+	</div>
+}
+
+// loadingSkeleton displays a placeholder shimmer animation for content.
+templ loadingSkeleton(loading props.Loading) {
+	<div
+		data-loading
+		data-variant="skeleton"
+		if loading.ID != "" {
+			id={ loading.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex items-center w-full",
+				loading.Class,
+			),
+		}
+		{ loading.Attributes... }
+	>
+		<div
+			class={
+				tailwind.Merge(
+					"relative overflow-hidden bg-background-default-tertiary",
+					loadingRoundedClasses(loading.Rounded),
+				),
+			}
+			style={ loadingStyles(loading.Size, loading.Width) }
+		>
+			<style>@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}</style>
+			<div
+				class="absolute inset-0 bg-background-default-secondary"
+				style="mask-image: linear-gradient(90deg, transparent 0%, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 50%, transparent 100%); animation: shimmer 1.5s ease-in-out infinite;"
+			></div>
+		</div>
+	</div>
+}
+
+func loadingRoundedClasses(rounded bool) string {
+	return classes.Join(
+		map[string]bool{
+			"rounded":      !rounded,
+			"rounded-full": rounded,
+		},
+	)
+}
+
+func loadingStyles(size string, width int) string {
+	// Height based on size
+	height := 20 // default md
+	switch size {
+	case props.LoadingSizeXS:
+		height = 12
+	case props.LoadingSizeSmall:
+		height = 16
+	case props.LoadingSizeMedium:
+		height = 20
+	case props.LoadingSizeLarge:
+		height = 24
+	case props.LoadingSizeXL:
+		height = 32
+	}
+
+	// Width as percentage
+	widthPct := 100
+	if width > 0 && width < 100 {
+		widthPct = width
+	}
+
+	return fmt.Sprintf("height: %dpx; width: %d%%", height, widthPct)
+}

@@ -1,6 +1,10 @@
-@import "tailwindcss" source("./**/*.{templ,go}");
+@import "./tailwind/node_modules/tailwindcss" source(none);
+@source "./{assets,cmd,examples,icons,internal,props}/**/*.{templ,go,js}";
+@source "./*.{templ,go,js}";
 @import "./tailwind.theme.css";
-@plugin "@tailwindcss/forms";
-@plugin "@tailwindcss/typography";
+@plugin "./tailwind/forms.js";
+@plugin "./tailwind/typography/index.js";
+@source inline("shadow-sm shadow-lg shadow-xl shadow-active shadow-button-default shadow-button-primary shadow-button-pressed shadow-button-dark-pressed shadow-avatar shadow-avatar-inverse shadow-shortcut shadow-shortcut-inverse");
+@source inline("max-md:!fixed max-md:!w-[240px] max-md:!visible max-md:!inset-y-0 max-md:!left-0 max-md:!flex");
 
 @import "./components.css";

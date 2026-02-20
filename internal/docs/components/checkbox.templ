@@ -21,25 +21,11 @@ templ Checkbox() {
 		@examples.CheckboxCheckedExample()
 	}
 	@modules.Example(modules.ExampleProps{
-		Title:       "With Description",
-		Description: "Add a description below the label for additional context.",
-		Code:        examples.LoadExample("checkbox_description.templ"),
-	}) {
-		@examples.CheckboxDescriptionExample()
-	}
-	@modules.Example(modules.ExampleProps{
 		Title:       "Switch Variant",
 		Description: "Use Variant=\"switch\" for a toggle switch style.",
 		Code:        examples.LoadExample("checkbox_switch.templ"),
 	}) {
 		@examples.CheckboxSwitchExample()
-	}
-	@modules.Example(modules.ExampleProps{
-		Title:       "Switch with Description",
-		Description: "Toggle switches can also include descriptions for additional context.",
-		Code:        examples.LoadExample("checkbox_switch_description.templ"),
-	}) {
-		@examples.CheckboxSwitchDescriptionExample()
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Disabled State",
@@ -64,7 +50,6 @@ templ Checkbox() {
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with checkbox styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Label", Type: "string", Default: "", Description: "Label text for the checkbox"},
-				{Name: "Description", Type: "string", Default: "", Description: "Optional description text displayed below the label"},
 				{Name: "Variant", Type: "string", Default: "", Description: "Visual variant: \"switch\" for toggle switch style"},
 				{Name: "Name", Type: "string", Default: "", Description: "Form field name"},
 				{Name: "Value", Type: "string", Default: "", Description: "Form field value"},

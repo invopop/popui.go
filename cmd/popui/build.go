@@ -66,8 +66,19 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 	}
 	log.Printf("JS file published")
 
-	// Copy over the docs specific JS
-	scriptsOutPath := path.Join(buildOutputPath, "assets", "scripts")
+	// Copy over the docs specific assets
+	docsAssetsOutPath := path.Join(buildOutputPath, "assets")
+	err = createFolder(docsAssetsOutPath)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+	err = copyFile(path.Join("internal/docs/assets", "prism-popui.css"), path.Join(docsAssetsOutPath, "prism-popui.css"))
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+	log.Printf("Prism CSS file published")
+
+	scriptsOutPath := path.Join(docsAssetsOutPath, "scripts")
 	err = createFolder(scriptsOutPath)
 	if err != nil {
 		log.Fatalf("Error: %v", err)

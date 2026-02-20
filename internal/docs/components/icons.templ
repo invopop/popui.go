@@ -1,0 +1,16 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+templ iconCard(name string, icon templ.Component) {
+	<div
+		class="flex flex-col items-center justify-center aspect-square p-2 rounded-lg border border-border hover:border-border-bold hover:bg-background-default-secondary cursor-pointer transition-all group"
+		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('@icons." + name + "()'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		@click="copy()"
+	>
+		<div class="w-6 h-6 flex items-center justify-center text-foreground mb-2 group-hover:text-foreground-accent">
+			@icon
+		</div>
+		<span class="text-xs text-foreground-default-secondary text-center leading-tight" x-show="!copied">{ name }</span>
+		<span class="text-xs text-foreground-success text-center leading-tight" x-show="copied" x-cloak>Copied!</span>
+	</div>
+}

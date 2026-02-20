@@ -1,0 +1,80 @@
+package components
+
+import (
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Toast() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("toast.templ"),
+	}) {
+		@examples.ToastExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Variants",
+		Description: "Toast notifications come in different variants to indicate the type of message: success, error, warning, and info.",
+		Code:        examples.LoadExample("toast_variants.templ"),
+	}) {
+		@examples.ToastVariantsExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Icon",
+		Description: "Enable the Icon prop to display a contextual icon based on the variant.",
+		Code:        examples.LoadExample("toast_with_icon.templ"),
+	}) {
+		@examples.ToastWithIconExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Triggering Toasts",
+		Description: "Use Alpine.js with popui.showToast() to trigger toast notifications from button clicks.",
+		Code:        examples.LoadExample("toast_trigger.templ"),
+	}) {
+		@examples.ToastTriggerExample()
+	}
+	@modules.Section("Usage", "usage") {
+		<div class="space-y-4">
+			<div>
+				<h3 class="text-lg font-semibold mb-2">JavaScript API</h3>
+				<p class="text-foreground-default-secondary mb-4">
+					Toasts are triggered using the <code class="bg-background-default-secondary px-1 rounded">popui.showToast()</code> function.
+					The toast container is automatically created on <code class="bg-background-default-secondary px-1 rounded">document.body</code> when the first toast is shown.
+				</p>
+			</div>
+			<div>
+				<h4 class="font-semibold mb-2">Basic Usage</h4>
+				<p class="text-foreground-default-secondary mb-2">Call popui.showToast() with an options object:</p>
+				<pre class="language-js bg-background-default-secondary p-3 rounded-lg text-sm overflow-x-auto"><code>popui.showToast(&#123;
+    variant: 'success',      // 'success', 'error', 'warning', 'info'
+    title: 'Saved!',
+    description: 'Your changes have been saved.',
+    duration: 3000           // auto-dismiss after 3 seconds (0 to disable)
+&#125;)</code></pre>
+			</div>
+			<div>
+				<h4 class="font-semibold mb-2">With Alpine.js</h4>
+				<p class="text-foreground-default-secondary mb-2">Trigger toasts from button clicks using Alpine's &#64;click directive:</p>
+				<pre class="language-go bg-background-default-secondary p-3 rounded-lg text-sm overflow-x-auto"><code>&#64;popui.Button(props.Button&#123;
+    Variant: "primary",
+    Attributes: templ.Attributes&#123;
+        "&#64;click": "popui.showToast(&#123;variant: 'success', title: 'Saved!'&#125;)",
+    &#125;,
+&#125;) &#123;
+    Show Toast
+&#125;</code></pre>
+			</div>
+		</div>
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "popui.showToast() Options",
+			Description: "Options for the JavaScript showToast function.",
+			Items: []modules.APITableItem{
+				{Name: "variant", Type: "string", Default: "\"default\"", Description: "Visual style: success, error, warning, info"},
+				{Name: "title", Type: "string", Default: "\"\"", Description: "Main toast title text"},
+				{Name: "description", Type: "string", Default: "\"\"", Description: "Additional descriptive text below the title (optional)"},
+				{Name: "duration", Type: "number", Default: "3000", Description: "Auto-dismiss duration in milliseconds (0 to disable)"},
+			},
+		})
+	}
+}

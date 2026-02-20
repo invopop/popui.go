@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func CheckboxSwitchDescriptionExample() templ.Component {
+func ToastContainerExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,40 +34,21 @@ func CheckboxSwitchDescriptionExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative h-32 w-full border border-border rounded-xl overflow-hidden\"><div id=\"demo-toast-container\" class=\"absolute bottom-2 right-2 flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = popui.Checkbox(props.Checkbox{
-			Name:        "notifications",
-			Label:       "Push notifications",
-			Description: "Get notified about important updates and messages.",
-			Variant:     props.CheckboxVariantSwitch,
-			Checked:     true,
+		templ_7745c5c3_Err = popui.Toast(props.Toast{
+			Variant:     "success",
+			Title:       "Saved",
+			Description: "Changes saved successfully.",
+			Icon:        true,
+			Duration:    999999,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = popui.Checkbox(props.Checkbox{
-			Name:        "marketing",
-			Label:       "Marketing emails",
-			Description: "Receive emails about new products and special offers.",
-			Variant:     props.CheckboxVariantSwitch,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = popui.Checkbox(props.Checkbox{
-			Name:        "analytics",
-			Label:       "Usage analytics",
-			Description: "Help us improve by sharing anonymous usage data.",
-			Variant:     props.CheckboxVariantSwitch,
-			Checked:     true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

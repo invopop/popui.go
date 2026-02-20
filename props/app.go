@@ -14,8 +14,7 @@ type App struct {
 	// component.
 	Head templ.Component
 
-	// Data adds the x-data attribute to the application body wrapper's
-	// contents. When used with HTMX, this data will also be replaced.
+	// Data adds the x-data attribute to the application body's contents.
 	Data string
 
 	// HTMX when true loads the htmx javascript library
@@ -33,6 +32,11 @@ type App struct {
 	// Stylesheets is a list of additional stylesheet links to include as an
 	// alternative to defining in the head property.
 	Stylesheets []Link
+
+	// Portal is an optional component that is rendered outside the main grid
+	// container but inside the body. This is useful for fixed-positioned elements
+	// like toast containers that need to escape the grid layout.
+	Portal templ.Component
 }
 
 // Main for configuring the App main content component.

@@ -1,0 +1,18 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ToastExample() {
+	// With description
+	@popui.Toast(props.Toast{
+		Title:       "Notification",
+		Description: "Your action was completed.",
+	})
+	// Without description
+	@popui.Toast(props.Toast{
+		Title:       "Changes saved",
+	})
+}
