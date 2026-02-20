@@ -26,12 +26,19 @@ function isPlainObject(value) {
   return Object.getPrototypeOf(value) === proto
 }
 
+function isPollutingKey(key) {
+  return key === '__proto__' || key === 'constructor' || key === 'prototype'
+}
+
 function merge(target, ...sources) {
   if (!sources.length) return target
   const source = sources.shift()
 
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
+      if (isPollutingKey(key)) {
+        continue
+      }
       if (Array.isArray(source[key])) {
         if (!target[key]) target[key] = []
         source[key].forEach((item, index) => {
