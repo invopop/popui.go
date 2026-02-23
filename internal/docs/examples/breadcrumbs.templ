@@ -20,3 +20,31 @@ templ BreadcrumbsExample() {
 		})
 	}
 }
+
+templ BreadcrumbsWithAttributesExample() {
+	@popui.Breadcrumbs() {
+		@popui.Breadcrumb(props.Breadcrumb{
+			Label: "Home",
+			Href:  "/",
+			Attributes: templ.Attributes{
+				"hx-get":      "/",
+				"hx-target":   "#content",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "/",
+			},
+		})
+		@popui.Breadcrumb(props.Breadcrumb{
+			Label: "Products",
+			Href:  "/products",
+			Attributes: templ.Attributes{
+				"hx-get":      "/products",
+				"hx-target":   "#content",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "/products",
+			},
+		})
+		@popui.Breadcrumb(props.Breadcrumb{
+			Label: "Electronics",
+		})
+	}
+}
