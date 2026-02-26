@@ -41,7 +41,7 @@ func ContextMenu(opts ...props.ContextMenu) templ.Component {
 		p := props.First(opts).GenerateID()
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"relative inline-block",
-			classes.Join(map[string]bool{"flex justify-end": p.RightAlign}),
+			classes.If(p.RightAlign, "flex justify-end"),
 		),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -135,7 +135,7 @@ func ContextMenu(opts ...props.ContextMenu) templ.Component {
 		var templ_7745c5c3_Var7 = []any{tailwind.Merge(
 			"context-menu",
 			"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background",
-			classes.Join(map[string]bool{"context-menu-right-align": p.RightAlign}),
+			classes.If(p.RightAlign, "context-menu-right-align"),
 			p.Class,
 		),
 		}

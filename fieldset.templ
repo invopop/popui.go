@@ -18,9 +18,7 @@ templ Fieldset(p ...props.Fieldset) {
 		class={
 			tailwind.Merge(
 				"relative w-full flex-1 flex flex-col gap-4",
-				classes.Join(map[string]bool{
-					"border border-border-default-secondary rounded-md bg-background p-4": fieldset.Variant == props.FieldsetVariantCard,
-				}),
+				classes.If(fieldset.Variant == props.FieldsetVariantCard, "border border-border-default-secondary rounded-md bg-background p-4"),
 				fieldset.Class,
 			),
 		}

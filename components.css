@@ -92,11 +92,9 @@ body {
 [popover].popover-modal:not(:popover-open) {
   display: none;
 }
-/*
-[popover].popover-modal::backdrop {
+[popover].popover-modal-backdrop::backdrop {
   background-color: rgb(0 0 0 / 0.5);
 }
-*/
 
 /* Generic selectors */
 div[contenteditable='true'] .tag {

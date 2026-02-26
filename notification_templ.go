@@ -178,13 +178,11 @@ func Notification(opts ...props.Notification) templ.Component {
 }
 
 func notificationClasses(notifType string) string {
-	return classes.Join(
-		map[string]bool{
-			"bg-background-info text-foreground-info":         notifType == "info",
-			"bg-background-warning text-foreground-warning":   notifType == "warning",
-			"bg-background-critical text-foreground-critical": notifType == "error",
-			"bg-background-success text-foreground-success":   notifType == "success",
-		},
+	return tailwind.Merge(
+		classes.If(notifType == "info", "bg-background-info text-foreground-info"),
+		classes.If(notifType == "warning", "bg-background-warning text-foreground-warning"),
+		classes.If(notifType == "error", "bg-background-critical text-foreground-critical"),
+		classes.If(notifType == "success", "bg-background-success text-foreground-success"),
 	)
 }
 

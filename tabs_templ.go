@@ -206,20 +206,16 @@ func Tab(p ...props.Tab) templ.Component {
 }
 
 func tabsClasses(prp props.Tabs) string {
-	return classes.Join(
-		map[string]bool{
-			"gap-6 overflow-visible border-b border-border":                                                             prp.Variant != "pill",
-			"bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5": prp.Variant == "pill",
-		},
+	return tailwind.Merge(
+		classes.If(prp.Variant != "pill", "gap-6 overflow-visible border-b border-border"),
+		classes.If(prp.Variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5"),
 	)
 }
 
 func tabClasses(prp props.Tab) string {
-	return classes.Join(
-		map[string]bool{
-			"relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px":            prp.Variant != "pill",
-			"rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm": prp.Variant == "pill",
-		},
+	return tailwind.Merge(
+		classes.If(prp.Variant != "pill", "relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"),
+		classes.If(prp.Variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm"),
 	)
 }
 

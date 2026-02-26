@@ -41,11 +41,11 @@ func Checkbox(p ...props.Checkbox) templ.Component {
 		checkbox := props.First(p).GenerateID()
 		isSwitch := checkbox.Variant == props.CheckboxVariantSwitch
 		if isSwitch {
-			var templ_7745c5c3_Var2 = []any{classes.Join(map[string]bool{
-				"flex flex-row-reverse justify-between gap-2 text-foreground text-base has-[:disabled]:opacity-30": true,
-				"items-center": checkbox.Description == "",
-				"items-start":  checkbox.Description != "",
-			}),
+			var templ_7745c5c3_Var2 = []any{tailwind.Merge(
+				"flex flex-row-reverse justify-between gap-2 text-foreground text-base has-[:disabled]:opacity-30",
+				classes.If(checkbox.Description == "", "items-center"),
+				classes.If(checkbox.Description != "", "items-start"),
+			),
 			}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
@@ -68,10 +68,10 @@ func Checkbox(p ...props.Checkbox) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var4 = []any{classes.Join(map[string]bool{
-				"relative inline-block w-8 h-5 shrink-0 [&>input:checked+span]:bg-background-accent [&>input:focus+span]:shadow-[0_0_1px_#169958] [&>input:checked+span:before]:translate-x-3": true,
-				"mt-0.5": checkbox.Description != "",
-			}),
+			var templ_7745c5c3_Var4 = []any{tailwind.Merge(
+				"relative inline-block w-8 h-5 shrink-0 [&>input:checked+span]:bg-background-accent [&>input:focus+span]:shadow-[0_0_1px_#169958] [&>input:checked+span:before]:translate-x-3",
+				classes.If(checkbox.Description != "", "mt-0.5"),
+			),
 			}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 			if templ_7745c5c3_Err != nil {
@@ -154,11 +154,11 @@ func Checkbox(p ...props.Checkbox) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var9 = []any{classes.Join(map[string]bool{
-				"flex gap-2 [&>input:disabled]:opacity-30 [&>input:disabled+label]:opacity-30": true,
-				"items-center": checkbox.Description == "",
-				"items-start":  checkbox.Description != "",
-			}),
+			var templ_7745c5c3_Var9 = []any{tailwind.Merge(
+				"flex gap-2 [&>input:disabled]:opacity-30 [&>input:disabled+label]:opacity-30",
+				classes.If(checkbox.Description == "", "items-center"),
+				classes.If(checkbox.Description != "", "items-start"),
+			),
 			}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 			if templ_7745c5c3_Err != nil {
@@ -281,11 +281,9 @@ func checkboxInput(p props.Checkbox) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		isSwitch := p.Variant == props.CheckboxVariantSwitch
 		var templ_7745c5c3_Var16 = []any{tailwind.Merge(
-			classes.Join(map[string]bool{
-				"form-checkbox w-4 h-4 text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30": !isSwitch,
-				"opacity-0 w-0 h-0": isSwitch,
-				"mt-0.5":            !isSwitch && p.Description != "",
-			}),
+			classes.If(!isSwitch, "form-checkbox w-4 h-4 text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30"),
+			classes.If(isSwitch, "opacity-0 w-0 h-0"),
+			classes.If(!isSwitch && p.Description != "", "mt-0.5"),
 			p.Class,
 		),
 		}
@@ -353,7 +351,7 @@ func checkboxInput(p props.Checkbox) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 103, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 101, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -372,7 +370,7 @@ func checkboxInput(p props.Checkbox) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(p.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 106, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 104, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -436,7 +434,7 @@ func OptionGroup(opts ...props.OptionGroup) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(group.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 117, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 115, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -488,7 +486,7 @@ func OptionGroup(opts ...props.OptionGroup) templ.Component {
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(group.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 129, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `checkbox.templ`, Line: 127, Col: 17}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {

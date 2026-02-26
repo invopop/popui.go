@@ -76,9 +76,7 @@ templ SidebarItem(opts ...props.SidebarItem) {
 			}
 			class={
 				tailwind.Merge(
-					classes.Join(map[string]bool{
-						"bg-background-default-secondary": p.Selected,
-					}),
+					classes.If(p.Selected, "bg-background-default-secondary"),
 					p.Class,
 				),
 			}

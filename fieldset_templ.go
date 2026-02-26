@@ -41,9 +41,7 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 		fieldset := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"relative w-full flex-1 flex flex-col gap-4",
-			classes.Join(map[string]bool{
-				"border border-border-default-secondary rounded-md bg-background p-4": fieldset.Variant == props.FieldsetVariantCard,
-			}),
+			classes.If(fieldset.Variant == props.FieldsetVariantCard, "border border-border-default-secondary rounded-md bg-background p-4"),
 			fieldset.Class,
 		),
 		}
@@ -107,7 +105,7 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fieldset.Legend)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 31, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 29, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

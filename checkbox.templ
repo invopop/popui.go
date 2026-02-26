@@ -15,19 +15,19 @@ templ Checkbox(p ...props.Checkbox) {
 	if isSwitch {
 		<label
 			class={
-				classes.Join(map[string]bool{
-					"flex flex-row-reverse justify-between gap-2 text-foreground text-base has-[:disabled]:opacity-30": true,
-					"items-center": checkbox.Description == "",
-					"items-start": checkbox.Description != "",
-				}),
+				tailwind.Merge(
+					"flex flex-row-reverse justify-between gap-2 text-foreground text-base has-[:disabled]:opacity-30",
+					classes.If(checkbox.Description == "", "items-center"),
+					classes.If(checkbox.Description != "", "items-start"),
+				),
 			}
 		>
 			<div
 				class={
-					classes.Join(map[string]bool{
-						"relative inline-block w-8 h-5 shrink-0 [&>input:checked+span]:bg-background-accent [&>input:focus+span]:shadow-[0_0_1px_#169958] [&>input:checked+span:before]:translate-x-3": true,
-						"mt-0.5": checkbox.Description != "",
-					}),
+					tailwind.Merge(
+						"relative inline-block w-8 h-5 shrink-0 [&>input:checked+span]:bg-background-accent [&>input:focus+span]:shadow-[0_0_1px_#169958] [&>input:checked+span:before]:translate-x-3",
+						classes.If(checkbox.Description != "", "mt-0.5"),
+					),
 				}
 			>
 				@checkboxInput(checkbox)
@@ -47,11 +47,11 @@ templ Checkbox(p ...props.Checkbox) {
 	} else {
 		<div
 			class={
-				classes.Join(map[string]bool{
-					"flex gap-2 [&>input:disabled]:opacity-30 [&>input:disabled+label]:opacity-30": true,
-					"items-center": checkbox.Description == "",
-					"items-start": checkbox.Description != "",
-				}),
+				tailwind.Merge(
+					"flex gap-2 [&>input:disabled]:opacity-30 [&>input:disabled+label]:opacity-30",
+					classes.If(checkbox.Description == "", "items-center"),
+					classes.If(checkbox.Description != "", "items-start"),
+				),
 			}
 		>
 			@checkboxInput(checkbox)
@@ -81,11 +81,9 @@ templ checkboxInput(p props.Checkbox) {
 		type="checkbox"
 		class={
 			tailwind.Merge(
-				classes.Join(map[string]bool{
-					"form-checkbox w-4 h-4 text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30": !isSwitch,
-					"opacity-0 w-0 h-0": isSwitch,
-					"mt-0.5": !isSwitch && p.Description != "",
-				}),
+				classes.If(!isSwitch, "form-checkbox w-4 h-4 text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30"),
+				classes.If(isSwitch, "opacity-0 w-0 h-0"),
+				classes.If(!isSwitch && p.Description != "", "mt-0.5"),
 				p.Class,
 			),
 		}

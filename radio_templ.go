@@ -92,9 +92,7 @@ func radioDefault(radio props.Radio) templ.Component {
 		}
 		var templ_7745c5c3_Var3 = []any{tailwind.Merge(
 			"font-sans cursor-pointer",
-			classes.Join(map[string]bool{
-				"flex flex-col": radio.Description != "",
-			}),
+			classes.If(radio.Description != "", "flex flex-col"),
 		),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
@@ -139,7 +137,7 @@ func radioDefault(radio props.Radio) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(radio.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 40, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 38, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -152,7 +150,7 @@ func radioDefault(radio props.Radio) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(radio.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 41, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 39, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -170,7 +168,7 @@ func radioDefault(radio props.Radio) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(radio.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 43, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 41, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -232,7 +230,7 @@ func radioCard(radio props.Radio) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(radio.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 54, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 52, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -258,7 +256,7 @@ func radioCard(radio props.Radio) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(radio.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 64, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 62, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -276,7 +274,7 @@ func radioCard(radio props.Radio) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(radio.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 66, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 64, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -356,10 +354,8 @@ func radioInput(p props.Radio) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		var templ_7745c5c3_Var17 = []any{tailwind.Merge(
-			classes.Join(map[string]bool{
-				"form-radio h-5 w-5 border-border-default-secondary hover:border-border-default-secondary-hover text-background-accent focus:ring-0 focus:ring-offset-0 cursor-pointer disabled:cursor-not-allowed": !isThemeVariant(p.Variant),
-				"relative w-7 h-7 rounded-full border-2 border-transparent cursor-pointer p-0 ring-0 appearance-none bg-none [&:checked]:bg-none [&:checked]:after:content-[''] [&:checked]:after:absolute [&:checked]:after:top-1/2 [&:checked]:after:left-1/2 [&:checked]:after:-translate-x-1/2 [&:checked]:after:-translate-y-1/2 [&:checked]:after:w-5 [&:checked]:after:h-5 [&:checked]:after:bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M15%205.10547L8.33333%2014.5792L5%2011.1841%22%20stroke%3D%22white%22%20stroke-width%3D%221.1%22%2F%3E%3C%2Fsvg%3E')] [&:checked]:after:bg-contain [&:checked]:after:bg-no-repeat [&:checked]:after:bg-center [&:checked]:after:pointer-events-none": isThemeVariant(p.Variant),
-			}),
+			classes.If(!isThemeVariant(p.Variant), "form-radio h-5 w-5 border-border-default-secondary hover:border-border-default-secondary-hover text-background-accent focus:ring-0 focus:ring-offset-0 cursor-pointer disabled:cursor-not-allowed"),
+			classes.If(isThemeVariant(p.Variant), "relative w-7 h-7 rounded-full border-2 border-transparent cursor-pointer p-0 ring-0 appearance-none bg-none [&:checked]:bg-none [&:checked]:after:content-[''] [&:checked]:after:absolute [&:checked]:after:top-1/2 [&:checked]:after:left-1/2 [&:checked]:after:-translate-x-1/2 [&:checked]:after:-translate-y-1/2 [&:checked]:after:w-5 [&:checked]:after:h-5 [&:checked]:after:bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M15%205.10547L8.33333%2014.5792L5%2011.1841%22%20stroke%3D%22white%22%20stroke-width%3D%221.1%22%2F%3E%3C%2Fsvg%3E')] [&:checked]:after:bg-contain [&:checked]:after:bg-no-repeat [&:checked]:after:bg-center [&:checked]:after:pointer-events-none"),
 			p.Class,
 		),
 		}
@@ -374,7 +370,7 @@ func radioInput(p props.Radio) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 83, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 81, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -392,7 +388,7 @@ func radioInput(p props.Radio) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 85, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 83, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -411,7 +407,7 @@ func radioInput(p props.Radio) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(p.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 88, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 86, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {

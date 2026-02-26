@@ -43,6 +43,13 @@ templ App() {
 		IframeContent: examples.AppWithTableExample(),
 		IframeHeight:  "500px",
 	})
+	@modules.Example(modules.ExampleProps{
+		Title:         "App with Aside Panel",
+		Description:   "App layout with an optional aside panel on the right side. The aside has a fixed width of 400px and appears between the header and footer.",
+		Code:          examples.LoadExample("app_with_aside.templ"),
+		IframeContent: examples.AppWithAsideExample(),
+		IframeHeight:  "500px",
+	})
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "App",
@@ -117,6 +124,16 @@ templ App() {
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the nav element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with nav styles"},
+				{Name: "Data", Type: "string", Default: "", Description: "Alpine.js x-data attribute value for reactive state"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Aside",
+			Description: "Optional fixed-width sidebar component that appears on the right side of the app, next to the Main content area and between the Header and Footer. Has a fixed width of 400px with overflow scrolling.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the aside element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with aside styles"},
 				{Name: "Data", Type: "string", Default: "", Description: "Alpine.js x-data attribute value for reactive state"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 			},

@@ -1027,11 +1027,7 @@ func CardFileInfo(p ...props.CardFileInfo) templ.Component {
 }
 
 func cardClasses(card props.Card) string {
-	return classes.Join(
-		map[string]bool{
-			"bg-background-default-secondary pointer-events-none": card.Disabled,
-		},
-	)
+	return classes.If(card.Disabled, "bg-background-default-secondary pointer-events-none")
 }
 
 func percentageStyle(percent int64, color string) templ.CSSClass {

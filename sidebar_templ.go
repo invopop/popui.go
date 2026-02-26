@@ -284,9 +284,7 @@ func SidebarItem(opts ...props.SidebarItem) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 = []any{tailwind.Merge(
-			classes.Join(map[string]bool{
-				"bg-background-default-secondary": p.Selected,
-			}),
+			classes.If(p.Selected, "bg-background-default-secondary"),
 			p.Class,
 		),
 		}

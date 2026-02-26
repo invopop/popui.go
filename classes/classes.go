@@ -2,42 +2,32 @@
 package classes
 
 import (
+	"slices"
 	"strings"
 )
 
-// Join conditionally joins class names together, mimicking the clsx/classnames behavior.
-// Accepts strings (which are included as-is) and maps (where keys are included if values are truthy).
-// Empty strings are filtered out automatically.
-//
-// Example:
-//
-//	classes.Join("base-class", map[string]bool{"active": isActive, "disabled": isDisabled})
-//	// Returns: "base-class active" (if isActive is true and isDisabled is false)
-func Join(items ...any) string {
-	var classes []string
+// Join will join the list of classes together after first filtering to remove
+// any empty strings. Don't forget that the order of classes matters, classes
+// that come later may override classes that come earlier.
+func Join(items ...string) string {
+	return strings.Join(slices.DeleteFunc(items, func(s string) bool {
+		// remove all empty strings
+		return s == ""
+	}), " ")
+}
 
-	for _, item := range items {
-		switch v := item.(type) {
-		case string:
-			if v != "" {
-				classes = append(classes, v)
-			}
-		case map[string]bool:
-			for class, condition := range v {
-				if condition && class != "" {
-					classes = append(classes, class)
-				}
-			}
-		}
+// If cond is true, returns base, otherwise returns an empty string.
+func If(cond bool, base ...string) string {
+	if cond {
+		return Join(base...)
 	}
-
-	return strings.Join(classes, " ")
+	return ""
 }
 
 // FormField returns common CSS classes for form fields (input, select, textarea).
 // These classes provide consistent styling for border, focus, hover, disabled states, font, caret, and padding.
 func FormField() string {
-	return "font-sans py-1.5 px-2.5 border border-border-default-secondary w-full rounded-lg text-base outline-none text-foreground tracking-tight caret-foreground-accent placeholder:text-foreground-default-tertiary box-border disabled:bg-background-default-secondary hover:enabled:border-border-default-secondary-hover focus:hover:enabled:border-border-selected-bold focus:ring-0 focus:ring-offset-0"
+	return "font-sans py-1.5 pl-2 pr-2 border border-border-default-secondary w-full rounded-lg text-base outline-none text-foreground tracking-tight caret-foreground-accent placeholder:text-foreground-default-tertiary box-border disabled:bg-background-default-secondary hover:enabled:border-border-default-secondary-hover focus:hover:enabled:border-border-selected-bold focus:ring-0 focus:ring-offset-0"
 }
 
 // FormFieldError returns the error styling classes for form fields.
@@ -50,9 +40,7 @@ func FormFieldError() string {
 // When hasError is true, applies critical styling. When false, applies focus styling.
 func FormFieldState(hasError bool) string {
 	return Join(
-		map[string]bool{
-			FormFieldError(): hasError,
-			"focus:border-border-selected-bold focus:shadow-active": !hasError,
-		},
+		If(hasError, FormFieldError()),
+		If(!hasError, "focus:border-border-selected-bold focus:shadow-active"),
 	)
 }

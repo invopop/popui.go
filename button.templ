@@ -116,32 +116,28 @@ func buttonBaseClasses() string {
 }
 
 func buttonClasses(variant string, size string) string {
-	return classes.Join(
-		map[string]bool{
-			// Variant classes
-			"border-0 shadow-none hover:bg-background-default-tertiary-hover hover:shadow-button-default":                                                                                                            variant == props.ButtonVariantTransparent,
-			"border-border-default-secondary bg-background-default-tertiary text-foreground-critical hover:border-transparent hover:bg-background-critical-bold hover:text-foreground-inverse [&_svg]:text-critical": variant == props.ButtonVariantDanger,
-			"bg-background-accent text-foreground-inverse shadow-button-primary hover:bg-background-accent-hover active:bg-background-accent-hover":                                                                  variant == props.ButtonVariantPrimary,
-			"border-0 bg-background-default-tertiary hover:bg-background-default-tertiary-hover":                                                                                                                     variant == props.ButtonVariantSecondary,
-			// Size classes
-			"text-sm rounded":             size == props.ButtonSizeSmall,
-			"py-[5px] px-3 rounded-lg":    size == props.ButtonSizeLarge,
-			"p-[5px] leading-none size-7": size == props.ButtonSizeIcon,
-			// Icon color based on size
-			"[&_svg]:text-icon":               size != props.ButtonSizeIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger,
-			"[&_svg]:text-icon-inverse":       size != props.ButtonSizeIcon && variant == props.ButtonVariantPrimary,
-			"[&_svg]:text-foreground":         size == props.ButtonSizeIcon && variant != props.ButtonVariantPrimary,
-			"[&_svg]:text-foreground-inverse": size == props.ButtonSizeIcon && variant == props.ButtonVariantPrimary,
-		},
+	return tailwind.Merge(
+		// Variant classes
+		classes.If(variant == props.ButtonVariantTransparent, "border-0 shadow-none hover:bg-background-default-tertiary-hover hover:shadow-button-default"),
+		classes.If(variant == props.ButtonVariantDanger, "border-border-default-secondary bg-background-default-tertiary text-foreground-critical hover:border-transparent hover:bg-background-critical-bold hover:text-foreground-inverse [&_svg]:text-critical"),
+		classes.If(variant == props.ButtonVariantPrimary, "bg-background-accent text-foreground-inverse shadow-button-primary hover:bg-background-accent-hover active:bg-background-accent-hover"),
+		classes.If(variant == props.ButtonVariantSecondary, "border-0 bg-background-default-tertiary hover:bg-background-default-tertiary-hover"),
+		// Size classes
+		classes.If(size == props.ButtonSizeSmall, "text-sm rounded"),
+		classes.If(size == props.ButtonSizeLarge, "py-[5px] px-3 rounded-lg"),
+		classes.If(size == props.ButtonSizeIcon, "p-[5px] leading-none size-7"),
+		// Icon color based on size
+		classes.If(size != props.ButtonSizeIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-icon"),
+		classes.If(size != props.ButtonSizeIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-icon-inverse"),
+		classes.If(size == props.ButtonSizeIcon && variant != props.ButtonVariantPrimary, "[&_svg]:text-foreground"),
+		classes.If(size == props.ButtonSizeIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-foreground-inverse"),
 	)
 }
 
 func buttonGroupAlignmentClasses(alignment string) string {
-	return classes.Join(
-		map[string]bool{
-			"justify-start":  alignment == props.ButtonGroupAlignLeft || alignment == "",
-			"justify-center": alignment == props.ButtonGroupAlignCenter,
-			"justify-end":    alignment == props.ButtonGroupAlignRight,
-		},
+	return tailwind.Merge(
+		classes.If(alignment == props.ButtonGroupAlignLeft || alignment == "", "justify-start"),
+		classes.If(alignment == props.ButtonGroupAlignCenter, "justify-center"),
+		classes.If(alignment == props.ButtonGroupAlignRight, "justify-end"),
 	)
 }

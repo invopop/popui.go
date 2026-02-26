@@ -39,27 +39,24 @@ func tagStatusClasses(prp props.TagStatus) string {
 	hasDot := prp.Dot
 	hasLabel := prp.Label != ""
 
-	return classes.Join(
-		map[string]bool{
-			// Padding based on dot and label presence
-			"px-1 py-0.5":     !hasDot || (hasDot && hasLabel),
-			"p-1":             hasDot && !hasLabel,
-			"pl-1.5 pr-[5px]": hasDot && hasLabel,
-			"h-5":             hasLabel,
-
-			// Color variants
-			"bg-background-status-paid text-foreground-status-paid [&>[data-dot]]:bg-icon-status-paid":                                                           prp.Status == "green",
-			"bg-background-status-processing text-foreground-status-processing [&>[data-dot]]:bg-icon-status-processing":                                         prp.Status == "yellow",
-			"bg-background-status-error text-foreground-status-error [&>[data-dot]]:bg-icon-status-error":                                                        prp.Status == "red",
-			"bg-background-status-draft text-foreground-status-draft [&>[data-dot]]:bg-icon-status-draft":                                                        prp.Status == "orange",
-			"bg-background-status-sent text-foreground-status-sent [&>[data-dot]]:bg-icon-status-sent":                                                           prp.Status == "blue",
-			"bg-background-status-registered text-foreground-status-registered [&>[data-dot]]:bg-icon-status-registered":                                         prp.Status == "purple",
-			"bg-sherwood-alpha-10 text-sherwood-60 [&>[data-dot]]:bg-sherwood-50":                                                                                prp.Status == "olive",
-			"bg-background-status-completed text-foreground-status-completed [&>[data-dot]]:bg-icon-status-completed":                                            prp.Status == "teal",
-			"bg-background-status-rejected text-foreground-status-rejected [&>[data-dot]]:bg-icon-status-rejected":                                               prp.Status == "crimson",
-			"bg-background-status-received text-foreground-status-received [&>[data-dot]]:bg-icon-status-received":                                               prp.Status == "steelBlue",
-			"border border-dashed border-border-default-secondary text-foreground-default-tertiary [&>[data-dot]]:bg-icon-status-empty":                          prp.Status == "empty",
-			"bg-background-default-tertiary text-foreground-default-secondary [&>[data-dot]]:border-border-default-secondary [&>[data-dot]]:bg-icon-status-void": prp.Status == "grey",
-		},
+	return tailwind.Merge(
+		// Padding based on dot and label presence
+		classes.If(!hasDot || (hasDot && hasLabel), "px-1 py-0.5"),
+		classes.If(hasDot && !hasLabel, "p-1"),
+		classes.If(hasDot && hasLabel, "pl-1.5 pr-[5px]"),
+		classes.If(hasLabel, "h-5"),
+		// Color variants
+		classes.If(prp.Status == "green", "bg-background-status-paid text-foreground-status-paid [&>[data-dot]]:bg-icon-status-paid"),
+		classes.If(prp.Status == "yellow", "bg-background-status-processing text-foreground-status-processing [&>[data-dot]]:bg-icon-status-processing"),
+		classes.If(prp.Status == "red", "bg-background-status-error text-foreground-status-error [&>[data-dot]]:bg-icon-status-error"),
+		classes.If(prp.Status == "orange", "bg-background-status-draft text-foreground-status-draft [&>[data-dot]]:bg-icon-status-draft"),
+		classes.If(prp.Status == "blue", "bg-background-status-sent text-foreground-status-sent [&>[data-dot]]:bg-icon-status-sent"),
+		classes.If(prp.Status == "purple", "bg-background-status-registered text-foreground-status-registered [&>[data-dot]]:bg-icon-status-registered"),
+		classes.If(prp.Status == "olive", "bg-sherwood-alpha-10 text-sherwood-60 [&>[data-dot]]:bg-sherwood-50"),
+		classes.If(prp.Status == "teal", "bg-background-status-completed text-foreground-status-completed [&>[data-dot]]:bg-icon-status-completed"),
+		classes.If(prp.Status == "crimson", "bg-background-status-rejected text-foreground-status-rejected [&>[data-dot]]:bg-icon-status-rejected"),
+		classes.If(prp.Status == "steelBlue", "bg-background-status-received text-foreground-status-received [&>[data-dot]]:bg-icon-status-received"),
+		classes.If(prp.Status == "empty", "border border-dashed border-border-default-secondary text-foreground-default-tertiary [&>[data-dot]]:bg-icon-status-empty"),
+		classes.If(prp.Status == "grey", "bg-background-default-tertiary text-foreground-default-secondary [&>[data-dot]]:border-border-default-secondary [&>[data-dot]]:bg-icon-status-void"),
 	)
 }

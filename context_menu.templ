@@ -19,7 +19,7 @@ templ ContextMenu(opts ...props.ContextMenu) {
 		class={
 			tailwind.Merge(
 				"relative inline-block",
-				classes.Join(map[string]bool{"flex justify-end": p.RightAlign}),
+				classes.If(p.RightAlign, "flex justify-end"),
 			),
 		}
 		if p.ID != "" {
@@ -48,7 +48,7 @@ templ ContextMenu(opts ...props.ContextMenu) {
 				tailwind.Merge(
 					"context-menu",
 					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background",
-					classes.Join(map[string]bool{"context-menu-right-align": p.RightAlign}),
+					classes.If(p.RightAlign, "context-menu-right-align"),
 					p.Class,
 				),
 			}

@@ -23,11 +23,8 @@ templ Textarea(p ...props.Textarea) {
 			class={ tailwind.Merge(
 					classes.FormField(),
 					classes.FormFieldState(!prp.Error.Empty()),
-					classes.Join(prp.Class,
-						map[string]bool{
-							"font-mono": prp.Monospace,
-						},
-					),
+					classes.If(prp.Monospace, "font-mono"),
+					prp.Class,
 				) }
 			rows={ prp.GetRows() }
 			if prp.Disabled {

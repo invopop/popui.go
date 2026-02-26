@@ -128,11 +128,7 @@ func FlashMessage(opts ...props.FlashMessage) templ.Component {
 }
 
 func flashMessageClasses(msgType string) string {
-	return classes.Join(
-		map[string]bool{
-			"text-foreground-accent": msgType == "success",
-		},
-	)
+	return classes.If(msgType == "success", "text-foreground-accent")
 }
 
 var _ = templruntime.GeneratedTemplate

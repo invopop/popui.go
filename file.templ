@@ -81,9 +81,7 @@ templ FileUpload(p ...props.InputFile) {
 				class={
 					tailwind.Merge(
 						"w-10 rounded-md",
-						classes.Join(map[string]bool{
-							"h-10 object-cover": file.PreviewSquare,
-						}),
+						classes.If(file.PreviewSquare, "h-10 object-cover"),
 					),
 				}
 				src={ file.AvatarURL }

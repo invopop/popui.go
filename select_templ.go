@@ -247,11 +247,9 @@ func Select(p ...props.Select) templ.Component {
 }
 
 func selectHeightClasses(prp props.Select) string {
-	return classes.Join(
-		map[string]bool{
-			"h-8 pr-9":    !prp.Multiple,
-			"h-auto pr-2": prp.Multiple,
-		},
+	return tailwind.Merge(
+		classes.If(!prp.Multiple, "h-8 pr-9"),
+		classes.If(prp.Multiple, "h-auto pr-2"),
 	)
 }
 
