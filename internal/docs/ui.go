@@ -25,6 +25,18 @@ type Group struct {
 // DocsIndex is the index of all documentation pages.
 var groups = []*Group{
 	{
+		Title: "Design System",
+		Path:  "design-system",
+		Pages: []*Page{
+			{
+				Title:    "Icons",
+				Desc:     "Browse the full set of icons available in PopUI. Click any icon to copy its usage code.",
+				Path:     "icons",
+				Template: components.Icons(),
+			},
+		},
+	},
+	{
 		Title: "Layout",
 		Path:  "layout",
 		Pages: []*Page{

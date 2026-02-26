@@ -1,0 +1,23 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ iconCard(name string, icon templ.Component) {
+	@popui.Card(props.Card{
+		Class: "items-center justify-center aspect-square !p-2 cursor-pointer transition-all group hover:border-border-default-secondary",
+		Attributes: templ.Attributes{
+			"x-data": "{copied: false, copy() { navigator.clipboard.writeText('@icons." + name + "()'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}",
+			"@click": "copy()",
+		},
+	}) {
+		<div class="w-6 h-6 flex items-center justify-center text-foreground mb-2 group-hover:text-foreground-accent">
+			@icon
+		</div>
+		<span class="text-xs text-foreground-default-secondary text-center leading-tight" x-show="!copied">{ name }</span>
+		<span class="text-xs text-foreground-success text-center leading-tight" x-show="copied" x-cloak>Copied!</span>
+	}
+}
