@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/a-h/templ"
-	"github.com/invopop/popui.go/icons"
+	"github.com/invopop/icons"
 )
 
 // Icons renders a grid of all available icons by iterating the icons registry.
@@ -14,12 +14,8 @@ func Icons() templ.Component {
 		if _, err := io.WriteString(w, `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px;">`); err != nil {
 			return err
 		}
-		for _, name := range icons.IconsList {
-			fn, ok := icons.Registry[name]
-			if !ok {
-				continue
-			}
-			if err := iconCard(name, fn()).Render(ctx, w); err != nil {
+		for _, def := range icons.Defs {
+			if err := iconCard(def.Name, def.Component).Render(ctx, w); err != nil {
 				return err
 			}
 		}

@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
-	"github.com/invopop/popui.go/icons"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
