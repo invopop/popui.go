@@ -6,7 +6,15 @@ See the [live demo site](https://popui-go.netlify.app/) for code examples and us
 
 ### Building
 
-In order to generate the CSS, the `tailwindcss` application must be installed in your system, and the base [popui](https://github.com/invopop/popui) package must be present in the parent directory of this repo. To generate all the resources, run:
+In order to generate the CSS, the `tailwindcss` application must be installed in your system. In general we recommend using brew for this:
+
+```bash
+brew install tailwindcss
+```
+
+We're not expecting many theme changes, but periodically it may be useful to copy the `tailwind.theme.css` file from the [popui](https://github.com/invopop/popui) project to the root of this one so that resource is available.
+
+To generate all the resources, run:
 
 ```bash
 go generate ./...

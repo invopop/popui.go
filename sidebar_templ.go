@@ -67,7 +67,7 @@ func Sidebar(opts ...props.Sidebar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" :class=\"open && 'max-md:!fixed max-md:!w-[240px] max-md:!visible max-md:!inset-y-0 max-md:!left-0'\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" :class=\"{ 'max-md:!fixed max-md:!w-[240px] max-md:!visible max-md:!inset-y-0 max-md:!left-0': open }\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -116,7 +116,7 @@ func SidebarHeader() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"w-full flex max-md:hidden p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7\" :class=\"open && 'max-md:!flex'\"><button class=\"hidden items-center justify-center size-7 p-[5px] mt-2 cursor-pointer text-foreground-default-secondary hover:text-foreground\" :class=\"open && 'max-md:!flex'\" @click=\"open = false\" aria-label=\"Close sidebar\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"w-full flex max-md:hidden p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7\" :class=\"{ 'max-md:!flex': open }\"><button class=\"hidden items-center justify-center size-7 p-[5px] mt-2 cursor-pointer text-foreground-default-secondary hover:text-foreground\" :class=\"{ 'max-md:!flex': open }\" @click=\"open = false\" aria-label=\"Close sidebar\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

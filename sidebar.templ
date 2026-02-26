@@ -27,7 +27,7 @@ templ Sidebar(opts ...props.Sidebar) {
 					p.Class,
 				),
 			}
-			:class="open && 'max-md:!fixed max-md:!w-[240px] max-md:!visible max-md:!inset-y-0 max-md:!left-0'"
+			:class="{ 'max-md:!fixed max-md:!w-[240px] max-md:!visible max-md:!inset-y-0 max-md:!left-0': open }"
 			{ p.Attrs... }
 		>
 			{ children... }
@@ -52,10 +52,10 @@ templ Sidebar(opts ...props.Sidebar) {
 // is collapsed and shown when the sidebar is toggled open. A close button
 // appears to the left of the content on mobile.
 templ SidebarHeader() {
-	<div class="w-full flex max-md:hidden p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7" :class="open && 'max-md:!flex'">
+	<div class="w-full flex max-md:hidden p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7" :class="{ 'max-md:!flex': open }">
 		<button
 			class="hidden items-center justify-center size-7 p-[5px] mt-2 cursor-pointer text-foreground-default-secondary hover:text-foreground"
-			:class="open && 'max-md:!flex'"
+			:class="{ 'max-md:!flex': open }"
 			@click="open = false"
 			aria-label="Close sidebar"
 		>

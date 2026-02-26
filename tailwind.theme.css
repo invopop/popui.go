@@ -379,12 +379,35 @@
   --color-accent-50: var(--color-base-accent, var(--color-green-50));
   --color-accent-60: color-mix(in srgb, var(--color-accent-50) 84%, black);
   --color-accent-70: color-mix(in srgb, var(--color-accent-50) 68%, black);
-  --color-accent-80: var(--color-base-accent-bg, color-mix(in srgb, var(--color-accent-50) 52%, black));
-  --color-accent-alpha-5: color-mix(in srgb, var(--color-accent-50) 5%, transparent);
-  --color-accent-alpha-10: color-mix(in srgb, var(--color-accent-50) 10%, transparent);
-  --color-accent-alpha-20: color-mix(in srgb, var(--color-accent-50) 20%, transparent);
-  --color-accent-alpha-30: color-mix(in srgb, var(--color-accent-50) 30%, transparent);
-  --color-accent-alpha-40: color-mix(in srgb, var(--color-accent-50) 40%, transparent);
+  --color-accent-80: var(
+    --color-base-accent-bg,
+    color-mix(in srgb, var(--color-accent-50) 52%, black)
+  );
+  --color-accent-alpha-5: color-mix(
+    in srgb,
+    var(--color-accent-50) 5%,
+    transparent
+  );
+  --color-accent-alpha-10: color-mix(
+    in srgb,
+    var(--color-accent-50) 10%,
+    transparent
+  );
+  --color-accent-alpha-20: color-mix(
+    in srgb,
+    var(--color-accent-50) 20%,
+    transparent
+  );
+  --color-accent-alpha-30: color-mix(
+    in srgb,
+    var(--color-accent-50) 30%,
+    transparent
+  );
+  --color-accent-alpha-40: color-mix(
+    in srgb,
+    var(--color-accent-50) 40%,
+    transparent
+  );
 
   /* Neutral */
   --color-neutral-5: var(--color-grey-5);
@@ -602,8 +625,12 @@
   --color-background-selected-default-hover: var(--color-accent-alpha-20);
   --color-background-selected-default-press: var(--color-accent-alpha-30);
   --color-background-selected-inverse: var(--color-neutral-white-alpha-10);
-  --color-background-selected-inverse-hover: var(--color-neutral-white-alpha-20);
-  --color-background-selected-inverse-press: var(--color-neutral-white-alpha-30);
+  --color-background-selected-inverse-hover: var(
+    --color-neutral-white-alpha-20
+  );
+  --color-background-selected-inverse-press: var(
+    --color-neutral-white-alpha-30
+  );
 
   --color-background-accent-default: var(--color-accent-50);
   --color-background-accent-default-hover: var(--color-accent-60);
@@ -637,9 +664,13 @@
   --color-background-status-sent: var(--color-info-alpha-10);
   --color-background-status-received: var(--color-personalization-sky-alpha-10);
   --color-background-status-paid: var(--color-positive-alpha-10);
-  --color-background-status-completed: var(--color-personalization-aqua-alpha-10);
+  --color-background-status-completed: var(
+    --color-personalization-aqua-alpha-10
+  );
   --color-background-status-error: var(--color-critical-alpha-10);
-  --color-background-status-rejected: var(--color-personalization-magenta-alpha-10);
+  --color-background-status-rejected: var(
+    --color-personalization-magenta-alpha-10
+  );
   --color-background-status-void: var(--color-neutral-alpha-10);
 
   /* Border */
@@ -707,57 +738,63 @@
   /* ============================================
      TOKEN ALIASES (default omitted)
      ============================================ */
-  
+
   /* Foreground */
   --color-foreground: var(--color-foreground-default-default);
-  
+
   --color-foreground-inverse: var(--color-foreground-inverse-default);
-  
+
   --color-foreground-accent: var(--color-foreground-accent-default);
   --color-foreground-accent-hover: var(--color-foreground-accent-default-hover);
-  
+
   --color-foreground-selected: var(--color-foreground-selected-default);
-  --color-foreground-selected-hover: var(--color-foreground-selected-default-hover);
-  
+  --color-foreground-selected-hover: var(
+    --color-foreground-selected-default-hover
+  );
+
   --color-foreground-success: var(--color-foreground-success-default);
   --color-foreground-info: var(--color-foreground-info-default);
   --color-foreground-attention: var(--color-foreground-attention-default);
   --color-foreground-warning: var(--color-foreground-warning-default);
   --color-foreground-critical: var(--color-foreground-critical-default);
-  
+
   /* Background */
   --color-background: var(--color-background-default-default);
-  
+
   --color-background-selected: var(--color-background-selected-default);
-  --color-background-selected-hover: var(--color-background-selected-default-hover);
-  --color-background-selected-press: var(--color-background-selected-default-press);
-  
+  --color-background-selected-hover: var(
+    --color-background-selected-default-hover
+  );
+  --color-background-selected-press: var(
+    --color-background-selected-default-press
+  );
+
   --color-background-accent: var(--color-background-accent-default);
   --color-background-accent-hover: var(--color-background-accent-default-hover);
   --color-background-accent-press: var(--color-background-accent-default-press);
-  
+
   --color-background-info: var(--color-background-info-default);
-  
+
   --color-background-success: var(--color-background-success-default);
-  
+
   --color-background-attention: var(--color-background-attention-default);
-  
+
   --color-background-warning: var(--color-background-warning-default);
-  
+
   --color-background-critical: var(--color-background-critical-default);
-  
+
   /* Border */
   --color-border: var(--color-border-default-default);
-  
+
   --color-border-inverse: var(--color-border-inverse-default);
-  
+
   --color-border-selected: var(--color-border-selected-default);
-  
+
   --color-border-warning: var(--color-border-warning-default);
-  
+
   /* Icon */
   --color-icon: var(--color-icon-default-default);
-  
+
   --color-icon-inverse: var(--color-icon-inverse-default);
   --color-icon-accent: var(--color-icon-accent-default);
   --color-icon-selected: var(--color-icon-selected-default);
@@ -777,13 +814,27 @@
   --radius-2xl: 12px;
 
   /* Box Shadow */
-  --shadow-sm:  0 2px 20px 0 rgba(10, 10, 10, 0.04);
-  --shadow-lg:  0 8px 30px 0 rgba(10, 10, 10, 0.12);
-  --shadow-xl:  0 8px 28px -6px rgba(10, 10, 10, 0.12), 0 18px 88px -4px rgba(10, 10, 10, 0.14);
-  --shadow-active: 0px 0px 0px 2px color-mix(in lab, transparent 88%, var(--color-background-accent-default, var(--color-positive-50)));
-  --shadow-button-default: 0 2px 6px -1px rgba(11, 11, 16, 0.04), 0 -2px 4px 0 rgba(11, 11, 16, 0.04) inset;
-  --shadow-button-primary: 0 -4px 4px 0 rgba(11, 11, 16, 0.12) inset, 0 1px 1.5px 0 rgba(255, 255, 255, 0.16) inset, 0 2px 4px -1px rgba(11, 11, 16, 0.08);
-  --shadow-button-pressed: 0 2px 6px 0 rgba(11, 11, 16, 0.16) inset, 0 -2px 5px -2px rgba(255, 255, 255, 0.25) inset;
+  --shadow-sm: 0 2px 20px 0 rgba(10, 10, 10, 0.04);
+  --shadow-lg: 0 8px 30px 0 rgba(10, 10, 10, 0.12);
+  --shadow-xl:
+    0 8px 28px -6px rgba(10, 10, 10, 0.12),
+    0 18px 88px -4px rgba(10, 10, 10, 0.14);
+  --shadow-active: 0px 0px 0px 2px
+    color-mix(
+      in lab,
+      transparent 88%,
+      var(--color-background-accent-default, var(--color-positive-50))
+    );
+  --shadow-button-default:
+    0 2px 6px -1px rgba(11, 11, 16, 0.04),
+    0 -2px 4px 0 rgba(11, 11, 16, 0.04) inset;
+  --shadow-button-primary:
+    0 -4px 4px 0 rgba(11, 11, 16, 0.12) inset,
+    0 1px 1.5px 0 rgba(255, 255, 255, 0.16) inset,
+    0 2px 4px -1px rgba(11, 11, 16, 0.08);
+  --shadow-button-pressed:
+    0 2px 6px 0 rgba(11, 11, 16, 0.16) inset,
+    0 -2px 5px -2px rgba(255, 255, 255, 0.25) inset;
   --shadow-button-dark-pressed: 0 4px 4px -1px rgba(11, 11, 16, 0.16) inset;
   --shadow-avatar: 0 0 0 1px var(--color-border-default-default) inset;
   --shadow-avatar-inverse: 0 0 0 1px var(--color-border-inverse-default) inset;
@@ -799,29 +850,31 @@
 
   /* Font Family */
   --font-sans: Inter, sans-serif;
-  --font-mono: CommitMono, ui-monospace, Menlo, Monaco, Consolas, "Ubuntu Mono", "Roboto Mono", "DejaVu Sans Mono", monospace;
+  --font-mono:
+    CommitMono, ui-monospace, Menlo, Monaco, Consolas, "Ubuntu Mono",
+    "Roboto Mono", "DejaVu Sans Mono", monospace;
 
   /* Typography */
   --text-2xl: 24px;
   --text-2xl--line-height: 32px;
   --text-2xl--letter-spacing: var(--tracking-tightest);
-  
+
   --text-xl: 20px;
   --text-xl--line-height: 28px;
   --text-xl--letter-spacing: var(--tracking-tighter);
-  
+
   --text-lg: 16px;
   --text-lg--line-height: 24px;
   --text-lg--letter-spacing: var(--tracking-tight);
-  
+
   --text-base: 14px;
   --text-base--line-height: 20px;
   --text-base--letter-spacing: var(--tracking-normal);
-  
+
   --text-sm: 12px;
   --text-sm--line-height: 16px;
   --text-sm--letter-spacing: var(--tracking-wide);
-  
+
   --text-xs: 10px;
   --text-xs--line-height: 12px;
   --text-xs--letter-spacing: var(--tracking-wide);
@@ -874,8 +927,12 @@
     --color-background-default-default: var(--color-neutral-90);
     --color-background-default-secondary: var(--color-neutral-white-alpha-5);
     --color-background-default-tertiary: var(--color-neutral-white-alpha-10);
-    --color-background-default-tertiary-hover: var(--color-neutral-white-alpha-20);
-    --color-background-default-tertiary-press: var(--color-neutral-white-alpha-30);
+    --color-background-default-tertiary-hover: var(
+      --color-neutral-white-alpha-20
+    );
+    --color-background-default-tertiary-press: var(
+      --color-neutral-white-alpha-30
+    );
     --color-background-default-bold: var(--color-neutral-100);
     --color-background-default-accent: var(--color-neutral-white-alpha-10);
     --color-background-default-negative: var(--color-neutral-100);
@@ -884,7 +941,7 @@
     --color-background-selected-default-hover: var(--color-accent-alpha-30);
     --color-background-selected-default-press: var(--color-accent-alpha-40);
     --color-background-selected-inverse: var(--color-white-10);
-    --color-background-selected-inverse-hover: var(--color-nwhite-20);
+    --color-background-selected-inverse-hover: var(--color-white-20);
     --color-background-selected-inverse-press: var(--color-white-30);
 
     --color-background-accent-default: var(--color-accent-60);
@@ -917,11 +974,17 @@
     --color-background-status-processing: var(--color-attention-alpha-20);
     --color-background-status-registered: var(--color-personalization-alpha-30);
     --color-background-status-sent: var(--color-info-alpha-30);
-    --color-background-status-received: var(--color-personalization-sky-alpha-20);
+    --color-background-status-received: var(
+      --color-personalization-sky-alpha-20
+    );
     --color-background-status-paid: var(--color-positive-alpha-30);
-    --color-background-status-completed: var(--color-personalization-aqua-alpha-20);
+    --color-background-status-completed: var(
+      --color-personalization-aqua-alpha-20
+    );
     --color-background-status-error: var(--color-critical-alpha-20);
-    --color-background-status-rejected: var(--color-personalization-magenta-alpha-20);
+    --color-background-status-rejected: var(
+      --color-personalization-magenta-alpha-20
+    );
     --color-background-status-void: var(--color-neutral-white-alpha-10);
 
     /* Border */

@@ -51,13 +51,6 @@ templ App(opts ...props.App) {
 				if p.Head != nil {
 					@p.Head
 				}
-				if p.AccentColor != "" {
-					<style>
-						:root {
-							--workspace-accent-color: { p.AccentColor };
-						}
-					</style>
-				}
 			}
 			@Body() {
 				// Main app container uses universal ID for HTMX targeting.
@@ -65,6 +58,9 @@ templ App(opts ...props.App) {
 					id={ AppID }
 					if p.Data != "" {
 						x-data={ p.Data }
+					}
+					if p.AccentColor != "" {
+						data-accent-color={ p.AccentColor }
 					}
 					class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full"
 				>
@@ -104,9 +100,6 @@ templ Main(opts ...props.Main) {
 				}),
 				p.Class,
 			),
-		}
-		if p.Data != "" {
-			x-data={ p.Data }
 		}
 		{ p.Attributes... }
 	>
