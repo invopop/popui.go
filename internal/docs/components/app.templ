@@ -35,6 +35,7 @@ templ App() {
 		Code:          examples.LoadExample("app_with_sidebar.templ"),
 		IframeContent: examples.AppWithSidebarExample(),
 		IframeHeight:  "500px",
+		Stacked:       true,
 	})
 	@modules.Example(modules.ExampleProps{
 		Title:         "App with table and pagination",
@@ -49,6 +50,7 @@ templ App() {
 		Code:          examples.LoadExample("app_with_aside.templ"),
 		IframeContent: examples.AppWithAsideExample(),
 		IframeHeight:  "500px",
+		Stacked:       true,
 	})
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
