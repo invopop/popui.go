@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
 	"strings"
 )
 
@@ -12,18 +13,19 @@ type CodeBlockProps struct {
 	Side     bool
 }
 
+func codeBlockPreClass(side bool) string {
+	return classes.Join(
+		"w-full !border-0 bg-background-default-secondary overflow-hidden font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative",
+		classes.If(side, "rounded-b-xl lg:rounded-b-none lg:rounded-r-xl rounded-tl-none rounded-bl-none"),
+		classes.If(!side, "rounded-xl"),
+	)
+}
+
 templ CodeBlock(props CodeBlockProps) {
 	{{ code := strings.TrimSpace(props.Code) }}
 	if code != "" {
-	{{ preClass := "w-full !border-0 bg-background-default-secondary overflow-hidden font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative" }}
-	{{ if props.Side }}
-		{{ preClass = preClass + " rounded-b-xl lg:rounded-b-none lg:rounded-r-xl rounded-tl-none rounded-bl-none" }}
-	{{ else }}
-		{{ preClass = preClass + " rounded-xl" }}
-	{{ end }}
-	if code != "" {
 		<pre
-			class={ preClass }
+			class={ codeBlockPreClass(props.Side) }
 		>
 			<button
 				type="button"
