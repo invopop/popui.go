@@ -63,7 +63,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><button type=\"button\" class=\"absolute top-2 right-2 cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground\" onclick=\"popui.copyCodeBlock(this)\"><span data-copy-icon-duplicate>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><button type=\"button\" class=\"absolute top-2 right-2 cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground\" onclick=\"popui.copyCodeBlock(this)\" aria-label=\"Copy code\" title=\"Copy code\"><span data-copy-icon-duplicate>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -91,7 +91,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i + 1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 39, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 41, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -131,7 +131,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(code)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 41, Col: 139}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 43, Col: 139}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {

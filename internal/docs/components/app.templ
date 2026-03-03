@@ -13,28 +13,24 @@ templ App() {
 		Description:   "Simple app with a header, main content area, and footer.",
 		Code:          examples.LoadExample("app.templ"),
 		IframeContent: examples.AppExample(),
-		IframeHeight:  "400px",
 	})
 	@modules.Example(modules.ExampleProps{
 		Title:         "Configuration App",
 		Description:   "Simple app with only a basic content area.",
 		Code:          examples.LoadExample("app_config.templ"),
 		IframeContent: examples.AppConfigExample(),
-		IframeHeight:  "400px",
 	})
 	@modules.Example(modules.ExampleProps{
 		Title:         "App Popup",
 		Description:   "App layout with a header and closer button..",
 		Code:          examples.LoadExample("app_popup.templ"),
 		IframeContent: examples.AppPopupExample(),
-		IframeHeight:  "300px",
 	})
 	@modules.Example(modules.ExampleProps{
 		Title:         "App with Sidebar Navigation",
 		Description:   "App layout that includes a sidebar navigation menu alongside the main content area.",
 		Code:          examples.LoadExample("app_with_sidebar.templ"),
 		IframeContent: examples.AppWithSidebarExample(),
-		IframeHeight:  "500px",
 		Stacked:       true,
 	})
 	@modules.Example(modules.ExampleProps{
@@ -42,14 +38,12 @@ templ App() {
 		Description:   "App layout that includes a full width table and pagination in the main content area.",
 		Code:          examples.LoadExample("app_with_table.templ"),
 		IframeContent: examples.AppWithTableExample(),
-		IframeHeight:  "500px",
 	})
 	@modules.Example(modules.ExampleProps{
 		Title:         "App with Aside Panel",
 		Description:   "App layout with an optional aside panel on the right side. The aside has a fixed width of 400px and appears between the header and footer.",
 		Code:          examples.LoadExample("app_with_aside.templ"),
 		IframeContent: examples.AppWithAsideExample(),
-		IframeHeight:  "500px",
 		Stacked:       true,
 	})
 	@modules.Section("API Reference", "api") {

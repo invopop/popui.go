@@ -14,7 +14,6 @@ type ExampleProps struct {
 	Code          string
 	Language      string
 	IframeContent templ.Component // Component to render in iframe for full-page examples
-	IframeHeight  string          // Height of iframe (e.g., "400px", "50vh")
 	Stacked       bool            // When true, preview appears above code instead of side-by-side
 }
 
@@ -40,12 +39,8 @@ func Example(props ExampleProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		language := props.Language
-		height := props.IframeHeight
 		if language == "" {
 			language = "go"
-		}
-		if height == "" {
-			height = "600px"
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-3 w-full\">")
 		if templ_7745c5c3_Err != nil {
@@ -64,7 +59,7 @@ func Example(props ExampleProps) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 28, Col: 89}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 23, Col: 89}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -83,7 +78,7 @@ func Example(props ExampleProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 31, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 26, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -125,7 +120,7 @@ func Example(props ExampleProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 = []any{"flex items-stretch bg-background flex-1 min-w-0",
-				templ.KV("aspect-video", props.Stacked && props.IframeHeight == ""),
+				templ.KV("aspect-video", props.Stacked),
 			}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 			if templ_7745c5c3_Err != nil {
@@ -144,33 +139,20 @@ func Example(props ExampleProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><div class=\"flex items-stretch w-full h-full rounded-lg overflow-hidden\" style=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><div class=\"flex items-stretch w-full h-full rounded-lg overflow-hidden\" x-data=\"{\n\t\t\t\t\tobserver: null,\n\t\t\t\t\tinit() {\n\t\t\t\t\t\tthis.renderIframe();\n\t\t\t\t\t\tif (!this.observer) {\n\t\t\t\t\t\t\tthis.observer = new MutationObserver(() => this.syncDark());\n\t\t\t\t\t\t\tthis.observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });\n\t\t\t\t\t\t}\n\t\t\t\t\t\tthis.$el.addEventListener('alpine:destroy', () => this.destroy(), { once: true });\n\t\t\t\t\t},\n\t\t\t\t\tdestroy() {\n\t\t\t\t\t\tif (this.observer) {\n\t\t\t\t\t\t\tthis.observer.disconnect();\n\t\t\t\t\t\t\tthis.observer = null;\n\t\t\t\t\t\t}\n\t\t\t\t\t},\n\t\t\t\t\trenderIframe() {\n\t\t\t\t\t\tconst iframe = this.$refs.iframe;\n\t\t\t\t\t\tconst doc = iframe.contentDocument || iframe.contentWindow.document;\n\t\t\t\t\t\tdoc.open();\n\t\t\t\t\t\tdoc.write(this.$refs.content.innerHTML);\n\t\t\t\t\t\tdoc.close();\n\t\t\t\t\t\tthis.syncDark();\n\t\t\t\t\t},\n\t\t\t\t\tsyncDark() {\n\t\t\t\t\t\tconst iframe = this.$refs.iframe;\n\t\t\t\t\t\tconst doc = iframe.contentDocument || iframe.contentWindow.document;\n\t\t\t\t\t\tif (doc.documentElement) {\n\t\t\t\t\t\t\tdoc.documentElement.classList.toggle('dark', document.documentElement.classList.contains('dark'));\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\" x-init=\"init()\"><iframe x-ref=\"iframe\" class=\"w-full h-full border-0\" title=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("height: " + height)
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 50, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 82, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" x-data=\"{\n\t\t\t\t\tobserver: null,\n\t\t\t\t\tinit() {\n\t\t\t\t\t\tthis.renderIframe();\n\t\t\t\t\t\tif (!this.observer) {\n\t\t\t\t\t\t\tthis.observer = new MutationObserver(() => this.syncDark());\n\t\t\t\t\t\t\tthis.observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });\n\t\t\t\t\t\t}\n\t\t\t\t\t\tthis.$el.addEventListener('alpine:destroy', () => this.destroy(), { once: true });\n\t\t\t\t\t},\n\t\t\t\t\tdestroy() {\n\t\t\t\t\t\tif (this.observer) {\n\t\t\t\t\t\t\tthis.observer.disconnect();\n\t\t\t\t\t\t\tthis.observer = null;\n\t\t\t\t\t\t}\n\t\t\t\t\t},\n\t\t\t\t\trenderIframe() {\n\t\t\t\t\t\tconst iframe = this.$refs.iframe;\n\t\t\t\t\t\tconst doc = iframe.contentDocument || iframe.contentWindow.document;\n\t\t\t\t\t\tdoc.open();\n\t\t\t\t\t\tdoc.write(this.$refs.content.innerHTML);\n\t\t\t\t\t\tdoc.close();\n\t\t\t\t\t\tthis.syncDark();\n\t\t\t\t\t},\n\t\t\t\t\tsyncDark() {\n\t\t\t\t\t\tconst iframe = this.$refs.iframe;\n\t\t\t\t\t\tconst doc = iframe.contentDocument || iframe.contentWindow.document;\n\t\t\t\t\t\tif (doc.documentElement) {\n\t\t\t\t\t\t\tdoc.documentElement.classList.toggle('dark', document.documentElement.classList.contains('dark'));\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\" x-init=\"init()\"><iframe x-ref=\"iframe\" class=\"w-full h-full border-0\" title=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 88, Col: 25}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"></iframe><template x-ref=\"content\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></iframe><template x-ref=\"content\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -178,31 +160,31 @@ func Example(props ExampleProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</template></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</template></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var10 = []any{"flex-1 min-w-0",
+			var templ_7745c5c3_Var9 = []any{"flex-1 min-w-0",
 				templ.KV("lg:max-w-[50%]", !props.Stacked),
 			}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var10).String())
+			var templ_7745c5c3_Var10 string
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var9).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -214,36 +196,36 @@ func Example(props ExampleProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var12 = []any{"flex flex-col overflow-hidden rounded-xl border border-border-default-secondary",
+			var templ_7745c5c3_Var11 = []any{"flex flex-col overflow-hidden rounded-xl border border-border-default-secondary",
 				templ.KV("lg:flex-row max-h-[800px]", !props.Stacked),
 			}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var12).String())
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var11).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"><div class=\"flex-1 min-w-0\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"><div class=\"flex-1 min-w-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -261,35 +243,35 @@ func Example(props ExampleProps) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = PreviewBox().Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = PreviewBox().Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 = []any{"flex-1 min-w-0",
+			var templ_7745c5c3_Var14 = []any{"flex-1 min-w-0",
 				templ.KV("lg:max-w-[50%]", !props.Stacked),
 			}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var15).String())
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var14).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -301,12 +283,12 @@ func Example(props ExampleProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

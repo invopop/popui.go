@@ -15,8 +15,6 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/invopop/gobl v0.308.0 h1:0AU9/p7/MAXI4O7zATjvrW/0ZfIvrKjzBTBVFcGhUO0=
 github.com/invopop/gobl v0.308.0/go.mod h1:AVq7NPXN8/ob9Iz1eyYdc3kYseZdboMepXRPb2kPBLI=
-github.com/invopop/icons v0.10.0 h1:Mgq9bxb6AJtt3aLc3KhW3pVqDjalmMcKtYXVsdlpMCQ=
-github.com/invopop/icons v0.10.0/go.mod h1:4+y0PC00O/M1wsre0dakpk/jgr0N859lL2/fANnlWfQ=
 github.com/invopop/icons v0.11.0 h1:CrW0nVSTpmw4dltpGoJXwfx+kw07f7CqKxPm+/wqXxY=
 github.com/invopop/icons v0.11.0/go.mod h1:4+y0PC00O/M1wsre0dakpk/jgr0N859lL2/fANnlWfQ=
 github.com/labstack/echo/v4 v4.15.0 h1:hoRTKWcnR5STXZFe9BmYun9AMTNeSbjHi2vtDuADJ24=
