@@ -15,11 +15,15 @@ type CodeBlockProps struct {
 templ CodeBlock(props CodeBlockProps) {
 	{{ code := strings.TrimSpace(props.Code) }}
 	if code != "" {
+	{{ preClass := "w-full !border-0 bg-background-default-secondary overflow-hidden font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative" }}
+	{{ if props.Side }}
+		{{ preClass = preClass + " rounded-b-xl lg:rounded-b-none lg:rounded-r-xl rounded-tl-none rounded-bl-none" }}
+	{{ else }}
+		{{ preClass = preClass + " rounded-xl" }}
+	{{ end }}
+	if code != "" {
 		<pre
-			class={
-			"w-full !border-0 bg-background-default-secondary overflow-hidden font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative rounded-t-none rounded-b-xl",
-			templ.KV("lg:rounded-b-none lg:rounded-r-xl lg:rounded-tl-none lg:rounded-bl-none", props.Side),
-			}
+			class={ preClass }
 		>
 			<button
 				type="button"
