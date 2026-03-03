@@ -24,6 +24,8 @@ templ CodeBlock(props CodeBlockProps) {
 				type="button"
 				class="absolute top-2 right-2 cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground"
 				onclick="popui.copyCodeBlock(this)"
+				aria-label="Copy code"
+				title="Copy code"
 			>
 				<span data-copy-icon-duplicate>
 					@icons.Duplicate()
