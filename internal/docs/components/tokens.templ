@@ -154,15 +154,6 @@ templ Tokens() {
 
 		// Spacing & Layout Section
 		@modules.Section("Spacing & Layout", "spacing") {
-			<div class="mb-8">
-				<h3 class="text-base font-medium text-foreground mb-4">Custom Spacing</h3>
-				<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-					@spacingCard("gap-[5px]", "5px")
-					@spacingCard("gap-18", "4.5rem (72px)")
-					@spacingCard("gap-128", "32rem (512px)")
-				</div>
-			</div>
-
 			<div>
 				<h3 class="text-base font-medium text-foreground mb-4">Border Radius</h3>
 				<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -268,18 +259,6 @@ templ tokenSwatch(props TokenCardProps) {
 				@icons.Placeholder()
 			</div>
 	}
-}
-
-templ spacingCard(className, value string) {
-	<div
-		class="flex flex-col gap-2 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
-		@click="copy()"
-	>
-		<div class="text-sm font-medium text-foreground" x-show="!copied">{ className }</div>
-		<div class="text-sm font-medium text-foreground-success" x-show="copied" x-cloak>Copied</div>
-		<div class="text-xs text-foreground-default-secondary">{ value }</div>
-	</div>
 }
 
 templ radiusCard(name, value string) {
