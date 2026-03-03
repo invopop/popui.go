@@ -650,9 +650,9 @@ func tokenCard(props TokenCardProps) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + props.Class + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('" + props.Class + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 231, Col: 159}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 231, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -868,9 +868,9 @@ func radiusCard(name, value string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('rounded-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('rounded-" + name + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 267, Col: 160}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 267, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -958,9 +958,9 @@ func shadowCard(className, label, description string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 282, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 282, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -1081,9 +1081,9 @@ func fontCard(name, value, sample string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var34 string
-		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('font-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('font-" + name + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 303, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 303, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
@@ -1184,9 +1184,9 @@ func fontWeightCard(className, weight string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var41 string
-		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 318, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 318, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 		if templ_7745c5c3_Err != nil {
@@ -1274,9 +1274,9 @@ func textSizeCard(className, size, lineHeight string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var47 string
-		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 333, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 333, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 		if templ_7745c5c3_Err != nil {
@@ -1377,9 +1377,9 @@ func trackingCard(className, value, textClass string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var54 string
-		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs("copyable('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 350, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 350, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 		if templ_7745c5c3_Err != nil {

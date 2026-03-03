@@ -139,14 +139,14 @@ func Example(props ExampleProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><div class=\"flex items-stretch w-full h-full rounded-lg overflow-hidden\" x-data=\"{\n\t\t\t\t\tobserver: null,\n\t\t\t\t\tinit() {\n\t\t\t\t\t\tthis.renderIframe();\n\t\t\t\t\t\tif (!this.observer) {\n\t\t\t\t\t\t\tthis.observer = new MutationObserver(() => this.syncDark());\n\t\t\t\t\t\t\tthis.observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });\n\t\t\t\t\t\t}\n\t\t\t\t\t\tthis.$el.addEventListener('alpine:destroy', () => this.destroy(), { once: true });\n\t\t\t\t\t},\n\t\t\t\t\tdestroy() {\n\t\t\t\t\t\tif (this.observer) {\n\t\t\t\t\t\t\tthis.observer.disconnect();\n\t\t\t\t\t\t\tthis.observer = null;\n\t\t\t\t\t\t}\n\t\t\t\t\t},\n\t\t\t\t\trenderIframe() {\n\t\t\t\t\t\tconst iframe = this.$refs.iframe;\n\t\t\t\t\t\tconst doc = iframe.contentDocument || iframe.contentWindow.document;\n\t\t\t\t\t\tdoc.open();\n\t\t\t\t\t\tdoc.write(this.$refs.content.innerHTML);\n\t\t\t\t\t\tdoc.close();\n\t\t\t\t\t\tthis.syncDark();\n\t\t\t\t\t},\n\t\t\t\t\tsyncDark() {\n\t\t\t\t\t\tconst iframe = this.$refs.iframe;\n\t\t\t\t\t\tconst doc = iframe.contentDocument || iframe.contentWindow.document;\n\t\t\t\t\t\tif (doc.documentElement) {\n\t\t\t\t\t\t\tdoc.documentElement.classList.toggle('dark', document.documentElement.classList.contains('dark'));\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\" x-init=\"init()\"><iframe x-ref=\"iframe\" class=\"w-full h-full border-0\" title=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><div class=\"flex items-stretch w-full h-full rounded-lg overflow-hidden\" x-data=\"iframePreview\"><iframe x-ref=\"iframe\" class=\"w-full h-full border-0\" title=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 82, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/example.templ`, Line: 50, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

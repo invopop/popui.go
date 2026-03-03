@@ -228,7 +228,7 @@ templ Tokens() {
 templ tokenCard(props TokenCardProps) {
 	<div
 		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + props.Class + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('" + props.Class + "')" }
 		@click="copy()"
 	>
 		if isInverse(props.Name) {
@@ -264,7 +264,7 @@ templ tokenSwatch(props TokenCardProps) {
 templ radiusCard(name, value string) {
 	<div
 		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('rounded-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('rounded-" + name + "')" }
 		@click="copy()"
 	>
 		<div class={ "w-10 h-10 bg-background-default-secondary border border-border rounded-" + name }></div>
@@ -279,7 +279,7 @@ templ radiusCard(name, value string) {
 templ shadowCard(className, label, description string) {
 	<div
 		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('" + className + "')" }
 		@click="copy()"
 	>
 		if isInverse(className) {
@@ -300,7 +300,7 @@ templ shadowCard(className, label, description string) {
 templ fontCard(name, value, sample string) {
 	<div
 		class="flex flex-col gap-2 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('font-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('font-" + name + "')" }
 		@click="copy()"
 	>
 		<div class="flex items-center justify-between">
@@ -315,7 +315,7 @@ templ fontCard(name, value, sample string) {
 templ fontWeightCard(className, weight string) {
 	<div
 		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('" + className + "')" }
 		@click="copy()"
 	>
 		<div class="w-24 flex-shrink-0">
@@ -330,7 +330,7 @@ templ fontWeightCard(className, weight string) {
 templ textSizeCard(className, size, lineHeight string) {
 	<div
 		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('" + className + "')" }
 		@click="copy()"
 	>
 		<div class="w-25 flex-shrink-0">
@@ -347,7 +347,7 @@ templ textSizeCard(className, size, lineHeight string) {
 templ trackingCard(className, value, textClass string) {
 	<div
 		class="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all"
-		x-data={ "{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}" }
+		x-data={ "copyable('" + className + "')" }
 		@click="copy()"
 	>
 		<div class="w-25 flex-shrink-0">

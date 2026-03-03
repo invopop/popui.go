@@ -121,6 +121,7 @@ func Index() templ.Component {
 			Description: "Comprehensive documentation for the PopUI component library.",
 			Scripts: []props.Script{
 				{Src: "/assets/" + assets.Versioned("scripts", "docs.js")},
+				{Src: "/assets/" + assets.Versioned("scripts", "docs-components.js")},
 			},
 			Head: headers(),
 			Data: "docs",
@@ -225,7 +226,7 @@ func headers() templ.Component {
 		var templ_7745c5c3_Var9 templ.SafeURL
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs("/assets/" + assets.Versioned("prism-popui.css"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 47, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 48, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -326,7 +327,7 @@ func article(id, title, description string) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 73, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 74, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -339,7 +340,7 @@ func article(id, title, description string) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 75, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 76, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -583,7 +584,7 @@ func sidebarItem(href, title string) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 119, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 120, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
