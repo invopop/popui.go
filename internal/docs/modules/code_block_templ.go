@@ -52,20 +52,20 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		code := strings.TrimSpace(props.Code)
 		if code != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative w-full h-full\"><div class=\"sticky top-0 z-[2] h-0 flex justify-end pointer-events-none\"><button type=\"button\" class=\"pointer-events-auto cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none mt-2 mr-2 opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground\" onclick=\"navigator.clipboard.writeText(this.getAttribute('data-copy-value'));var b=this;b.querySelector('[data-copy-icon-duplicate]').classList.add('hidden');b.querySelector('[data-copy-icon-success]').classList.remove('hidden');setTimeout(function(){b.querySelector('[data-copy-icon-duplicate]').classList.remove('hidden');b.querySelector('[data-copy-icon-success]').classList.add('hidden')},2000)\" data-copy-value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative w-full h-full\"><div class=\"sticky top-0 z-[2] h-0 flex justify-end pointer-events-none\"><button type=\"button\" class=\"pointer-events-auto cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none mt-2 mr-2 opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground\" x-data=\"copyable\" x-on:click=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(code)
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("copy(%q)", code))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 33, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/modules/code_block.templ`, Line: 33, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" aria-label=\"Copy code\" title=\"Copy code\"><span data-copy-icon-duplicate>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" aria-label=\"Copy code\" title=\"Copy code\"><span x-show=\"!copied\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -73,7 +73,7 @@ func CodeBlock(props CodeBlockProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span> <span class=\"hidden\" data-copy-icon-success>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span> <span x-show=\"copied\" x-cloak>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
