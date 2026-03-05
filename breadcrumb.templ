@@ -15,7 +15,7 @@ templ Breadcrumbs(opts ...props.Breadcrumbs) {
 		}
 		class={
 			tailwind.Merge(
-				"flex items-center gap-1 [&>li:last-child>span:last-child]:hidden",
+				"flex items-center gap-3 [&>li:last-child>span:last-child]:hidden",
 				p.Class,
 			),
 		}
@@ -36,8 +36,8 @@ templ Breadcrumb(opts ...props.Breadcrumb) {
 		}
 		class={
 			tailwind.Merge(
-				"flex items-center gap-1",
-				p.Class,
+			"flex items-center gap-3",
+			p.Class,
 			),
 		}
 	>

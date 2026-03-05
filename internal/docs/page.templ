@@ -59,9 +59,15 @@ templ headers() {
 
 templ getStarted() {
 	@article("getting-started", "Getting Started", "Learn how to install and use PopUI in your projects.") {
-		<p>Welcome to PopUI! This guide will help you get started with installing and using PopUI in your projects.</p>
-		<h2 class="text-xl font-semibold mt-8">Installation</h2>
-		<p>To install PopUI, you can use the following command:</p>
+		@popui.P() {
+			Welcome to PopUI! This guide will help you get started with installing and using PopUI in your projects.
+		}
+		@popui.Title(props.Title{Class: "text-xl mt-8"}) {
+			Installation
+		}
+		@popui.P() {
+			To install PopUI, you can use the following command:
+		}
 		<pre class="language-bash"><code>go get github.com/invopop/popui.go</code></pre>
 	}
 }
@@ -77,12 +83,14 @@ templ article(id, title, description string) {
 	}) {
 		<div class="w-full max-w-[1440px] mx-auto pt-2 pb-16">
 			<div class="space-y-8">
-				<div class="space-y-1.5">
-					<h1 class="text-2xl font-bold">{ title }</h1>
-					<p class="text-lg text-foreground-default-secondary">
-						{ description }
-					</p>
-				</div>
+			<div class="space-y-1.5">
+				@popui.Title(props.Title{Class: "text-2xl font-bold"}) {
+					{ title }
+				}
+				@popui.Description(props.Description{Class: "text-lg"}) {
+					{ description }
+				}
+			</div>
 				{ children... }
 			</div>
 		</div>
@@ -90,11 +98,23 @@ templ article(id, title, description string) {
 }
 
 templ sidebar() {
-	@popui.Sidebar(props.Sidebar{Title: "PopUI Documentation"}) {
+	@popui.Sidebar(props.Sidebar{
+		Title: "PopUI Documentation",
+	}) {
 		@popui.SidebarHeader() {
-			<a href="/">
+			<a href="/" class="flex-1">
 				@popui.PopuiLogo()
 			</a>
+		@popui.Button(props.Button{
+			Variant: props.ButtonVariantTransparent,
+			Size:    props.ButtonSizeIcon,
+			Class:   "-mr-1",
+			Attributes: templ.Attributes{
+				"data-sidebar-hide": "",
+			},
+		}) {
+			@icons.SidebarHide()
+		}
 		}
 		@popui.SidebarContent() {
 			@popui.SidebarSection(props.SidebarSection{Title: "Overview"}) {
