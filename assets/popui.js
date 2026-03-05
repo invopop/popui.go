@@ -180,7 +180,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
   // DOM initialization
   document.addEventListener('DOMContentLoaded', () => {
-    // Sidebar
+    // Legacy sidebar (deprecated Page component)
     const button = document.querySelector(QUERY_SELECTORS.hamburgerButton)
     const sidebar = document.querySelector(QUERY_SELECTORS.sidebar)
     const page = document.querySelector(QUERY_SELECTORS.page)
@@ -202,6 +202,48 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     if (page) {
       page.addEventListener('click', hideSidebar)
+    }
+
+    // Modern sidebar toggle (App + Sidebar components)
+    const popuiSidebar = document.getElementById('popui-sidebar')
+    if (popuiSidebar) {
+      const openSidebar = () => popuiSidebar.classList.add('popui-sidebar-open')
+      const closeSidebar = () => popuiSidebar.classList.remove('popui-sidebar-open')
+      const toggleSidebar = () => popuiSidebar.classList.toggle('popui-sidebar-open')
+      const mql = window.matchMedia('(min-width: 768px)')
+
+      // Open by default at md+ breakpoint
+      if (mql.matches) openSidebar()
+
+      // Toggle button (open sidebar)
+      document.querySelectorAll('[data-sidebar-toggle]').forEach((btn) => {
+        btn.addEventListener('click', toggleSidebar)
+      })
+
+      // Hide button (close sidebar)
+      document.querySelectorAll('[data-sidebar-hide]').forEach((btn) => {
+        btn.addEventListener('click', closeSidebar)
+      })
+
+      // Close on escape (mobile only)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mql.matches) closeSidebar()
+      })
+
+      // Close when clicking outside the sidebar (mobile only)
+      document.addEventListener('click', (e) => {
+        if (mql.matches) return
+        if (!popuiSidebar.classList.contains('popui-sidebar-open')) return
+        if (!popuiSidebar.contains(e.target) && !e.target.closest('[data-sidebar-toggle]')) {
+          closeSidebar()
+        }
+      })
+
+      // Auto-open/close when crossing the md breakpoint
+      mql.addEventListener('change', (e) => {
+        if (e.matches) openSidebar()
+        else closeSidebar()
+      })
     }
 
     // ButtonCopy

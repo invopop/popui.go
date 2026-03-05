@@ -142,6 +142,26 @@ form {
   margin-block-end: 0;
 }
 
+/* Sidebar toggle button — visible only when sidebar is collapsed */
+.popui-sidebar-toggle {
+  display: none;
+}
+:has(#popui-sidebar:not(.popui-sidebar-open)) .popui-sidebar-toggle {
+  display: flex;
+}
+
+/* Sidebar open state */
+#popui-sidebar.popui-sidebar-open {
+  width: 240px;
+  visibility: visible;
+}
+@media (max-width: 767px) {
+  #popui-sidebar.popui-sidebar-open {
+    position: fixed;
+    z-index: 40;
+  }
+}
+
 [x-cloak] {
   display: none !important;
 }

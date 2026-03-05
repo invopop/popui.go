@@ -6,14 +6,17 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Sidebar provides a wrapper for sidebars on admin panels
+// Sidebar provides a wrapper for sidebars on admin panels.
+// Visibility is controlled by the `popui-sidebar-open` class. At the `md`
+// breakpoint and above the class is applied automatically on page load.
+// Below `md` the Header's built-in menu button toggles it.
 templ Sidebar(opts ...props.Sidebar) {
 	{{ p := props.First(opts) }}
 	<nav
 		id="popui-sidebar"
 		class={
 			tailwind.Merge(
-				"h-full w-0 md:w-[240px] invisible md:visible bg-background flex flex-col items-center gap-0 transition-[width] ease-in-out duration-300 border-r border-border [&_ul_li_a]:whitespace-nowrap [&_ul_li_a]:overflow-hidden [&_ul_li_a_div]:shrink-0",
+				"h-full w-0 invisible bg-background flex flex-col items-center gap-0 transition-[width] ease-in-out duration-300 border-r border-border [&_ul_li_a]:whitespace-nowrap [&_ul_li_a]:overflow-hidden [&_ul_li_a_div]:shrink-0",
 				p.Class,
 			),
 		}
@@ -25,7 +28,7 @@ templ Sidebar(opts ...props.Sidebar) {
 
 // SidebarHeader provides a header for the sidebar
 templ SidebarHeader() {
-	<div class="w-full flex p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&_div]:!w-7 [&_div]:!h-7">
+	<div class="w-full flex p-4 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&>div]:!w-7 [&>div]:!h-7">
 		{ children... }
 	</div>
 }

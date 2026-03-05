@@ -38,7 +38,7 @@ func Breadcrumbs(opts ...props.Breadcrumbs) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"flex items-center gap-1 [&>li:last-child>span:last-child]:hidden",
+			"flex items-center gap-3 [&>li:last-child>span:last-child]:hidden",
 			p.Class,
 		),
 		}
@@ -132,7 +132,7 @@ func Breadcrumb(opts ...props.Breadcrumb) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var6 = []any{tailwind.Merge(
-			"flex items-center gap-1",
+			"flex items-center gap-3",
 			p.Class,
 		),
 		}
