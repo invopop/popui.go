@@ -257,7 +257,7 @@ func AppWithSidebarExample() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"w-full flex items-center justify-center min-h-10 p-4 gap-2 border border-dashed border-border-document-png bg-background-document-png rounded-2xl\">This is where the page contents goes.</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"w-full flex items-center justify-center min-h-10 p-4 gap-2 border border-dashed border-border-document-png bg-background-document-png rounded-2xl text-foreground-default-tertiary\">This is where the page contents goes.</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

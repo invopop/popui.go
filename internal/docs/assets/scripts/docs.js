@@ -65,6 +65,22 @@ document.addEventListener("alpine:init", () => {
     },
   }));
 
+  Alpine.data("darkModeToggle", () => ({
+    dark: false,
+    init() {
+      const stored = localStorage.getItem("dark-mode");
+      this.dark = stored !== null
+        ? stored === "true"
+        : document.documentElement.classList.contains("dark");
+      document.documentElement.classList.toggle("dark", this.dark);
+    },
+    toggle() {
+      this.dark = !this.dark;
+      document.documentElement.classList.toggle("dark", this.dark);
+      localStorage.setItem("dark-mode", this.dark);
+    },
+  }));
+
   Alpine.data("copyable", () => ({
     copied: false,
     copy(text) {

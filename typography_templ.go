@@ -130,7 +130,7 @@ func Title(opts ...props.Title) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var6 = []any{tailwind.Merge(
-			"font-sans text-foreground text-lg font-medium",
+			"font-sans text-foreground text-lg font-semibold",
 			p.Class,
 		),
 		}

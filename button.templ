@@ -17,7 +17,7 @@ templ ButtonGroup(opts ...props.ButtonGroup) {
 		}
 		class={
 			tailwind.Merge(
-				"flex items-center gap-2",
+				"flex flex-wrap items-center gap-2",
 				buttonGroupAlignmentClasses(btns.Align),
 				btns.Class,
 			),

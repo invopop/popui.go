@@ -354,7 +354,7 @@ func radioInput(p props.Radio) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		var templ_7745c5c3_Var17 = []any{tailwind.Merge(
-			classes.If(!isThemeVariant(p.Variant), "form-radio h-5 w-5 border-border-default-secondary hover:border-border-default-secondary-hover text-background-accent focus:ring-0 focus:ring-offset-0 cursor-pointer disabled:cursor-not-allowed"),
+			classes.If(!isThemeVariant(p.Variant), "form-radio h-5 w-5 bg-background border-border-default-secondary hover:border-border-default-secondary-hover text-background-accent focus:ring-0 focus:ring-offset-0 cursor-pointer disabled:cursor-not-allowed"),
 			classes.If(isThemeVariant(p.Variant), "relative w-7 h-7 rounded-full border-2 border-transparent cursor-pointer p-0 ring-0 appearance-none bg-none [&:checked]:bg-none [&:checked]:after:content-[''] [&:checked]:after:absolute [&:checked]:after:top-1/2 [&:checked]:after:left-1/2 [&:checked]:after:-translate-x-1/2 [&:checked]:after:-translate-y-1/2 [&:checked]:after:w-5 [&:checked]:after:h-5 [&:checked]:after:bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M15%205.10547L8.33333%2014.5792L5%2011.1841%22%20stroke%3D%22white%22%20stroke-width%3D%221.1%22%2F%3E%3C%2Fsvg%3E')] [&:checked]:after:bg-contain [&:checked]:after:bg-no-repeat [&:checked]:after:bg-center [&:checked]:after:pointer-events-none"),
 			p.Class,
 		),
