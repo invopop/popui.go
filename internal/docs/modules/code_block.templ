@@ -30,7 +30,7 @@ templ CodeBlock(props CodeBlockProps) {
 					type="button"
 					class="pointer-events-auto cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none mt-2 mr-2 opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground"
 					x-data="copyable"
-					x-on:click={ fmt.Sprintf("copy(%q)", code) }
+					@click={ fmt.Sprintf("copy(%q)", code) }
 					aria-label="Copy code"
 					title="Copy code"
 				>
