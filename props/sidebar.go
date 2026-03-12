@@ -6,21 +6,21 @@ import "github.com/a-h/templ"
 type Sidebar struct {
 	Title string
 	Class string
-	Attrs templ.Attributes
+	Attributes templ.Attributes
 }
 
 // SidebarSection Templ component props
 type SidebarSection struct {
-	Title string
-	Class string
-	Attrs templ.Attributes
+	Title      string
+	Class      string
+	Attributes templ.Attributes
 }
 
 // SidebarItem defines the property for a single sidebar navigation item.
 type SidebarItem struct {
-	ID       string
-	Class    string
-	Selected bool
-	Attrs    templ.Attributes
-	Href     templ.SafeURL
+	ID         string
+	Class      string
+	Selected   bool
+	Attributes templ.Attributes
+	Href       templ.SafeURL
 }

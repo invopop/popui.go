@@ -171,7 +171,7 @@ templ sidebarItem(href, title string) {
 	{{ id := slugify(href) }}
 	@popui.SidebarItem(props.SidebarItem{
 		Href: templ.URL("#" + id),
-		Attrs: templ.Attributes{
+		Attributes: templ.Attributes{
 			":class": "{'bg-background-default-secondary': page == '" + id + "'}",
 		},
 	}) {

@@ -303,7 +303,7 @@ func PageHeader(opts ...props.PageHeader) templ.Component {
 					templ_7745c5c3_Err = Breadcrumb(props.Breadcrumb{
 						Label:      i.Name,
 						Href:       i.URL,
-						Attributes: i.Attrs,
+						Attributes: i.Attributes,
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err

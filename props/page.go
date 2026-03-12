@@ -26,11 +26,11 @@ type PageHeader struct {
 }
 
 // PageBreadcrumb defines a Page Breadcrumb to be displayed on a PageHeader.
-// Attrs can be used to add extra properties such as target="_blank"
+// Attributes can be used to add extra properties such as target="_blank"
 type PageBreadcrumb struct {
-	Name  string
-	URL   templ.SafeURL
-	Attrs templ.Attributes
+	Name       string
+	URL        templ.SafeURL
+	Attributes templ.Attributes
 }
 
 // PageContent Templ component props

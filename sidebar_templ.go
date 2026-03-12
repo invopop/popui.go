@@ -63,7 +63,7 @@ func Sidebar(opts ...props.Sidebar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, p.Attrs)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, p.Attributes)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -209,7 +209,7 @@ func SidebarSection(opts ...props.SidebarSection) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, p.Attrs)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, p.Attributes)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -253,7 +253,7 @@ func SidebarSection(opts ...props.SidebarSection) templ.Component {
 }
 
 // SidebarItem provides an individual item for the SidebarSection component.
-// All attributes provided in Attrs will be added to the `<a>` element embedded
+// All attributes provided in Attributes will be added to the `<a>` element embedded
 // inside the `<li>`. If you need to select the item using javascript, apply
 // the `bg-background-default-secondary` class, for static rendering use the
 // `Selected` property.
@@ -351,7 +351,7 @@ func SidebarItem(opts ...props.SidebarItem) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, p.Attrs)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, p.Attributes)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

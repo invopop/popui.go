@@ -17,7 +17,7 @@ templ Sidebar(opts ...props.Sidebar) {
 				p.Class,
 			),
 		}
-		{ p.Attrs... }
+		{ p.Attributes... }
 	>
 		{ children... }
 	</nav>
@@ -48,7 +48,7 @@ templ SidebarSection(opts ...props.SidebarSection) {
 				p.Class,
 			),
 		}
-		{ p.Attrs... }
+		{ p.Attributes... }
 	>
 		if p.Title != "" {
 			<p>{ p.Title }</p>
@@ -60,7 +60,7 @@ templ SidebarSection(opts ...props.SidebarSection) {
 }
 
 // SidebarItem provides an individual item for the SidebarSection component.
-// All attributes provided in Attrs will be added to the `<a>` element embedded
+// All attributes provided in Attributes will be added to the `<a>` element embedded
 // inside the `<li>`. If you need to select the item using javascript, apply
 // the `bg-background-default-secondary` class, for static rendering use the
 // `Selected` property.
@@ -80,7 +80,7 @@ templ SidebarItem(opts ...props.SidebarItem) {
 					p.Class,
 				),
 			}
-			{ p.Attrs... }
+			{ p.Attributes... }
 		>
 			{ children... }
 		</a>

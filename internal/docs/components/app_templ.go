@@ -244,6 +244,89 @@ func App() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "Sidebar",
+				Description: "Navigation sidebar for admin panels. Renders a fixed-width nav element that collapses on small screens and expands on medium+ breakpoints.",
+				Items: []modules.APITableItem{
+					{Name: "Title", Type: "string", Default: "", Description: "Title for the sidebar (currently unused in rendering, reserved for accessibility)"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with sidebar styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "SidebarHeader",
+				Description: "Header area at the top of the sidebar, typically used for a logo or branding. Renders with a bottom border separator.",
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "SidebarContent",
+				Description: "Scrollable content area of the sidebar that grows to fill available space. Contains sidebar sections and navigation items.",
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "SidebarSection",
+				Description: "Groups related navigation items within the sidebar content area. Renders an optional title and a list of sidebar items.",
+				Items: []modules.APITableItem{
+					{Name: "Title", Type: "string", Default: "", Description: "Section heading displayed above the navigation items"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with section styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "SidebarItem",
+				Description: "Individual navigation link within a sidebar section. Renders as an anchor element inside a list item with hover and selected states.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the anchor element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
+					{Name: "Selected", Type: "bool", Default: "false", Description: "When true, applies the active/selected background style"},
+					{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "Navigation URL for the sidebar link"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the anchor element"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "SidebarFooter",
+				Description: "Footer area at the bottom of the sidebar with a top border separator. Useful for user profile links or secondary actions.",
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)

@@ -723,7 +723,7 @@ func sidebarItem(href, title string) templ.Component {
 		})
 		templ_7745c5c3_Err = popui.SidebarItem(props.SidebarItem{
 			Href: templ.URL("#" + id),
-			Attrs: templ.Attributes{
+			Attributes: templ.Attributes{
 				":class": "{'bg-background-default-secondary': page == '" + id + "'}",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
