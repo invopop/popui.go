@@ -4,8 +4,8 @@ import "github.com/a-h/templ"
 
 // Sidebar Templ component props
 type Sidebar struct {
-	Title string
-	Class string
+	Title      string
+	Class      string
 	Attributes templ.Attributes
 }
 
