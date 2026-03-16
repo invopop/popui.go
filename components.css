@@ -225,16 +225,16 @@ form {
   border-color: var(--color-border-inverse-default);
 }
 
-.sidebar-dark > div:first-child {
+.sidebar-dark > .SidebarHeader {
   border-color: var(--color-border-inverse-default);
   color: var(--color-foreground-inverse-default);
 }
 
-.sidebar-dark > div:first-child button svg {
+.sidebar-dark > .SidebarHeader button svg {
   color: var(--color-foreground-inverse-default);
 }
 
-.sidebar-dark > div:last-child {
+.sidebar-dark > .SidebarFooter {
   border-color: var(--color-border-inverse-default);
 }
 

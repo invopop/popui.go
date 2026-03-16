@@ -7,9 +7,11 @@ import (
 )
 
 // Sidebar provides a wrapper for sidebars on admin panels.
-// Visibility is controlled by the `popui-sidebar-open` class. At the `md`
-// breakpoint and above the class is applied automatically on page load.
-// Below `md` the Header's built-in menu button toggles it.
+// At the `md` breakpoint and above the sidebar is visible by default via the
+// `md:w-[240px]` and `md:visible` base classes. JavaScript then adds the
+// `popui-sidebar-ready` class to enable toggle behavior, using the
+// `popui-sidebar-open` class to represent the "open" state once ready. Below
+// `md`, the Header's built-in menu button toggles `popui-sidebar-open`.
 templ Sidebar(opts ...props.Sidebar) {
 	{{ p := props.First(opts) }}
 	<nav
