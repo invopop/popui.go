@@ -178,7 +178,7 @@ templ Header(opts ...props.Header) {
 				@icons.Menu()
 			</button>
         */
-		<div class="flex items-center gap-1">
+		<div class="flex items-center gap-3">
 			if p.Title != nil {
 				@p.Title
 			}
@@ -242,7 +242,7 @@ templ Footer(opts ...props.Footer) {
 		}
 		{ p.Attributes... }
 	>
-		<div class="flex justify-end border-t border-border gap-3 p-4">
+		<div class="flex justify-end border-t border-border gap-3 px-4 py-3">
 			{ children... }
 		</div>
 	</footer>

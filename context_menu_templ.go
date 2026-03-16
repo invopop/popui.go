@@ -134,7 +134,7 @@ func ContextMenu(opts ...props.ContextMenu) templ.Component {
 		}
 		var templ_7745c5c3_Var7 = []any{tailwind.Merge(
 			"context-menu",
-			"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background",
+			"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg",
 			classes.If(p.RightAlign, "context-menu-right-align"),
 			p.Class,
 		),
@@ -173,6 +173,7 @@ func ContextMenu(opts ...props.ContextMenu) templ.Component {
 }
 
 // ContextMenuItem provides a menu item within the context menu.
+// Use Variant "critical" for destructive actions like delete.
 func ContextMenuItem(opts ...props.ContextMenuItem) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -196,7 +197,9 @@ func ContextMenuItem(opts ...props.ContextMenuItem) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var10 = []any{tailwind.Merge(
-			"font-sans font-medium text-base text-foreground w-full rounded-md hover:bg-background-default-secondary",
+			"font-sans font-medium text-base w-full rounded-md hover:bg-background-default-secondary",
+			classes.If(p.Variant == props.ContextMenuItemVariantCritical, "text-foreground-critical [&_svg]:text-icon-critical [&_svg_*[fill]]:!fill-[var(--color-icon-critical)]"),
+			classes.If(p.Variant != props.ContextMenuItemVariantCritical, "text-foreground [&_svg]:text-icon [&_svg_*[fill]]:fill-[var(--color-icon)]"),
 			p.Class,
 		),
 		}
@@ -216,7 +219,7 @@ func ContextMenuItem(opts ...props.ContextMenuItem) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `context_menu.templ`, Line: 68, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `context_menu.templ`, Line: 69, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -248,7 +251,7 @@ func ContextMenuItem(opts ...props.ContextMenuItem) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "><div class=\"w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "><div class=\"w-full px-2 py-1.5 flex items-center gap-1.5 cursor-pointer whitespace-nowrap\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

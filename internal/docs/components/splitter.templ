@@ -1,0 +1,42 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Splitter() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("splitter.templ"),
+	}) {
+		@examples.SplitterExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Horizontal",
+		Description: "Set the Orientation to horizontal for a left/right split layout.",
+		Code:        examples.LoadExample("splitter_horizontal.templ"),
+	}) {
+		@examples.SplitterHorizontalExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Splitter",
+			Description: "Resizable split pane layout with a draggable divider. Requires Alpine.js.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with splitter styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Orientation", Type: "string", Default: "vertical", Description: "Split direction: 'vertical' (top/bottom) or 'horizontal' (left/right)"},
+				{Name: "InitialPercent", Type: "int", Default: "50", Description: "Initial size of the first panel as a percentage"},
+				{Name: "MinPercent", Type: "int", Default: "15", Description: "Minimum size of the first panel as a percentage"},
+				{Name: "MaxPercent", Type: "int", Default: "85", Description: "Maximum size of the first panel as a percentage"},
+				{Name: "First", Type: "templ.Component", Default: "", Description: "Content for the first (top/left) panel"},
+				{Name: "Second", Type: "templ.Component", Default: "", Description: "Content for the second (bottom/right) panel"},
+				{Name: "FirstClass", Type: "string", Default: "", Description: "Additional CSS classes for the first panel"},
+				{Name: "SecondClass", Type: "string", Default: "", Description: "Additional CSS classes for the second panel"},
+			},
+		})
+	}
+}

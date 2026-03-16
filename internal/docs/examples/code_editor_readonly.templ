@@ -1,0 +1,15 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CodeEditorReadonlyExample() {
+	@popui.CodeEditor(props.CodeEditor{
+		Label:    "Generated Query",
+		Value:    "SELECT id, name FROM products\nWHERE price > 100\nORDER BY name ASC;",
+		Readonly: true,
+		Rows:     3,
+	})
+}

@@ -1,0 +1,26 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SplitterExample() {
+	<div class="w-full h-64 border border-border rounded-xl overflow-hidden">
+		@popui.Splitter(props.Splitter{
+			Class:      "h-full",
+			First:      splitterTopPanel(),
+			Second:     splitterBottomPanel(),
+			FirstClass: "p-4",
+			SecondClass: "p-4",
+		})
+	</div>
+}
+
+templ splitterTopPanel() {
+	<p class="text-sm text-foreground-default-secondary">Top panel</p>
+}
+
+templ splitterBottomPanel() {
+	<p class="text-sm text-foreground-default-secondary">Bottom panel</p>
+}

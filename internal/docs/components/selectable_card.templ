@@ -1,0 +1,47 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ SelectableCard() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("selectable_card.templ"),
+	}) {
+		@examples.SelectableCardExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Trailing Content",
+		Description: "Selectable cards support children content rendered on the right side, such as avatar stacks or icons.",
+		Code:        examples.LoadExample("selectable_card_with_content.templ"),
+	}) {
+		@examples.SelectableCardWithContentExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Disabled State",
+		Description: "Cards can be disabled to prevent interaction.",
+		Code:        examples.LoadExample("selectable_card_disabled.templ"),
+	}) {
+		@examples.SelectableCardDisabledExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "SelectableCard",
+			Description: "A card-style radio selection component with label, description, and trailing content slot.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, x-model, etc.)"},
+				{Name: "Label", Type: "string", Default: "", Description: "Primary text displayed in the card"},
+				{Name: "Description", Type: "string", Default: "", Description: "Secondary text shown below the label"},
+				{Name: "Value", Type: "string", Default: "", Description: "Value attribute for the radio input"},
+				{Name: "Name", Type: "string", Default: "", Description: "Groups selectable cards together (radio name attribute)"},
+				{Name: "Checked", Type: "bool", Default: "false", Description: "Whether the card is initially selected"},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Prevents interaction with the card"},
+			},
+		})
+	}
+}

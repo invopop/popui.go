@@ -20,6 +20,13 @@ templ ContextMenu() {
 	}) {
 		@examples.ContextMenuRightAlignedExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Icons",
+		Description: "Menu items with icons and a critical variant for destructive actions",
+		Code:        examples.LoadExample("context_menu_with_icons.templ"),
+	}) {
+		@examples.ContextMenuWithIconsExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "ContextMenu",
@@ -40,6 +47,7 @@ templ ContextMenu() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
+				{Name: "Variant", Type: "string", Default: "", Description: "Visual style variant. Use 'critical' for destructive actions (applies critical text and icon colors)"},
 			},
 		})
 	}

@@ -1,0 +1,20 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+)
+
+templ AvatarStackExample() {
+	@popui.AvatarStack() {
+		@popui.AvatarStackItem() {
+			@icons.Upload()
+		}
+		@popui.AvatarStackItem() {
+			@icons.Tables()
+		}
+		@popui.AvatarStackItem() {
+			@icons.Invopop()
+		}
+	}
+}

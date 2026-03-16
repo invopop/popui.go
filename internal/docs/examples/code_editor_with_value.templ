@@ -1,0 +1,14 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CodeEditorWithValueExample() {
+	@popui.CodeEditor(props.CodeEditor{
+		Label: "SQL Query",
+		Value: "SELECT\n  u.name,\n  u.email,\n  COUNT(o.id) AS order_count\nFROM users u\nLEFT JOIN orders o ON o.user_id = u.id\nWHERE u.active = true\nGROUP BY u.name, u.email\nORDER BY order_count DESC\nLIMIT 10;",
+		Rows:  4,
+	})
+}

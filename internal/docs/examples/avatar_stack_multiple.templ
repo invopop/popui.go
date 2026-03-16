@@ -1,0 +1,47 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+)
+
+templ AvatarStackMultipleExample() {
+	<div class="flex flex-col gap-4">
+		@popui.AvatarStack() {
+			@popui.AvatarStackItem() {
+				@icons.Upload()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Tables()
+			}
+		}
+		@popui.AvatarStack() {
+			@popui.AvatarStackItem() {
+				@icons.Signature()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Stamp()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Send()
+			}
+		}
+		@popui.AvatarStack() {
+			@popui.AvatarStackItem() {
+				@icons.Upload()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Tables()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Signature()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Send()
+			}
+			@popui.AvatarStackItem() {
+				@icons.Invopop()
+			}
+		}
+	</div>
+}

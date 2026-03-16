@@ -13,23 +13,29 @@ templ PageState(opts ...props.PageState) {
 		}
 		class={
 			tailwind.Merge(
-				"flex flex-col items-center justify-center text-foreground-accent gap-4",
+				"flex flex-col items-center justify-center gap-4",
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		if p.Illustration != nil {
-			@p.Illustration
-		}
-		<div class="flex flex-col items-center justify-center space-y-0.5 mb-4">
-			@Subtitle() {
-				{ p.Title }
+		<div class="flex flex-col items-center justify-center gap-1">
+			if p.Illustration != nil {
+				<div class="text-foreground-accent">
+					@p.Illustration
+				</div>
 			}
-			@Description() {
-				{ p.Description }
-			}
+			<div class="flex flex-col items-center justify-center space-y-0.5">
+				<h2 class="text-foreground text-base tracking-normal font-medium">
+					{ p.Title }
+				</h2>
+				@Description() {
+					{ p.Description }
+				}
+			</div>
 		</div>
-		{ children... }
+		<div class="flex items-center gap-2">
+			{ children... }
+		</div>
 	</div>
 }

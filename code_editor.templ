@@ -1,0 +1,108 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// CodeEditor provides a code-style textarea with line numbers and monospace font.
+//
+// The component auto-sizes to fit content up to MaxRows, then scrolls. It uses
+// Alpine.js for line number synchronization and auto-resize behavior.
+//
+// If the Label property is provided, a simple label will be rendered above the editor.
+templ CodeEditor(p ...props.CodeEditor) {
+	{{ prp := props.First(p) }}
+	<div class="flex flex-col gap-2 w-full">
+		if prp.Label != "" {
+			@Label(props.Label{ID: prp.ID}) {
+				{ prp.Label }
+			}
+		}
+		<div
+			class={ tailwind.Merge(
+				"rounded-lg border overflow-clip",
+				classes.If(prp.Error.Empty(), "border-border-default-secondary focus-within:border-border-selected-bold focus-within:shadow-active"),
+				classes.If(!prp.Error.Empty(), "border-border-critical-bold"),
+				classes.If(prp.Disabled, "bg-background-default-secondary"),
+				prp.Class,
+			) }
+			x-data={ "{" +
+				"lines: []," +
+				"minRows: " + prp.GetRows() + "," +
+				"maxRows: " + prp.GetMaxRows() + "," +
+				"lineHeight: 20," +
+				"update() {" +
+				"  const ta = this.$refs.editor;" +
+				"  if (!ta) return;" +
+				"  const count = Math.max(this.minRows, ta.value.split('\\n').length);" +
+				"  this.lines = Array.from({length: count}, (_, i) => i + 1);" +
+				"  ta.style.height = 'auto';" +
+				"  ta.style.height = ta.scrollHeight + 'px';" +
+				"}," +
+				"init() {" +
+				"  this.update();" +
+				"  const popover = this.$el.closest('[popover]');" +
+				"  if (popover) popover.addEventListener('toggle', (e) => { if (e.newState === 'open') this.$nextTick(() => this.update()); });" +
+				"}" +
+			"}" }
+		>
+			<div
+				class="overflow-y-auto overflow-x-auto"
+				style={ "max-height:" + prp.GetMaxRows() + "lh" }
+			>
+				<div class="flex min-w-0">
+					<div
+						class="shrink-0 select-none bg-background-default-secondary border-r border-border-default-secondary py-2 text-right sticky left-0"
+						aria-hidden="true"
+					>
+						<template x-for="line in lines" :key="line">
+							<div
+								class="px-3 font-mono text-sm leading-5 text-foreground-default-tertiary"
+								x-text="line"
+							></div>
+						</template>
+					</div>
+					<textarea
+						x-ref="editor"
+						id={ prp.ID }
+						class={ tailwind.Merge(
+							"flex-1 py-2 px-3 font-mono text-sm leading-5 text-foreground bg-background resize-none outline-none border-0 focus:ring-0 w-full overflow-x-auto",
+							classes.If(prp.Disabled, "bg-background-default-secondary cursor-not-allowed"),
+						) }
+						rows={ prp.GetRows() }
+						wrap="off"
+						x-on:input="update()"
+						if prp.Disabled {
+							disabled
+						}
+						if prp.Autofocus {
+							autofocus
+						}
+						if prp.Readonly {
+							readonly
+						}
+						if prp.Required {
+							required
+						}
+						if prp.Name != "" {
+							name={ prp.Name }
+						}
+						if prp.Placeholder != "" {
+							placeholder={ prp.Placeholder }
+						}
+						{ prp.Attributes... }
+					>
+						if prp.Value != "" {
+							{ prp.Value }
+						}
+					</textarea>
+				</div>
+			</div>
+		</div>
+		if !prp.Error.Empty() {
+			@InputError(prp.Error)
+		}
+	</div>
+}

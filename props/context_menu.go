@@ -30,7 +30,16 @@ type ContextMenuItem struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+
+	// Variant sets the visual style of the menu item.
+	// Use "critical" for destructive actions (e.g., delete).
+	Variant string
 }
+
+const (
+	// ContextMenuItemVariantCritical styles the menu item for destructive actions.
+	ContextMenuItemVariantCritical = "critical"
+)
 
 // GenerateID generates a unique ID for the ContextMenu if none is provided.
 func (cm ContextMenu) GenerateID() ContextMenu {

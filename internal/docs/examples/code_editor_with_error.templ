@@ -1,0 +1,15 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CodeEditorWithErrorExample() {
+	@popui.CodeEditor(props.CodeEditor{
+		Label: "SQL Query",
+		Value: "SELEC * FROM users;",
+		Rows:  3,
+		Error: props.Error{Text: "Syntax error near 'SELEC'"},
+	})
+}

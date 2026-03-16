@@ -1,0 +1,57 @@
+package components
+
+import (
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ CodeEditor() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("code_editor.templ"),
+	}) {
+		@examples.CodeEditorExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Value & Label",
+		Description: "Auto-sizes to fit content up to the maximum number of rows.",
+		Code:        examples.LoadExample("code_editor_with_value.templ"),
+	}) {
+		@examples.CodeEditorWithValueExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Read-only",
+		Description: "Use for displaying code that shouldn't be modified.",
+		Code:        examples.LoadExample("code_editor_readonly.templ"),
+	}) {
+		@examples.CodeEditorReadonlyExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Error",
+		Description: "Displays validation errors below the editor.",
+		Code:        examples.LoadExample("code_editor_with_error.templ"),
+	}) {
+		@examples.CodeEditorWithErrorExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "CodeEditor",
+			Description: "A code-style textarea with line numbers, monospace font, and auto-resize behavior.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the textarea element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with editor styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission"},
+				{Name: "Placeholder", Type: "string", Default: "", Description: "Placeholder text when editor is empty"},
+				{Name: "Value", Type: "string", Default: "", Description: "Initial value of the editor"},
+				{Name: "Label", Type: "string", Default: "", Description: "Label text displayed above the editor"},
+				{Name: "Rows", Type: "int", Default: "4", Description: "Minimum number of visible rows"},
+				{Name: "MaxRows", Type: "int", Default: "20", Description: "Maximum visible rows before scrolling"},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the editor"},
+				{Name: "Readonly", Type: "bool", Default: "false", Description: "Makes the editor read-only"},
+				{Name: "Required", Type: "bool", Default: "false", Description: "Marks the editor as required for form validation"},
+				{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the editor on page load"},
+				{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback"},
+			},
+		})
+	}
+}

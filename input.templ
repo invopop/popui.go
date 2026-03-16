@@ -48,7 +48,8 @@ templ Input(p ...props.Input) {
 					tailwind.Merge(
 						classes.FormField(),
 						classes.FormFieldState(!prp.Error.Empty()),
-						inputSizeClasses(prp),
+						inputVariantClasses(prp),
+					inputSizeClasses(prp),
 						prp.Class,
 					),
 				}
@@ -80,6 +81,15 @@ templ Input(p ...props.Input) {
 			@InputError(prp.Error)
 		}
 	</div>
+}
+
+func inputVariantClasses(p props.Input) string {
+	switch p.Variant {
+	case props.InputVariantGhost:
+		return "!border-0 !shadow-none !ring-0 !bg-transparent"
+	default:
+		return ""
+	}
 }
 
 func inputSizeClasses(p props.Input) string {

@@ -1,0 +1,48 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// AvatarStack displays a group of overlapping avatar items, commonly used
+// to show workflow steps, user groups, or related icons in a compact space.
+templ AvatarStack(p ...props.AvatarStack) {
+	{{ stack := props.First(p) }}
+	<div
+		if stack.ID != "" {
+			id={ stack.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex items-center",
+				stack.Class,
+			),
+		}
+		{ stack.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// AvatarStackItem renders a single item in an AvatarStack with overlap styling.
+// Expects an icon or image as children.
+templ AvatarStackItem(p ...props.AvatarStackItem) {
+	{{ item := props.First(p) }}
+	<div
+		if item.ID != "" {
+			id={ item.ID }
+		}
+		class={
+			tailwind.Merge(
+				"shrink-0 -ml-2 first:-ml-0 rounded-lg bg-background p-0.5",
+				item.Class,
+			),
+		}
+		{ item.Attributes... }
+	>
+		<div class="w-7 h-7 rounded-md bg-background-default-secondary flex items-center justify-center text-foreground-default-bold [&>svg]:w-3.5 [&>svg]:h-3.5 overflow-hidden">
+			{ children... }
+		</div>
+	</div>
+}

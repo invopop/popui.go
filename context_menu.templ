@@ -47,7 +47,7 @@ templ ContextMenu(opts ...props.ContextMenu) {
 			class={
 				tailwind.Merge(
 					"context-menu",
-					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background",
+					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg",
 					classes.If(p.RightAlign, "context-menu-right-align"),
 					p.Class,
 				),
@@ -61,6 +61,7 @@ templ ContextMenu(opts ...props.ContextMenu) {
 }
 
 // ContextMenuItem provides a menu item within the context menu.
+// Use Variant "critical" for destructive actions like delete.
 templ ContextMenuItem(opts ...props.ContextMenuItem) {
 	{{ p := props.First(opts) }}
 	<li
@@ -69,13 +70,15 @@ templ ContextMenuItem(opts ...props.ContextMenuItem) {
 		}
 		class={
 			tailwind.Merge(
-				"font-sans font-medium text-base text-foreground w-full rounded-md hover:bg-background-default-secondary",
+				"font-sans font-medium text-base w-full rounded-md hover:bg-background-default-secondary",
+				classes.If(p.Variant == props.ContextMenuItemVariantCritical, "text-foreground-critical [&_svg]:text-icon-critical [&_svg_*[fill]]:!fill-[var(--color-icon-critical)]"),
+				classes.If(p.Variant != props.ContextMenuItemVariantCritical, "text-foreground [&_svg]:text-icon [&_svg_*[fill]]:fill-[var(--color-icon)]"),
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		<div class="w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap">
+		<div class="w-full px-2 py-1.5 flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
 			{ children... }
 		</div>
 	</li>

@@ -1,0 +1,43 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ AvatarStack() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("avatar_stack.templ"),
+	}) {
+		@examples.AvatarStackExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Multiple Sizes",
+		Description: "Avatar stacks can contain varying numbers of items. Items overlap with negative margin for a compact display.",
+		Code:        examples.LoadExample("avatar_stack_multiple.templ"),
+	}) {
+		@examples.AvatarStackMultipleExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "AvatarStack",
+			Description: "Container for overlapping avatar items, commonly used for workflow steps or user groups.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with stack styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "AvatarStackItem",
+			Description: "A single item within an AvatarStack. Renders with overlap styling and a background container for icons.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+	}
+}

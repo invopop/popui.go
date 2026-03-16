@@ -16,7 +16,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func ContextMenu() templ.Component {
+func AvatarStack() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +49,14 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.AvatarStackExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("context_menu.templ"),
+			Code: examples.LoadExample("avatar_stack.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,16 +73,16 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuRightAlignedExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.AvatarStackMultipleExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Right Aligned",
-			Description: "Align the context menu to the right side of the button",
-			Code:        examples.LoadExample("context_menu_right_aligned.templ"),
+			Title:       "Multiple Sizes",
+			Description: "Avatar stacks can contain varying numbers of items. Items overlap with negative margin for a compact display.",
+			Code:        examples.LoadExample("avatar_stack_multiple.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -99,42 +99,13 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuWithIconsExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "With Icons",
-			Description: "Menu items with icons and a critical variant for destructive actions",
-			Code:        examples.LoadExample("context_menu_with_icons.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "ContextMenu",
-				Description: "The main context menu component that displays a context menu.",
+				Title:       "AvatarStack",
+				Description: "Container for overlapping avatar items, commonly used for workflow steps or user groups.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Optional identifier for the container. If not provided, Alpine.js x-id generates unique IDs automatically for each instance", Required: false},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
-					{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
-					{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
-					{Name: "RightAlign", Type: "bool", Default: "false", Description: "Align the context menu to the right side of the button"},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with stack styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -145,13 +116,12 @@ func ContextMenu() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "ContextMenuItem",
-				Description: "Individual menu item within the context menu.",
+				Title:       "AvatarStackItem",
+				Description: "A single item within an AvatarStack. Renders with overlap styling and a background container for icons.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
-					{Name: "Variant", Type: "string", Default: "", Description: "Visual style variant. Use 'critical' for destructive actions (applies critical text and icon colors)"},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -159,7 +129,7 @@ func ContextMenu() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

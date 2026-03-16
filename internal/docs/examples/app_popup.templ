@@ -31,13 +31,10 @@ templ AppPopupExample() {
 }
 
 templ appPopupTitle() {
-	@popui.Button(props.Button{
-		Variant: props.ButtonVariantTransparent,
-		Class:   "p-2",
-	}) {
+	@popui.Button(props.Button{Size: props.ButtonSizeIcon}) {
 		@icons.Close()
 	}
-	<span>
+	<span class="text-lg font-medium tracking-tight text-foreground">
 		Popup Example
 	</span>
 }

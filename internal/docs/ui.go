@@ -68,6 +68,12 @@ var groups = []*Group{
 				Path:     "separator",
 				Template: components.Separator(),
 			},
+			{
+				Title:    "Splitter",
+				Desc:     "Resizable split pane layout with a draggable divider for two-panel layouts.",
+				Path:     "splitter",
+				Template: components.Splitter(),
+			},
 		},
 	},
 	{
@@ -117,6 +123,12 @@ var groups = []*Group{
 				Template: components.Radio(),
 			},
 			{
+				Title:    "Selectable Card",
+				Desc:     "Card-style radio selection with label, description, and trailing content.",
+				Path:     "selectable-card",
+				Template: components.SelectableCard(),
+			},
+			{
 				Title:    "Select",
 				Desc:     "Dropdown selection control for choosing one or more options from a list.",
 				Path:     "select",
@@ -133,6 +145,12 @@ var groups = []*Group{
 				Desc:     "Multi-line text input field for capturing longer user input with support for labels and validation.",
 				Path:     "textarea",
 				Template: components.Textarea(),
+			},
+			{
+				Title:    "Code Editor",
+				Desc:     "Code-style textarea with line numbers, monospace font, and auto-resize.",
+				Path:     "code-editor",
+				Template: components.CodeEditor(),
 			},
 		},
 	},
@@ -181,6 +199,12 @@ var groups = []*Group{
 				Desc:     "Display user profile images or initials in circular containers.",
 				Path:     "avatar",
 				Template: components.Avatar(),
+			},
+			{
+				Title:    "Avatar Stack",
+				Desc:     "Display overlapping avatar items for workflow steps, user groups, or related icons.",
+				Path:     "avatar-stack",
+				Template: components.AvatarStack(),
 			},
 			{
 				Title:    "Description List",

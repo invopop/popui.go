@@ -16,7 +16,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func ContextMenu() templ.Component {
+func SelectableCard() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +49,14 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SelectableCardExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("context_menu.templ"),
+			Code: examples.LoadExample("selectable_card.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,16 +73,16 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuRightAlignedExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SelectableCardWithContentExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Right Aligned",
-			Description: "Align the context menu to the right side of the button",
-			Code:        examples.LoadExample("context_menu_right_aligned.templ"),
+			Title:       "With Trailing Content",
+			Description: "Selectable cards support children content rendered on the right side, such as avatar stacks or icons.",
+			Code:        examples.LoadExample("selectable_card_with_content.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -99,16 +99,16 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuWithIconsExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SelectableCardDisabledExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "With Icons",
-			Description: "Menu items with icons and a critical variant for destructive actions",
-			Code:        examples.LoadExample("context_menu_with_icons.templ"),
+			Title:       "Disabled State",
+			Description: "Cards can be disabled to prevent interaction.",
+			Code:        examples.LoadExample("selectable_card_disabled.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -126,32 +126,18 @@ func ContextMenu() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "ContextMenu",
-				Description: "The main context menu component that displays a context menu.",
+				Title:       "SelectableCard",
+				Description: "A card-style radio selection component with label, description, and trailing content slot.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Optional identifier for the container. If not provided, Alpine.js x-id generates unique IDs automatically for each instance", Required: false},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
-					{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
-					{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
-					{Name: "RightAlign", Type: "bool", Default: "false", Description: "Align the context menu to the right side of the button"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "ContextMenuItem",
-				Description: "Individual menu item within the context menu.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
-					{Name: "Variant", Type: "string", Default: "", Description: "Visual style variant. Use 'critical' for destructive actions (applies critical text and icon colors)"},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, x-model, etc.)"},
+					{Name: "Label", Type: "string", Default: "", Description: "Primary text displayed in the card"},
+					{Name: "Description", Type: "string", Default: "", Description: "Secondary text shown below the label"},
+					{Name: "Value", Type: "string", Default: "", Description: "Value attribute for the radio input"},
+					{Name: "Name", Type: "string", Default: "", Description: "Groups selectable cards together (radio name attribute)"},
+					{Name: "Checked", Type: "bool", Default: "false", Description: "Whether the card is initially selected"},
+					{Name: "Disabled", Type: "bool", Default: "false", Description: "Prevents interaction with the card"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

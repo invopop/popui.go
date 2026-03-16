@@ -8,6 +8,12 @@ const (
 	InputSizeLarge string = "lg"
 )
 
+// Input variants if not using default.
+const (
+	InputVariantGhost string = "ghost"
+)
+
+
 // Input defines the properties that can be used with input fields.
 type Input struct {
 	ID          string
@@ -18,6 +24,9 @@ type Input struct {
 	Value       string
 	Name        string
 	Label       string
+
+	// Variant defines the input style variant, see the InputVariant constants.
+	Variant string
 
 	// Set the height of the input field, see the InputSize constants.
 	Size string

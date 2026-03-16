@@ -1,0 +1,120 @@
+package popui
+
+import (
+	"fmt"
+
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Splitter provides a resizable split pane layout with a draggable divider.
+// Set First and Second props to the content of each panel.
+// Requires Alpine.js for drag interaction.
+templ Splitter(p ...props.Splitter) {
+	{{ sp := props.First(p) }}
+	<div
+		if sp.ID != "" {
+			id={ sp.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex min-h-0",
+				classes.If(sp.IsHorizontal(), "flex-row"),
+				classes.If(!sp.IsHorizontal(), "flex-col"),
+				sp.Class,
+			),
+		}
+		x-data={ splitterAlpineData(sp) }
+		@mousemove.window="onMouseMove($event)"
+		@mouseup.window="onMouseUp()"
+		{ sp.Attributes... }
+	>
+		<!-- First panel -->
+		<div
+			class={
+				tailwind.Merge(
+					"min-h-0 min-w-0 overflow-auto",
+					sp.FirstClass,
+				),
+			}
+			if sp.IsHorizontal() {
+				:style="'width:' + pct + '%'"
+			} else {
+				:style="'height:' + pct + '%'"
+			}
+		>
+			if sp.First != nil {
+				@sp.First
+			}
+		</div>
+		<!-- Handle -->
+		<div
+			class={
+				tailwind.Merge(
+					"shrink-0 relative flex items-center",
+					classes.If(sp.IsHorizontal(), "cursor-col-resize px-1.5"),
+					classes.If(!sp.IsHorizontal(), "cursor-row-resize py-1.5"),
+				),
+			}
+			@mousedown.prevent="onMouseDown($event)"
+		>
+			<div
+				class={
+					tailwind.Merge(
+						"bg-border transition-colors",
+						classes.If(sp.IsHorizontal(), "w-px h-full"),
+						classes.If(!sp.IsHorizontal(), "w-full h-px"),
+					),
+				}
+				:class="dragging ? 'bg-border-selected-bold' : ''"
+			></div>
+		</div>
+		<!-- Second panel -->
+		<div
+			class={
+				tailwind.Merge(
+					"min-h-0 min-w-0 overflow-auto",
+					sp.SecondClass,
+				),
+			}
+			if sp.IsHorizontal() {
+				:style="'width:' + (100 - pct) + '%'"
+			} else {
+				:style="'height:' + (100 - pct) + '%'"
+			}
+		>
+			if sp.Second != nil {
+				@sp.Second
+			}
+		</div>
+	</div>
+}
+
+func splitterAlpineData(sp props.Splitter) string {
+	axis := "clientY"
+	dimension := "offsetHeight"
+	if sp.IsHorizontal() {
+		axis = "clientX"
+		dimension = "offsetWidth"
+	}
+	return fmt.Sprintf(`{
+		dragging: false,
+		pct: %d,
+		startPos: 0,
+		startPct: 0,
+		onMouseDown(e) {
+			this.dragging = true;
+			this.startPos = e.%s;
+			this.startPct = this.pct;
+		},
+		onMouseMove(e) {
+			if (!this.dragging) return;
+			const container = $el;
+			const delta = e.%s - this.startPos;
+			const p = this.startPct + (delta / container.%s) * 100;
+			this.pct = Math.min(%d, Math.max(%d, p));
+		},
+		onMouseUp() { this.dragging = false; }
+	}`, sp.GetInitialPercent(), axis, axis, dimension, sp.GetMaxPercent(), sp.GetMinPercent())
+}

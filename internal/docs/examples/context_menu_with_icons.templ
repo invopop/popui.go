@@ -1,0 +1,28 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ContextMenuWithIconsExample() {
+	@popui.ContextMenu(props.ContextMenu{
+		RightAlign: true,
+	}) {
+		@popui.ContextMenuItem() {
+			@icons.Edit()
+			Edit
+		}
+		@popui.ContextMenuItem() {
+			@icons.Duplicate()
+			Duplicate
+		}
+		@popui.ContextMenuItem(props.ContextMenuItem{
+			Variant: props.ContextMenuItemVariantCritical,
+		}) {
+			@icons.Delete()
+			Delete
+		}
+	}
+}

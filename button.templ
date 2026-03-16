@@ -28,6 +28,12 @@ templ ButtonGroup(opts ...props.ButtonGroup) {
 	</div>
 }
 
+// ButtonGroupDivider renders a vertical divider line for separating
+// groups of buttons within a ButtonGroup.
+templ ButtonGroupDivider() {
+	<div class="w-px h-5 bg-border self-center shrink-0"></div>
+}
+
 // Button provides a button or anchor element styled as a button.
 // If the Anchor property is set, it renders an <a> tag, otherwise a <button> tag.
 // Supports sizes: "sm", "md" (default), "lg", and "icon"

@@ -16,7 +16,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func ContextMenu() templ.Component {
+func Splitter() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +49,14 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SplitterExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("context_menu.templ"),
+			Code: examples.LoadExample("splitter.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,16 +73,16 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuRightAlignedExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SplitterHorizontalExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Right Aligned",
-			Description: "Align the context menu to the right side of the button",
-			Code:        examples.LoadExample("context_menu_right_aligned.templ"),
+			Title:       "Horizontal",
+			Description: "Set the Orientation to horizontal for a left/right split layout.",
+			Code:        examples.LoadExample("splitter_horizontal.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -99,59 +99,21 @@ func ContextMenu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.ContextMenuWithIconsExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "With Icons",
-			Description: "Menu items with icons and a critical variant for destructive actions",
-			Code:        examples.LoadExample("context_menu_with_icons.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "ContextMenu",
-				Description: "The main context menu component that displays a context menu.",
+				Title:       "Splitter",
+				Description: "Resizable split pane layout with a draggable divider. Requires Alpine.js.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Optional identifier for the container. If not provided, Alpine.js x-id generates unique IDs automatically for each instance", Required: false},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
-					{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
-					{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
-					{Name: "RightAlign", Type: "bool", Default: "false", Description: "Align the context menu to the right side of the button"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "ContextMenuItem",
-				Description: "Individual menu item within the context menu.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
-					{Name: "Variant", Type: "string", Default: "", Description: "Visual style variant. Use 'critical' for destructive actions (applies critical text and icon colors)"},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with splitter styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+					{Name: "Orientation", Type: "string", Default: "vertical", Description: "Split direction: 'vertical' (top/bottom) or 'horizontal' (left/right)"},
+					{Name: "InitialPercent", Type: "int", Default: "50", Description: "Initial size of the first panel as a percentage"},
+					{Name: "MinPercent", Type: "int", Default: "15", Description: "Minimum size of the first panel as a percentage"},
+					{Name: "MaxPercent", Type: "int", Default: "85", Description: "Maximum size of the first panel as a percentage"},
+					{Name: "First", Type: "templ.Component", Default: "", Description: "Content for the first (top/left) panel"},
+					{Name: "Second", Type: "templ.Component", Default: "", Description: "Content for the second (bottom/right) panel"},
+					{Name: "FirstClass", Type: "string", Default: "", Description: "Additional CSS classes for the first panel"},
+					{Name: "SecondClass", Type: "string", Default: "", Description: "Additional CSS classes for the second panel"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -159,7 +121,7 @@ func ContextMenu() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
