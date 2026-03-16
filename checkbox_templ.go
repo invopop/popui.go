@@ -281,7 +281,7 @@ func checkboxInput(p props.Checkbox) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		isSwitch := p.Variant == props.CheckboxVariantSwitch
 		var templ_7745c5c3_Var16 = []any{tailwind.Merge(
-			classes.If(!isSwitch, "form-checkbox w-4 h-4 text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30"),
+			classes.If(!isSwitch, "form-checkbox w-4 h-4 bg-background text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30"),
 			classes.If(isSwitch, "opacity-0 w-0 h-0"),
 			classes.If(!isSwitch && p.Description != "", "mt-0.5"),
 			p.Class,

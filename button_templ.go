@@ -40,7 +40,7 @@ func ButtonGroup(opts ...props.ButtonGroup) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		btns := props.First(opts)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"flex items-center gap-2",
+			"flex flex-wrap items-center gap-2",
 			buttonGroupAlignmentClasses(btns.Align),
 			btns.Class,
 		),

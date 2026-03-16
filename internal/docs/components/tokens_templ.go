@@ -645,20 +645,20 @@ func tokenCard(props TokenCardProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + props.Class + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("copy('" + props.Class + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 231, Col: 159}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 232, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" @click=\"copy()\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -863,20 +863,20 @@ func radiusCard(name, value string) templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('rounded-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("copy('rounded-" + name + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 267, Col: 160}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 268, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" @click=\"copy()\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -953,20 +953,20 @@ func shadowCard(className, label, description string) templ.Component {
 			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all overflow-hidden\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("copy('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 282, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 283, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" @click=\"copy()\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1076,20 +1076,20 @@ func fontCard(name, value, sample string) templ.Component {
 			templ_7745c5c3_Var33 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"flex flex-col gap-2 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"flex flex-col gap-2 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var34 string
-		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('font-" + name + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs("copy('font-" + name + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 303, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 304, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\" @click=\"copy()\"><div class=\"flex items-center justify-between\"><div class=\"text-sm font-medium text-foreground\" x-show=\"!copied\">font-")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\"><div class=\"flex items-center justify-between\"><div class=\"text-sm font-medium text-foreground\" x-show=\"!copied\">font-")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1179,20 +1179,20 @@ func fontWeightCard(className, weight string) templ.Component {
 			templ_7745c5c3_Var40 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var41 string
-		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs("copy('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 318, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 319, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\" @click=\"copy()\"><div class=\"w-24 flex-shrink-0\"><div class=\"text-sm font-medium text-foreground\" x-show=\"!copied\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\"><div class=\"w-24 flex-shrink-0\"><div class=\"text-sm font-medium text-foreground\" x-show=\"!copied\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1269,20 +1269,20 @@ func textSizeCard(className, size, lineHeight string) templ.Component {
 			templ_7745c5c3_Var46 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var47 string
-		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs("copy('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 333, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 334, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "\" @click=\"copy()\"><div class=\"w-25 flex-shrink-0\"><div class=\"text-sm font-medium text-foreground\" x-show=\"!copied\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "\"><div class=\"w-25 flex-shrink-0\"><div class=\"text-sm font-medium text-foreground\" x-show=\"!copied\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1372,20 +1372,20 @@ func trackingCard(className, value, textClass string) templ.Component {
 			templ_7745c5c3_Var53 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<div class=\"flex items-center gap-4 p-4 rounded-xl border border-border hover:border-border-default-secondary cursor-pointer transition-all\" x-data=\"copyable\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var54 string
-		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs("{copied: false, copy() { navigator.clipboard.writeText('" + className + "'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}")
+		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs("copy('" + className + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 350, Col: 157}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/components/tokens.templ`, Line: 351, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "\" @click=\"copy()\"><div class=\"w-25 flex-shrink-0\"><div class=\"text-sm font-medium text-foreground whitespace-nowrap\" x-show=\"!copied\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "\"><div class=\"w-25 flex-shrink-0\"><div class=\"text-sm font-medium text-foreground whitespace-nowrap\" x-show=\"!copied\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

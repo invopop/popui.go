@@ -1,6 +1,7 @@
 package popui
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/htmx"
 	"github.com/invopop/popui.go/props"
@@ -71,7 +72,7 @@ templ appBody(p props.App) {
 		if p.AccentColor != "" {
 			data-accent-color={ p.AccentColor }
 		}
-		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full bg-background"
+		class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr_auto] w-full h-full [&_nav]:col-start-1 [&_nav]:row-span-full bg-background text-foreground"
 	>
 		{ children... }
 	</div>
@@ -173,12 +174,8 @@ templ Header(opts ...props.Header) {
 		}
 		{ p.Attributes... }
 	>
-		/* TODO: add menu button
-			<button class="block p-[5px] mr-2 md:hidden">
-				@icons.Menu()
-			</button>
-        */
-		<div class="flex items-center gap-1">
+		<div class="flex items-center gap-3">
+			@headerMenuButton()
 			if p.Title != nil {
 				@p.Title
 			}
@@ -220,6 +217,20 @@ templ Aside(opts ...props.Aside) {
 	>
 		{ children... }
 	</aside>
+}
+
+// headerMenuButton renders a menu button visible only when the sidebar is
+// collapsed. It adds the `popui-sidebar-open` class on the sidebar element.
+templ headerMenuButton() {
+	@Button(props.Button{
+		Size:  props.ButtonSizeIcon,
+		Class: "popui-sidebar-toggle -ml-2",
+		Attributes: templ.Attributes{
+			"data-sidebar-toggle": "",
+		},
+	}) {
+		@icons.Menu()
+	}
 }
 
 // Footer provides a footer to be used inside the App with contents

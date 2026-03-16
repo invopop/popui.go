@@ -15,7 +15,7 @@ type CodeBlockProps struct {
 
 func codeBlockPreClass(side bool) string {
 	return classes.Join(
-		"w-full !border-0 bg-background-default-secondary overflow-hidden font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6] relative",
+		"w-full h-full !border-0 bg-background-default-secondary font-mono text-[13px] tracking-[-0.039px] m-0 leading-[1.6]",
 		classes.If(side, "rounded-b-xl lg:rounded-b-none lg:rounded-r-xl rounded-tl-none rounded-bl-none"),
 		classes.If(!side, "rounded-xl"),
 	)
@@ -24,31 +24,35 @@ func codeBlockPreClass(side bool) string {
 templ CodeBlock(props CodeBlockProps) {
 	{{ code := strings.TrimSpace(props.Code) }}
 	if code != "" {
-		<pre
-			class={ codeBlockPreClass(props.Side) }
-		>
-			<button
-				type="button"
-				class="absolute top-2 right-2 cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground"
-				onclick="popui.copyButtonValue(this)"
-				data-copy-value={ code }
-				aria-label="Copy code"
-				title="Copy code"
-			>
-				<span data-copy-icon-duplicate>
-					@icons.Duplicate()
-				</span>
-				<span class="hidden" data-copy-icon-success>
-					@icons.Tick()
-				</span>
-			</button>
-			<div class="flex gap-[12px] p-2">
-				<div class="flex flex-col text-right w-[16px] text-foreground-default-tertiary shrink-0 select-none">
-					for i := range strings.Split(code, "\n") {
-						<span>{ fmt.Sprint(i + 1) }</span>
-					}
-				</div><code class={ "flex-1 min-w-0 overflow-x-auto block p-0 bg-transparent border-0 rounded-none language-" + props.Language }>{ code }</code>
+		<div class="relative w-full h-full">
+			<div class="sticky top-0 z-[2] h-0 flex justify-end pointer-events-none">
+				<button
+					type="button"
+					class="pointer-events-auto cursor-pointer inline-flex items-center justify-center p-[5px] leading-none size-7 rounded-md border-0 shadow-none mt-2 mr-2 opacity-30 hover:opacity-100 transition-opacity hover:bg-background-default-tertiary-hover text-foreground"
+					x-data="copyable"
+					@click={ fmt.Sprintf("copy(%q)", code) }
+					aria-label="Copy code"
+					title="Copy code"
+				>
+					<span x-show="!copied">
+						@icons.Duplicate()
+					</span>
+					<span x-show="copied" x-cloak>
+						@icons.Tick()
+					</span>
+				</button>
 			</div>
-		</pre>
+			<pre
+				class={ codeBlockPreClass(props.Side) }
+			>
+				<div class="flex gap-[12px] p-2">
+					<div class="flex flex-col text-right w-[16px] text-foreground-default-tertiary shrink-0 select-none">
+						for i := range strings.Split(code, "\n") {
+							<span>{ fmt.Sprint(i + 1) }</span>
+						}
+					</div><code class={ "flex-1 min-w-0 block p-0 bg-transparent border-0 rounded-none language-" + props.Language }>{ code }</code>
+				</div>
+			</pre>
+		</div>
 	}
 }

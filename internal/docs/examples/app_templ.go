@@ -140,7 +140,7 @@ func AppExample() templ.Component {
 						return nil
 					})
 					templ_7745c5c3_Err = popui.Block(props.Block{
-						Class: "items-center justify-center border border-dashed border-border-document-png bg-background-document-png rounded-2xl",
+						Class: "items-center justify-center border border-dashed border-border-document-png bg-background-document-png rounded-2xl text-foreground-default-tertiary",
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err

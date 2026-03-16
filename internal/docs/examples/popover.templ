@@ -15,11 +15,13 @@ templ PopoverExample() {
 		ID: "example-popover",
 	}) {
 		@popui.Block() {
-			<h2>Modal Title</h2>
-			<p>
+			@popui.Title() {
+				Modal Title
+			}
+			@popui.P() {
 				This is a centered modal popover using the HTML popover API.
 				It displays content in the center of the screen with a backdrop overlay.
-			</p>
+			}
 			@popui.ButtonGroup(props.ButtonGroup{Align: "right"}) {
 				@popui.Button(props.Button{
 					Variant:             props.ButtonVariantSecondary,

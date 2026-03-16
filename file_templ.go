@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
@@ -52,7 +53,7 @@ func fileInput(file props.InputFile, class string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(file.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 13, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 14, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -107,7 +108,7 @@ func fileInput(file props.InputFile, class string) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(file.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 33, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 34, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -126,7 +127,7 @@ func fileInput(file props.InputFile, class string) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(file.Accept)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 36, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 37, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -145,7 +146,7 @@ func fileInput(file props.InputFile, class string) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(file.Capture)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 39, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 40, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -208,7 +209,7 @@ func InputFile(p ...props.InputFile) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(file.ID + "-wrapper")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 49, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 50, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -304,7 +305,7 @@ func FileUpload(p ...props.InputFile) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(file.ID + "-wrapper")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 69, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 70, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -370,7 +371,7 @@ func FileUpload(p ...props.InputFile) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(file.AvatarURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 87, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 88, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -383,7 +384,7 @@ func FileUpload(p ...props.InputFile) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(file.AvatarAlt)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 88, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 89, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -394,25 +395,33 @@ func FileUpload(p ...props.InputFile) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"flex h-10 w-10 items-center justify-center rounded-md bg-background-default-secondary border border-dashed border-border-default-secondary bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjI0ODUgMy4yNDg3NUMzLjA3ODY4IDMuNDE4NTggMi45NDk5NSAzLjcxMzkzIDIuOTQ5OTUgNC4yMzAyVjExLjc5MDJDMi45NDk5NSAxMi4yODc2IDMuMDY5NDYgMTIuNTggMy4yMzAwOSAxMi43NTI2TDguMzk2MDQgNy41NzcwM0w4LjM5NjEgNy41NzY5OEM4LjYwNzg3IDcuMzY0NzYgOC44NTk0MSA3LjE5NjQgOS4xMzYzMyA3LjA4MTUyQzkuNDEzMjcgNi45NjY2NCA5LjcxMDE1IDYuOTA3NSAxMC4wMSA2LjkwNzVDMTAuMzA5OCA2LjkwNzUgMTAuNjA2NyA2Ljk2NjY0IDEwLjg4MzYgNy4wODE1MkMxMS4xNjA2IDcuMTk2NDEgMTEuNDEyMSA3LjM2NDc5IDExLjYyMzkgNy41NzcwM0wxMy4wNyA5LjAyMzA3VjQuMjMwMkMxMy4wNyAzLjcxMzkzIDEyLjk0MTIgMy40MTg1OCAxMi43NzE0IDMuMjQ4NzVDMTIuNjAxNiAzLjA3ODkyIDEyLjMwNjIgMi45NTAyIDExLjc5IDIuOTUwMkg0LjIyOTk1QzMuNzEzNjkgMi45NTAyIDMuNDE4MzMgMy4wNzg5MiAzLjI0ODUgMy4yNDg3NVpNMTEuNzkgMTMuMDcwMkg0LjMyNTk0TDkuMTAzODYgOC4yODM0M0w5LjEwMzkxIDguMjgzMzhDOS4yMjI4IDguMTY0MjMgOS4zNjQwMyA4LjA2OTcgOS41MTk1MSA4LjAwNTJDOS42NzQ5OCA3Ljk0MDcgOS44NDE2NSA3LjkwNzUgMTAuMDEgNy45MDc1QzEwLjE3ODMgNy45MDc1IDEwLjM0NSA3Ljk0MDcgMTAuNTAwNCA4LjAwNTJDMTAuNjU1OSA4LjA2OTcgMTAuNzk3MSA4LjE2NDIzIDEwLjkxNiA4LjI4MzM4TDEwLjkxNjQgOC4yODM3NkwxMy4wNyAxMC40MzczVjExLjc5MDJDMTMuMDcgMTIuMzA2NSAxMi45NDEyIDEyLjYwMTggMTIuNzcxNCAxMi43NzE2QzEyLjYwMTYgMTIuOTQxNSAxMi4zMDYyIDEzLjA3MDIgMTEuNzkgMTMuMDcwMlpNMTQuMDcgMTEuNzkwMlYxMC4yMzUxVjEwLjIyNTNWNC4yMzAyQzE0LjA3IDMuNTU5NzkgMTMuOTAyIDIuOTY1MTUgMTMuNDc4NSAyLjU0MTY0QzEzLjA1NSAyLjExODE0IDEyLjQ2MDQgMS45NTAyIDExLjc5IDEuOTUwMkg0LjIyOTk1QzMuNTU5NTUgMS45NTAyIDIuOTY0OSAyLjExODE0IDIuNTQxNCAyLjU0MTY0QzIuMTE3ODkgMi45NjUxNSAxLjk0OTk1IDMuNTU5NzkgMS45NDk5NSA0LjIzMDJWMTEuNzkwMkMxLjk0OTk1IDEyLjQ2MDYgMi4xMTc4OSAxMy4wNTUyIDIuNTQxNCAxMy40Nzg3QzIuOTY0OSAxMy45MDIzIDMuNTU5NTUgMTQuMDcwMiA0LjIyOTk1IDE0LjA3MDJIMTEuNzlDMTIuNDYwNCAxNC4wNzAyIDEzLjA1NSAxMy45MDIzIDEzLjQ3ODUgMTMuNDc4N0MxMy45MDIgMTMuMDU1MiAxNC4wNyAxMi40NjA2IDE0LjA3IDExLjc5MDJaTTQuNzcxNTIgNS42NjY3N0M0Ljk4MDYzIDUuNDU3NjcgNS4yNjQyMyA1LjM0MDE5IDUuNTU5OTUgNS4zNDAxOUM1Ljg1NTY2IDUuMzQwMTkgNi4xMzkyNyA1LjQ1NzY3IDYuMzQ4MzcgNS42NjY3N0M2LjU1NzQ3IDUuODc1ODcgNi42NzQ5NSA2LjE1OTQ4IDYuNjc0OTUgNi40NTUxOUM2LjY3NDk1IDYuNzUwOTEgNi41NTc0NyA3LjAzNDUyIDYuMzQ4MzcgNy4yNDM2MkM2LjEzOTI3IDcuNDUyNzIgNS44NTU2NiA3LjU3MDE5IDUuNTU5OTUgNy41NzAxOUM1LjI2NDIzIDcuNTcwMTkgNC45ODA2MyA3LjQ1MjcyIDQuNzcxNTIgNy4yNDM2MkM0LjU2MjQyIDcuMDM0NTIgNC40NDQ5NSA2Ljc1MDkxIDQuNDQ0OTUgNi40NTUxOUM0LjQ0NDk1IDYuMTU5NDggNC41NjI0MiA1Ljg3NTg3IDQuNzcxNTIgNS42NjY3N1oiIGZpbGw9IiMwMzA3MTIiLz4KPC9zdmc+Cg==')] bg-no-repeat bg-center\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"flex h-10 w-10 items-center justify-center rounded-md bg-background-default-secondary border border-dashed border-border-default-secondary text-foreground-default-tertiary\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = icons.Picture().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<span class=\"flex-1 text-base text-foreground font-medium\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"flex-1 text-base text-foreground font-medium\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(file.Text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 93, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `file.templ`, Line: 96, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -428,7 +437,7 @@ func FileUpload(p ...props.InputFile) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "Upload")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "Upload")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -453,7 +462,7 @@ func FileUpload(p ...props.InputFile) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

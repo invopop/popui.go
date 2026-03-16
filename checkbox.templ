@@ -81,7 +81,7 @@ templ checkboxInput(p props.Checkbox) {
 		type="checkbox"
 		class={
 			tailwind.Merge(
-				classes.If(!isSwitch, "form-checkbox w-4 h-4 text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30"),
+				classes.If(!isSwitch, "form-checkbox w-4 h-4 bg-background text-background-accent rounded border border-border-default-secondary hover:border-border-default-secondary-hover focus:text-background-accent focus:ring-0 focus:ring-offset-0 disabled:opacity-30"),
 				classes.If(isSwitch, "opacity-0 w-0 h-0"),
 				classes.If(!isSwitch && p.Description != "", "mt-0.5"),
 				p.Class,

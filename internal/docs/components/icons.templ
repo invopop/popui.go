@@ -10,8 +10,8 @@ templ iconCard(name string, icon templ.Component) {
 	@popui.Card(props.Card{
 		Class: "items-center justify-center aspect-square !p-2 cursor-pointer transition-all group hover:border-border-default-secondary",
 		Attributes: templ.Attributes{
-			"x-data": "{copied: false, copy() { navigator.clipboard.writeText('@icons." + name + "()'); this.copied = true; setTimeout(() => this.copied = false, 1500); }}",
-			"@click": "copy()",
+			"x-data": "copyable",
+			"@click": "copy('@icons." + name + "()')",
 		},
 	}) {
 		<div class="w-6 h-6 flex items-center justify-center text-foreground mb-2 group-hover:text-foreground-accent">

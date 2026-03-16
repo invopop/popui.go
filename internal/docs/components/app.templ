@@ -134,5 +134,46 @@ templ App() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 			},
 		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Sidebar",
+			Description: "Navigation sidebar for admin panels. Renders a fixed-width nav element that collapses on small screens and expands on medium+ breakpoints.",
+			Items: []modules.APITableItem{
+				{Name: "Title", Type: "string", Default: "", Description: "Title for the sidebar (currently unused in rendering, reserved for accessibility)"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with sidebar styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarHeader",
+			Description: "Header area at the top of the sidebar, typically used for a logo or branding. Renders with a bottom border separator.",
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarContent",
+			Description: "Scrollable content area of the sidebar that grows to fill available space. Contains sidebar sections and navigation items.",
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarSection",
+			Description: "Groups related navigation items within the sidebar content area. Renders an optional title and a list of sidebar items.",
+			Items: []modules.APITableItem{
+				{Name: "Title", Type: "string", Default: "", Description: "Section heading displayed above the navigation items"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with section styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarItem",
+			Description: "Individual navigation link within a sidebar section. Renders as an anchor element inside a list item with hover and selected states.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the anchor element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
+				{Name: "Selected", Type: "bool", Default: "false", Description: "When true, applies the active/selected background style"},
+				{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "Navigation URL for the sidebar link"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the anchor element"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarFooter",
+			Description: "Footer area at the bottom of the sidebar with a top border separator. Useful for user profile links or secondary actions.",
+		})
 	}
 }

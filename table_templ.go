@@ -78,7 +78,8 @@ func Table(p ...props.Table) templ.Component {
 			classes.If(!prp.ScrollHorizontal, "w-full"),
 			classes.If(prp.ScrollHorizontal, "w-max"),
 			"border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background",
-			"[&_tr]:data-[state=disabled]:opacity-30 [&_tr:last-child_td]:border-b-0",
+			"[&_tr]:data-[state=disabled]:opacity-30",
+			classes.If(prp.Variant == "card", "[&_tr:last-child_td]:border-b-0"),
 			"[&_td>div]:flex [&_td>div]:items-center [&_td>div]:gap-2",
 			"[&_th]:border-b [&_th]:border-border [&_th]:text-left [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th.first]:pl-4 [&_th:last-child]:pr-4 [&_th.last]:pr-4",
 			"[&_td]:border-b [&_td]:border-border [&_td]:text-left [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td.first]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4 [&_td.last]:pr-4",
@@ -200,7 +201,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 67, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 68, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -338,7 +339,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(totalPagesStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 126, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 127, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -442,7 +443,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 172, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 173, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -465,7 +466,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 173, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 174, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -509,7 +510,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(totalItemsStr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 181, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 182, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -522,7 +523,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(itemsLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 181, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 182, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
