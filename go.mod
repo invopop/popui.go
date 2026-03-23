@@ -1,4 +1,4 @@
-module github.com/mateuszJS/popui.go
+module github.com/invopop/popui.go
 
 go 1.25.5
 
@@ -9,7 +9,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/invopop/gobl v0.308.0
 	github.com/invopop/icons v0.11.0
-	github.com/invopop/popui.go v0.27.0
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/text v0.34.0

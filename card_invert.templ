@@ -1,13 +1,12 @@
 package popui
 
 import (
-	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
 templ CardInvert() {
-	@popui.Card(props.Card{Class: "bg-background-default-secondary p-0.5 pt-0 gap-0 border-none"}) {
+	@Card(props.Card{Class: "bg-background-default-secondary p-0.5 pt-0 gap-0 border-none"}) {
 		{ children... }
 	}
 }
@@ -21,7 +20,7 @@ templ CardInvertHead() {
 
 templ CardInvertContent(opts ...props.CardInvertContent) {
 	{{ p := props.First(opts) }}
-	@popui.CardContent(props.CardContent{
+	@CardContent(props.CardContent{
 		Class: tailwind.Merge(
 			"flex items-center gap-1.5 p-3 bg-background border border-border rounded-2xl",
 			p.Class,

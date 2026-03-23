@@ -9,7 +9,6 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -53,7 +52,7 @@ func CardInvert() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Card(props.Card{Class: "bg-background-default-secondary p-0.5 pt-0 gap-0 border-none"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Card(props.Card{Class: "bg-background-default-secondary p-0.5 pt-0 gap-0 border-none"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,7 +137,7 @@ func CardInvertContent(opts ...props.CardInvertContent) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.CardContent(props.CardContent{
+		templ_7745c5c3_Err = CardContent(props.CardContent{
 			Class: tailwind.Merge(
 				"flex items-center gap-1.5 p-3 bg-background border border-border rounded-2xl",
 				p.Class,
