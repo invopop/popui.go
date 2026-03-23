@@ -1,0 +1,34 @@
+package popui
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// SidebarCollapsableSection is a collapsable wrapper for SidebarItems or `<li>`.
+templ SidebarCollapsableSection(opts ...props.SidebarCollapseSection) {
+	{{ p := props.First(opts) }}
+	<details
+		class={
+			tailwind.Merge(
+				"group w-full flex flex-col gap-2 [&[open]_.sidebar-section-chevron]:rotate-0 [&_p]:text-foreground-default-secondary [&_p]:font-sans [&_p]:text-sm [&_p]:font-medium [&_p]:indent-2 [&_ul]:flex [&_ul]:flex-col [&_ul]:items-start [&_ul]:w-full [&_ul]:gap-0.5 [&_ul_li]:w-full [&_a]:w-full [&_a]:flex [&_a]:py-1.5 [&_a]:px-2 [&_a]:items-center [&_a]:gap-1.5 [&_a]:rounded-lg [&_a]:text-foreground [&_a]:font-sans [&_a]:text-base [&_a]:font-medium [&_a:hover]:bg-background-default-secondary [&_svg_*[stroke]]:stroke-[var(--color-icon-default-default)] [&_svg_*[fill]]:fill-[var(--color-icon-default-default)]",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+		open
+	>
+		<summary class="select-none cursor-pointer w-full flex items-center [&::-webkit-details-marker]:hidden">
+			if p.Title != "" {
+				<p>{ p.Title }</p>
+			}
+			<div class="sidebar-section-chevron text-icon-default-secondary ml-0.5 rotate-180 scale-[0.8]">
+				@icons.ChevronDown()
+			</div>
+		</summary>
+		<ul>
+			{ children... }
+		</ul>
+	</details>
+}

@@ -46,10 +46,10 @@ func Table(p ...props.Table) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		prp := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"h-full",
 			classes.If(prp.ScrollHorizontal, "overflow-x-auto"),
 			classes.If(!prp.ScrollHorizontal, "overflow-hidden has-[[role=menu]]:overflow-visible"),
 			classes.If(prp.Variant == "card", "border border-border rounded-lg"),
+			prp.RootClass,
 		),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -81,8 +81,8 @@ func Table(p ...props.Table) templ.Component {
 			"[&_tr]:data-[state=disabled]:opacity-30",
 			classes.If(prp.Variant == "card", "[&_tr:last-child_td]:border-b-0"),
 			"[&_td>div]:flex [&_td>div]:items-center [&_td>div]:gap-2",
-			"[&_th]:border-b [&_th]:border-border [&_th]:text-left [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th.first]:pl-4 [&_th:last-child]:pr-4 [&_th.last]:pr-4",
-			"[&_td]:border-b [&_td]:border-border [&_td]:text-left [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td.first]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4 [&_td.last]:pr-4",
+			"[&_th]:border-b [&_th]:border-border [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th.first]:pl-4 [&_th:last-child]:pr-4 [&_th.last]:pr-4",
+			"[&_td]:border-b [&_td]:border-border [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td.first]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4 [&_td.last]:pr-4",
 			"[&_td:has([role=menu])]:py-1.5 [&_th:has([role=menu])]:py-1.5",
 			prp.Class,
 		)}
