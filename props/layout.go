@@ -1,6 +1,10 @@
 package props
 
-import "github.com/a-h/templ"
+import (
+	"encoding/json"
+
+	"github.com/a-h/templ"
+)
 
 // Head Templ component properties.
 type Head struct {
@@ -73,11 +77,17 @@ func (d importmapData) MarshalJSON() ([]byte, error) {
 		if i > 0 {
 			buf = append(buf, ',')
 		}
-		buf = append(buf, '"')
-		buf = append(buf, pair[0]...)
-		buf = append(buf, `":"`...)
-		buf = append(buf, pair[1]...)
-		buf = append(buf, '"')
+		key, err := json.Marshal(pair[0])
+		if err != nil {
+			return nil, err
+		}
+		val, err := json.Marshal(pair[1])
+		if err != nil {
+			return nil, err
+		}
+		buf = append(buf, key...)
+		buf = append(buf, ':')
+		buf = append(buf, val...)
 	}
 	buf = append(buf, "}}"...)
 	return buf, nil
