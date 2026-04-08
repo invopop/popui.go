@@ -37,6 +37,12 @@ templ Head(p ...props.Head) {
 		if h.Auth {
 			@AuthScript()
 		}
+		if len(h.Importmap) > 0 {
+			@props.ImportmapScript(h.Importmap)
+		}
+		for _, mod := range h.Modules {
+			<script type="module" src={ mod.Src }></script>
+		}
 		for _, sheet := range h.Stylesheets {
 			<link href={ sheet.Href } rel={ sheet.RelOrStylesheet() }/>
 		}
@@ -137,3 +143,4 @@ templ PopupLayout(p props.PopupLayout) {
 		</body>
 	</html>
 }
+
