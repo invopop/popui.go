@@ -7,6 +7,7 @@ import (
 	"embed"
 	"fmt"
 	"io"
+	"io/fs"
 	"path"
 )
 
@@ -26,14 +27,27 @@ var Assets embed.FS
 
 var versionCache = map[string]string{}
 
-// Versioned provides the versioned path for the given path assuming the file
-// exists in the Assets embedded filestyem.
-func Versioned(file ...string) string {
+// Versioned will find the file inside the provided filesystem and
+// add a version hash as a query parameter so that when the asset is loaded
+// by the browser it'll always use the latest version.
+//
+// For example, to load a JS file inside a Templ component:
+//
+//	<script src={ popui.Versioned(assets.Content, "scripts", "app.js") }></script>
+//
+// Where `assets.Content` is the source of the file and `"scripts", "app.js"`
+// identify the file's location. The above example might produce:
+//
+//	<script src="scripts/app.js?v=a1b2c3d4"></script>
+//
+// A simple version cache is used, and will only be renewed upon reloading
+// the application. Paths must be unique for this to work correctly.
+func Versioned(content fs.FS, file ...string) string {
 	p := path.Join(file...)
 	if v, ok := versionCache[p]; ok {
-		return p + "?v=" + v
+		return v
 	}
-	f, err := Assets.Open(p)
+	f, err := content.Open(p)
 	if err != nil {
 		return p
 	}
@@ -46,8 +60,7 @@ func Versioned(file ...string) string {
 	}
 
 	v := fmt.Sprintf("%x", h.Sum(nil))[0:8]
-
-	versionCache[p] = v
-
-	return p + "?v=" + v
+	vp := p + "?v=" + v
+	versionCache[p] = vp
+	return vp
 }
