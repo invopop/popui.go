@@ -426,7 +426,7 @@ func EmbeddedCSS() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 templ.SafeURL
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(path.Join(AssetPath, Versioned("assets", "popui.css")))
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(path.Join(AssetPath, Versioned(Assets, "assets", "popui.css")))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 87, Col: 68}
 		}
@@ -471,7 +471,7 @@ func EmbeddedJS() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(path.Join(AssetPath, Versioned("assets", "popui.js")))
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(path.Join(AssetPath, Versioned(Assets, "assets", "popui.js")))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 94, Col: 68}
 		}
@@ -575,7 +575,7 @@ func AlpineStoreContenteditable() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var22 string
-		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(path.Join(AssetPath, Versioned("assets", "contenteditable.js")))
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(path.Join(AssetPath, Versioned(Assets, "assets", "contenteditable.js")))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 110, Col: 78}
 		}
