@@ -40,6 +40,12 @@ templ Head(p ...props.Head) {
 		for _, sheet := range h.Stylesheets {
 			<link href={ sheet.Href } rel={ sheet.RelOrStylesheet() }/>
 		}
+		if len(h.Importmap) > 0 {
+			@props.ImportmapScript(h.Importmap)
+		}
+		for _, mod := range h.Modules {
+			<script type="module" src={ mod.Src }></script>
+		}
 		for _, script := range h.Scripts {
 			<script src={ script.Src } defer?={ script.Defer } async?={ script.Async }></script>
 		}
@@ -137,3 +143,4 @@ templ PopupLayout(p props.PopupLayout) {
 		</body>
 	</html>
 }
+
