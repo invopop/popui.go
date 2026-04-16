@@ -1,6 +1,6 @@
 module github.com/invopop/popui.go
 
-go 1.25.5
+go 1.24.0
 
 require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
@@ -8,7 +8,7 @@ require (
 	github.com/dchest/uniuri v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/invopop/gobl v0.308.0
-	github.com/invopop/icons v0.11.0
+	github.com/invopop/icons v0.14.0
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/text v0.34.0
