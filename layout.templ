@@ -3,6 +3,7 @@ package popui
 import (
 	"github.com/invopop/popui.go/htmx"
 	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
 	"path"
 )
 
@@ -16,6 +17,7 @@ templ HTML() {
 // Head provides the standard `<head>` section for an HTML document with defaults.
 templ Head(p ...props.Head) {
 	<head>
+		@themeBootstrap()
 		{{ h := props.First(p) }}
 		<title>{ h.Title }</title>
 		if h.Description != "" {
@@ -60,9 +62,7 @@ templ Body(opts ...props.Body) {
 		if p.ID != "" {
 			id={ p.ID }
 		}
-		if p.Class != "" {
-			class={ p.Class }
-		}
+		class={ tailwind.Merge("bg-background", p.Class) }
 		if p.Data != "" {
 			x-data={ p.Data }
 		}
@@ -70,6 +70,23 @@ templ Body(opts ...props.Body) {
 	>
 		{ children... }
 	</body>
+}
+
+// themeBootstrap applies the `dark` class to `<html>` synchronously when the
+// page is loaded with a `?theme=dark` query parameter. This lets a host page
+// (e.g. an iframe embedder) hand down its color scheme without a flash of
+// light content before the app's own scripts run.
+templ themeBootstrap() {
+	<script>
+		(function () {
+			try {
+				var p = new URLSearchParams(window.location.search);
+				if (p.get('theme') === 'dark') {
+					document.documentElement.classList.add('dark');
+				}
+			} catch (e) {}
+		})();
+	</script>
 }
 
 // FontInterLinks provides the head data required to load the Inter font.
