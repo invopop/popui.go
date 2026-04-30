@@ -3,6 +3,7 @@ package popui
 import (
 	"github.com/invopop/popui.go/htmx"
 	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
 	"path"
 )
 
@@ -61,9 +62,7 @@ templ Body(opts ...props.Body) {
 		if p.ID != "" {
 			id={ p.ID }
 		}
-		if p.Class != "" {
-			class={ p.Class }
-		}
+		class={ tailwind.Merge("bg-background", p.Class) }
 		if p.Data != "" {
 			x-data={ p.Data }
 		}
