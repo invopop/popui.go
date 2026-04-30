@@ -1,9 +1,12 @@
 /**
  * PopUI Tailwind v4 Theme Configuration
- * 
+ *
  * This file can be imported in any project using:
  * @import "@invopop/popui/tailwind.theme.css";
- * 
+ *
+ * To use the Geist Mono font, add this to your HTML or main CSS file:
+ * @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+ *
  * Three-tier color system:
  * 1. Primitive colors: Raw color values from Figma (e.g., mint-100)
  * 2. Semantic colors: Named palettes using base colors (e.g., positive-100)
@@ -598,6 +601,9 @@
   --color-background-default-accent: var(--color-brand-50);
   --color-background-default-negative: var(--color-neutral-100);
 
+  --color-background-inverse-default: var(--color-neutral-alpha-5);
+  --color-background-inverse-secondary: var(--color-neutral-white-alpha-100);
+
   --color-background-selected-default: var(--color-accent-alpha-10);
   --color-background-selected-default-hover: var(--color-accent-alpha-20);
   --color-background-selected-default-press: var(--color-accent-alpha-30);
@@ -617,11 +623,11 @@
 
   --color-background-attention-default: var(--color-attention-alpha-10);
 
-  --color-background-warning-default: var(--color-warning-alpha-10);
+  --color-background-warning-default: var(--color-warning-alpha-5);
   --color-background-warning-bold: var(--color-warning-60);
   --color-background-warning-inverse: var(--color-warning-50);
 
-  --color-background-critical-default: var(--color-critical-alpha-10);
+  --color-background-critical-default: var(--color-critical-alpha-5);
   --color-background-critical-bold: var(--color-critical-50);
   --color-background-critical-inverse: var(--color-critical-40);
 
@@ -672,7 +678,7 @@
   --color-icon-inverse-secondary: var(--color-neutral-white-alpha-40);
   --color-icon-inverse-bold: var(--color-neutral-white-alpha-100);
 
-  --color-icon-selected-default: var(--color-positive-50);
+  --color-icon-selected-default: var(--color-accent-50);
   --color-icon-accent-default: var(--color-accent-50);
 
   --color-icon-success-default: var(--color-positive-50);
@@ -728,6 +734,8 @@
   /* Background */
   --color-background: var(--color-background-default-default);
   
+  --color-background-inverse: var(--color-background-inverse-default);
+
   --color-background-selected: var(--color-background-selected-default);
   --color-background-selected-hover: var(--color-background-selected-default-hover);
   --color-background-selected-press: var(--color-background-selected-default-press);
@@ -781,6 +789,7 @@
   --shadow-lg:  0 8px 30px 0 rgba(10, 10, 10, 0.12);
   --shadow-xl:  0 8px 28px -6px rgba(10, 10, 10, 0.12), 0 18px 88px -4px rgba(10, 10, 10, 0.14);
   --shadow-active: 0px 0px 0px 2px color-mix(in lab, transparent 88%, var(--color-background-accent-default, var(--color-positive-50)));
+  --shadow-warning: 0px 0px 0px 2px color-mix(in lab, transparent 88%, var(--color-border-warning-bold, var(--color-warning-50)));
   --shadow-button-default: 0 2px 6px -1px rgba(11, 11, 16, 0.04), 0 -2px 4px 0 rgba(11, 11, 16, 0.04) inset;
   --shadow-button-primary: 0 -4px 4px 0 rgba(11, 11, 16, 0.12) inset, 0 1px 1.5px 0 rgba(255, 255, 255, 0.16) inset, 0 2px 4px -1px rgba(11, 11, 16, 0.08);
   --shadow-button-pressed: 0 2px 6px 0 rgba(11, 11, 16, 0.16) inset, 0 -2px 5px -2px rgba(255, 255, 255, 0.25) inset;
@@ -799,7 +808,7 @@
 
   /* Font Family */
   --font-sans: Inter, sans-serif;
-  --font-mono: "Geist Mono", CommitMono, ui-monospace, Menlo, Monaco, Consolas, "Ubuntu Mono", "Roboto Mono", "DejaVu Sans Mono", monospace;
+  --font-mono: "Geist Mono", CommitMono, ui-monospace, Menlo, Monaco, Consolas, "Roboto Mono", "DejaVu Sans Mono", monospace;
 
   /* Font Features for Monospace */
   --font-mono-features: "ss02" on, "ss08" on, "ss09" on;
@@ -816,10 +825,6 @@
   --text-lg: 16px;
   --text-lg--line-height: 24px;
   --text-lg--letter-spacing: var(--tracking-tight);
-
-  --text-md: 15px;
-  --text-md--line-height: 22px;
-  --text-md--letter-spacing: var(--tracking-normal);
   
   --text-base: 14px;
   --text-base--line-height: 20px;
@@ -886,6 +891,9 @@
     --color-background-default-bold: var(--color-neutral-100);
     --color-background-default-accent: var(--color-neutral-white-alpha-10);
     --color-background-default-negative: var(--color-neutral-100);
+
+    --color-background-inverse-default: var(--color-neutral-90);
+    --color-background-inverse-secondary: var(--color-neutral-white-alpha-5);
 
     --color-background-selected-default: var(--color-accent-alpha-20);
     --color-background-selected-default-hover: var(--color-accent-alpha-30);
@@ -961,7 +969,7 @@
     --color-icon-inverse-secondary: var(--color-neutral-white-alpha-40);
     --color-icon-inverse-bold: var(--color-neutral-white-alpha-100);
 
-    --color-icon-selected-default: var(--color-positive-50);
+    --color-icon-selected-default: var(--color-accent-50);
     --color-icon-accent-default: var(--color-white);
     --color-icon-success-default: var(--color-positive-50);
 
@@ -999,4 +1007,76 @@
   font-family: var(--font-mono);
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: var(--font-mono-features);
+}
+
+/* Animated sidebar hide icon */
+
+.icon-sidebar-hide_anim_line,
+.icon-sidebar-hide_anim_arrow {
+  transition: all 0.4s ease;
+}
+
+.icon-sidebar-hide_anim_line {
+  transform: translate(3.5px, 0.5px);
+}
+
+.icon-sidebar-hide:hover .icon-sidebar-hide_anim_line {
+  transform: translate(-.25px, 0.5px) scale(0.70, 1);
+}
+
+.icon-sidebar-hide_anim {
+  overflow: hidden;
+}
+
+.icon-sidebar-hide:hover .icon-sidebar-hide_anim_line rect {
+  rx: 0.5px;
+}
+
+.icon-sidebar-hide_anim_arrow {
+    transform: translate(-1.5px, -2px);
+}
+
+.icon-sidebar-hide:hover .icon-sidebar-hide_anim_arrow {
+  transform: translate(-4px, -2px);
+}
+
+/* Animated sidebar show icon */
+
+.icon-sidebar-show_anim_line,
+.icon-sidebar-show_anim_arrow {
+  transition: transform 0.4s ease;
+}
+
+.icon-sidebar-show_anim_arrow {
+  transform: scale(-1, 1) translateX(-1px);
+  transform-origin: 8px 8px;
+}
+
+.icon-sidebar-show:hover .icon-sidebar-show_anim_line,
+.icon-sidebar-show:hover .icon-sidebar-show_anim_arrow {
+  transform: translate(4px, 0);
+  rx: 0;
+}
+
+.icon-sidebar-show_anim_line rect {
+  rx: 0.5px;
+  transform: translate(1.3px, 3px) scale(0.70, 1);
+}
+
+.icon-sidebar-show:hover .icon-sidebar-show_anim_line rect {
+  rx: 0px;
+  transform: translate(1px, 3px) scale(1, 1);
+}
+
+.icon-sidebar-show:hover .icon-sidebar-show_anim_arrow {
+  transform: scale(-1, 1) translate(-4px, 0);
+}
+
+/* Animated pulse icon */
+
+.icon-pulse_r0 { animation: icon-pulse-animation 1.6s ease-in-out infinite 0s; }
+.icon-pulse_r1 { animation: icon-pulse-animation 1.6s ease-in-out infinite 0.16s; }
+@keyframes icon-pulse-animation {
+  0%, 100% { fill: var(--color-background-default-tertiary); }
+  40% { fill: var(--color-accent-50); }
 }
