@@ -47,6 +47,7 @@ templ App(opts ...props.App) {
 				HTMX:        p.HTMX,
 				Axios:       p.Axios,
 				Auth:        p.Auth,
+				SkipCSS:     p.SkipCSS,
 				Importmap:   p.Importmap,
 				Modules:     p.Modules,
 				Stylesheets: p.Stylesheets,
@@ -131,8 +132,56 @@ templ Article(opts ...props.Article) {
 		}
 		{ p.Attributes... }
 	>
+		if p.Title != "" {
+			<div class="flex flex-col gap-0.5 pt-4 pb-1">
+				<h1 class="text-foreground text-2xl font-semibold font-sans">
+					if p.Icon != "" {
+						<img src={ p.Icon } alt="Icon" class="inline-block w-6 h-6 mr-2"/>
+					}
+					{ p.Title }
+				</h1>
+				if p.Subtitle != "" {
+					<p class="font-sans text-base text-foreground-default-secondary">{ p.Subtitle }</p>
+				}
+			</div>
+			if p.Title != "" && !p.HideTitleSeparator {
+				<hr
+					class="border-b border-transparent"
+					style="border-width: 0.5px; border-image: repeating-linear-gradient(90deg, var(--color-border-default-secondary), var(--color-border-default-secondary) 3px, transparent 4px, transparent 7px); border-image-slice: 1;"
+				/>
+			}
+		}
 		{ children... }
 	</article>
+}
+
+// Section provides a simple section container that stacks its children
+// vertically with a gap. This can be used inside Articles or Mains to group
+// related content.
+templ Section(opts ...props.Section) {
+	{{ p := props.First(opts) }}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex flex-col w-full gap-4 pb-5",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		if p.Title != "" {
+			<div class="flex flex-col gap-0.5 pt-1">
+				<h2 class="font-medium font-sans text-foreground text-lg">{ p.Title }</h2>
+				if p.Subtitle != "" {
+					<p class="font-sans text-base text-foreground-default-secondary">{ p.Subtitle }</p>
+				}
+			</div>
+		}
+		{ children... }
+	</section>
 }
 
 // Block provides a simple block container that stacks its children

@@ -23,7 +23,12 @@ templ Head(p ...props.Head) {
 		}
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		@EmbeddedCSS()
+		@FontInterLinks()
+		if h.SkipCSS {
+			<!-- Skipping default CSS as SkipCSS is true -->
+		} else {
+			@EmbeddedCSS()
+		}
 		@EmbeddedJS()
 		if h.AlpineJS {
 			@AlpineJS()
@@ -83,7 +88,6 @@ templ FontInterLinks() {
 // EmbeddedCSS provides the CSS to include in the `<head>` section of an HTML
 // document that will load the styles from embeded files served by the web server.
 templ EmbeddedCSS() {
-	@FontInterLinks()
 	<link href={ path.Join(AssetPath, Versioned(Assets, "assets", "popui.css")) } rel="stylesheet"/>
 }
 
@@ -143,4 +147,3 @@ templ PopupLayout(p props.PopupLayout) {
 		</body>
 	</html>
 }
-

@@ -24,6 +24,11 @@ type Head struct {
 	// to add authentication tokens to requests automatically.
 	Axios bool
 
+	// SkipCSS when true will not include the default CSS in the head. This is useful
+	// when you want to provide your own CSS or use the components without the default
+	// styling.
+	SkipCSS bool
+
 	// Importmap is a list of module specifier mappings. When non-empty,
 	// rendered as <script type="importmap">{"imports":{...}}</script>
 	// before any module scripts. Order is preserved.
