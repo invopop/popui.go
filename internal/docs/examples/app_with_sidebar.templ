@@ -43,8 +43,8 @@ templ AppWithSidebarExample() {
 			}
 		}
 		@popui.Main(props.Main{Center: true}) {
-			@popui.Article(props.Article{Title: "App", Subtitle: "Example of configuring the app with props"}) {
-				@popui.Section(props.Section{Title: "Configuration", Subtitle: "Example of section with title and subtitle"}) {
+			@popui.Article(props.Article{Title: "App", Description: "Example of configuring the app with props"}) {
+				@popui.Section(props.Section{Title: "Configuration", Description: "Example of section with title and description"}) {
 					@popui.Input(props.Input{
 						ID:          "name-for-app-with-sidebar",
 						Label:       "Name",
@@ -58,7 +58,7 @@ templ AppWithSidebarExample() {
 						Placeholder: "email@example.com",
 					})
 				}
-				@popui.Section(props.Section{Title: "Preferences", Subtitle: "Example of section with title and subtitle"}) {
+				@popui.Section(props.Section{Title: "Preferences", Description: "Example of section with title and description"}) {
 					@popui.Checkbox(props.Checkbox{
 						ID:    "subscribe-for-app-with-sidebar",
 						Label: "Subscribe to newsletter",

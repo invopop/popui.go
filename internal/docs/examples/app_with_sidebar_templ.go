@@ -322,7 +322,7 @@ func AppWithSidebarExample() templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.Section(props.Section{Title: "Configuration", Subtitle: "Example of section with title and subtitle"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.Section(props.Section{Title: "Configuration", Description: "Example of section with title and description"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -351,13 +351,13 @@ func AppWithSidebarExample() templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.Section(props.Section{Title: "Preferences", Subtitle: "Example of section with title and subtitle"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.Section(props.Section{Title: "Preferences", Description: "Example of section with title and description"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = popui.Article(props.Article{Title: "App", Subtitle: "Example of configuring the app with props"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.Article(props.Article{Title: "App", Description: "Example of configuring the app with props"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

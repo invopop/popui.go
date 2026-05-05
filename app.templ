@@ -140,8 +140,8 @@ templ Article(opts ...props.Article) {
 					}
 					{ p.Title }
 				</h1>
-				if p.Subtitle != "" {
-					<p class="font-sans text-base text-foreground-default-secondary">{ p.Subtitle }</p>
+				if p.Description != "" {
+					<p class="font-sans text-base text-foreground-default-secondary">{ p.Description }</p>
 				}
 			</div>
 			if p.Title != "" && !p.HideTitleSeparator {
@@ -175,8 +175,8 @@ templ Section(opts ...props.Section) {
 		if p.Title != "" {
 			<div class="flex flex-col gap-0.5 pt-1">
 				<h2 class="font-medium font-sans text-foreground text-lg">{ p.Title }</h2>
-				if p.Subtitle != "" {
-					<p class="font-sans text-base text-foreground-default-secondary">{ p.Subtitle }</p>
+				if p.Description != "" {
+					<p class="font-sans text-base text-foreground-default-secondary">{ p.Description }</p>
 				}
 			</div>
 		}

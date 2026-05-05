@@ -74,8 +74,8 @@ type Article struct {
 	Icon string
 	// Title is a simple string title of this article.
 	Title string
-	// Subtitle is a simple string subtitle of this article.
-	Subtitle string
+	// Description is a simple string description of this article to show under the title.
+	Description string
 
 	// FullWidth when true makes the article take the full width of the
 	// main content area while maintaining padding.
@@ -98,8 +98,8 @@ type Section struct {
 	Icon string
 	// Title is a simple string title of this section.
 	Title string
-	// Subtitle is a simple string subtitle of this section.
-	Subtitle string
+	// Description is a simple string description of this section to show under the title.
+	Description string
 
 	Attributes templ.Attributes
 }
