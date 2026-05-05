@@ -20,6 +20,13 @@ templ Separator() {
 	}) {
 		@examples.SeparatorCustomSpacingExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Content",
+		Description: "Children are rendered centered on top of the dashed line with a solid background that hides the border behind them.",
+		Code:        examples.LoadExample("separator_with_content.templ"),
+	}) {
+		@examples.SeparatorWithContentExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Separator",
