@@ -66,9 +66,36 @@ type Article struct {
 	ID    string
 	Class string
 
+	// Icon is a URL for an icon to show before the title.
+	Icon string
+	// Title is a simple string title of this article.
+	Title string
+	// Subtitle is a simple string subtitle of this article.
+	Subtitle string
+
 	// FullWidth when true makes the article take the full width of the
 	// main content area while maintaining padding.
 	FullWidth bool
+
+	// HideTitleSeparator when true hides the separator line between the title,
+	// subtitle, and content. The line will only be present if the Title is set.
+	HideTitleSeparator bool
+
+	Attributes templ.Attributes
+}
+
+// Section defines a section within an article that has its own title, subtitle, and content.
+// Sections are used to break up content within an article into smaller, more manageable pieces.
+type Section struct {
+	ID    string
+	Class string
+
+	// Icon is a URL for an icon to show before the title.
+	Icon string
+	// Title is a simple string title of this section.
+	Title string
+	// Subtitle is a simple string subtitle of this section.
+	Subtitle string
 
 	Attributes templ.Attributes
 }

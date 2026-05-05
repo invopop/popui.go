@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
-	github.com/a-h/templ v0.3.977
+	github.com/a-h/templ v0.3.1001
 	github.com/dchest/uniuri v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/invopop/gobl v0.308.0
