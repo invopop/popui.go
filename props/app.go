@@ -27,6 +27,10 @@ type App struct {
 	// Auth when true enables authentication token handling in included scripts.
 	Auth bool
 
+	// SkipCSS when true will not include the default CSS in the head. This is useful
+	// for applications that provide their own CSS on top of those used by PopUI.
+	SkipCSS bool
+
 	// Importmap is a list of module specifier mappings for an ES import map.
 	// When non-empty, rendered before module and regular scripts.
 	Importmap []Import
