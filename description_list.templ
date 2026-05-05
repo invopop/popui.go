@@ -26,7 +26,8 @@ templ DescriptionList(opts ...props.DescriptionList) {
 
 // DescriptionListItem provides a wrapper for description list items.
 // Renders a term (dt) and description (dd) with proper styling.
-// Use Label/Value props for simple text, or DT/DD components for complex content.
+// Use Label/Value props for simple text, DT/DD components for complex content,
+// or pick and mix as needed.
 templ DescriptionListItem(opts ...props.DescriptionListItem) {
 	{{ p := props.First(opts) }}
 	<div
@@ -41,15 +42,16 @@ templ DescriptionListItem(opts ...props.DescriptionListItem) {
 		}
 		{ p.Attributes... }
 	>
-		if p.Label != "" && p.Value != "" {
-			<dt class="font-sans text-base font-medium text-foreground-default-secondary flex items-center gap-0.5">
+		if p.Label != "" {
+			@DT() {
 				{ p.Label }
-			</dt>
-			<dd class="text-base text-foreground font-medium">
+			}
+		}
+		{ children... }
+		if p.Value != "" {
+			@DD() {
 				{ p.Value }
-			</dd>
-		} else {
-			{ children... }
+			}
 		}
 	</div>
 }
