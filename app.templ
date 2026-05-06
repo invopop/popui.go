@@ -135,8 +135,8 @@ templ Article(opts ...props.Article) {
 		if p.Title != "" {
 			<div class="flex flex-col gap-0.5 pt-4 pb-1">
 				<h1 class="text-foreground text-2xl font-semibold font-sans">
-					if p.Icon != "" {
-						<img src={ p.Icon } alt="Icon" class="inline-block w-6 h-6 mr-2"/>
+					if p.Icon != nil {
+						@p.Icon
 					}
 					{ p.Title }
 				</h1>
@@ -175,8 +175,8 @@ templ Section(opts ...props.Section) {
 		if p.Title != "" {
 			<div class="flex flex-col gap-0.5 pt-1">
 				<h2 class="font-medium font-sans text-foreground text-lg">
-					if p.Icon != "" {
-						<img src={ p.Icon } alt="Icon" class="inline-block w-6 h-6 mr-2"/>
+					if p.Icon != nil {
+						@p.Icon
 					}
 					{ p.Title }
 				</h2>

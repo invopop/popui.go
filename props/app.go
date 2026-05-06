@@ -70,8 +70,8 @@ type Article struct {
 	ID    string
 	Class string
 
-	// Icon is a URL for an icon to show before the title.
-	Icon string
+	// Icon is a component to show before the title.
+	Icon templ.Component
 	// Title is a simple string title of this article.
 	Title string
 	// Description is a simple string description of this article to show under the title.
@@ -94,8 +94,8 @@ type Section struct {
 	ID    string
 	Class string
 
-	// Icon is a URL for an icon to show before the title.
-	Icon string
+	// Icon is a component to show before the title.
+	Icon templ.Component
 	// Title is a simple string title of this section.
 	Title string
 	// Description is a simple string description of this section to show under the title.
