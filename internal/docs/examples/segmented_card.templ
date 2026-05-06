@@ -1,0 +1,37 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SegmentedCardExample() {
+	@popui.SegmentedCard() {
+		@popui.SegmentedCardHead() {
+			<span>Oct 01, 2025 → Oct 31, 2025</span>
+			<div class="ml-auto">
+				@popui.TagStatus(props.TagStatus{Label: "Current", Status: "grey"})
+			</div>
+		}
+		@popui.SegmentedCardContent() {
+			@popui.InvopopLogoSquare()
+			<span class="font-medium">Enterprise</span>
+			<div class="ml-auto flex items-center gap-3 text-sm text-foreground-default-secondary">
+				<span>Documents: <span class="font-medium text-foreground-default">100</span></span>
+				<span class="text-border-default">|</span>
+				<span>Price: <span class="font-medium text-foreground-default">€0.00 / month</span></span>
+				<button type="button" class="size-7 inline-flex items-center justify-center rounded-md border border-border-default text-foreground-default-secondary hover:bg-background-default-secondary">…</button>
+			</div>
+		}
+		@popui.SegmentedCardContent() {
+			<div class="size-7 rounded-md bg-red-50 inline-flex items-center justify-center text-white text-xs font-bold">C</div>
+			<span class="font-medium">Chargebee</span>
+			<div class="ml-auto flex items-center gap-3 text-sm text-foreground-default-secondary">
+				<span>Seats: <span class="font-medium text-foreground-default">10</span></span>
+				<span class="text-border-default">|</span>
+				<span>Price: <span class="font-medium text-foreground-default">€0.00 / month</span></span>
+				<button type="button" class="size-7 inline-flex items-center justify-center rounded-md border border-border-default text-foreground-default-secondary hover:bg-background-default-secondary">…</button>
+			</div>
+		}
+	}
+}
