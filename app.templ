@@ -174,7 +174,12 @@ templ Section(opts ...props.Section) {
 	>
 		if p.Title != "" {
 			<div class="flex flex-col gap-0.5 pt-1">
-				<h2 class="font-medium font-sans text-foreground text-lg">{ p.Title }</h2>
+				<h2 class="font-medium font-sans text-foreground text-lg">
+					if p.Icon != "" {
+						<img src={ p.Icon } alt="Icon" class="inline-block w-6 h-6 mr-2"/>
+					}
+					{ p.Title }
+				</h2>
 				if p.Description != "" {
 					<p class="font-sans text-base text-foreground-default-secondary">{ p.Description }</p>
 				}
