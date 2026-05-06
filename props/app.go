@@ -27,6 +27,14 @@ type App struct {
 	// Auth when true enables authentication token handling in included scripts.
 	Auth bool
 
+	// Importmap is a list of module specifier mappings for an ES import map.
+	// When non-empty, rendered before module and regular scripts.
+	Importmap []Import
+
+	// Modules is a list of ES module scripts to include.
+	// Rendered as <script type="module"> after the importmap.
+	Modules []Module
+
 	// Scripts is a list of additional script paths to include as an alternative
 	// to defining in the head property.
 	Scripts []Script
