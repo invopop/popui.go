@@ -91,7 +91,7 @@ func Separator(opts ...props.Separator) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "><hr class=\"absolute inset-x-0 top-1/2 m-0 w-full -translate-y-1/2 border-b border-transparent\" style=\"border-image: repeating-linear-gradient(90deg, var(--color-border-default-secondary), var(--color-border-default-secondary) 3px, transparent 3px, transparent 7px); border-image-slice: 1;\"><span class=\"relative bg-background px-3 text-sm text-foreground-default-secondary empty:hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "><hr class=\"absolute inset-x-0 top-1/2 m-0 w-full -translate-y-1/2 border-b border-transparent\" style=\"border-width: 0.5px; border-image: repeating-linear-gradient(90deg, var(--color-border-default-secondary), var(--color-border-default-secondary) 3px, transparent 3px, transparent 7px); border-image-slice: 1;\"><span class=\"relative bg-background px-3 text-sm text-foreground-default-secondary empty:hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
