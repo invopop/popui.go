@@ -6,8 +6,8 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// SidebarCollapsableSection is a collapsable wrapper for SidebarItems or `<li>`.
-templ SidebarCollapsableSection(opts ...props.SidebarCollapseSection) {
+// SidebarCollapsibleSection is a collapsible wrapper for SidebarItems or `<li>`.
+templ SidebarCollapsibleSection(opts ...props.SidebarCollapseSection) {
 	{{ p := props.First(opts) }}
 	<details
 		class={
