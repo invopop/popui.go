@@ -19,3 +19,6 @@ storybook-static
 # Local Netlify folder
 .netlify
 .claude/
+node_modules/
+package.json
+package-lock.json
