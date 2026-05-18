@@ -31,6 +31,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Side navigation | `Sidebar` > `SidebarSection` > `SidebarItem` |
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
+| Segmented content card | `SegmentedCard` |
 | Metric display | `CardDashboard` > `CardDashboardItem` |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `CardFile` > `CardFileInfo` |
