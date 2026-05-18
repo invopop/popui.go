@@ -18,3 +18,4 @@ storybook-static
 /icons/dist
 # Local Netlify folder
 .netlify
+.claude/
