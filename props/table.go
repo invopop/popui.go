@@ -6,6 +6,7 @@ import "github.com/a-h/templ"
 type Table struct {
 	ID               string
 	Class            string
+	RootClass        string
 	Attributes       templ.Attributes
 	Variant          string // "card" adds outer border
 	ScrollHorizontal bool   // Enable horizontal scrolling for wide tables

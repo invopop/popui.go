@@ -1,0 +1,68 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SegmentedCardPaymentExample() {
+	@popui.SegmentedCard() {
+		@popui.SegmentedCardHead() {
+			<span>Payment</span>
+			@popui.Button(props.Button{Size: "sm"}) {
+				@icons.Add()
+				<span>Add</span>
+			}
+		}
+		@popui.SegmentedCardBody() {
+			@popui.SegmentedCardContent() {
+				<div class="flex grow items-center gap-2">
+					@popui.Image(props.Image{
+						Src:   "https://assets.invopop.com/payment-methods/visa.svg",
+						Alt:   "Visa",
+						Class: "h-4 w-6 rounded-none object-contain",
+					})
+					<span class="font-medium text-foreground">· 3709</span>
+				</div>
+				<div class="flex items-center gap-3">
+					<span class="text-base text-foreground-default-secondary">Exp 03/29</span>
+					@popui.TagStatus(props.TagStatus{Label: "Default", Status: "grey"})
+					@popui.ContextMenu(props.ContextMenu{RightAlign: true}) {
+						@popui.ContextMenuItem() {
+							@icons.Edit()
+							<span>Edit</span>
+						}
+						@popui.ContextMenuItem() {
+							@icons.Delete()
+							<span>Remove</span>
+						}
+					}
+				</div>
+			}
+			@popui.SegmentedCardContent() {
+				<div class="flex grow items-center gap-2">
+					@popui.Image(props.Image{
+						Src:   "https://assets.invopop.com/payment-methods/mastercard.svg",
+						Alt:   "Mastercard",
+						Class: "h-4 w-6 rounded-none object-contain",
+					})
+					<span class="font-medium text-foreground">· 8374</span>
+				</div>
+				<div class="flex items-center gap-3">
+					<span class="text-base text-foreground-default-secondary">Exp 11/32</span>
+					@popui.ContextMenu(props.ContextMenu{RightAlign: true}) {
+						@popui.ContextMenuItem() {
+							@icons.Edit()
+							<span>Edit</span>
+						}
+						@popui.ContextMenuItem() {
+							@icons.Delete()
+							<span>Remove</span>
+						}
+					}
+				</div>
+			}
+		}
+	}
+}
