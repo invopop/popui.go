@@ -1,0 +1,15 @@
+package examples
+
+import "github.com/invopop/popui.go"
+
+templ SeparatorWithContentExample() {
+	@popui.P() {
+		Content above
+	}
+	@popui.Separator() {
+		or
+	}
+	@popui.P() {
+		Content below
+	}
+}
