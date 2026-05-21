@@ -292,7 +292,7 @@ func SegmentedCardContent(opts ...props.SegmentedCardContent) templ.Component {
 			ID:         p.ID,
 			Attributes: p.Attributes,
 			Class: tailwind.Merge(
-				"flex items-center justify-between gap-1.5 p-3 bg-background border border-border rounded-xl",
+				"flex items-center gap-1.5 p-3 bg-background border border-border rounded-xl",
 				p.Class,
 			),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)

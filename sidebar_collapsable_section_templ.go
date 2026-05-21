@@ -14,8 +14,8 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// SidebarCollapsableSection is a collapsable wrapper for SidebarItems or `<li>`.
-func SidebarCollapsableSection(opts ...props.SidebarCollapseSection) templ.Component {
+// SidebarCollapsibleSection is a collapsible wrapper for SidebarItems or `<li>`.
+func SidebarCollapsibleSection(opts ...props.SidebarCollapseSection) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
