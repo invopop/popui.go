@@ -20,6 +20,7 @@ import (
 //  * time
 //  * week
 //  * month
+//  * number
 //
 // If the Label property is provided, a simple label will be rendered above the input.
 templ Input(p ...props.Input) {
@@ -112,7 +113,7 @@ templ InputError(e props.Error) {
 
 func inputType(typ string) string {
 	switch typ {
-	case "email", "file", "search", "password", "tel", "url", "date", "time", "week", "month":
+	case "email", "file", "search", "password", "tel", "url", "date", "time", "week", "month", "number":
 		return typ
 	default:
 		return "text"
