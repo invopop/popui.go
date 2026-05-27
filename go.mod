@@ -4,11 +4,11 @@ go 1.24.0
 
 require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
-	github.com/a-h/templ v0.3.977
+	github.com/a-h/templ v0.3.1001
 	github.com/dchest/uniuri v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/invopop/gobl v0.308.0
-	github.com/invopop/icons v0.14.0
+	github.com/invopop/icons v0.19.0
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/text v0.34.0

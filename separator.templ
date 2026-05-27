@@ -5,21 +5,29 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Separator provides a horizontal separator with a dashed line.
+// Separator provides a horizontal separator with a dashed line. Optional
+// children are rendered centered on top of the line with a solid background
+// so the dashed line is hidden behind them.
 templ Separator(opts ...props.Separator) {
 	{{ p := props.First(opts) }}
-	<hr
+	<div
 		if p.ID != "" {
 			id={ p.ID }
 		}
 		class={
 			tailwind.Merge(
-				"my-2",
+				"relative my-2 flex min-h-[1px] w-full items-center justify-center",
 				p.Class,
 			),
 		}
-		class="border-b border-transparent"
-		style="border-image: repeating-linear-gradient(90deg, var(--color-border-default-secondary), var(--color-border-default-secondary) 3px, transparent 3px, transparent 7px); border-image-slice: 1;"
 		{ p.Attributes... }
-	/>
+	>
+		<hr
+			class="absolute inset-x-0 top-1/2 m-0 w-full -translate-y-1/2 border-b border-transparent"
+			style="border-width: 0.5px; border-image: repeating-linear-gradient(90deg, var(--color-border-default-secondary), var(--color-border-default-secondary) 3px, transparent 3px, transparent 7px); border-image-slice: 1;"
+		/>
+		<span class="relative bg-background px-3 text-sm text-foreground-default-secondary empty:hidden">
+			{ children... }
+		</span>
+	</div>
 }

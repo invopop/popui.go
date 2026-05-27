@@ -13,11 +13,17 @@ templ DescriptionListExample() {
 		})
 		@popui.DescriptionListItem(props.DescriptionListItem{
 			Label: "Email",
-			Value: "john@example.com",
-		})
+		}) {
+			@popui.DD() {
+				<a href="mailto:john@example.com">john@example.com</a>
+			}
+		}
 		@popui.DescriptionListItem(props.DescriptionListItem{
-			Label: "Role",
 			Value: "Administrator",
-		})
+		}) {
+			@popui.DT() {
+				Role
+			}
+		}
 	}
 }

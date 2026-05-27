@@ -1,0 +1,68 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ SegmentedCard() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("segmented_card.templ"),
+	}) {
+		@examples.SegmentedCardExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Address",
+		Description: "Single-row variant containing a DescriptionList. The header pairs a label with a small secondary action button.",
+		Code:        examples.LoadExample("segmented_card_address.templ"),
+	}) {
+		@examples.SegmentedCardAddressExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Payment Methods",
+		Description: "Multi-row variant for stored payment methods. Each row pairs a brand mark with the masked digits and inline meta. The first row carries a Default tag.",
+		Code:        examples.LoadExample("segmented_card_payment.templ"),
+	}) {
+		@examples.SegmentedCardPaymentExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "SegmentedCard",
+			Description: "Segmented card style with a tinted outer container that wraps a SegmentedCardHead and SegmentedCardBody.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the card element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SegmentedCardHead",
+			Description: "Header row for SegmentedCard with subdued styling. Sits flush with the outer container; place inside SegmentedCard before the body.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the header element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with header styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SegmentedCardBody",
+			Description: "Wrapper for one or more SegmentedCardContent rows. Provides the 2px outer padding and 2px gap between rows.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the body element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with body styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SegmentedCardContent",
+			Description: "Inner content row for SegmentedCard with a bordered, rounded background.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the content element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with content styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+	}
+}

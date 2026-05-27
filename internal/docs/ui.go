@@ -63,6 +63,12 @@ var groups = []*Group{
 				Template: components.Card(),
 			},
 			{
+				Title:    "Segmented Card",
+				Desc:     "Segmented card style with a tinted outer container wrapping a bordered inner content area.",
+				Path:     "segmented-card",
+				Template: components.SegmentedCard(),
+			},
+			{
 				Title:    "Page State",
 				Desc:     "Layout for displaying page states with illustrations and call-to-action.",
 				Path:     "page-state",
