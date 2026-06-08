@@ -42,7 +42,7 @@ func tagStatusClasses(prp props.TagStatus) string {
 	return tailwind.Merge(
 		// Padding based on dot and label presence
 		classes.If(!hasDot || (hasDot && hasLabel), "px-1 py-0.5"),
-		classes.If(hasDot && !hasLabel, "p-1"),
+		classes.If(hasDot && !hasLabel, "p-0"),
 		classes.If(hasDot && hasLabel, "pl-1.5 pr-[5px]"),
 		classes.If(hasLabel, "h-5"),
 		// Color variants

@@ -327,3 +327,169 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }, true)
   }
 })();
+
+// Alpine controller for the DropdownSelect component. Single mode submits on
+// click and closes the popover. Multiple mode toggles the value in/out of
+// the selection set without closing; the form is submitted once on
+// popover close, only if the selection actually changed. Auto-open pops
+// the dropdown after mount — used by callers that spawn the chip via a
+// parent menu and want the options visible without a second click.
+document.addEventListener('alpine:init', () => {
+  if (!window.Alpine) return
+  Alpine.data('dropdownSelect', (init) => ({
+    values: (init && init.values) || [],
+    multiple: !!(init && init.multiple),
+    multipleLabel: (init && init.multipleLabel) || 'items',
+    name: (init && init.name) || '',
+    initial: '',
+    init() {
+      this.initial = JSON.stringify(this.values)
+      if (init && init.autoOpen) {
+        this.$nextTick(() => {
+          const trigger = this.$refs.trigger
+          if (trigger && typeof trigger.click === 'function') trigger.click()
+        })
+      }
+    },
+    submitForm() {
+      const form = this.$root.closest('form')
+      if (form && typeof form.requestSubmit === 'function') form.requestSubmit()
+    },
+    toggle(v) {
+      if (!this.multiple) {
+        this.values = [v]
+        const pop = this.$root.querySelector('[popover]')
+        if (pop && typeof pop.hidePopover === 'function') pop.hidePopover()
+        this.initial = JSON.stringify(this.values)
+        // Defer to $nextTick so Alpine's reactive `x-for` has rendered the
+        // new hidden inputs before HTMX serialises the form. Without this
+        // the form submits with stale (empty) input set and the URL ends
+        // up without the new value.
+        this.$nextTick(() => this.submitForm())
+        return
+      }
+      if (this.values.includes(v)) {
+        this.values = this.values.filter((x) => x !== v)
+      } else {
+        this.values = [...this.values, v]
+      }
+      // Multi-mode: submit on every flip so the table refreshes
+      // immediately. Sync `initial` first so the onToggle close-handler
+      // sees no diff and skips its redundant submit. $nextTick is required
+      // so Alpine's reactive `x-for` has rendered the hidden inputs
+      // before HTMX reads the form.
+      //
+      // The consumer should scope the HTMX swap to a region that does NOT
+      // include this dropdown (e.g. via hx-target/hx-select on a table
+      // wrapper, with hx-swap-oob for any sibling regions that need
+      // refreshing too). That way the popover survives the swap and the
+      // user can keep ticking without the dropdown re-rendering.
+      this.initial = JSON.stringify(this.values)
+      this.$nextTick(() => this.submitForm())
+    },
+    onToggle(e) {
+      if (!this.multiple) return
+      if (e.newState !== 'closed') return
+      const now = JSON.stringify(this.values)
+      if (now === this.initial) return
+      this.initial = now
+      this.submitForm()
+    },
+  }))
+})
+
+// Alpine controller for popui.FilterRow. Tracks the single active filter
+// (the row uses a single-filter-at-a-time UX), handles add/remove,
+// clears stale values when the active chip changes, and auto-opens the
+// chip's value editor on add — matches @invopop/popui Svelte
+// FilterChip's justAdded onMount toggle.
+//
+// Each chip wraps itself in a [data-filter-name=…] div; the controller
+// uses that to find the chip's editor and either focus its text input or
+// click its popovertarget trigger.
+document.addEventListener('alpine:init', () => {
+  if (!window.Alpine) return
+  Alpine.data('filterRow', (initialActive) => ({
+    active: Array.isArray(initialActive) ? [...initialActive] : [],
+
+    // Clear all form fields associated with a filter name. Handles plain
+    // text inputs, <select>s, and DropdownSelect — the latter stores its
+    // selection in inner Alpine state, not directly in form inputs, so
+    // we reach into that scope.
+    clearFilter(name) {
+      const chip = this.$root.querySelector('[data-filter-name="' + name + '"]')
+      if (!chip) return
+      const input = chip.querySelector('input[type="text"][name="' + name + '"]')
+      if (input) input.value = ''
+      const select = chip.querySelector('select[name="' + name + '"]')
+      if (select) select.value = ''
+      // DropdownSelect inner scope (role=combobox).
+      const dropdown = chip.querySelector('[role="combobox"]')
+      if (dropdown && window.Alpine) {
+        const data = Alpine.$data(dropdown)
+        if (data && Array.isArray(data.values)) {
+          data.values = []
+          data.initial = '[]'
+        }
+      }
+    },
+
+    // Open the chip's value editor right after it appears so the user
+    // doesn't need an extra click. requestAnimationFrame + setTimeout
+    // fallback handles the timing dance between the closing "+ Filter"
+    // popover and the opening chip popover (browsers serialise popover
+    // transitions, sometimes refusing showPopover on a popover while
+    // another is mid-close).
+    autoOpenChip(name) {
+      const chip = this.$root.querySelector('[data-filter-name="' + name + '"]')
+      if (!chip) return
+      const tryOpen = () => {
+        const popover = chip.querySelector('[popover]')
+        if (popover && popover.matches(':popover-open')) return true
+        const trigger = chip.querySelector('button[popovertarget]')
+        if (trigger && typeof trigger.click === 'function') { trigger.click(); return true }
+        if (popover && typeof popover.showPopover === 'function') {
+          try { popover.showPopover(); return true } catch (e) {}
+        }
+        return false
+      }
+      const focusInput = () => {
+        const txt = chip.querySelector('input[type="text"]')
+        if (txt) txt.focus()
+      }
+      requestAnimationFrame(() => {
+        if (tryOpen()) return
+        setTimeout(() => { if (!tryOpen()) focusInput() }, 0)
+      })
+    },
+
+    add(name) {
+      // Single-filter model: replace whatever chip was active before and
+      // null out the leaving chip's values so they don't leak into the
+      // URL on the next submit.
+      const previous = this.active.filter((n) => n !== name)
+      previous.forEach((n) => this.clearFilter(n))
+      this.active = [name]
+      this.$nextTick(() => this.autoOpenChip(name))
+    },
+
+    remove(name) {
+      this.active = this.active.filter((n) => n !== name)
+      this.clearFilter(name)
+      // Always re-submit so the URL drops the filter even when the chip
+      // was opened but never had a value typed in.
+      if (this.$root && typeof this.$root.requestSubmit === 'function') {
+        this.$root.requestSubmit()
+      }
+    },
+
+    isActive(name) {
+      return this.active.includes(name)
+    },
+
+    available(name) {
+      return !this.active.includes(name)
+    },
+  }))
+})
+
