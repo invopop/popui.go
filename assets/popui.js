@@ -476,11 +476,17 @@ document.addEventListener('alpine:init', () => {
     remove(name) {
       this.active = this.active.filter((n) => n !== name)
       this.clearFilter(name)
-      // Always re-submit so the URL drops the filter even when the chip
-      // was opened but never had a value typed in.
-      if (this.$root && typeof this.$root.requestSubmit === 'function') {
-        this.$root.requestSubmit()
-      }
+      // Defer the submit to $nextTick so Alpine's reactive <template x-for>
+      // inside a DropdownSelect chip has time to remove the hidden input(s)
+      // for the cleared values before HTMX serialises the form. Without
+      // this the removed value still lives in the DOM at submit time and
+      // the URL keeps the filter the user just dismissed — mirrors the
+      // deferral dropdownSelect.toggle() already uses for the add case.
+      this.$nextTick(() => {
+        if (this.$root && typeof this.$root.requestSubmit === 'function') {
+          this.$root.requestSubmit()
+        }
+      })
     },
 
     isActive(name) {
