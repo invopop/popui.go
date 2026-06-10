@@ -1,0 +1,41 @@
+package components
+
+import (
+	_ "embed"
+
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Drawer() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("drawer.templ"),
+	}) {
+		@examples.DrawerExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Drawer",
+			Description: "Fixed-position side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive. Open / close is driven by `popui-drawer-open` / `popui-drawer-close` window events whose `event.detail` must match the drawer's ID; the controller also re-broadcasts those events on every open transition so external listeners react to all close paths (X click, Escape, programmatic).",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the drawer's <aside> element and the event scope for open/close."},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the drawer's base styling."},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the <aside> element."},
+				{Name: "Position", Type: "string", Default: "right", Description: "Edge of the viewport to anchor to. One of `props.DrawerPositionRight` or `props.DrawerPositionLeft`."},
+				{Name: "Width", Type: "int", Default: "400", Description: "Drawer width in pixels. 0 falls back to 400."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "DrawerHeader",
+			Description: "Sticky header bar at the top of a Drawer: X close button on the leading edge, truncated h1 title in the middle, optional action slot via children on the trailing edge. The default close button dispatches `popui-drawer-close` with the matching `DrawerID`.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the header element."},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the header's base styling."},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the header element."},
+				{Name: "DrawerID", Type: "string", Default: "", Description: "ID of the parent Drawer — used by the default close button to dispatch `popui-drawer-close` with the matching `event.detail`."},
+				{Name: "Title", Type: "string", Default: "", Description: "h1 heading rendered in the centre cell. Truncates on overflow."},
+				{Name: "CloseAttributes", Type: "templ.Attributes", Default: "", Description: "Replace the close button's default attributes. The override is responsible for dispatching `popui-drawer-close` to keep the drawer's Alpine state in sync."},
+			},
+		})
+	}
+}

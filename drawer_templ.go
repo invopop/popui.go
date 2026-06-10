@@ -17,16 +17,16 @@ import (
 )
 
 // Drawer renders a floating, fixed-position side panel that overlays
-// the right edge of the viewport. See props.Drawer for the field
-// reference. Open/close is driven by the `popui-drawer-open` /
+// one edge of the viewport. See props.Drawer for the field reference.
+// Open/close is driven by the `popui-drawer-open` /
 // `popui-drawer-close` window events — both expect `event.detail` to
 // equal the drawer's ID. Backed by the `drawer` Alpine controller in
 // popui.js.
 //
 // The drawer is non-blocking — no backdrop, the rest of the app stays
-// interactive — mirroring console-ui's JobDetailPanel. Stays mounted
-// across HTMX content swaps so the caller can re-fill the panel's
-// inner content slot without losing the open/close state.
+// interactive. Stays mounted across HTMX content swaps so the caller
+// can re-fill the panel's inner content slot without losing the
+// open/close state.
 //
 // Recipe — wire to an HTMX-fetched detail panel:
 //
@@ -75,8 +75,14 @@ func Drawer(opts ...props.Drawer) templ.Component {
 		if width <= 0 {
 			width = 400
 		}
+		anchorEdge := "right: 0;"
+		borderSide := "border-l"
+		if p.Position == props.DrawerPositionLeft {
+			anchorEdge = "left: 0;"
+			borderSide = "border-r"
+		}
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"flex flex-col bg-background border-l border-border overflow-hidden",
+			"flex flex-col bg-background "+borderSide+" border-border overflow-hidden",
 			p.Class,
 		),
 		}
@@ -96,7 +102,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 54, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 62, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -114,7 +120,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("drawer('" + p.ID + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 56, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 64, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -125,9 +131,9 @@ func Drawer(opts ...props.Drawer) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("position: fixed; right: 0; top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px;")
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px;")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 60, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 68, Col: 117}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -225,7 +231,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 91, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 99, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -293,7 +299,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 107, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 115, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {

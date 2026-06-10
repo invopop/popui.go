@@ -672,12 +672,11 @@ document.addEventListener('alpine:init', () => {
 })
 
 // Alpine controller for popui.Drawer — a fixed-position floating side
-// panel that overlays the right edge of the viewport. Mirrors console-ui's
-// JobDetailPanel pattern: non-blocking (no backdrop, rest of the app
-// stays interactive), `fly`-style transition in from the right, closes
-// on Escape. Stays mounted across HTMX content swaps so the caller can
-// re-fill the panel's inner content slot without the open/close state
-// flickering.
+// panel that overlays one edge of the viewport. Non-blocking (no
+// backdrop, rest of the app stays interactive), fades in/out on the
+// open state, closes on Escape. Stays mounted across HTMX content
+// swaps so the caller can re-fill the panel's inner content slot
+// without the open/close state flickering.
 //
 // Open/close protocol: dispatch a `popui-drawer-open` /
 // `popui-drawer-close` event on `window` with `detail` set to the

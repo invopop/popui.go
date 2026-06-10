@@ -1,0 +1,27 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ DrawerExample() {
+	@popui.Button(props.Button{
+		Attributes: templ.Attributes{
+			"@click": "window.dispatchEvent(new CustomEvent('popui-drawer-open', {detail: 'drawer-example'}))",
+		},
+	}) {
+		Open drawer
+	}
+	@popui.Drawer(props.Drawer{ID: "drawer-example", Width: 420}) {
+		@popui.DrawerHeader(props.DrawerHeader{
+			DrawerID: "drawer-example",
+			Title:    "Drawer title",
+		})
+		<div class="px-4 py-4 text-base text-foreground">
+			Drawer body content goes here. Fill the slot via HTMX, dispatch
+			the open event from the trigger, close via the header X or
+			Escape.
+		</div>
+	}
+}

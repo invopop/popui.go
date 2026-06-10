@@ -9,16 +9,16 @@ import (
 )
 
 // Drawer renders a floating, fixed-position side panel that overlays
-// the right edge of the viewport. See props.Drawer for the field
-// reference. Open/close is driven by the `popui-drawer-open` /
+// one edge of the viewport. See props.Drawer for the field reference.
+// Open/close is driven by the `popui-drawer-open` /
 // `popui-drawer-close` window events — both expect `event.detail` to
 // equal the drawer's ID. Backed by the `drawer` Alpine controller in
 // popui.js.
 //
 // The drawer is non-blocking — no backdrop, the rest of the app stays
-// interactive — mirroring console-ui's JobDetailPanel. Stays mounted
-// across HTMX content swaps so the caller can re-fill the panel's
-// inner content slot without losing the open/close state.
+// interactive. Stays mounted across HTMX content swaps so the caller
+// can re-fill the panel's inner content slot without losing the
+// open/close state.
 //
 // Recipe — wire to an HTMX-fetched detail panel:
 //
@@ -49,6 +49,14 @@ templ Drawer(opts ...props.Drawer) {
 			width = 400
 		}
 	}}
+	{{
+		anchorEdge := "right: 0;"
+		borderSide := "border-l"
+		if p.Position == props.DrawerPositionLeft {
+			anchorEdge = "left: 0;"
+			borderSide = "border-r"
+		}
+	}}
 	<aside
 		if p.ID != "" {
 			id={ p.ID }
@@ -57,10 +65,10 @@ templ Drawer(opts ...props.Drawer) {
 		x-show="open"
 		x-transition.opacity.duration.150ms
 		x-cloak
-		style={ "position: fixed; right: 0; top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px;" }
+		style={ "position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px;" }
 		class={
 			tailwind.Merge(
-				"flex flex-col bg-background border-l border-border overflow-hidden",
+				"flex flex-col bg-background "+borderSide+" border-border overflow-hidden",
 				p.Class,
 			),
 		}

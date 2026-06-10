@@ -2,42 +2,54 @@ package props
 
 import "github.com/a-h/templ"
 
+// Drawer position constants for the Position prop. Drawers anchor to
+// one edge of the viewport; pick the side that's furthest from the
+// app's primary navigation.
+const (
+	DrawerPositionRight string = "right"
+	DrawerPositionLeft  string = "left"
+)
+
 // Drawer renders a floating, fixed-position side panel that overlays
-// the right edge of the viewport. Mounted once near the App root and
-// toggled open/closed via the `popui-drawer-open` / `popui-drawer-close`
-// window events (event.detail must equal the drawer's ID). Stays
-// mounted across HTMX content swaps so the open/close state survives
-// — the caller fills the drawer's content slot via hx-target on a
-// child container and dispatches the open event after the swap.
+// one edge of the viewport. Non-blocking by default — no backdrop, the
+// rest of the app stays interactive — and stays mounted across HTMX
+// content swaps so the open/close state survives. Consumers typically
+// host a swap target inside the drawer's children block, fill it via
+// hx-target, and dispatch the open event after the swap.
 //
-// Mirrors console-ui's JobDetailPanel pattern: fixed right-0 top-0
-// bottom-0 z-50, non-blocking (no backdrop, rest of the app stays
-// interactive), `fly`-style transition in from the right, closes on
-// Escape. No grid reflow on open/close — the panel overlays the main
-// content area instead of pushing it.
+// Toggled via the `popui-drawer-open` / `popui-drawer-close` window
+// events whose `event.detail` must equal the drawer's ID. The
+// controller scopes those by ID so several drawers can coexist on a
+// single page without trampling each other; it also re-broadcasts the
+// matching event whenever the open state flips, so external listeners
+// react to every close path (X click, Escape, programmatic).
 type Drawer struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
 
+	// Position picks the viewport edge the drawer anchors to.
+	// One of DrawerPositionRight (default) or DrawerPositionLeft.
+	// Empty / unknown values fall back to right.
+	Position string
+
 	// Width sets the drawer's fixed pixel width. Zero falls back to
-	// 400 — the JobDetailPanel default. Anything between 320 and
-	// 720 reads comfortably without overlapping the main content.
+	// 400 — a comfortable detail-panel default. Anything between
+	// 320 and 720 reads well without crowding the main content.
 	Width int
 }
 
 // DrawerHeader renders a sticky header bar at the top of a popui.Drawer:
-// an X close button on the left, a single-line truncated title in the
-// middle, and an optional action slot on the right (children of the
-// component). Lives inside a popui.Drawer's children block so it sits
-// above the scrollable content area.
+// an X close button on the leading edge, a single-line truncated title
+// in the middle, and an optional action slot on the trailing edge
+// (children of the component). Lives inside a popui.Drawer's children
+// block so it sits above the scrollable content area.
 //
 // The close button dispatches `popui-drawer-close` (event.detail =
-// DrawerID) by default. Pass CloseAttributes to add extra behavior on
-// click — e.g. clearing a URL query param via history.replaceState.
-// CloseAttributes are appended after the default attributes, so any
-// extra `@click` REPLACES the default rather than merging — give the
-// override responsibility for re-dispatching the close event.
+// DrawerID) by default. Pass CloseAttributes to override that click
+// behavior — e.g. to also clear a URL query param via
+// history.replaceState — but make sure the override still dispatches
+// the close event so the drawer's Alpine state syncs.
 type DrawerHeader struct {
 	ID         string
 	Class      string
@@ -52,9 +64,9 @@ type DrawerHeader struct {
 	// with `truncate` if it overflows the available width.
 	Title string
 
-	// CloseAttributes override the close button's default attributes
-	// (a single `@click` that dispatches the close event). Pass your
-	// own `@click` if you need extra logic (e.g. URL rewrite) — make
-	// sure to still dispatch the close event yourself.
+	// CloseAttributes replace the close button's default attributes
+	// (a single `@click` that dispatches the close event). When set,
+	// the override is fully responsible for closing the drawer — keep
+	// the `popui-drawer-close` dispatch in your handler.
 	CloseAttributes templ.Attributes
 }

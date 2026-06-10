@@ -135,6 +135,12 @@ var groups = []*Group{
 				Template: components.DescriptionList(),
 			},
 			{
+				Title:    "Drawer",
+				Desc:     "Floating side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive — and stays mounted across content swaps.",
+				Path:     "drawer",
+				Template: components.Drawer(),
+			},
+			{
 				Title:    "Fieldset",
 				Desc:     "Groups form fields together with proper spacing and optional legend.",
 				Path:     "fieldset",
