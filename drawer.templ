@@ -1,0 +1,62 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Drawer renders a floating, fixed-position side panel that overlays
+// the right edge of the viewport. See props.Drawer for the field
+// reference. Open/close is driven by the `popui-drawer-open` /
+// `popui-drawer-close` window events — both expect `event.detail` to
+// equal the drawer's ID. Backed by the `drawer` Alpine controller in
+// popui.js.
+//
+// The drawer is non-blocking — no backdrop, the rest of the app stays
+// interactive — mirroring console-ui's JobDetailPanel. Stays mounted
+// across HTMX content swaps so the caller can re-fill the panel's
+// inner content slot without losing the open/close state.
+//
+// Recipe — wire to an HTMX-fetched detail panel:
+//
+//	@popui.Drawer(props.Drawer{ID: "my-drawer"}) {
+//	    <div id="my-drawer-content" class="flex-1 flex flex-col"></div>
+//	}
+//
+//	<tr
+//	    hx-get="/detail/{id}"
+//	    hx-target="#my-drawer-content"
+//	    hx-swap="innerHTML"
+//	    hx-on::after-swap="window.dispatchEvent(new CustomEvent('popui-drawer-open', {detail:'my-drawer'}))"
+//	>...</tr>
+//
+// Close from inside the panel with the inverse event:
+//
+//	<button @click="window.dispatchEvent(new CustomEvent('popui-drawer-close', {detail:'my-drawer'}))">...</button>
+//
+// The positioning + size live inline on the `<aside>` element so the
+// component renders correctly without the bundled popui.css needing to
+// ship every transform/translation utility — those classes aren't
+// emitted by the popui Tailwind build today.
+templ Drawer(opts ...props.Drawer) {
+	{{ p := props.First(opts) }}
+	<aside
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		x-data={ "drawer('" + p.ID + "')" }
+		x-show="open"
+		x-transition.opacity.duration.150ms
+		x-cloak
+		style="position: fixed; right: 0; top: 0; bottom: 0; z-index: 50; width: 400px;"
+		class={
+			tailwind.Merge(
+				"flex flex-col bg-background border-l border-border overflow-auto",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</aside>
+}

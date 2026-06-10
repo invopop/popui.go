@@ -671,3 +671,44 @@ document.addEventListener('alpine:init', () => {
   }))
 })
 
+// Alpine controller for popui.Drawer — a fixed-position floating side
+// panel that overlays the right edge of the viewport. Mirrors console-ui's
+// JobDetailPanel pattern: non-blocking (no backdrop, rest of the app
+// stays interactive), `fly`-style transition in from the right, closes
+// on Escape. Stays mounted across HTMX content swaps so the caller can
+// re-fill the panel's inner content slot without the open/close state
+// flickering.
+//
+// Open/close protocol: dispatch a `popui-drawer-open` /
+// `popui-drawer-close` event on `window` with `detail` set to the
+// drawer's ID. Scoped by ID so multiple drawers can coexist on a
+// single page without trampling each other.
+document.addEventListener('alpine:init', () => {
+  if (!window.Alpine) return
+  Alpine.data('drawer', (id) => ({
+    open: false,
+    init() {
+      const matches = (e) => e && e.detail === id
+      this._onOpen = (e) => { if (matches(e)) this.open = true }
+      this._onClose = (e) => { if (matches(e)) this.open = false }
+      this._onKeydown = (e) => {
+        // Escape only closes the drawer when it's actually open — lets
+        // page-level Escape handlers (search bars, popovers) keep
+        // working when the drawer is dismissed.
+        if (e.key === 'Escape' && this.open) {
+          this.open = false
+          e.stopPropagation()
+        }
+      }
+      window.addEventListener('popui-drawer-open', this._onOpen)
+      window.addEventListener('popui-drawer-close', this._onClose)
+      document.addEventListener('keydown', this._onKeydown)
+    },
+    destroy() {
+      window.removeEventListener('popui-drawer-open', this._onOpen)
+      window.removeEventListener('popui-drawer-close', this._onClose)
+      document.removeEventListener('keydown', this._onKeydown)
+    },
+  }))
+})
+
