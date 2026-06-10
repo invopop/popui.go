@@ -419,12 +419,13 @@ document.addEventListener('alpine:init', () => {
     init() {
       this.initial = JSON.stringify(this.values)
       // Arrow/Enter/Space/Esc are driven from the document level: focusing the
-      // list is unreliable while the closing "+ Filter" popover restores focus
-      // to <body> (real Chrome included). When CLOSED, only the focused
+      // list can be undone by the closing "+ Filter" popover restoring focus to
+      // its invoker (the "+" button) or <body>. When CLOSED, only the focused
       // combobox control opens (on Down/Enter/Space) — keys aren't hijacked
-      // globally. When OPEN, keys act while focus is in the control or lost to
-      // <body> (the post-add steal state); keys aimed at other focused controls
-      // and typing in text filters are left alone.
+      // globally. When OPEN, keys act while focus is in the control, lost to
+      // <body>, or anywhere else in the same filter row (e.g. the "+" button);
+      // keys aimed at controls outside the row and typing in text filters are
+      // left alone.
       this._onKeydown = (e) => {
         if (!this.$root || this.$root.offsetParent === null) return // chip hidden
         if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter' && e.key !== 'Escape' && e.key !== ' ') return
@@ -438,7 +439,8 @@ document.addEventListener('alpine:init', () => {
           }
           return
         }
-        if (a && a !== document.body && !this.$root.contains(a)) return // focus on another control
+        const form = this.$root.closest('form')
+        if (a && a !== document.body && !this.$root.contains(a) && !(form && form.contains(a))) return // focus outside the row
         this.onKeydown(e)
       }
       document.addEventListener('keydown', this._onKeydown, true)
@@ -586,6 +588,19 @@ document.addEventListener('alpine:init', () => {
         if (window.Alpine) {
           const d = Alpine.$data(optionList)
           if (d && typeof d.openPanel === 'function') d.openPanel()
+        }
+        // Move focus onto the combobox control so it lands on the dropdown —
+        // not the "+" button, where the closing "+ Filter" popover would
+        // otherwise restore focus (its invoker). The re-assert covers a
+        // restoration that lands a beat later; it's a single retry, not a loop
+        // (a tight loop fights the popover and never settles).
+        if (typeof optionList.focus === 'function') {
+          optionList.focus()
+          setTimeout(() => {
+            if (document.activeElement !== optionList && !optionList.contains(document.activeElement)) {
+              optionList.focus()
+            }
+          }, 50)
         }
         return
       }
