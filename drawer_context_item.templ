@@ -22,9 +22,17 @@ templ DrawerContextItem(opts ...props.DrawerContextItem) {
 		<button
 			type="button"
 			class="cursor-pointer w-full group focus:outline-none"
+			if p.Tabindex != "" {
+				tabindex={ p.Tabindex }
+			}
 			@click={ p.OnClickExpr }
 		>
-			<div class="flex items-center gap-3 px-2 py-1.5 rounded-md group-hover:bg-background-default-secondary">
+			<div
+				class="flex items-center gap-3 px-2 py-1.5 rounded-md group-hover:bg-background-default-secondary"
+				if p.HighlightExpr != "" {
+					:class={ "{ 'bg-background-default-secondary': " + p.HighlightExpr + " }" }
+				}
+			>
 				if p.Color != "" {
 					@TagStatus(props.TagStatus{Status: p.Color, Dot: true})
 				}

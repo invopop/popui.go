@@ -398,11 +398,128 @@ document.addEventListener('alpine:init', () => {
   }))
 })
 
-// Alpine controller for popui.FilterRow. Tracks the single active filter
-// (the row uses a single-filter-at-a-time UX), handles add/remove,
-// clears stale values when the active chip changes, and auto-opens the
-// chip's value editor on add — matches @invopop/popui Svelte
-// FilterChip's justAdded onMount toggle.
+// Alpine controller for popui.FilterRow's inline option editor — the
+// always-open, trigger-less option list that replaces the old DropdownSelect
+// for coloured/multi filter fields. Owns the selected `values`, the arrow-key
+// highlight (`activeIndex`), and the keyboard handlers (Down/Up move the
+// highlight, Enter toggles the highlighted option, Esc blurs). Selection is
+// emitted as reactive hidden inputs by the template; every change submits the
+// form on $nextTick so the x-for inputs exist before HTMX serialises.
+document.addEventListener('alpine:init', () => {
+  if (!window.Alpine) return
+  Alpine.data('filterOptionList', (init) => ({
+    values: (init && init.values) || [],
+    multiple: !!(init && init.multiple),
+    multipleLabel: (init && init.multipleLabel) || 'items',
+    name: (init && init.name) || '',
+    optionValues: (init && init.optionValues) || [],
+    activeIndex: -1,
+    open: false,
+    initial: '',
+    init() {
+      this.initial = JSON.stringify(this.values)
+      // Arrow/Enter/Space/Esc are driven from the document level: focusing the
+      // list is unreliable while the closing "+ Filter" popover restores focus
+      // to <body> (real Chrome included). When CLOSED, only the focused
+      // combobox control opens (on Down/Enter/Space) — keys aren't hijacked
+      // globally. When OPEN, keys act while focus is in the control or lost to
+      // <body> (the post-add steal state); keys aimed at other focused controls
+      // and typing in text filters are left alone.
+      this._onKeydown = (e) => {
+        if (!this.$root || this.$root.offsetParent === null) return // chip hidden
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter' && e.key !== 'Escape' && e.key !== ' ') return
+        const a = document.activeElement
+        const editable = a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT' || a.isContentEditable)
+        if (editable && !this.$root.contains(a)) return // don't hijack typing elsewhere
+        if (!this.open) {
+          if (this.$root.contains(a) && (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault()
+            this.openPanel()
+          }
+          return
+        }
+        if (a && a !== document.body && !this.$root.contains(a)) return // focus on another control
+        this.onKeydown(e)
+      }
+      document.addEventListener('keydown', this._onKeydown, true)
+      // A click outside the chip closes the options panel (summary box stays).
+      this._onDocClick = (e) => {
+        if (!this.open) return
+        if (this.$root && this.$root.contains(e.target)) return
+        this.closePanel()
+      }
+      document.addEventListener('click', this._onDocClick, true)
+    },
+    destroy() {
+      if (this._onKeydown) document.removeEventListener('keydown', this._onKeydown, true)
+      if (this._onDocClick) document.removeEventListener('click', this._onDocClick, true)
+    },
+    submitForm() {
+      const form = this.$root.closest('form')
+      if (form && typeof form.requestSubmit === 'function') form.requestSubmit()
+    },
+    openPanel() {
+      this.open = true
+      if (this.activeIndex < 0 && this.optionValues.length) this.activeIndex = 0
+    },
+    closePanel() {
+      this.open = false
+      this.activeIndex = -1
+    },
+    togglePanel() {
+      this.open ? this.closePanel() : this.openPanel()
+    },
+    move(delta) {
+      const n = this.optionValues.length
+      if (!n) return
+      const base = this.activeIndex < 0 ? (delta > 0 ? -1 : 0) : this.activeIndex
+      this.activeIndex = ((base + delta) % n + n) % n
+    },
+    onKeydown(e) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        this.move(1)
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        this.move(-1)
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        // Enter/Space toggle the highlighted option. preventDefault stops a
+        // focused option <button> from also firing its native click (double
+        // toggle) and stops Space from scrolling the page.
+        e.preventDefault()
+        if (this.activeIndex >= 0) this.toggle(this.optionValues[this.activeIndex])
+      } else if (e.key === 'Escape') {
+        this.closePanel()
+      }
+    },
+    // choose moves the highlight to a row and toggles it — the single entry
+    // point for a mouse click on a row, so click and Enter stay in sync (the
+    // rows are tabindex=-1 and never hold the keyboard cursor themselves).
+    choose(i) {
+      if (i < 0 || i >= this.optionValues.length) return
+      this.activeIndex = i
+      this.toggle(this.optionValues[i])
+    },
+    toggle(v) {
+      if (!this.multiple) {
+        this.values = [v]
+      } else if (this.values.includes(v)) {
+        this.values = this.values.filter((x) => x !== v)
+      } else {
+        this.values = [...this.values, v]
+      }
+      this.initial = JSON.stringify(this.values)
+      // Defer so Alpine's reactive x-for hidden inputs render before HTMX
+      // serialises the form (mirrors dropdownSelect.toggle).
+      this.$nextTick(() => this.submitForm())
+    },
+  }))
+})
+
+// Alpine controller for popui.FilterRow. Tracks the active filters
+// (multi-filter UX: several apply at once), handles add/remove, clears a
+// filter's stale values when its chip is removed, and auto-opens a chip's
+// value editor on add.
 //
 // Each chip wraps itself in a [data-filter-name=…] div; the controller
 // uses that to find the chip's editor and either focus its text input or
@@ -417,7 +534,10 @@ document.addEventListener('alpine:init', () => {
     // selection in inner Alpine state, not directly in form inputs, so
     // we reach into that scope.
     clearFilter(name) {
-      const chip = this.$root.querySelector('[data-filter-name="' + name + '"]')
+      // Resolve the form even when called from the nested "+ Filter" menu
+      // scope (there Alpine's $root is the menu div, not the form).
+      const root = (this.$root.closest && this.$root.closest('form')) || this.$root
+      const chip = root.querySelector('[data-filter-name="' + name + '"]')
       if (!chip) return
       const input = chip.querySelector('input[type="text"][name="' + name + '"]')
       if (input) input.value = ''
@@ -432,6 +552,17 @@ document.addEventListener('alpine:init', () => {
           data.initial = '[]'
         }
       }
+      // Inline option-list editor (data-filter-options) — same reset, plus
+      // the arrow-key highlight so a re-added chip starts clean.
+      const optionList = chip.querySelector('[data-filter-options]')
+      if (optionList && window.Alpine) {
+        const listData = Alpine.$data(optionList)
+        if (listData && Array.isArray(listData.values)) {
+          listData.values = []
+          listData.initial = '[]'
+          listData.activeIndex = -1
+        }
+      }
     },
 
     // Open the chip's value editor right after it appears so the user
@@ -441,8 +572,23 @@ document.addEventListener('alpine:init', () => {
     // transitions, sometimes refusing showPopover on a popover while
     // another is mid-close).
     autoOpenChip(name) {
-      const chip = this.$root.querySelector('[data-filter-name="' + name + '"]')
+      // Resolve the form even when called from the nested "+ Filter" menu
+      // scope (there Alpine's $root is the menu div, not the form), so the
+      // chip lookup below actually finds the chip.
+      const root = (this.$root.closest && this.$root.closest('form')) || this.$root
+      const chip = root.querySelector('[data-filter-name="' + name + '"]')
       if (!chip) return
+      // Inline option-list editor: open its panel so the options auto-display
+      // on add (its arrow/Enter keys are handled by a document-level listener,
+      // so no fragile focus dance is needed).
+      const optionList = chip.querySelector('[data-filter-options]')
+      if (optionList) {
+        if (window.Alpine) {
+          const d = Alpine.$data(optionList)
+          if (d && typeof d.openPanel === 'function') d.openPanel()
+        }
+        return
+      }
       const tryOpen = () => {
         const popover = chip.querySelector('[popover]')
         if (popover && popover.matches(':popover-open')) return true
@@ -464,13 +610,20 @@ document.addEventListener('alpine:init', () => {
     },
 
     add(name) {
-      // Single-filter model: replace whatever chip was active before and
-      // null out the leaving chip's values so they don't leak into the
-      // URL on the next submit.
-      const previous = this.active.filter((n) => n !== name)
-      previous.forEach((n) => this.clearFilter(n))
-      this.active = [name]
+      // Multi-filter: append the field (don't replace the others) so several
+      // filters apply at once and the chips lay out left-to-right in the order
+      // they were added. CSS flex `order` on each chip (= its index in
+      // `active`) renders them in add-order regardless of input declaration
+      // order; the "+" add button is pinned last.
+      if (!this.active.includes(name)) this.active = [...this.active, name]
       this.$nextTick(() => this.autoOpenChip(name))
+    },
+
+    // orderOf returns a chip's flex order — its position in the add-order
+    // `active` list — so chips lay out left-to-right in the order added.
+    orderOf(name) {
+      const i = this.active.indexOf(name)
+      return i < 0 ? 0 : i
     },
 
     remove(name) {
@@ -495,6 +648,10 @@ document.addEventListener('alpine:init', () => {
 
     available(name) {
       return !this.active.includes(name)
+    },
+
+    hasActive() {
+      return this.active.length > 0
     },
   }))
 })

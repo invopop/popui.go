@@ -147,6 +147,12 @@ var groups = []*Group{
 				Template: components.File(),
 			},
 			{
+				Title:    "Filter Row",
+				Desc:     "Search-bar style filter row for data views: a \"+ Filter\" menu plus one editable chip per active filter, with multi-field filtering, colored option lists, and keyboard navigation.",
+				Path:     "filter-row",
+				Template: components.FilterRow(),
+			},
+			{
 				Title:    "Flag",
 				Desc:     "Display country flags using ISO 3166-1 alpha-2 country codes.",
 				Path:     "flag",

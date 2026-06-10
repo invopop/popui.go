@@ -39,4 +39,20 @@ type DrawerContextItem struct {
 	// OnClickExpr is the Alpine handler run when the row is clicked.
 	// Example: "toggle('production')"
 	OnClickExpr string
+
+	// Tabindex, when non-empty, sets the row button's tabindex attribute.
+	// Pass "-1" to take the row out of the Tab order — used by virtual-cursor
+	// lists (e.g. FilterRow's inline option list) where a parent element owns
+	// keyboard focus and the highlight is driven by an index, not DOM focus,
+	// so individual rows must not steal focus. Empty → no tabindex (the row is
+	// a normal tab stop, e.g. inside a DropdownSelect popover).
+	Tabindex string
+
+	// HighlightExpr is an optional Alpine expression evaluating to bool. When
+	// non-empty, it drives a keyboard-highlight class on the row (the same
+	// `bg-background-default-secondary` used for hover) so a parent controller
+	// can paint the row under an arrow-key cursor. Empty → no binding, so
+	// existing callers (e.g. DropdownSelect) are unaffected. Example:
+	//   "activeIndex === 2"
+	HighlightExpr string
 }

@@ -3,15 +3,16 @@ package props
 import "github.com/a-h/templ"
 
 // FilterRow renders a search-bar–style row at the top of a data view: a
-// "+ Filter" menu plus one editable chip per active filter. Single-filter
-// UX — picking a field from the menu replaces whatever chip was active
-// before. Backed by the `filterRow` Alpine controller registered in
-// popui.js (active list, add/remove, auto-open on add, cleared values on
-// swap).
+// "+ Filter" menu plus one editable chip per active filter. Multi-filter
+// UX — picking a field from the menu appends an editable chip (it does not
+// replace active filters); several filters apply at once (AND), laid out
+// left-to-right in add order. Backed by the `filterRow` Alpine controller
+// registered in popui.js (active list, add/remove, auto-open on add,
+// cleared values on remove).
 //
 // The whole row is one <form> that fires hx-get on submit. Caller wires
 // the HTMX target/select/swap so the swap can be scoped to the data
-// region (keeps the filter row alive — its popovers stay open across
+// region (keeps the filter row alive — its open option panel survives
 // submissions).
 type FilterRow struct {
 	ID         string
@@ -46,12 +47,19 @@ type FilterRow struct {
 
 // FilterInput describes one filterable field rendered as a chip. The
 // chip's value editor is chosen by the input's shape:
-//   - Options with a Color → popui.DropdownSelect with TagStatus dots.
+//   - Options with a Color → an inline colored option list (TagStatus dots,
+//     with keyboard navigation).
 //   - Options without Color → plain <select>.
 //   - No Options → free-text <input>.
 type FilterInput struct {
 	Name  string
 	Label string
+
+	// PluralLabel overrides the auto-pluralised label shown in the chip's
+	// summary when several options are selected ("3 statuses"). Leave empty
+	// to use the built-in English pluralizer; set it for irregular plurals
+	// (e.g. Label "Person" → PluralLabel "people").
+	PluralLabel string
 
 	// Icon is rendered both in the "+ Filter" menu and on the active chip.
 	Icon templ.Component
@@ -63,17 +71,17 @@ type FilterInput struct {
 
 	Options []FilterOption
 
-	// Multi turns the DropdownSelect into a multi-select (one chip,
-	// many values). Only honoured for the DropdownSelect editor path
-	// (options with Color). Also flips the operator label from
-	// "matches" to "is any of".
+	// Multi turns the colored-option editor into a multi-select (one chip,
+	// many values). Only honoured for the inline option-list editor path
+	// (options with Color). Also flips the operator label from "matches"
+	// to "is any of".
 	Multi bool
 }
 
-// FilterOption is one row in a FilterInput's value dropdown. Color is a
+// FilterOption is one row in a FilterInput's value list. Color is a
 // TagStatus.Status value (green, orange, blue, etc.) — non-empty Color
-// switches the editor from a plain <select> to popui.DropdownSelect with
-// the matching coloured dot.
+// switches the editor from a plain <select> to an inline colored option
+// list with the matching dot.
 type FilterOption struct {
 	Value string
 	Label string
