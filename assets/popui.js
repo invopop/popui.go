@@ -703,6 +703,18 @@ document.addEventListener('alpine:init', () => {
       window.addEventListener('popui-drawer-open', this._onOpen)
       window.addEventListener('popui-drawer-close', this._onClose)
       document.addEventListener('keydown', this._onKeydown)
+
+      // Re-broadcast the matching window event whenever `open` flips
+      // so external consumers can react to *any* close path (X click,
+      // Escape, programmatic), not just the ones that explicitly
+      // dispatch the event themselves. Skip equal-value writes to
+      // avoid an event echo loop when the listeners above resync the
+      // property to the value it already had.
+      this.$watch('open', (newVal, oldVal) => {
+        if (newVal === oldVal) return
+        const name = newVal ? 'popui-drawer-open' : 'popui-drawer-close'
+        window.dispatchEvent(new CustomEvent(name, { detail: id }))
+      })
     },
     destroy() {
       window.removeEventListener('popui-drawer-open', this._onOpen)

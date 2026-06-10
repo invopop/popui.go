@@ -19,4 +19,42 @@ type Drawer struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+
+	// Width sets the drawer's fixed pixel width. Zero falls back to
+	// 400 — the JobDetailPanel default. Anything between 320 and
+	// 720 reads comfortably without overlapping the main content.
+	Width int
+}
+
+// DrawerHeader renders a sticky header bar at the top of a popui.Drawer:
+// an X close button on the left, a single-line truncated title in the
+// middle, and an optional action slot on the right (children of the
+// component). Lives inside a popui.Drawer's children block so it sits
+// above the scrollable content area.
+//
+// The close button dispatches `popui-drawer-close` (event.detail =
+// DrawerID) by default. Pass CloseAttributes to add extra behavior on
+// click — e.g. clearing a URL query param via history.replaceState.
+// CloseAttributes are appended after the default attributes, so any
+// extra `@click` REPLACES the default rather than merging — give the
+// override responsibility for re-dispatching the close event.
+type DrawerHeader struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+
+	// DrawerID is the parent Drawer's ID — used by the default close
+	// button to dispatch `popui-drawer-close` with the matching
+	// `event.detail` so the right drawer toggles closed.
+	DrawerID string
+
+	// Title is the h1 heading rendered in the centre cell. Truncates
+	// with `truncate` if it overflows the available width.
+	Title string
+
+	// CloseAttributes override the close button's default attributes
+	// (a single `@click` that dispatches the close event). Pass your
+	// own `@click` if you need extra logic (e.g. URL rewrite) — make
+	// sure to still dispatch the close event yourself.
+	CloseAttributes templ.Attributes
 }
