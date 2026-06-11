@@ -253,6 +253,32 @@ func Table() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TableStickyExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Sticky Header & Frozen First Column",
+			Description: "Pin the header row and freeze the identity column for dense, wide data tables. StickyHeader keeps the column titles in view while the body scrolls; FreezeFirstColumn pins the first column with a full-height divider that stays put during horizontal scroll; ColumnDividers separates the column titles; FullWidth stretches the table to fill its container. The RootClass must be a bounded vertical scroll container (e.g. 'flex-1 min-h-0 overflow-y-auto') — for a full-page app, set FillViewport on popui.App so the body doesn't absorb the scroll, otherwise the header has nothing to stick within. Scroll the example in both directions. Cells use TableCell — text, or a muted dash when empty (see the Location column).",
+			Code:        examples.LoadExample("table_sticky.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
 				Description: "A table component with automatic styling for borders, spacing, and typography. The table wrapper provides rounded corners and overflow handling. Supports horizontal scrolling.",
@@ -261,13 +287,36 @@ func Table() templ.Component {
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles. Use Tailwind's arbitrary variants like [&_tr:hover_td]:bg-gray-100 for advanced styling"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the table element"},
 					{Name: "Variant", Type: "string", Default: "", Description: "Visual style: 'card' adds outer border and rounded corners"},
+					{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the scroll wrapper around the table. Use to bound height + enable vertical scroll for StickyHeader (e.g. 'flex-1 min-h-0 overflow-y-auto')"},
 					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Enable horizontal scrolling when table content exceeds container width. Useful for tables with many columns"},
+					{Name: "StickyHeader", Type: "bool", Default: "false", Description: "Pin the <thead> row to the top while the body scrolls. Requires RootClass to make the wrapper a bounded vertical scroll container"},
+					{Name: "FreezeFirstColumn", Type: "bool", Default: "false", Description: "Pin the first column (header + every row) to the left during horizontal scroll, with a full-height right divider that stays in place. Requires ScrollHorizontal"},
+					{Name: "ColumnDividers", Type: "bool", Default: "false", Description: "Draw a label-height divider before each header column. The 2nd divider is suppressed when FreezeFirstColumn is set (its full-height border already separates columns 1 and 2)"},
+					{Name: "FullWidth", Type: "bool", Default: "false", Description: "Stretch the table to fill its container width even when columns don't need it, while still growing past it when they do"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "TableCell",
+				Description: "Renders the content of a single table cell with consistent styling. Place inside a <td> (or <th>) within Table. An empty Value renders a muted dash so missing data reads differently from a real value. For non-text content (buttons, tags, links), put that directly in the cell instead.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the cell content element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the cell content element"},
+					{Name: "Value", Type: "string", Default: "", Description: "Text content of the cell. An empty value renders a muted dash placeholder"},
+					{Name: "Mono", Type: "bool", Default: "false", Description: "Render the value in the monospace face — for ids, hashes, and other fixed-width values"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -295,7 +344,7 @@ func Table() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -318,7 +367,7 @@ func Table() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
