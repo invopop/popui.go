@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/props"
@@ -136,13 +137,17 @@ templ filterChip(in props.FilterInput) {
 			{ in.Label }
 		</div>
 		<div class="inline-flex items-center py-1 px-2 cursor-default pointer-events-none text-foreground-default-secondary font-normal text-base border-r border-border-default-secondary">
-			if in.Multi {
+			if in.Range {
+				is between
+			} else if in.Multi {
 				is any of
 			} else {
 				matches
 			}
 		</div>
-		if filterHasColours(in.Options) {
+		if in.Range {
+			@filterRangeCalendar(in)
+		} else if filterHasColours(in.Options) || in.Multi {
 			@filterInlineOptions(in)
 		} else if len(in.Options) > 0 {
 			<select
@@ -166,8 +171,10 @@ templ filterChip(in props.FilterInput) {
 				type="text"
 				name={ in.Name }
 				value={ firstVal }
-				placeholder={ in.Label + "…" }
-				class="filter-chip-input bg-transparent text-foreground placeholder:text-foreground-default-tertiary placeholder:font-normal py-1 px-2 font-medium text-base w-44 truncate hover:bg-background-default-secondary focus:bg-background-default-secondary"
+				placeholder={ filterTextPlaceholder(in.Label) }
+				oninput="clearTimeout(this._ft); this._ft = setTimeout(() => this.form.requestSubmit(), 350)"
+				onchange="clearTimeout(this._ft); this.form.requestSubmit()"
+				class="filter-chip-input bg-transparent text-foreground placeholder:text-foreground-default-tertiary placeholder:font-normal py-1 px-2 font-sans font-normal text-base w-44 truncate hover:bg-background-default-secondary focus:bg-background-default-secondary focus:outline-none"
 			/>
 		}
 		<div class="border-l border-border-default-secondary">
@@ -282,6 +289,124 @@ templ filterInlineOptions(in props.FilterInput) {
 	</div>
 }
 
+// filterRangeCalendar renders the date-range editor: a summary box that
+// auto-opens a dual-month calendar with a preset rail (this/last week,
+// month, quarter + custom). Backed by the `rangeCalendar` Alpine controller
+// in popui.js; the selected range is emitted as a single hidden input
+// "from..to" under the field name. Mirrors filterInlineOptions' open/close
+// + auto-open wiring (data-filter-calendar is the hook autoOpenChip uses).
+templ filterRangeCalendar(in props.FilterInput) {
+	<div
+		x-data={ filterRangeCalendarData(in) }
+		data-filter-calendar
+		role="application"
+		aria-label={ in.Label }
+		tabindex="0"
+		class="relative inline-block filter-chip-input focus:outline-none"
+	>
+		<input type="hidden" :name="name" :value="rangeValue"/>
+		<div
+			@click="togglePanel()"
+			class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
+		>
+			<span x-show="!summary" class="text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
+			<span x-show="summary" x-text="summary" class="font-medium text-base text-foreground whitespace-nowrap"></span>
+		</div>
+		<div
+			x-show="open"
+			x-cloak
+			style="top:100%;z-index:50"
+			class="popui-cal context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden"
+		>
+			<div class="flex">
+				<div class="popui-cal-presets flex flex-col gap-1 items-stretch p-3 border-r border-border">
+					<template x-for="p in presets" :key="p.key">
+						<button
+							type="button"
+							class="popui-cal-preset"
+							:data-active="preset === p.key ? '' : null"
+							@click="setPreset(p.key)"
+							x-text="p.label"
+						></button>
+					</template>
+				</div>
+				<div class="p-3">
+					<div class="relative flex items-center justify-between mb-1">
+						@Button(props.Button{
+							Size:       props.ButtonSizeIcon,
+							Attributes: templ.Attributes{"type": "button", "@click": "prev()", "aria-label": "Previous month"},
+						}) {
+							@icons.ArrowLeft()
+						}
+						@Button(props.Button{
+							Size:       props.ButtonSizeIcon,
+							Attributes: templ.Attributes{"type": "button", "@click": "next()", "aria-label": "Next month"},
+						}) {
+							@icons.ArrowRight()
+						}
+					</div>
+					<div class="flex gap-6">
+						<template x-for="(mon, mi) in monthsView" :key="mi">
+							<div class="flex flex-col">
+								<header class="h-9 flex items-center justify-center text-base font-medium text-foreground" x-text="mon.label"></header>
+								<table class="popui-cal-grid border-collapse">
+									<thead>
+										<tr>
+											<template x-for="dow in dows" :key="dow">
+												<th class="popui-cal-head" x-text="dow"></th>
+											</template>
+										</tr>
+									</thead>
+									<tbody>
+										<template x-for="(week, wi) in mon.weeks" :key="wi">
+											<tr>
+												<template x-for="(cell, ci) in week" :key="ci">
+													<td class="p-0 text-center">
+														<button
+															type="button"
+															class="popui-cal-day"
+															@click="selectDay(cell.iso)"
+															:data-state="dayState(cell.iso)"
+															:data-outside="cell.outside ? '' : null"
+															:data-today="cell.today ? '' : null"
+															x-text="cell.day"
+														></button>
+													</td>
+												</template>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// filterRangeCalendarData builds the x-data="rangeCalendar({...})" snippet,
+// seeding from/to out of the chip's "from..to" value (URL state).
+func filterRangeCalendarData(in props.FilterInput) string {
+	from, to := "", ""
+	if len(in.Values) > 0 {
+		if i := strings.Index(in.Values[0], ".."); i >= 0 {
+			from = in.Values[0][:i]
+			to = in.Values[0][i+2:]
+		}
+	}
+	fromJS := "null"
+	if from != "" {
+		fromJS = "'" + from + "'"
+	}
+	toJS := "null"
+	if to != "" {
+		toJS = "'" + to + "'"
+	}
+	return "rangeCalendar({name: '" + in.Name + "', from: " + fromJS + ", to: " + toJS + "})"
+}
+
 // filterRowAlpine builds the x-data="filterRow([...])" snippet with the
 // initial active list pre-populated from inputs that already have a
 // value (the fields that came in via the URL).
@@ -293,6 +418,21 @@ func filterRowAlpine(inputs []props.FilterInput) string {
 		}
 	}
 	return "filterRow([" + strings.Join(active, ",") + "])"
+}
+
+// filterTextPlaceholder builds the free-text chip's placeholder, e.g.
+// "Enter supplier SIREN…". The label's first letter is lower-cased unless it
+// begins an acronym (first two letters upper-case, like "SIREN"), so
+// acronyms stay intact.
+func filterTextPlaceholder(label string) string {
+	r := []rune(label)
+	if len(r) == 0 {
+		return "Enter…"
+	}
+	if !(len(r) >= 2 && unicode.IsUpper(r[0]) && unicode.IsUpper(r[1])) {
+		r[0] = unicode.ToLower(r[0])
+	}
+	return "Enter " + string(r) + "…"
 }
 
 // filterFirstValue returns the first element of a string slice or empty.

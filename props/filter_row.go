@@ -76,6 +76,13 @@ type FilterInput struct {
 	// (options with Color). Also flips the operator label from "matches"
 	// to "is any of".
 	Multi bool
+
+	// Range turns the chip into a date-range picker: the operator reads
+	// "is between" and the editor auto-opens a dual-month calendar with a
+	// preset rail (this/last week, month, quarter + custom). The selected
+	// range is submitted as a single value "YYYY-MM-DD..YYYY-MM-DD" under
+	// Name. Takes precedence over Options/Multi.
+	Range bool
 }
 
 // FilterOption is one row in a FilterInput's value list. Color is a

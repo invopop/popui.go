@@ -565,6 +565,12 @@ document.addEventListener('alpine:init', () => {
           listData.activeIndex = -1
         }
       }
+      // Date-range calendar editor — reset the selected range.
+      const calendar = chip.querySelector('[data-filter-calendar]')
+      if (calendar && window.Alpine) {
+        const calData = Alpine.$data(calendar)
+        if (calData && typeof calData.clear === 'function') calData.clear()
+      }
     },
 
     // Open the chip's value editor right after it appears so the user
@@ -602,6 +608,17 @@ document.addEventListener('alpine:init', () => {
             }
           }, 50)
         }
+        return
+      }
+      // Date-range calendar editor: open its panel on add, same as the
+      // inline option list.
+      const calendar = chip.querySelector('[data-filter-calendar]')
+      if (calendar) {
+        if (window.Alpine) {
+          const d = Alpine.$data(calendar)
+          if (d && typeof d.openPanel === 'function') d.openPanel()
+        }
+        if (typeof calendar.focus === 'function') calendar.focus()
         return
       }
       const tryOpen = () => {
@@ -667,6 +684,145 @@ document.addEventListener('alpine:init', () => {
 
     hasActive() {
       return this.active.length > 0
+    },
+  }))
+
+  // Date-range calendar for the FilterRow's Range chip. Dual-month grid with
+  // start/middle/end range selection, prev/next nav, and a preset rail
+  // (this/last week, month, quarter + custom). Selection is exposed as
+  // `rangeValue` ("YYYY-MM-DD..YYYY-MM-DD") which the chip binds to a hidden
+  // input; completing a range (or picking a preset) submits the form.
+  Alpine.data('rangeCalendar', (init) => ({
+    name: (init && init.name) || '',
+    open: false,
+    preset: 'custom',
+    from: (init && init.from) || null,
+    to: (init && init.to) || null,
+    viewY: 2000,
+    viewM: 0,
+    dows: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    presets: [
+      { key: 'thisWeek', label: 'This Week' },
+      { key: 'lastWeek', label: 'Last Week' },
+      { key: 'thisMonth', label: 'This month' },
+      { key: 'lastMonth', label: 'Last month' },
+      { key: 'thisQuarter', label: 'This quarter' },
+      { key: 'lastQuarter', label: 'Last quarter' },
+      { key: 'custom', label: 'Custom' },
+    ],
+    init() {
+      const base = this.from ? this.parse(this.from) : new Date()
+      this.viewY = base.getFullYear()
+      this.viewM = base.getMonth()
+      this._onDocClick = (e) => {
+        if (this.open && this.$root && !this.$root.contains(e.target)) this.open = false
+      }
+      document.addEventListener('click', this._onDocClick, true)
+    },
+    destroy() {
+      document.removeEventListener('click', this._onDocClick, true)
+    },
+    parse(s) {
+      const p = String(s).split('-').map(Number)
+      return new Date(p[0], p[1] - 1, p[2])
+    },
+    iso(dt) {
+      const m = String(dt.getMonth() + 1).padStart(2, '0')
+      const d = String(dt.getDate()).padStart(2, '0')
+      return dt.getFullYear() + '-' + m + '-' + d
+    },
+    isToday(dt) {
+      const t = new Date()
+      return dt.getFullYear() === t.getFullYear() && dt.getMonth() === t.getMonth() && dt.getDate() === t.getDate()
+    },
+    monthGrid(y, m) {
+      const first = new Date(y, m, 1)
+      const cur = new Date(y, m, 1 - first.getDay())
+      const weeks = []
+      for (let w = 0; w < 6; w++) {
+        const week = []
+        for (let d = 0; d < 7; d++) {
+          week.push({ day: cur.getDate(), iso: this.iso(cur), outside: cur.getMonth() !== m, today: this.isToday(cur) })
+          cur.setDate(cur.getDate() + 1)
+        }
+        weeks.push(week)
+      }
+      return weeks
+    },
+    monthLabel(y, m) {
+      return new Date(y, m, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })
+    },
+    get monthsView() {
+      const r = new Date(this.viewY, this.viewM + 1, 1)
+      return [
+        { label: this.monthLabel(this.viewY, this.viewM), weeks: this.monthGrid(this.viewY, this.viewM) },
+        { label: this.monthLabel(r.getFullYear(), r.getMonth()), weeks: this.monthGrid(r.getFullYear(), r.getMonth()) },
+      ]
+    },
+    prev() {
+      const d = new Date(this.viewY, this.viewM - 1, 1)
+      this.viewY = d.getFullYear(); this.viewM = d.getMonth()
+    },
+    next() {
+      const d = new Date(this.viewY, this.viewM + 1, 1)
+      this.viewY = d.getFullYear(); this.viewM = d.getMonth()
+    },
+    dayState(iso) {
+      if (!this.from) return null
+      if (!this.to) return iso === this.from ? 'start' : null
+      if (iso === this.from) return 'start'
+      if (iso === this.to) return 'end'
+      if (iso > this.from && iso < this.to) return 'middle'
+      return null
+    },
+    selectDay(iso) {
+      this.preset = 'custom'
+      if (!this.from || (this.from && this.to)) {
+        this.from = iso; this.to = null
+        return
+      }
+      if (iso < this.from) { this.to = this.from; this.from = iso }
+      else { this.to = iso }
+      this.apply()
+    },
+    setPreset(key) {
+      this.preset = key
+      if (key === 'custom') return
+      const t = new Date(); t.setHours(0, 0, 0, 0)
+      const sow = (d) => { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); return x }
+      let from, to
+      if (key === 'thisWeek') { from = sow(t); to = new Date(from); to.setDate(to.getDate() + 6) }
+      else if (key === 'lastWeek') { to = sow(t); to.setDate(to.getDate() - 1); from = new Date(to); from.setDate(from.getDate() - 6) }
+      else if (key === 'thisMonth') { from = new Date(t.getFullYear(), t.getMonth(), 1); to = new Date(t.getFullYear(), t.getMonth() + 1, 0) }
+      else if (key === 'lastMonth') { from = new Date(t.getFullYear(), t.getMonth() - 1, 1); to = new Date(t.getFullYear(), t.getMonth(), 0) }
+      else if (key === 'thisQuarter') { const q = Math.floor(t.getMonth() / 3); from = new Date(t.getFullYear(), q * 3, 1); to = new Date(t.getFullYear(), q * 3 + 3, 0) }
+      else if (key === 'lastQuarter') { let q = Math.floor(t.getMonth() / 3) - 1, y = t.getFullYear(); if (q < 0) { q = 3; y-- } from = new Date(y, q * 3, 1); to = new Date(y, q * 3 + 3, 0) }
+      else return
+      this.from = this.iso(from); this.to = this.iso(to)
+      this.viewY = from.getFullYear(); this.viewM = from.getMonth()
+      this.apply()
+    },
+    fmt(iso) {
+      return this.parse(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    },
+    get summary() {
+      if (this.from && this.to) return this.fmt(this.from) + ' – ' + this.fmt(this.to)
+      if (this.from) return this.fmt(this.from) + ' – …'
+      return ''
+    },
+    get rangeValue() {
+      if (this.from && this.to) return this.from + '..' + this.to
+      return ''
+    },
+    togglePanel() { this.open = !this.open },
+    openPanel() { this.open = true },
+    clear() { this.from = null; this.to = null; this.preset = 'custom' },
+    apply() {
+      this.open = false
+      const form = this.$root && this.$root.closest && this.$root.closest('form')
+      if (form && typeof form.requestSubmit === 'function') {
+        this.$nextTick(() => form.requestSubmit())
+      }
     },
   }))
 })
