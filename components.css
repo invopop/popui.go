@@ -354,3 +354,66 @@ form {
   0%, 100% { fill: var(--color-background-default-tertiary); }
   40% { fill: var(--color-accent-50); }
 }
+
+/* Detail view (popui.DetailList / DetailItem / DetailRow) — console-ui-style
+   label-on-left / value-on-right rows for side panels and drawers. Shipped
+   here so any consuming app gets the styling without copying a <style> block. */
+.popui-detail-list { padding-bottom: 1rem; }
+.popui-detail-indent { margin-left: 1rem; margin-right: 1rem; }
+.popui-detail-row { display: flex; gap: 1.5rem; align-items: center; }
+.popui-detail-row > .popui-detail-label {
+  min-width: 148px;
+  color: var(--color-foreground-default-secondary);
+  font-size: 0.875rem;
+}
+.popui-detail-row > .popui-detail-value-wrap {
+  flex: 1 1 0%;
+  display: flex;
+  gap: 0.375rem;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 2rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+.popui-detail-row > .popui-detail-value-wrap:hover {
+  background-color: var(--color-background-default-secondary);
+}
+.popui-detail-value {
+  flex: 1 1 0%;
+  min-width: 0;
+  color: var(--color-foreground);
+  font-weight: 500;
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+/* Copyable value row: strip popui.ButtonCopy chrome so the value reads as
+   plain text in line with the other rows, and reveal action buttons / copy
+   icons only while the row is hovered. */
+.popui-detail-copyable [data-button-copy] {
+  justify-content: flex-start;
+  padding-left: 0;
+}
+.popui-detail-copyable [data-button-copy]:hover {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.popui-detail-copyable [data-button-copy]:active {
+  transform: none;
+  box-shadow: none;
+}
+.popui-detail-copyable [data-copy-text] { font-family: var(--font-sans); }
+.popui-detail-copyable { cursor: pointer; }
+.popui-detail-copyable .popui-detail-action,
+.popui-detail-copyable [data-copy-icon-duplicate],
+.popui-detail-copyable [data-copy-icon-success] {
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.popui-detail-copyable:hover .popui-detail-action,
+.popui-detail-copyable:hover [data-copy-icon-duplicate],
+.popui-detail-copyable:hover [data-copy-icon-success] {
+  opacity: 1;
+}

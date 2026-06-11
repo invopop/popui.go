@@ -1,0 +1,105 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// DetailList wraps a set of popui.DetailItem / popui.DetailRow rows into a
+// console-ui-style detail view. See props.DetailList for the field
+// reference. The list styling (row layout, label column, hover-tinted value
+// cell) ships with popui's stylesheet, so any app can drop this into a panel
+// or drawer without copying CSS.
+//
+//	@popui.DetailList(props.DetailList{Bordered: true, Indent: true}) {
+//	    @popui.DetailItem(props.DetailItem{Label: "Role", Value: "Seller"})
+//	    @popui.DetailItem(props.DetailItem{Label: "Status", Value: status})
+//	    @popui.DetailRow(props.DetailRow{Label: "ID", Copyable: true}) {
+//	        <span class="popui-detail-value">{ id }</span>
+//	        @popui.ButtonCopy(props.ButtonCopy{Value: id, Variant: props.ButtonVariantTransparent})
+//	    }
+//	}
+templ DetailList(opts ...props.DetailList) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"popui-detail-list",
+				classes.If(p.Indent, "popui-detail-indent"),
+				classes.If(p.Bordered, "border-b border-border"),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<ul class="space-y-1">
+			{ children... }
+		</ul>
+	</div>
+}
+
+// DetailItem renders one text row — Label on the left, Value on the right.
+// Empty Value renders an em-dash. See props.DetailItem.
+templ DetailItem(opts ...props.DetailItem) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Class != "" {
+			class={ p.Class }
+		}
+		{ p.Attributes... }
+	>
+		<div class="popui-detail-row">
+			<div class="popui-detail-label">{ p.Label }</div>
+			<div class="popui-detail-value-wrap">
+				<div class="popui-detail-value">{ detailValueOrDash(p.Value) }</div>
+			</div>
+		</div>
+	</li>
+}
+
+// DetailRow renders a detail row whose value cell is filled by children
+// (tags, links, copy buttons, …). See props.DetailRow; set Copyable for an
+// id/copy row with reveal-on-hover actions.
+templ DetailRow(opts ...props.DetailRow) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Class != "" {
+			class={ p.Class }
+		}
+		{ p.Attributes... }
+	>
+		<div class="popui-detail-row">
+			<div class="popui-detail-label">{ p.Label }</div>
+			<div
+				class={
+					tailwind.Merge(
+						"popui-detail-value-wrap",
+						classes.If(p.Copyable, "popui-detail-copyable"),
+					),
+				}
+			>
+				{ children... }
+			</div>
+		</div>
+	</li>
+}
+
+// detailValueOrDash keeps a uniform em-dash placeholder for missing detail
+// values so the value column stays aligned regardless of which fields are
+// populated.
+func detailValueOrDash(s string) string {
+	if s == "" {
+		return "—"
+	}
+	return s
+}

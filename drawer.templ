@@ -52,9 +52,11 @@ templ Drawer(opts ...props.Drawer) {
 	{{
 		anchorEdge := "right: 0;"
 		borderSide := "border-l"
+		offEdge := "100%"
 		if p.Position == props.DrawerPositionLeft {
 			anchorEdge = "left: 0;"
 			borderSide = "border-r"
+			offEdge = "-100%"
 		}
 	}}
 	<aside
@@ -62,10 +64,9 @@ templ Drawer(opts ...props.Drawer) {
 			id={ p.ID }
 		}
 		x-data={ "drawer('" + p.ID + "')" }
-		x-show="open"
-		x-transition.opacity.duration.150ms
 		x-cloak
-		style={ "position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px;" }
+		style={ "position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px; transition: transform 300ms ease, opacity 300ms ease, visibility 300ms ease; will-change: transform;" }
+		:style={ "{ transform: open ? 'translateX(0)' : 'translateX(" + offEdge + ")', opacity: open ? 1 : 0, visibility: open ? 'visible' : 'hidden' }" }
 		class={
 			tailwind.Merge(
 				"flex flex-col bg-background "+borderSide+" border-border overflow-hidden",
