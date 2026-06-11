@@ -83,6 +83,8 @@ templ Table() {
 				{Name: "FreezeFirstColumn", Type: "bool", Default: "false", Description: "Pin the first column (header + every row) to the left during horizontal scroll, with a full-height right divider that stays in place. Requires ScrollHorizontal"},
 				{Name: "ColumnDividers", Type: "bool", Default: "false", Description: "Draw a label-height divider before each header column. The 2nd divider is suppressed when FreezeFirstColumn is set (its full-height border already separates columns 1 and 2)"},
 				{Name: "FullWidth", Type: "bool", Default: "false", Description: "Stretch the table to fill its container width even when columns don't need it, while still growing past it when they do"},
+				{Name: "RowHover", Type: "bool", Default: "false", Description: "Tint a body row's cells on hover — the standard data-table affordance for scanning a row"},
+				{Name: "Resizable", Type: "bool", Default: "false", Description: "Let the user drag the right edge of each header cell to resize the column. Drag handles + behavior are provided by popui (CSS + popui.js); no consumer script needed"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

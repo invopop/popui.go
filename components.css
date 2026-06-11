@@ -369,6 +369,42 @@ form {
   table-layout: auto;
 }
 
+/* Scroll-table cells — when ScrollHorizontal is set the cells shouldn't wrap,
+   and columns get a sensible minimum width so short-content columns aren't
+   squeezed to a few characters (they still grow to fit longer content, and
+   stretch to fill under FullWidth). Removes the need for consumers to hand-set
+   per-column widths or whitespace utilities. */
+.popui-table-scroll-cells th,
+.popui-table-scroll-cells td {
+  white-space: nowrap;
+  min-width: 6rem;
+}
+
+/* RowHover — tint a body row on hover. The frozen first column keeps its own
+   opaque hover treatment (see .popui-table-freeze-first below), so this only
+   needs to cover the scrolling cells. */
+.popui-table-row-hover tbody tr:hover td {
+  background-color: var(--color-background-default-secondary);
+}
+
+/* Resizable — drag handle on the right edge of each header cell (attached by
+   popui.js). The handle is absolutely positioned, so the th needs a
+   positioning context; a sticky header already provides one, so only add
+   position: relative when the header isn't sticky (avoids overriding sticky). */
+.popui-table-resizable:not(.popui-table-sticky-header) thead th {
+  position: relative;
+}
+.popui-table-resizable thead th .popui-table-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 11;
+}
+
 /* Frozen-column scroll wrapper — suppress the horizontal overscroll
    "rubber-band" bounce. The elastic overscroll is a visual transform applied
    to the scroll contents, and the position: sticky first column rides along

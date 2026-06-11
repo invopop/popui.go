@@ -671,3 +671,49 @@ document.addEventListener('alpine:init', () => {
   }))
 })
 
+
+// Column resizing for popui.Table with Resizable set. Attaches a drag handle
+// to the right edge of each non-last header cell of any .popui-table-resizable
+// table; dragging sets an inline width/min-width on the th, which the
+// table-auto layout respects. Session-local (no persistence). Self-contained
+// so consumers don't need their own resize script.
+// Leading semicolon guards against ASI: popui.js's prior statement has no
+// trailing semicolon, so without this the IIFE would be parsed as a call on
+// the previous expression.
+;(function () {
+  function attachResizers() {
+    document.querySelectorAll('.popui-table-resizable thead th').forEach(function (th, idx, all) {
+      if (idx === all.length - 1) return; // last column — nothing to drag against
+      if (th.querySelector('.popui-table-resizer')) return; // already wired
+      var handle = document.createElement('div');
+      handle.className = 'popui-table-resizer';
+      th.appendChild(handle);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', attachResizers);
+  document.addEventListener('htmx:afterSettle', attachResizers);
+  document.addEventListener('mousedown', function (e) {
+    var handle = e.target.closest('.popui-table-resizer');
+    if (!handle) return;
+    e.preventDefault();
+    var th = handle.closest('th');
+    if (!th) return;
+    var startX = e.clientX;
+    var startWidth = th.offsetWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    function onMove(mv) {
+      var next = Math.max(60, startWidth + (mv.clientX - startX));
+      th.style.width = next + 'px';
+      th.style.minWidth = next + 'px';
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+})();
