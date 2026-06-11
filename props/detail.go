@@ -31,6 +31,52 @@ type DetailItem struct {
 	Value      string
 }
 
+// DetailHeading is a section title for a detail view (e.g. "Details",
+// "Inboxes"). Renders the heading with the standard padding/typography so
+// apps don't hand-roll the class string. Use Title, or pass children.
+type DetailHeading struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Title      string
+}
+
+// DetailEmpty is the muted placeholder shown when a detail section / tab has
+// no data ("No inboxes", "No reporting state", …). Use Text, or children.
+type DetailEmpty struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Text       string
+}
+
+// DetailCopyRow is a copyable detail row: the Value reads as plain text and,
+// on hover, the row tints and a copy button (and an optional external-link
+// button) fade in — the clipboard wiring is built in, so apps just pass a
+// label and value. It's the batteries-included form of popui.DetailRow with
+// Copyable set.
+type DetailCopyRow struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Label      string
+	// Value is shown (optionally truncated to Prefix…Suffix) and is what the
+	// copy button writes to the clipboard in full.
+	Value string
+	// Stacked places the label above the value (see DetailRow.Stacked).
+	Stacked bool
+	// Mono renders the value in the monospace face (ids, hashes).
+	Mono bool
+	// PrefixLength / SuffixLength truncate the DISPLAYED value to
+	// "prefix…suffix" (or "prefix…" when SuffixLength is 0); the full Value is
+	// still copied. Both 0 shows the value untruncated.
+	PrefixLength int
+	SuffixLength int
+	// URL, when set, adds a hover-revealed external-link button that opens it
+	// in a new tab.
+	URL templ.SafeURL
+}
+
 // DetailRow is a detail row whose value cell is filled by arbitrary
 // children — a popui.Tag, a link, a popui.ButtonCopy, etc. — instead of a
 // plain string. Same label column and hover-tinted value cell as
@@ -40,6 +86,9 @@ type DetailRow struct {
 	Class      string
 	Attributes templ.Attributes
 	Label      string
+	// Stacked places the label above the value (a vertical row) instead of
+	// the default label-left / value-right layout.
+	Stacked bool
 	// Copyable turns the value cell into a reveal-on-hover affordance row:
 	// children carrying the `popui-detail-action` class (and any
 	// popui.ButtonCopy icons) stay invisible until the row is hovered, and

@@ -435,12 +435,62 @@ form {
   40% { fill: var(--color-accent-50); }
 }
 
+/* Segmented tabs (popui.SegmentedTabs) — a pill-style toggle group: a tinted
+   track holding equal-width triggers, the active one lifted onto a card
+   surface. Active state is driven by a data-state="active" attribute the
+   component binds from its Alpine Model. */
+.popui-segmented {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 1.75rem;
+  padding: 0.125rem;
+  border-radius: 0.375rem;
+  background-color: var(--color-background-default-tertiary);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+.popui-segmented-full { width: 100%; }
+.popui-segmented-trigger {
+  display: inline-flex;
+  flex: 1 1 0%;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  height: 100%;
+  padding: 0.125rem 0.75rem;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  line-height: inherit;
+  border: 0;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 150ms, box-shadow 150ms;
+}
+.popui-segmented-trigger[data-state="active"] {
+  background-color: var(--color-background);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
 /* Detail view (popui.DetailList / DetailItem / DetailRow) — console-ui-style
    label-on-left / value-on-right rows for side panels and drawers. Shipped
    here so any consuming app gets the styling without copying a <style> block. */
 .popui-detail-list { padding-bottom: 1rem; }
 .popui-detail-indent { margin-left: 1rem; margin-right: 1rem; }
 .popui-detail-row { display: flex; gap: 1.5rem; align-items: center; }
+/* Stacked variant: label above the value. */
+.popui-detail-row.popui-detail-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+/* Stacked: align the label's left edge with the value (which carries the
+   value-wrap's 0.5rem left padding). */
+.popui-detail-stacked > .popui-detail-label { min-width: 0; padding-left: 0.5rem; }
 .popui-detail-row > .popui-detail-label {
   min-width: 148px;
   color: var(--color-foreground-default-secondary);
