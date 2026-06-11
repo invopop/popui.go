@@ -357,6 +357,18 @@ form {
    base to sit over the alpha hover/border tokens, and the header dividers are
    pseudo-elements that scale with the label height. */
 
+/* FullWidth — stretch the table to fill its container while still growing
+   past it when the columns need more (horizontal scroll). min-width pins it
+   to the container; width: max-content lets it expand beyond; table-layout:
+   auto so the extra width is distributed across the columns. Expressed as a
+   class rather than min-w-full/w-max/table-auto utilities because the popui
+   tailwind build doesn't emit min-w-full or table-auto. */
+.popui-table-full-width {
+  min-width: 100%;
+  width: max-content;
+  table-layout: auto;
+}
+
 /* Switch the sticky/frozen variant to separate borders. popui.Table defaults
    to border-collapse: collapse, where collapsed borders are painted on the
    table grid rather than the cells — so a sticky cell's own border-right would

@@ -77,7 +77,7 @@ func Table(p ...props.Table) templ.Component {
 			"table-fixed",
 			classes.If(!prp.ScrollHorizontal, "w-full"),
 			classes.If(prp.ScrollHorizontal, "w-max"),
-			classes.If(prp.FullWidth, "table-auto min-w-full w-max"),
+			classes.If(prp.FullWidth, "popui-table-full-width"),
 			classes.If(prp.StickyHeader, "popui-table-sticky-header"),
 			classes.If(prp.FreezeFirstColumn, "popui-table-freeze-first"),
 			classes.If(prp.ColumnDividers, "popui-table-col-dividers"),
