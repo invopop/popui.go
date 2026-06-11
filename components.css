@@ -448,7 +448,7 @@ form {
 
 /* Range calendar (popui FilterRow Range chip) — a dual-month date-range
    picker with a preset rail, replicating console-ui's range calendar. */
-.popui-cal { --popui-cal-cell: 2rem; min-height: 300px; }
+.popui-cal { --popui-cal-cell: 1.75rem; min-height: 300px; }
 .popui-cal-preset {
   white-space: nowrap;
   text-align: left;
@@ -479,7 +479,7 @@ form {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   border: 0;
   border-radius: 0.5rem;

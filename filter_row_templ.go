@@ -55,7 +55,7 @@ func FilterRow(opts ...props.FilterRow) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"flex flex-wrap items-center gap-2 px-4 h-12 border-b border-border shrink-0",
+			"flex flex-wrap items-center gap-2 px-4 min-h-12 py-2 border-b border-border shrink-0",
 			p.Class,
 		),
 		}
