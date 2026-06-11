@@ -1,0 +1,85 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TableStickyExample() {
+	@popui.Table(props.Table{
+		RootClass:         "max-h-64 overflow-auto",
+		ScrollHorizontal:  true,
+		StickyHeader:      true,
+		FreezeFirstColumn: true,
+		ColumnDividers:    true,
+		FullWidth:         true,
+	}) {
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Role</th>
+				<th>Team</th>
+				<th>Location</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>@popui.TableCell(props.TableCell{Value: "usr_001", Mono: true})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "John Doe"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "john@example.com"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Admin"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Platform"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Berlin"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+			</tr>
+			<tr>
+				<td>@popui.TableCell(props.TableCell{Value: "usr_002", Mono: true})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Jane Smith"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "jane@example.com"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "User"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Billing"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Madrid"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+			</tr>
+			<tr>
+				<td>@popui.TableCell(props.TableCell{Value: "usr_003", Mono: true})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Bob Johnson"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "bob@example.com"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Editor"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Content"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: ""})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Invited"})</td>
+			</tr>
+			<tr>
+				<td>@popui.TableCell(props.TableCell{Value: "usr_004", Mono: true})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Alice Brown"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "alice@example.com"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Admin"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Platform"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Lisbon"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+			</tr>
+			<tr>
+				<td>@popui.TableCell(props.TableCell{Value: "usr_005", Mono: true})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Charlie Davis"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "charlie@example.com"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "User"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Support"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Paris"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Suspended"})</td>
+			</tr>
+			<tr>
+				<td>@popui.TableCell(props.TableCell{Value: "usr_006", Mono: true})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Dana Evans"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "dana@example.com"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Editor"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Content"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Rome"})</td>
+				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+			</tr>
+		</tbody>
+	}
+}
