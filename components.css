@@ -369,6 +369,17 @@ form {
   table-layout: auto;
 }
 
+/* Frozen-column scroll wrapper — suppress the horizontal overscroll
+   "rubber-band" bounce. The elastic overscroll is a visual transform applied
+   to the scroll contents, and the position: sticky first column rides along
+   with it, so during the bounce it drifts instead of holding at the left edge.
+   overscroll-behavior-x: none disables the horizontal elastic bounce (and
+   scroll chaining) so the frozen column stays pinned. Only the x axis is
+   suppressed — vertical overscroll keeps its default behavior. */
+.popui-table-freeze-scroll {
+  overscroll-behavior-x: none;
+}
+
 /* Switch the sticky/frozen variant to separate borders. popui.Table defaults
    to border-collapse: collapse, where collapsed borders are painted on the
    table grid rather than the cells — so a sticky cell's own border-right would

@@ -22,6 +22,7 @@ templ Table(p ...props.Table) {
 			tailwind.Merge(
 				classes.If(prp.ScrollHorizontal, "overflow-x-auto"),
 				classes.If(!prp.ScrollHorizontal, "overflow-hidden has-[[role=menu]]:overflow-visible"),
+				classes.If(prp.FreezeFirstColumn, "popui-table-freeze-scroll"),
 				classes.If(prp.Variant == "card", "border border-border rounded-lg"),
 				prp.RootClass,
 			),
