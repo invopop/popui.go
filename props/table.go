@@ -33,6 +33,15 @@ type Table struct {
 	// the columns don't need it, while still growing past the container
 	// when they do. Pairs with ScrollHorizontal for wide tables.
 	FullWidth bool
+
+	// RowHover tints a body row's cells on hover — the standard data-table
+	// affordance for scanning across a row.
+	RowHover bool
+
+	// Resizable lets the user drag the right edge of each header cell to
+	// resize that column. The drag handles and behavior are provided by
+	// popui (CSS + popui.js); no consumer script is needed.
+	Resizable bool
 }
 
 // TablePaginationElements defines custom attributes for pagination interactive elements
