@@ -1,0 +1,83 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Multiselect() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("multiselect.templ"),
+	}) {
+		@examples.MultiselectExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Label",
+		Description: "Use the Label prop for a simple text label above the field.",
+		Code:        examples.LoadExample("multiselect_with_label.templ"),
+	}) {
+		@examples.MultiselectWithLabelExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Searchable",
+		Description: "Set Searchable to add a filter box inside the dropdown. Useful when there are many options.",
+		Code:        examples.LoadExample("multiselect_searchable.templ"),
+	}) {
+		@examples.MultiselectSearchableExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Disabled",
+		Description: "The field can be disabled to prevent user interaction. Selected values are still displayed but cannot be changed.",
+		Code:        examples.LoadExample("multiselect_disabled.templ"),
+	}) {
+		@examples.MultiselectDisabledExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Error",
+		Description: "The field can display error messages for validation feedback.",
+		Code:        examples.LoadExample("multiselect_with_error.templ"),
+	}) {
+		@examples.MultiselectWithErrorExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Multiselect",
+			Description: "Select-like dropdown for choosing multiple options, shown as removable tag chips.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier. Auto-generated when omitted so the label and dropdown link correctly"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the field styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the root element (data-*, aria-*, etc.)"},
+				{Name: "Name", Type: "string", Default: "", Description: "Name used for form submission. Each selected value is submitted under this name"},
+				{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the field"},
+				{Name: "Placeholder", Type: "string", Default: "Select options", Description: "Text shown inside the field when nothing is selected"},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the field"},
+				{Name: "Required", Type: "bool", Default: "false", Description: "Marks the field as required, requiring at least one selection for form validation"},
+				{Name: "Searchable", Type: "bool", Default: "false", Description: "Adds a search box inside the dropdown to filter options"},
+				{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the field"},
+				{Name: "Options", Type: "[]MultiselectOption", Default: "", Description: "Array of options to render in the dropdown"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "MultiselectOption",
+			Description: "Configuration for an individual option.",
+			Items: []modules.APITableItem{
+				{Name: "Value", Type: "string", Default: "", Description: "The value submitted when the option is selected"},
+				{Name: "Label", Type: "string", Default: "", Description: "The text displayed for the option and its tag chip"},
+				{Name: "Selected", Type: "bool", Default: "false", Description: "Whether the option is initially selected"},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Whether the option cannot be toggled"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Error",
+			Description: "Error configuration for displaying validation feedback.",
+			Items: []modules.APITableItem{
+				{Name: "Error", Type: "error", Default: "", Description: "Go error object to display (calls .Error() method)"},
+				{Name: "Text", Type: "string", Default: "", Description: "Text string to display as error message"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with error styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes for the error element"},
+			},
+		})
+	}
+}

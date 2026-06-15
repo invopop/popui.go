@@ -183,6 +183,12 @@ var groups = []*Group{
 				Template: components.Label(),
 			},
 			{
+				Title:    "Multiselect",
+				Desc:     "Dropdown for choosing multiple options, displayed as removable tag chips.",
+				Path:     "multiselect",
+				Template: components.Multiselect(),
+			},
+			{
 				Title:    "Notification",
 				Desc:     "Feedback messages with different severity types and icons.",
 				Path:     "notification",

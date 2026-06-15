@@ -1,0 +1,21 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ MultiselectWithLabelExample() {
+	@popui.Multiselect(props.Multiselect{
+		ID:          "countries-with-label",
+		Name:        "countries",
+		Label:       "Countries",
+		Placeholder: "Choose countries",
+		Options: []props.MultiselectOption{
+			{Value: "es", Label: "Spain"},
+			{Value: "fr", Label: "France"},
+			{Value: "de", Label: "Germany"},
+			{Value: "it", Label: "Italy"},
+		},
+	})
+}
