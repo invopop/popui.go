@@ -17,7 +17,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func FilterRow() templ.Component {
+func Filter() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -50,14 +50,14 @@ func FilterRow() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.FilterRowExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.FilterExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("filter_row.templ"),
+			Code: examples.LoadExample("filter.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -75,7 +75,7 @@ func FilterRow() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "FilterRow",
+				Title:       "Filter",
 				Description: "Search-bar–style filter row for data views. Renders a \"+ Filter\" menu plus one editable chip per active filter; multiple filters apply at once (AND), laid out left-to-right in add order. HTMX-driven: the whole row is one <form> that fires hx-get on submit.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the form element"},
@@ -83,8 +83,8 @@ func FilterRow() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes on the form (data-*, hx-*, etc.)"},
 					{Name: "BaseURL", Type: "string", Default: "", Description: "The form's hx-get target. Active filter values become query params on this URL"},
 					{Name: "Target", Type: "string", Default: "", Description: "hx-target selector — the region swapped on submit. Scope it to the data region (not the row) so the row survives swaps"},
-					{Name: "Select", Type: "string", Default: "", Description: "hx-select selector — extracts a matching region from the response. Usually equal to Target"},
-					{Name: "Swap", Type: "string", Default: "", Description: "hx-swap mode (innerHTML, outerHTML, …). Empty uses HTMX's default"},
+					{Name: "Select", Type: "string", Default: "Target", Description: "hx-select selector — extracts a matching region from the response. Defaults to Target when empty"},
+					{Name: "Swap", Type: "string", Default: "outerHTML", Description: "hx-swap mode (innerHTML, outerHTML, …). Defaults to outerHTML when empty"},
 					{Name: "PageSize", Type: "int", Default: "0", Description: "Carried as a hidden size input so page size survives filter changes. 0 omits it"},
 					{Name: "Inputs", Type: "[]FilterInput", Default: "", Description: "The filterable fields — one editable chip each"},
 				},
@@ -98,15 +98,15 @@ func FilterRow() templ.Component {
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "FilterInput",
-				Description: "One filterable field. The value editor is chosen by shape: options with a Color render an inline colored option list (with keyboard nav); options without a Color render a <select>; no options render a free-text <input>.",
+				Description: "One filterable field. Type picks the value editor and operator: text → free-text input (\"matches\"); select → single-choice option list (\"matches\"); multiple → multi-choice option list (\"is any of\"); calendar → date-range calendar (\"is between\"). select and multiple share the inline option list — an option's Color adds a TagStatus dot.",
 				Items: []modules.APITableItem{
 					{Name: "Name", Type: "string", Default: "", Description: "Form field name / query-param key"},
 					{Name: "Label", Type: "string", Default: "", Description: "Shown in the \"+ Filter\" menu and on the chip"},
-					{Name: "PluralLabel", Type: "string", Default: "", Description: "Overrides the auto-pluralised label in the multi-select summary (\"3 statuses\"). Empty uses the built-in English pluralizer; set for irregulars (e.g. \"people\")"},
+					{Name: "Type", Type: "string", Default: "text", Description: "Editor type: FilterTypeText, FilterTypeSelect, FilterTypeMultiple, or FilterTypeCalendar. Empty defaults to text"},
+					{Name: "PluralLabel", Type: "string", Default: "", Description: "Overrides the auto-pluralised label in the multiple summary (\"3 statuses\"). Empty uses the built-in English pluralizer; set for irregulars (e.g. \"people\")"},
 					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Rendered in the \"+ Filter\" menu and on the chip"},
 					{Name: "Values", Type: "[]string", Default: "", Description: "Currently-applied values (typically from the URL). Non-empty means the chip starts active on render"},
-					{Name: "Options", Type: "[]FilterOption", Default: "", Description: "Selectable options. Presence and Color decide the editor (see above)"},
-					{Name: "Multi", Type: "bool", Default: "false", Description: "Multi-select for colored options; also switches the operator label from \"matches\" to \"is any of\""},
+					{Name: "Options", Type: "[]FilterOption", Default: "", Description: "Choices for FilterTypeSelect and FilterTypeMultiple"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -118,11 +118,11 @@ func FilterRow() templ.Component {
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "FilterOption",
-				Description: "One option in a FilterInput's value list. A non-empty Color switches the editor from a plain <select> to an inline colored option list (TagStatus dot).",
+				Description: "One option in a select/multiple FilterInput's value list. A non-empty Color shows the matching TagStatus dot beside the option.",
 				Items: []modules.APITableItem{
 					{Name: "Value", Type: "string", Default: "", Description: "The submitted value"},
 					{Name: "Label", Type: "string", Default: "", Description: "The displayed text"},
-					{Name: "Color", Type: "string", Default: "", Description: "A TagStatus status (green, orange, blue, grey, …). Non-empty switches the editor to the colored inline option list"},
+					{Name: "Color", Type: "string", Default: "", Description: "A TagStatus status (green, orange, blue, grey, …). Non-empty shows a colored dot beside the option"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

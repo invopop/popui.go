@@ -14,12 +14,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-// FilterRowExample shows a generic data-view filter row: a colored
-// multi-select (Status), a free-text field (Name), and a date field
-// (Created Date). The editor for each field is chosen by its shape —
-// colored options render an inline option list, no options render a
-// free-text input.
-func FilterRowExample() templ.Component {
+func FilterExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -40,26 +35,35 @@ func FilterRowExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = popui.FilterRow(props.FilterRow{
+		templ_7745c5c3_Err = popui.Filter(props.Filter{
 			BaseURL:  "/data",
 			Target:   "#table-body",
-			Select:   "#table-body",
-			Swap:     "innerHTML",
 			PageSize: 20,
 			Inputs: []props.FilterInput{
 				{
 					Name:  "status",
 					Label: "Status",
 					Icon:  icons.Status(),
-					Multi: true,
+					Type:  props.FilterTypeMultiple,
 					Options: []props.FilterOption{
 						{Value: "active", Label: "Active", Color: "green"},
 						{Value: "pending", Label: "Pending", Color: "orange"},
 						{Value: "archived", Label: "Archived", Color: "grey"},
 					},
 				},
-				{Name: "name", Label: "Name", Icon: icons.Search()},
-				{Name: "created", Label: "Created Date", Icon: icons.Calendar()},
+				{
+					Name:  "priority",
+					Label: "Priority",
+					Icon:  icons.Tag(),
+					Type:  props.FilterTypeSelect,
+					Options: []props.FilterOption{
+						{Value: "high", Label: "High", Color: "red"},
+						{Value: "normal", Label: "Normal", Color: "blue"},
+						{Value: "low", Label: "Low", Color: "grey"},
+					},
+				},
+				{Name: "name", Label: "Name", Icon: icons.Search(), Type: props.FilterTypeText},
+				{Name: "created", Label: "Created Date", Icon: icons.Calendar(), Type: props.FilterTypeCalendar},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

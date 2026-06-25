@@ -528,8 +528,12 @@ document.addEventListener('alpine:init', () => {
 // click its popovertarget trigger.
 document.addEventListener('alpine:init', () => {
   if (!window.Alpine) return
-  Alpine.data('filterRow', (initialActive) => ({
+  Alpine.data('filterRow', (initialActive, allNames) => ({
     active: Array.isArray(initialActive) ? [...initialActive] : [],
+    // Every filterable field name, in declaration order. Used to decide when
+    // the "+ Filter" add button is still useful — once every field is active
+    // there is nothing left to add, so the button hides.
+    all: Array.isArray(allNames) ? [...allNames] : [],
 
     // Clear all form fields associated with a filter name. Handles plain
     // text inputs, <select>s, and DropdownSelect — the latter stores its
@@ -684,6 +688,13 @@ document.addEventListener('alpine:init', () => {
 
     hasActive() {
       return this.active.length > 0
+    },
+
+    // hasAvailable reports whether any field is still inactive (i.e. the
+    // "+ Filter" add menu has something to offer). False once every field is
+    // active, which hides the add button.
+    hasAvailable() {
+      return this.all.some((n) => !this.active.includes(n))
     },
   }))
 

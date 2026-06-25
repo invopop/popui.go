@@ -153,10 +153,10 @@ var groups = []*Group{
 				Template: components.File(),
 			},
 			{
-				Title:    "Filter Row",
-				Desc:     "Search-bar style filter row for data views: a \"+ Filter\" menu plus one editable chip per active filter, with multi-field filtering, colored option lists, and keyboard navigation.",
-				Path:     "filter-row",
-				Template: components.FilterRow(),
+				Title:    "Filter",
+				Desc:     "Search-bar style filter for data views: a \"+ Filter\" menu plus one editable chip per active filter, with multi-field filtering, colored option lists, and keyboard navigation.",
+				Path:     "filter",
+				Template: components.Filter(),
 			},
 			{
 				Title:    "Flag",
