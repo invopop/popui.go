@@ -684,6 +684,7 @@ func DetailCopyRow(opts ...props.DetailCopyRow) templ.Component {
 				})
 				templ_7745c5c3_Err = Button(props.Button{
 					Class: "popui-detail-action",
+					Size:  props.ButtonSizeIcon,
 					Attributes: templ.Attributes{
 						"type":            "button",
 						"aria-label":      "Copy",
@@ -719,6 +720,7 @@ func DetailCopyRow(opts ...props.DetailCopyRow) templ.Component {
 					})
 					templ_7745c5c3_Err = Button(props.Button{
 						Class:  "popui-detail-action",
+						Size:   props.ButtonSizeIcon,
 						Href:   p.URL,
 						Target: "_blank",
 						Rel:    "noopener noreferrer",

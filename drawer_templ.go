@@ -196,6 +196,11 @@ func Drawer(opts ...props.Drawer) templ.Component {
 // (matches the App.Header bar so the drawer reads as a peer surface).
 // Children render in the right-side action slot — pass any popui.Button
 // or icon to expose drawer-level actions.
+//
+// The header is `sticky top-0` with a solid background so the close button
+// and title stay pinned to the top of the drawer when the panel content is
+// swapped into a scrolling slot (`overflow-y-auto`) and the body scrolls
+// underneath it.
 func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -226,7 +231,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 			}
 		}
 		var templ_7745c5c3_Var9 = []any{tailwind.Merge(
-			"py-3.5 px-4 h-12 flex gap-3 items-center border-b border-border shrink-0",
+			"sticky top-0 z-10 bg-background py-3.5 px-4 h-12 flex gap-3 items-center border-b border-border shrink-0",
 			p.Class,
 		),
 		}
@@ -246,7 +251,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 100, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 105, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -314,7 +319,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 116, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 121, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

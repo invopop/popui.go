@@ -160,6 +160,7 @@ templ DetailCopyRow(opts ...props.DetailCopyRow) {
 		if p.Value != "" {
 			@Button(props.Button{
 				Class: "popui-detail-action",
+				Size:  props.ButtonSizeIcon,
 				Attributes: templ.Attributes{
 					"type":            "button",
 					"aria-label":      "Copy",
@@ -172,6 +173,7 @@ templ DetailCopyRow(opts ...props.DetailCopyRow) {
 			if p.URL != "" {
 				@Button(props.Button{
 					Class:  "popui-detail-action",
+					Size:   props.ButtonSizeIcon,
 					Href:   p.URL,
 					Target: "_blank",
 					Rel:    "noopener noreferrer",
