@@ -73,6 +73,28 @@ body {
   }
 }
 
+/* Multiselect dropdown */
+
+[popover].multiselect-panel {
+  position: fixed;
+  inset: unset;
+  overflow: visible;
+  top: anchor(bottom);
+  left: anchor(left);
+  margin-top: 0.25rem;
+}
+[popover].multiselect-panel:not(:popover-open) {
+  display: none;
+}
+@supports not (anchor-name: --test) {
+  [popover].multiselect-panel {
+    position: absolute;
+    top: auto;
+    left: auto;
+    margin: 0.25rem 0 0;
+  }
+}
+
 /* Popover Modal */
 
 [popover].popover-modal {
@@ -134,6 +156,17 @@ pre {
   background-size: 1.25rem 1.25rem;
 }
 .dark [data-select-arrow] {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%2330333B'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
+}
+
+/* Multiselect arrow — same glyph as the Select arrow, centred in a 20px box */
+.multiselect-arrow {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%23F3F4F6'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23030712' stroke-width='1.1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.25rem 1.25rem;
+}
+.dark .multiselect-arrow {
   background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%2330333B'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
 }
 
