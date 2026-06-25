@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// FilterRow renders a search-bar style filter row at the top of a data
-// view. See props.FilterRow for the field reference. Backed by the
+// Filter renders a search-bar style filter row at the top of a data
+// view. See props.Filter for the field reference. Backed by the
 // `filterRow` Alpine controller in popui.js.
 //
 // Multi-filter UX: picking a field from the "+ Filter" menu appends a
@@ -23,15 +24,28 @@ import (
 // Caller must wire the HTMX target/select/swap so the data region is
 // what's replaced — not the filter row itself. That way the popover
 // inside the active chip survives each filter submission.
-templ FilterRow(opts ...props.FilterRow) {
+templ Filter(opts ...props.Filter) {
 	{{ p := props.First(opts) }}
+	{{
+		// Select defaults to Target (every consumer swaps the same region it
+		// selects from), and Swap defaults to outerHTML (replace the region
+		// element whole). Both stay overridable.
+		sel := p.Select
+		if sel == "" {
+			sel = p.Target
+		}
+		swap := p.Swap
+		if swap == "" {
+			swap = "outerHTML"
+		}
+	}}
 	<form
 		if p.ID != "" {
 			id={ p.ID }
 		}
 		class={
 			tailwind.Merge(
-				"flex flex-wrap items-center gap-2 px-4 h-12 border-b border-border shrink-0",
+				"flex flex-wrap items-center gap-2 px-4 min-h-12 py-2 border-b border-border shrink-0",
 				p.Class,
 			),
 		}
@@ -40,12 +54,10 @@ templ FilterRow(opts ...props.FilterRow) {
 		if p.Target != "" {
 			hx-target={ p.Target }
 		}
-		if p.Select != "" {
-			hx-select={ p.Select }
+		if sel != "" {
+			hx-select={ sel }
 		}
-		if p.Swap != "" {
-			hx-swap={ p.Swap }
-		}
+		hx-swap={ swap }
 		hx-push-url="true"
 		hx-trigger="submit"
 		{ p.Attributes... }
@@ -78,19 +90,33 @@ templ filterAddMenu(inputs []props.FilterInput) {
 	<div
 		x-data
 		x-id="['filter-menu']"
+		x-show="hasAvailable()"
+		x-cloak
 		class="relative inline-block"
 		:style="'anchor-name: --filter-menu-' + $id('filter-menu') + '; order: 9999'"
 	>
+		// No filter active yet: the full "Filter" button (icon + label).
 		@Button(props.Button{
 			Attributes: templ.Attributes{
 				"type":                 "button",
+				"x-show":               "!hasActive()",
+				"x-bind:popovertarget": "$id('filter-menu')",
+			},
+		}) {
+			@icons.Filter()
+			Filter
+		}
+		// Once a filter is deployed, collapse to a compact icon button that
+		// adds another filter.
+		@Button(props.Button{
+			Size: props.ButtonSizeIcon,
+			Attributes: templ.Attributes{
+				"type":                 "button",
+				"x-show":               "hasActive()",
 				"x-bind:popovertarget": "$id('filter-menu')",
 			},
 		}) {
 			@icons.Add()
-			// Show the "Filter" label only when no filter is active; once a chip
-			// takes the lead position this collapses to a compact "+" button.
-			<span x-show="!hasActive()">Filter</span>
 		}
 		<div
 			popover
@@ -121,8 +147,8 @@ templ filterAddMenu(inputs []props.FilterInput) {
 
 // filterChip renders one editable filter chip: a segmented pill with the
 // field label, an operator label, the value editor, and a close button.
-// The value editor is chosen by the input's shape (DropdownSelect for
-// coloured options, plain <select> for non-coloured, <input> for text).
+// The value editor is chosen by in.Type: calendar → date-range calendar,
+// select/multiple → inline option list, anything else → free-text input.
 templ filterChip(in props.FilterInput) {
 	{{ firstVal := filterFirstValue(in.Values) }}
 	<div
@@ -136,38 +162,27 @@ templ filterChip(in props.FilterInput) {
 			{ in.Label }
 		</div>
 		<div class="inline-flex items-center py-1 px-2 cursor-default pointer-events-none text-foreground-default-secondary font-normal text-base border-r border-border-default-secondary">
-			if in.Multi {
+			if in.Type == props.FilterTypeCalendar {
+				is between
+			} else if in.Type == props.FilterTypeMultiple {
 				is any of
 			} else {
 				matches
 			}
 		</div>
-		if filterHasColours(in.Options) {
+		if in.Type == props.FilterTypeCalendar {
+			@filterRangeCalendar(in)
+		} else if in.Type == props.FilterTypeSelect || in.Type == props.FilterTypeMultiple {
 			@filterInlineOptions(in)
-		} else if len(in.Options) > 0 {
-			<select
-				name={ in.Name }
-				class={
-					"filter-chip-input bg-transparent py-1 pl-2 pr-7 font-medium text-base truncate hover:bg-background-default-secondary focus:bg-background-default-secondary cursor-pointer",
-					templ.KV("text-foreground-default-tertiary font-normal", firstVal == ""),
-					templ.KV("text-foreground", firstVal != ""),
-				}
-				onchange="this.form.requestSubmit()"
-			>
-				<option value="" disabled?={ firstVal != "" } selected?={ firstVal == "" }>
-					{ "Select " + strings.ToLower(in.Label) + "…" }
-				</option>
-				for _, opt := range in.Options {
-					<option value={ opt.Value } selected?={ opt.Value == firstVal } class="text-foreground font-medium">{ opt.Label }</option>
-				}
-			</select>
 		} else {
 			<input
 				type="text"
 				name={ in.Name }
 				value={ firstVal }
-				placeholder={ in.Label + "…" }
-				class="filter-chip-input bg-transparent text-foreground placeholder:text-foreground-default-tertiary placeholder:font-normal py-1 px-2 font-medium text-base w-44 truncate hover:bg-background-default-secondary focus:bg-background-default-secondary"
+				placeholder={ filterTextPlaceholder(in.Label) }
+				oninput="clearTimeout(this._ft); this._ft = setTimeout(() => this.form.requestSubmit(), 350)"
+				onchange="clearTimeout(this._ft); this.form.requestSubmit()"
+				class="filter-chip-input bg-transparent text-foreground placeholder:text-foreground-default-tertiary placeholder:font-normal py-1 px-2 font-sans font-normal text-base w-44 truncate hover:bg-background-default-secondary focus:bg-background-default-secondary focus:outline-none"
 			/>
 		}
 		<div class="border-l border-border-default-secondary">
@@ -249,7 +264,7 @@ templ filterInlineOptions(in props.FilterInput) {
 			role="listbox"
 			:id="$id('flb')"
 			aria-label={ in.Label }
-			if in.Multi {
+			if in.Type == props.FilterTypeMultiple {
 				aria-multiselectable="true"
 			}
 			x-show="open"
@@ -262,7 +277,7 @@ templ filterInlineOptions(in props.FilterInput) {
 					Value:          opt.Value,
 					Label:          opt.Label,
 					Color:          opt.Color,
-					Multiple:       in.Multi,
+					Multiple:       in.Type == props.FilterTypeMultiple,
 					IsSelectedExpr: "values.includes('" + opt.Value + "')",
 					// choose(i) syncs the highlight to the clicked row before
 					// toggling, so a mouse click and a keyboard Enter always act
@@ -282,17 +297,152 @@ templ filterInlineOptions(in props.FilterInput) {
 	</div>
 }
 
-// filterRowAlpine builds the x-data="filterRow([...])" snippet with the
-// initial active list pre-populated from inputs that already have a
-// value (the fields that came in via the URL).
+// filterRangeCalendar renders the date-range editor: a summary box that
+// auto-opens a dual-month calendar with a preset rail (this/last week,
+// month, quarter + custom). Backed by the `rangeCalendar` Alpine controller
+// in popui.js; the selected range is emitted as a single hidden input
+// "from..to" under the field name. Mirrors filterInlineOptions' open/close
+// + auto-open wiring (data-filter-calendar is the hook autoOpenChip uses).
+templ filterRangeCalendar(in props.FilterInput) {
+	<div
+		x-data={ filterRangeCalendarData(in) }
+		data-filter-calendar
+		role="application"
+		aria-label={ in.Label }
+		tabindex="0"
+		class="relative inline-block filter-chip-input focus:outline-none"
+	>
+		<input type="hidden" :name="name" :value="rangeValue"/>
+		<div
+			@click="togglePanel()"
+			class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
+		>
+			<span x-show="!summary" class="text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
+			<span x-show="summary" x-text="summary" class="font-medium text-base text-foreground whitespace-nowrap"></span>
+		</div>
+		<div
+			x-show="open"
+			x-cloak
+			style="top:100%;z-index:50"
+			class="popui-cal context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden"
+		>
+			<div class="flex">
+				<div class="popui-cal-presets flex flex-col gap-1 items-stretch p-3 border-r border-border">
+					<template x-for="p in presets" :key="p.key">
+						<button
+							type="button"
+							class="popui-cal-preset"
+							:data-active="preset === p.key ? '' : null"
+							@click="setPreset(p.key)"
+							x-text="p.label"
+						></button>
+					</template>
+				</div>
+				<div class="p-3">
+					<div class="relative flex items-center justify-between mb-1">
+						@Button(props.Button{
+							Size:       props.ButtonSizeIcon,
+							Attributes: templ.Attributes{"type": "button", "@click": "prev()", "aria-label": "Previous month"},
+						}) {
+							@icons.ArrowLeft()
+						}
+						@Button(props.Button{
+							Size:       props.ButtonSizeIcon,
+							Attributes: templ.Attributes{"type": "button", "@click": "next()", "aria-label": "Next month"},
+						}) {
+							@icons.ArrowRight()
+						}
+					</div>
+					<div class="flex gap-6">
+						<template x-for="(mon, mi) in monthsView" :key="mi">
+							<div class="flex flex-col">
+								<header class="h-9 flex items-center justify-center text-base font-medium text-foreground" x-text="mon.label"></header>
+								<table class="popui-cal-grid border-collapse">
+									<thead>
+										<tr>
+											<template x-for="dow in dows" :key="dow">
+												<th class="popui-cal-head" x-text="dow"></th>
+											</template>
+										</tr>
+									</thead>
+									<tbody>
+										<template x-for="(week, wi) in mon.weeks" :key="wi">
+											<tr>
+												<template x-for="(cell, ci) in week" :key="ci">
+													<td class="p-0 text-center">
+														<button
+															type="button"
+															class="popui-cal-day"
+															@click="selectDay(cell.iso)"
+															:data-state="dayState(cell.iso)"
+															:data-outside="cell.outside ? '' : null"
+															:data-today="cell.today ? '' : null"
+															x-text="cell.day"
+														></button>
+													</td>
+												</template>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// filterRangeCalendarData builds the x-data="rangeCalendar({...})" snippet,
+// seeding from/to out of the chip's "from..to" value (URL state).
+func filterRangeCalendarData(in props.FilterInput) string {
+	from, to := "", ""
+	if len(in.Values) > 0 {
+		if i := strings.Index(in.Values[0], ".."); i >= 0 {
+			from = in.Values[0][:i]
+			to = in.Values[0][i+2:]
+		}
+	}
+	fromJS := "null"
+	if from != "" {
+		fromJS = "'" + from + "'"
+	}
+	toJS := "null"
+	if to != "" {
+		toJS = "'" + to + "'"
+	}
+	return "rangeCalendar({name: '" + in.Name + "', from: " + fromJS + ", to: " + toJS + "})"
+}
+
+// filterRowAlpine builds the x-data="filterRow([active], [all])" snippet:
+// the initial active list (fields that already have a value, i.e. came in via
+// the URL) plus the full field list (so the controller can hide the "+ Filter"
+// button once every field is active).
 func filterRowAlpine(inputs []props.FilterInput) string {
-	var active []string
+	var active, all []string
 	for _, in := range inputs {
+		all = append(all, "'"+in.Name+"'")
 		if len(in.Values) > 0 {
 			active = append(active, "'"+in.Name+"'")
 		}
 	}
-	return "filterRow([" + strings.Join(active, ",") + "])"
+	return "filterRow([" + strings.Join(active, ",") + "], [" + strings.Join(all, ",") + "])"
+}
+
+// filterTextPlaceholder builds the free-text chip's placeholder, e.g.
+// "Enter supplier SIREN…". The label's first letter is lower-cased unless it
+// begins an acronym (first two letters upper-case, like "SIREN"), so
+// acronyms stay intact.
+func filterTextPlaceholder(label string) string {
+	r := []rune(label)
+	if len(r) == 0 {
+		return "Enter…"
+	}
+	if !(len(r) >= 2 && unicode.IsUpper(r[0]) && unicode.IsUpper(r[1])) {
+		r[0] = unicode.ToLower(r[0])
+	}
+	return "Enter " + string(r) + "…"
 }
 
 // filterFirstValue returns the first element of a string slice or empty.
@@ -303,18 +453,6 @@ func filterFirstValue(vs []string) string {
 		return ""
 	}
 	return vs[0]
-}
-
-// filterHasColours reports whether any option carries a TagStatus colour —
-// the signal to render the chip with popui.DropdownSelect instead of a
-// plain <select>.
-func filterHasColours(opts []props.FilterOption) bool {
-	for _, o := range opts {
-		if o.Color != "" {
-			return true
-		}
-	}
-	return false
 }
 
 // filterOptionListData builds the x-data="filterOptionList({...})" snippet for
@@ -337,7 +475,7 @@ func filterOptionListData(in props.FilterInput) string {
 	valuesJSON, _ := json.Marshal(values)
 	optionValuesJSON, _ := json.Marshal(optionValues)
 	return "filterOptionList({values: " + string(valuesJSON) +
-		", multiple: " + boolStr(in.Multi) +
+		", multiple: " + boolStr(in.Type == props.FilterTypeMultiple) +
 		", multipleLabel: '" + plural + "'" +
 		", name: '" + in.Name + "'" +
 		", optionValues: " + string(optionValuesJSON) + "})"

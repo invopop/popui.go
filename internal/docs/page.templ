@@ -14,6 +14,10 @@ templ Index() {
 	@popui.App(props.App{
 		Title:       "PopUI Documentation",
 		Description: "Comprehensive documentation for the PopUI component library.",
+		// HTMX powers the interactive examples (e.g. Filter submits via
+		// hx-get). Without it, a filter submit falls back to a native form
+		// navigation that reloads the whole docs page.
+		HTMX: true,
 		Scripts: []props.Script{
 			{Src: "/assets/" + assets.Versioned("scripts", "docs.js")},
 		},

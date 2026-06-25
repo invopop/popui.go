@@ -42,7 +42,7 @@ type DrawerContextItem struct {
 
 	// Tabindex, when non-empty, sets the row button's tabindex attribute.
 	// Pass "-1" to take the row out of the Tab order — used by virtual-cursor
-	// lists (e.g. FilterRow's inline option list) where a parent element owns
+	// lists (e.g. Filter's inline option list) where a parent element owns
 	// keyboard focus and the highlight is driven by an index, not DOM focus,
 	// so individual rows must not steal focus. Empty → no tabindex (the row is
 	// a normal tab stop, e.g. inside a DropdownSelect popover).
