@@ -7,14 +7,10 @@ import (
 
 templ TableStickyExample() {
 	@popui.Table(props.Table{
-		RootClass:         "max-h-64 overflow-auto",
-		ScrollHorizontal:  true,
-		StickyHeader:      true,
-		FreezeFirstColumn: true,
-		ColumnDividers:    true,
-		FullWidth:         true,
-		RowHover:          true,
-		Resizable:         true,
+		RootClass:        "max-h-64 overflow-auto",
+		ScrollHorizontal: true,
+		StickyHeader:     true,
+		Resizable:        true,
 	}) {
 		<thead>
 			<tr>

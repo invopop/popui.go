@@ -261,7 +261,7 @@ func Table() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Sticky Header & Frozen First Column",
-			Description: "Pin the header row and freeze the identity column for dense, wide data tables. StickyHeader keeps the column titles in view while the body scrolls; FreezeFirstColumn pins the first column with a full-height divider that stays put during horizontal scroll; ColumnDividers separates the column titles; FullWidth stretches the table to fill its container. The RootClass must be a bounded vertical scroll container (e.g. 'flex-1 min-h-0 overflow-y-auto') — for a full-page app, set FillViewport on popui.App so the body doesn't absorb the scroll, otherwise the header has nothing to stick within. Scroll the example in both directions. Cells use TableCell — text, or a muted dash when empty (see the Location column).",
+			Description: "Pin the header (StickyHeader) and scroll wide tables horizontally (ScrollHorizontal auto-freezes the first column); RootClass must be a bounded vertical scroll container. Scroll both directions.",
 			Code:        examples.LoadExample("table_sticky.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -281,19 +281,15 @@ func Table() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
-				Description: "A table component with automatic styling for borders, spacing, and typography. The table wrapper provides rounded corners and overflow handling. Supports horizontal scrolling.",
+				Description: "A table component with automatic styling for borders, spacing, and typography. Full-width layout, row-hover tint, and column-title dividers are always applied — no configuration needed. Supports horizontal scrolling (which auto-freezes the first column).",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the table element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles. Use Tailwind's arbitrary variants like [&_tr:hover_td]:bg-gray-100 for advanced styling"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the table element"},
 					{Name: "Variant", Type: "string", Default: "", Description: "Visual style: 'card' adds outer border and rounded corners"},
 					{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the scroll wrapper around the table. Use to bound height + enable vertical scroll for StickyHeader (e.g. 'flex-1 min-h-0 overflow-y-auto')"},
-					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Enable horizontal scrolling when table content exceeds container width. Useful for tables with many columns"},
+					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Wide, horizontally-scrolling table: the body scrolls sideways and the first column is automatically frozen (pinned left with a full-height divider) so the identity column never detaches"},
 					{Name: "StickyHeader", Type: "bool", Default: "false", Description: "Pin the <thead> row to the top while the body scrolls. Requires RootClass to make the wrapper a bounded vertical scroll container"},
-					{Name: "FreezeFirstColumn", Type: "bool", Default: "false", Description: "Pin the first column (header + every row) to the left during horizontal scroll, with a full-height right divider that stays in place. Requires ScrollHorizontal"},
-					{Name: "ColumnDividers", Type: "bool", Default: "false", Description: "Draw a label-height divider before each header column. The 2nd divider is suppressed when FreezeFirstColumn is set (its full-height border already separates columns 1 and 2)"},
-					{Name: "FullWidth", Type: "bool", Default: "false", Description: "Stretch the table to fill its container width even when columns don't need it, while still growing past it when they do"},
-					{Name: "RowHover", Type: "bool", Default: "false", Description: "Tint a body row's cells on hover — the standard data-table affordance for scanning a row"},
 					{Name: "Resizable", Type: "bool", Default: "false", Description: "Let the user drag the right edge of each header cell to resize the column. Drag handles + behavior are provided by popui (CSS + popui.js); no consumer script needed"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)

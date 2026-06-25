@@ -2,41 +2,28 @@ package props
 
 import "github.com/a-h/templ"
 
-// Table Templ component props
+// Table Templ component props.
+//
+// Full-width layout, row-hover tint, and column-title dividers are baked into
+// every Table — they're part of the standard data-table styling and need no
+// configuration.
 type Table struct {
-	ID               string
-	Class            string
-	RootClass        string
-	Attributes       templ.Attributes
-	Variant          string // "card" adds outer border
-	ScrollHorizontal bool   // Enable horizontal scrolling for wide tables
+	ID         string
+	Class      string
+	RootClass  string
+	Attributes templ.Attributes
+	Variant    string // "card" adds outer border
+
+	// ScrollHorizontal turns the table into a wide, horizontally-scrolling
+	// table: the body scrolls sideways and the first column is automatically
+	// frozen — pinned to the left with a full-height divider that stays put
+	// during the scroll, so the identity column never detaches from the rows.
+	ScrollHorizontal bool
 
 	// StickyHeader pins the <thead> row to the top while the body scrolls.
 	// The RootClass must make the wrapper a vertical scroll container with a
 	// bounded height (e.g. "flex-1 min-h-0 overflow-y-auto").
 	StickyHeader bool
-
-	// FreezeFirstColumn pins the first column (header + every body row) to
-	// the left edge while the table scrolls horizontally. Its right edge
-	// carries a full-height divider that stays in place during the scroll,
-	// so the identity column never detaches from the rows. Requires
-	// ScrollHorizontal.
-	FreezeFirstColumn bool
-
-	// ColumnDividers draws a label-height vertical divider before each
-	// header column, separating the column titles. When FreezeFirstColumn
-	// is also set, the divider before the 2nd column is suppressed because
-	// the frozen column's full-height right border already separates 1|2.
-	ColumnDividers bool
-
-	// FullWidth stretches the table to fill its container width even when
-	// the columns don't need it, while still growing past the container
-	// when they do. Pairs with ScrollHorizontal for wide tables.
-	FullWidth bool
-
-	// RowHover tints a body row's cells on hover — the standard data-table
-	// affordance for scanning across a row.
-	RowHover bool
 
 	// Resizable lets the user drag the right edge of each header cell to
 	// resize that column. The drag handles and behavior are provided by

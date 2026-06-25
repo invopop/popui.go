@@ -389,14 +389,10 @@ func TableStickyExample() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = popui.Table(props.Table{
-			RootClass:         "max-h-64 overflow-auto",
-			ScrollHorizontal:  true,
-			StickyHeader:      true,
-			FreezeFirstColumn: true,
-			ColumnDividers:    true,
-			FullWidth:         true,
-			RowHover:          true,
-			Resizable:         true,
+			RootClass:        "max-h-64 overflow-auto",
+			ScrollHorizontal: true,
+			StickyHeader:     true,
+			Resizable:        true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
