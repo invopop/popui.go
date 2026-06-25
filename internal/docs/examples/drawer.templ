@@ -5,11 +5,6 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-// DrawerExample mirrors a real detail panel (modeled on gov-fr's party
-// drawer): a DrawerHeader, a bordered DetailList of label/value items plus a
-// copyable id row, then SegmentedTabs switching between two stacked
-// DetailCopyRow panels. In a real app the body is fetched into the drawer via
-// HTMX after the open event; here it's static dummy data.
 templ DrawerExample() {
 	@popui.Button(props.Button{
 		Attributes: templ.Attributes{
@@ -38,38 +33,32 @@ templ DrawerExample() {
 				URL:          templ.SafeURL("https://app.invopop.com/silo-entry/01J8X2K9P3QF4R5S6T7U8V9W0X"),
 			})
 		}
-		<div x-data="{ tab: 'directory' }">
-			<div class="px-4 pt-4 pb-3">
-				@popui.SegmentedTabs(props.SegmentedTabs{
-					Model:     "tab",
-					Class:     "text-base",
-					FullWidth: true,
-					Tabs: []props.SegmentedTab{
-						{Value: "directory", Label: "Directory"},
-						{Value: "reporting", Label: "Reporting"},
-					},
-				})
-			</div>
-			<div x-show="tab === 'directory'">
-				<div class="px-4 py-2">
-					<ul class="space-y-2">
-						@popui.DetailCopyRow(props.DetailCopyRow{Label: "Name", Value: "Durand SARL", Stacked: true})
-						@popui.DetailCopyRow(props.DetailCopyRow{Label: "Endpoint", Value: "0009:552100554", Stacked: true})
-					</ul>
-				</div>
-			</div>
-			<div x-show="tab === 'reporting'" x-cloak>
-				<div class="px-4 py-2">
-					<ul class="space-y-2">
-						@popui.DetailCopyRow(props.DetailCopyRow{Label: "SIREN", Value: "552100554", Stacked: true})
-						@popui.DetailCopyRow(props.DetailCopyRow{Label: "Cadence", Value: "Monthly", Stacked: true})
-						@popui.DetailCopyRow(props.DetailCopyRow{Label: "Next period", Value: "2026-07-31", Stacked: true})
-						@popui.DetailRow(props.DetailRow{Label: "Last period", Stacked: true, Copyable: true}) {
-							<span class="popui-detail-value">2026-06-30</span>
-						}
-					</ul>
-				</div>
-			</div>
-		</div>
+		@popui.SegmentedTabView(props.SegmentedTabView{
+			FullWidth: true,
+			// text-base is 14px in this theme — matches the DetailItem
+			// font-size; the segmented triggers inherit it.
+			Class: "text-base",
+			Tabs: []props.SegmentedTab{
+				{Value: "directory", Label: "Directory"},
+				{Value: "reporting", Label: "Reporting"},
+			},
+		}) {
+			@popui.SegmentedTabPanel(props.SegmentedTabPanel{For: "directory"}) {
+				<ul class="space-y-2">
+					@popui.DetailCopyRow(props.DetailCopyRow{Label: "Name", Value: "Durand SARL", Stacked: true})
+					@popui.DetailCopyRow(props.DetailCopyRow{Label: "Endpoint", Value: "0009:552100554", Stacked: true})
+				</ul>
+			}
+			@popui.SegmentedTabPanel(props.SegmentedTabPanel{For: "reporting"}) {
+				<ul class="space-y-2">
+					@popui.DetailCopyRow(props.DetailCopyRow{Label: "SIREN", Value: "552100554", Stacked: true})
+					@popui.DetailCopyRow(props.DetailCopyRow{Label: "Cadence", Value: "Monthly", Stacked: true})
+					@popui.DetailCopyRow(props.DetailCopyRow{Label: "Next period", Value: "2026-07-31", Stacked: true})
+					@popui.DetailRow(props.DetailRow{Label: "Last period", Stacked: true, Copyable: true}) {
+						<span class="popui-detail-value">2026-06-30</span>
+					}
+				</ul>
+			}
+		}
 	}
 }
