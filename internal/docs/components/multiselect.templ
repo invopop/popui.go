@@ -48,7 +48,7 @@ templ Multiselect() {
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier. Auto-generated when omitted so the label and dropdown link correctly"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the field styles"},
-				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the root element (data-*, aria-*, etc.)"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the combobox control (data-*, aria-label, aria-describedby, etc.)"},
 				{Name: "Name", Type: "string", Default: "", Description: "Name used for form submission. Each selected value is submitted under this name"},
 				{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the field"},
 				{Name: "Placeholder", Type: "string", Default: "Select options", Description: "Text shown inside the field when nothing is selected"},

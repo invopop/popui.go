@@ -38,8 +38,9 @@ type Multiselect struct {
 }
 
 // GenerateID returns a new Multiselect instance with either the existing ID
-// or a new randomly generated one. This ensures the label and dropdown can be
-// correctly linked when no ID is provided, and is designed to be used inline:
+// or a new randomly generated one. The ID is applied to the combobox trigger
+// so that the label can be correctly linked to it when no ID is provided. It
+// is designed to be used inline:
 //
 //	@popui.Multiselect(props.Multiselect{Name: "tags", Label: "Tags"}.GenerateID())
 func (m Multiselect) GenerateID() Multiselect {

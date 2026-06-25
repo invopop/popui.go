@@ -31,7 +31,6 @@ templ Multiselect(p ...props.Multiselect) {
 		x-data={ multiselectData(prp) }
 		x-id="['multiselect']"
 		x-modelable="selected"
-		{ prp.Attributes... }
 	>
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID}) {
@@ -117,10 +116,14 @@ templ Multiselect(p ...props.Multiselect) {
 				:aria-activedescendant="activeId"
 				:popovertarget="$id('multiselect')"
 				@keydown="onKeydown($event)"
+				if prp.Required {
+					aria-required="true"
+				}
 				if prp.Disabled {
 					disabled
 				}
 				class="flex flex-1 items-center gap-1 min-w-12 bg-transparent outline-none text-left text-base text-foreground disabled:cursor-not-allowed"
+				{ prp.Attributes... }
 			>
 				<span x-show="selected.length === 0" class="truncate text-foreground-default-tertiary">
 					if prp.Placeholder != "" {
