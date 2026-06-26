@@ -10,14 +10,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     hamburgerButton: '.popui-admin-page-title__wrapper > button',
     sidebar: '.popui-admin-sidebar',
     page: '.popui-admin-page',
-    buttonCopy: '.popui-button-copy',
+    buttonCopy: '[data-button-copy]',
     buttonCopyValue: '[data-copy-value]',
-    buttonCopyText: '.popui-button-copy__text',
-    buttonCopyPopover: '.popui-button-copy__popover'
+    buttonCopyText: '[data-copy-text]'
   }
   const ACTIVE_MENU_CLASS = 'menu--active'
   const LOADING_CLASS = 'popui-button--loading'
-  const POPOVER_VISIBLE_CLASS = 'popui-button-copy__popover--visible'
 
   // Internal helper functions
   function prepareAccentColor() {
@@ -74,6 +72,20 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     return result
   }
 
+  // Populate every ButtonCopy's truncated text and keep it in sync with its
+  // hidden value input. Safe to call repeatedly (e.g. after HTMX swaps).
+  function initButtonCopies(root) {
+    const scope = root || document
+    scope.querySelectorAll(QUERY_SELECTORS.buttonCopy).forEach((container) => {
+      const input = container.querySelector(QUERY_SELECTORS.buttonCopyValue)
+      if (!input) return
+      updateButtonCopyText(input)
+      if (input._popuiCopyBound) return
+      input._popuiCopyBound = true
+      input.addEventListener('input', () => updateButtonCopyText(input))
+    })
+  }
+
   // Initialize popui namespace
   const popui = window.popui || {};
 
@@ -85,7 +97,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }
   };
 
-  // Public API: Copy button value to clipboard
+  // Public API: copy a ButtonCopy's value to the clipboard, then briefly swap
+  // its duplicate icon for the success tick.
   popui.copyButtonValue = function(button) {
     const container = button.closest(QUERY_SELECTORS.buttonCopy)
     if (!container) return
@@ -99,14 +112,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     navigator.clipboard
       .writeText(value)
       .then(() => {
-        // Show popover if it exists
-        const popover = container.querySelector(QUERY_SELECTORS.buttonCopyPopover)
-        if (popover) {
-          popover.classList.add(POPOVER_VISIBLE_CLASS)
-          setTimeout(() => {
-            popover.classList.remove(POPOVER_VISIBLE_CLASS)
-          }, 2000)
-        }
+        const dup = container.querySelector('[data-copy-icon-duplicate]')
+        const ok = container.querySelector('[data-copy-icon-success]')
+        if (!dup || !ok) return
+        dup.classList.add('hidden')
+        ok.classList.remove('hidden')
+        if (container._popuiCopyTimer) clearTimeout(container._popuiCopyTimer)
+        container._popuiCopyTimer = setTimeout(() => {
+          ok.classList.add('hidden')
+          dup.classList.remove('hidden')
+        }, 2000)
       })
       .catch((err) => {
         console.error('Failed to copy text: ', err)
@@ -250,19 +265,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }
 
     // ButtonCopy
-    const containers = document.querySelectorAll(QUERY_SELECTORS.buttonCopy)
-
-    containers.forEach((container) => {
-      const input = container.querySelector(QUERY_SELECTORS.buttonCopyValue)
-      if (!input) return
-
-      updateButtonCopyText(input)
-
-      input.addEventListener('input', () => {
-        updateButtonCopyText(input)
-      })
-    })
+    initButtonCopies()
   })
+
+  // Re-populate ButtonCopy cells inserted by HTMX content swaps.
+  document.addEventListener('htmx:afterSettle', () => initButtonCopies())
 
   // Remove any loading class from buttons after browser buttons navigation
   window.addEventListener('visibilitychange', function () {
