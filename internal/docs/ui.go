@@ -117,6 +117,12 @@ var groups = []*Group{
 				Template: components.ButtonCopy(),
 			},
 			{
+				Title:    "Calendar",
+				Desc:     "Dual-month, range-selection calendar with a preset rail and month navigation. Backed by the rangeCalendar Alpine controller; used by the Filter calendar chip.",
+				Path:     "calendar",
+				Template: components.Calendar(),
+			},
+			{
 				Title:    "Checkbox",
 				Desc:     "Checkbox inputs with optional toggle switch variant.",
 				Path:     "checkbox",
@@ -135,10 +141,10 @@ var groups = []*Group{
 				Template: components.DescriptionList(),
 			},
 			{
-				Title:    "Drawer",
+				Title:    "Side panel",
 				Desc:     "Floating side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive — and stays mounted across content swaps.",
-				Path:     "drawer",
-				Template: components.Drawer(),
+				Path:     "side-panel",
+				Template: components.SidePanel(),
 			},
 			{
 				Title:    "Fieldset",

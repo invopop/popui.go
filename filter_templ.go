@@ -786,9 +786,10 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 }
 
 // filterRangeCalendar renders the date-range editor: a summary box that
-// auto-opens a dual-month calendar with a preset rail (this/last week,
-// month, quarter + custom). Backed by the `rangeCalendar` Alpine controller
-// in popui.js; the selected range is emitted as a single hidden input
+// auto-opens a popover hosting the popui.Calendar grid (dual-month, preset
+// rail). Both the summary box and the calendar share the `rangeCalendar`
+// Alpine controller scope declared here, so popui.Calendar renders as plain
+// markup inside it. The selected range is emitted as a single hidden input
 // "from..to" under the field name. Mirrors filterInlineOptions' open/close
 // + auto-open wiring (data-filter-calendar is the hook autoOpenChip uses).
 func filterRangeCalendar(in props.FilterInput) templ.Component {
@@ -819,7 +820,7 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var35 string
 		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(filterRangeCalendarData(in))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 308, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 309, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 		if templ_7745c5c3_Err != nil {
@@ -832,7 +833,7 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(in.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 311, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 312, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 		if templ_7745c5c3_Err != nil {
@@ -845,67 +846,21 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs("Select " + strings.ToLower(in.Label) + "…")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 320, Col: 137}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 321, Col: 137}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</span> <span x-show=\"summary\" x-text=\"summary\" class=\"font-medium text-base text-foreground whitespace-nowrap\"></span></div><div x-show=\"open\" x-cloak style=\"top:100%;z-index:50\" class=\"popui-cal context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden\"><div class=\"flex\"><div class=\"popui-cal-presets flex flex-col gap-1 items-stretch p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div><div class=\"p-3\"><div class=\"relative flex items-center justify-between mb-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</span> <span x-show=\"summary\" x-text=\"summary\" class=\"font-medium text-base text-foreground whitespace-nowrap\"></span></div><div x-show=\"open\" x-cloak style=\"top:100%;z-index:50\" class=\"context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var38 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = icons.ArrowLeft().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = Button(props.Button{
-			Size:       props.ButtonSizeIcon,
-			Attributes: templ.Attributes{"type": "button", "@click": "prev()", "aria-label": "Previous month"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var38), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Calendar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var39 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = icons.ArrowRight().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = Button(props.Button{
-			Size:       props.ButtonSizeIcon,
-			Attributes: templ.Attributes{"type": "button", "@click": "next()", "aria-label": "Next month"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var39), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div><div class=\"flex gap-6\"><template x-for=\"(mon, mi) in monthsView\" :key=\"mi\"><div class=\"flex flex-col\"><header class=\"h-9 flex items-center justify-center text-base font-medium text-foreground\" x-text=\"mon.label\"></header><table class=\"popui-cal-grid border-collapse\"><thead><tr><template x-for=\"dow in dows\" :key=\"dow\"><th class=\"popui-cal-head\" x-text=\"dow\"></th></template></tr></thead> <tbody><template x-for=\"(week, wi) in mon.weeks\" :key=\"wi\"><tr><template x-for=\"(cell, ci) in week\" :key=\"ci\"><td class=\"p-0 text-center\"><button type=\"button\" class=\"popui-cal-day\" @click=\"selectDay(cell.iso)\" :data-state=\"dayState(cell.iso)\" :data-outside=\"cell.outside ? '' : null\" :data-today=\"cell.today ? '' : null\" x-text=\"cell.day\"></button></td></template></tr></template></tbody></table></div></template></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -931,7 +886,8 @@ func filterRangeCalendarData(in props.FilterInput) string {
 	if to != "" {
 		toJS = "'" + to + "'"
 	}
-	return "rangeCalendar({name: '" + in.Name + "', from: " + fromJS + ", to: " + toJS + "})"
+	return "rangeCalendar({name: '" + in.Name + "', from: " + fromJS + ", to: " + toJS +
+		", presets: " + calendarPresetsJS(in.Presets) + "})"
 }
 
 // filterRowAlpine builds the x-data="filterRow([active], [all])" snippet:

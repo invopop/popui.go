@@ -16,40 +16,40 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Drawer renders a floating, fixed-position side panel that overlays
-// one edge of the viewport. See props.Drawer for the field reference.
-// Open/close is driven by the `popui-drawer-open` /
-// `popui-drawer-close` window events — both expect `event.detail` to
-// equal the drawer's ID. Backed by the `drawer` Alpine controller in
+// SidePanel renders a floating, fixed-position side panel that overlays
+// one edge of the viewport. See props.SidePanel for the field reference.
+// Open/close is driven by the `popui-sidepanel-open` /
+// `popui-sidepanel-close` window events — both expect `event.detail` to
+// equal the panel's ID. Backed by the `sidePanel` Alpine controller in
 // popui.js.
 //
-// The drawer is non-blocking — no backdrop, the rest of the app stays
+// The side panel is non-blocking — no backdrop, the rest of the app stays
 // interactive. Stays mounted across HTMX content swaps so the caller
 // can re-fill the panel's inner content slot without losing the
 // open/close state.
 //
 // Recipe — wire to an HTMX-fetched detail panel:
 //
-//	@popui.Drawer(props.Drawer{ID: "my-drawer"}) {
-//	    <div id="my-drawer-content" class="flex-1 flex flex-col"></div>
+//	@popui.SidePanel(props.SidePanel{ID: "my-panel"}) {
+//	    <div id="my-panel-content" class="flex-1 flex flex-col"></div>
 //	}
 //
 //	<tr
 //	    hx-get="/detail/{id}"
-//	    hx-target="#my-drawer-content"
+//	    hx-target="#my-panel-content"
 //	    hx-swap="innerHTML"
-//	    hx-on::after-swap="window.dispatchEvent(new CustomEvent('popui-drawer-open', {detail:'my-drawer'}))"
+//	    hx-on::after-swap="window.dispatchEvent(new CustomEvent('popui-sidepanel-open', {detail:'my-panel'}))"
 //	>...</tr>
 //
 // Close from inside the panel with the inverse event:
 //
-//	<button @click="window.dispatchEvent(new CustomEvent('popui-drawer-close', {detail:'my-drawer'}))">...</button>
+//	<button @click="window.dispatchEvent(new CustomEvent('popui-sidepanel-close', {detail:'my-panel'}))">...</button>
 //
 // The positioning + size live inline on the `<aside>` element so the
 // component renders correctly without the bundled popui.css needing to
 // ship every transform/translation utility — those classes aren't
 // emitted by the popui Tailwind build today.
-func Drawer(opts ...props.Drawer) templ.Component {
+func SidePanel(opts ...props.SidePanel) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -78,7 +78,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 		anchorEdge := "right: 0;"
 		borderSide := "border-l"
 		offEdge := "100%"
-		if p.Position == props.DrawerPositionLeft {
+		if p.Position == props.SidePanelPositionLeft {
 			anchorEdge = "left: 0;"
 			borderSide = "border-r"
 			offEdge = "-100%"
@@ -104,7 +104,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 64, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 64, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -120,9 +120,9 @@ func Drawer(opts ...props.Drawer) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("drawer('" + p.ID + "')")
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("sidePanel('" + p.ID + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 66, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 66, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +135,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px; transition: transform 300ms ease, opacity 300ms ease, visibility 300ms ease; will-change: transform;")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 68, Col: 218}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 68, Col: 218}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -148,7 +148,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("{ transform: open ? 'translateX(0)' : 'translateX(" + offEdge + ")', opacity: open ? 1 : 0, visibility: open ? 'visible' : 'hidden' }")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 69, Col: 146}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 69, Col: 146}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -161,7 +161,7 @@ func Drawer(opts ...props.Drawer) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var2).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -191,17 +191,17 @@ func Drawer(opts ...props.Drawer) templ.Component {
 	})
 }
 
-// DrawerHeader — see props.DrawerHeader for the field reference. Sits
-// at the top of a popui.Drawer with a bottom border, fixed h-12 height
-// (matches the App.Header bar so the drawer reads as a peer surface).
+// SidePanelHeader — see props.SidePanelHeader for the field reference. Sits
+// at the top of a popui.SidePanel with a bottom border, fixed h-12 height
+// (matches the App.Header bar so the panel reads as a peer surface).
 // Children render in the right-side action slot — pass any popui.Button
-// or icon to expose drawer-level actions.
+// or icon to expose panel-level actions.
 //
 // The header is `sticky top-0` with a solid background so the close button
-// and title stay pinned to the top of the drawer when the panel content is
+// and title stay pinned to the top of the panel when the panel content is
 // swapped into a scrolling slot (`overflow-y-auto`) and the body scrolls
 // underneath it.
-func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
+func SidePanelHeader(opts ...props.SidePanelHeader) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -227,7 +227,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 		if closeAttrs == nil {
 			closeAttrs = templ.Attributes{
 				"type":   "button",
-				"@click": "window.dispatchEvent(new CustomEvent('popui-drawer-close', {detail:'" + p.DrawerID + "'}))",
+				"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-close', {detail:'" + p.SidePanelID + "'}))",
 			}
 		}
 		var templ_7745c5c3_Var9 = []any{tailwind.Merge(
@@ -251,7 +251,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 105, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 105, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -269,7 +269,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var9).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -319,7 +319,7 @@ func DrawerHeader(opts ...props.DrawerHeader) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `drawer.templ`, Line: 121, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 121, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

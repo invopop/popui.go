@@ -93,6 +93,11 @@ type FilterInput struct {
 
 	// Options are the choices for FilterTypeSelect and FilterTypeMultiple.
 	Options []FilterOption
+
+	// Presets selects the calendar preset rail for FilterTypeCalendar — which
+	// range shortcuts appear and in what order. Empty uses
+	// DefaultCalendarPresets(). Ignored for non-calendar types.
+	Presets []CalendarPreset
 }
 
 // FilterOption is one row in a select/multiple FilterInput's value list.

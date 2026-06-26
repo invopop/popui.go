@@ -9,11 +9,12 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
 
-func DrawerExample() templ.Component {
+func SidePanelExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -46,7 +47,7 @@ func DrawerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Open drawer")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Open side panel")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -54,7 +55,7 @@ func DrawerExample() templ.Component {
 		})
 		templ_7745c5c3_Err = popui.Button(props.Button{
 			Attributes: templ.Attributes{
-				"@click": "window.dispatchEvent(new CustomEvent('popui-drawer-open', {detail: 'drawer-example'}))",
+				"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-open', {detail: 'side-panel-example'}))",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -72,9 +73,9 @@ func DrawerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = popui.DrawerHeader(props.DrawerHeader{
-				DrawerID: "drawer-example",
-				Title:    "SIREN 552100554",
+			templ_7745c5c3_Err = popui.SidePanelHeader(props.SidePanelHeader{
+				SidePanelID: "side-panel-example",
+				Title:       "SIREN 552100554",
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -83,7 +84,7 @@ func DrawerExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = popui.DetailHeading(props.DetailHeading{Title: "Details"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.SidePanelHeading(props.SidePanelHeading{Title: "Details"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -103,7 +104,7 @@ func DrawerExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = popui.DetailItem(props.DetailItem{Label: "Given name", Value: "Camille"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.SidePanelItem(props.SidePanelItem{Label: "Given name", Value: "Camille"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -111,7 +112,7 @@ func DrawerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = popui.DetailItem(props.DetailItem{Label: "Surname", Value: "Durand"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.SidePanelItem(props.SidePanelItem{Label: "Surname", Value: "Durand"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -119,7 +120,7 @@ func DrawerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = popui.DetailItem(props.DetailItem{Label: "Role", Value: "Director"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.SidePanelItem(props.SidePanelItem{Label: "Role", Value: "Director"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -127,7 +128,7 @@ func DrawerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = popui.DetailItem(props.DetailItem{Label: "Reporting", Value: "Enabled"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.SidePanelItem(props.SidePanelItem{Label: "Reporting", Value: "Enabled"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -135,7 +136,7 @@ func DrawerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = popui.DetailItem(props.DetailItem{Label: "VAT regime", Value: "Réel normal mensuel"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.SidePanelItem(props.SidePanelItem{Label: "VAT regime", Value: "Réel normal mensuel"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -143,7 +144,7 @@ func DrawerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = popui.DetailItem(props.DetailItem{Label: "Decided", Value: "2026-03-14"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.SidePanelItem(props.SidePanelItem{Label: "Decided", Value: "2026-03-14"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -151,7 +152,7 @@ func DrawerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = popui.DetailCopyRow(props.DetailCopyRow{
+				templ_7745c5c3_Err = popui.SidePanelCopyRow(props.SidePanelCopyRow{
 					Label:        "Silo Entry ID",
 					Value:        "01J8X2K9P3QF4R5S6T7U8V9W0X",
 					PrefixLength: 23,
@@ -162,7 +163,7 @@ func DrawerExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = popui.DetailList(props.DetailList{Indent: true, Bordered: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.SidePanelList(props.SidePanelList{Indent: true, Bordered: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -198,11 +199,11 @@ func DrawerExample() templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DetailCopyRow(props.DetailCopyRow{Label: "Name", Value: "Durand SARL", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Name", Value: "Durand SARL", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DetailCopyRow(props.DetailCopyRow{Label: "Endpoint", Value: "0009:552100554", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Endpoint", Value: "0009:552100554", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -236,41 +237,32 @@ func DrawerExample() templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DetailCopyRow(props.DetailCopyRow{Label: "SIREN", Value: "552100554", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "SIREN", Value: "552100554", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DetailCopyRow(props.DetailCopyRow{Label: "Cadence", Value: "Monthly", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Cadence", Value: "Monthly", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DetailCopyRow(props.DetailCopyRow{Label: "Next period", Value: "2026-07-31", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Next period", Value: "2026-07-31", Stacked: true}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span class=\"popui-detail-value\">2026-06-30</span>")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						return nil
-					})
-					templ_7745c5c3_Err = popui.DetailRow(props.DetailRow{Label: "Last period", Stacked: true, Copyable: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.SidePanelActionRow(props.SidePanelActionRow{
+						Label:   "Last period",
+						Value:   "2026-06-30",
+						Stacked: true,
+						Icon:    icons.ExternalLink(),
+						URL:     templ.SafeURL("https://app.invopop.com/"),
+						ButtonAttributes: templ.Attributes{
+							"aria-label": "Open in a new tab",
+						},
+					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</ul>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</ul>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -284,9 +276,7 @@ func DrawerExample() templ.Component {
 			})
 			templ_7745c5c3_Err = popui.SegmentedTabView(props.SegmentedTabView{
 				FullWidth: true,
-				// text-base is 14px in this theme — matches the DetailItem
-				// font-size; the segmented triggers inherit it.
-				Class: "text-base",
+				Class:     "text-base",
 				Tabs: []props.SegmentedTab{
 					{Value: "directory", Label: "Directory"},
 					{Value: "reporting", Label: "Reporting"},
@@ -297,7 +287,7 @@ func DrawerExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Drawer(props.Drawer{ID: "drawer-example", Width: 480}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.SidePanel(props.SidePanel{ID: "side-panel-example", Width: 480}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

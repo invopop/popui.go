@@ -7,21 +7,21 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// DetailList wraps a set of popui.DetailItem / popui.DetailRow rows into a
-// console-ui-style detail view. See props.DetailList for the field
+// SidePanelList wraps a set of popui.SidePanelItem / popui.SidePanelRow rows
+// into a console-ui-style detail view. See props.SidePanelList for the field
 // reference. The list styling (row layout, label column, hover-tinted value
 // cell) ships with popui's stylesheet, so any app can drop this into a panel
-// or drawer without copying CSS.
+// or side panel without copying CSS.
 //
-//	@popui.DetailList(props.DetailList{Bordered: true, Indent: true}) {
-//	    @popui.DetailItem(props.DetailItem{Label: "Role", Value: "Seller"})
-//	    @popui.DetailItem(props.DetailItem{Label: "Status", Value: status})
-//	    @popui.DetailRow(props.DetailRow{Label: "ID", Copyable: true}) {
+//	@popui.SidePanelList(props.SidePanelList{Bordered: true, Indent: true}) {
+//	    @popui.SidePanelItem(props.SidePanelItem{Label: "Role", Value: "Seller"})
+//	    @popui.SidePanelItem(props.SidePanelItem{Label: "Status", Value: status})
+//	    @popui.SidePanelRow(props.SidePanelRow{Label: "ID", Copyable: true}) {
 //	        <span class="popui-detail-value">{ id }</span>
 //	        @popui.ButtonCopy(props.ButtonCopy{Value: id, Variant: props.ButtonVariantTransparent})
 //	    }
 //	}
-templ DetailList(opts ...props.DetailList) {
+templ SidePanelList(opts ...props.SidePanelList) {
 	{{ p := props.First(opts) }}
 	<div
 		if p.ID != "" {
@@ -43,9 +43,9 @@ templ DetailList(opts ...props.DetailList) {
 	</div>
 }
 
-// DetailItem renders one text row — Label on the left, Value on the right.
-// Empty Value renders an em-dash. See props.DetailItem.
-templ DetailItem(opts ...props.DetailItem) {
+// SidePanelItem renders one text row — Label on the left, Value on the right.
+// Empty Value renders an em-dash. See props.SidePanelItem.
+templ SidePanelItem(opts ...props.SidePanelItem) {
 	{{ p := props.First(opts) }}
 	<li
 		if p.ID != "" {
@@ -65,10 +65,10 @@ templ DetailItem(opts ...props.DetailItem) {
 	</li>
 }
 
-// DetailRow renders a detail row whose value cell is filled by children
-// (tags, links, copy buttons, …). See props.DetailRow; set Copyable for an
+// SidePanelRow renders a detail row whose value cell is filled by children
+// (tags, links, copy buttons, …). See props.SidePanelRow; set Copyable for an
 // id/copy row with reveal-on-hover actions.
-templ DetailRow(opts ...props.DetailRow) {
+templ SidePanelRow(opts ...props.SidePanelRow) {
 	{{ p := props.First(opts) }}
 	<li
 		if p.ID != "" {
@@ -102,9 +102,9 @@ templ DetailRow(opts ...props.DetailRow) {
 	</li>
 }
 
-// DetailHeading renders a section title for a detail view (standard padding +
-// typography). See props.DetailHeading.
-templ DetailHeading(opts ...props.DetailHeading) {
+// SidePanelHeading renders a section title for a detail view (standard padding +
+// typography). See props.SidePanelHeading.
+templ SidePanelHeading(opts ...props.SidePanelHeading) {
 	{{ p := props.First(opts) }}
 	<h3
 		if p.ID != "" {
@@ -121,9 +121,9 @@ templ DetailHeading(opts ...props.DetailHeading) {
 	</h3>
 }
 
-// DetailEmpty renders the muted placeholder shown when a detail section has no
-// data. See props.DetailEmpty.
-templ DetailEmpty(opts ...props.DetailEmpty) {
+// SidePanelEmpty renders the muted placeholder shown when a detail section has no
+// data. See props.SidePanelEmpty.
+templ SidePanelEmpty(opts ...props.SidePanelEmpty) {
 	{{ p := props.First(opts) }}
 	<div
 		if p.ID != "" {
@@ -140,13 +140,17 @@ templ DetailEmpty(opts ...props.DetailEmpty) {
 	</div>
 }
 
-// DetailCopyRow renders a copyable detail row — value as text plus a
+// SidePanelCopyRow renders a copyable detail row — value as text plus a
 // hover-revealed copy button (and an optional external-link button). The
 // clipboard write is wired via a data attribute (no per-app JS). See
-// props.DetailCopyRow.
-templ DetailCopyRow(opts ...props.DetailCopyRow) {
+// props.SidePanelCopyRow.
+//
+// Action buttons size with the row: 24px on a default (label-left) row and a
+// compact 16px on a Stacked row, where the value sits below the label.
+templ SidePanelCopyRow(opts ...props.SidePanelCopyRow) {
 	{{ p := props.First(opts) }}
-	@DetailRow(props.DetailRow{
+	{{ actionSize := props.ButtonSizeIconSmall }}
+	@SidePanelRow(props.SidePanelRow{
 		ID:         p.ID,
 		Class:      p.Class,
 		Attributes: p.Attributes,
@@ -160,7 +164,7 @@ templ DetailCopyRow(opts ...props.DetailCopyRow) {
 		if p.Value != "" {
 			@Button(props.Button{
 				Class: "popui-detail-action",
-				Size:  props.ButtonSizeIcon,
+				Size:  actionSize,
 				Attributes: templ.Attributes{
 					"type":            "button",
 					"aria-label":      "Copy",
@@ -173,7 +177,7 @@ templ DetailCopyRow(opts ...props.DetailCopyRow) {
 			if p.URL != "" {
 				@Button(props.Button{
 					Class:  "popui-detail-action",
-					Size:   props.ButtonSizeIcon,
+					Size:   actionSize,
 					Href:   p.URL,
 					Target: "_blank",
 					Rel:    "noopener noreferrer",
@@ -183,6 +187,49 @@ templ DetailCopyRow(opts ...props.DetailCopyRow) {
 				}) {
 					@icons.ExternalLink()
 				}
+			}
+		}
+	}
+}
+
+// SidePanelActionRow is the general form of SidePanelCopyRow: a detail row
+// with a value and a single hover-revealed action button whose glyph and
+// behavior the caller supplies. Pass Icon (any popui icon component) plus
+// either a URL (renders the button as an anchor opening in a new tab) or
+// ButtonAttributes (e.g. an onclick) for a plain-button action. The button
+// reveals on row hover via popui-detail-action and uses the same icon size as
+// SidePanelCopyRow. See props.SidePanelActionRow.
+//
+//	@popui.SidePanelActionRow(props.SidePanelActionRow{
+//	    Label: "Last period", Value: "2026-06-30", Stacked: true,
+//	    Icon: icons.ExternalLink(),
+//	    URL:  templ.SafeURL("https://app.invopop.com/…"),
+//	})
+templ SidePanelActionRow(opts ...props.SidePanelActionRow) {
+	{{ p := props.First(opts) }}
+	{{ actionSize := props.ButtonSizeIconSmall }}
+	{{ icon := p.Icon }}
+	@SidePanelRow(props.SidePanelRow{
+		ID:         p.ID,
+		Class:      p.Class,
+		Attributes: p.Attributes,
+		Label:      p.Label,
+		Stacked:    p.Stacked,
+		Copyable:   true,
+	}) {
+		<span class={ tailwind.Merge("popui-detail-value", classes.If(p.Mono, "font-mono")) }>
+			{ detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength) }
+		</span>
+		if icon != nil {
+			@Button(props.Button{
+				Class:      "popui-detail-action",
+				Size:       actionSize,
+				Href:       p.URL,
+				Target:     "_blank",
+				Rel:        "noopener noreferrer",
+				Attributes: p.ButtonAttributes,
+			}) {
+				@icon
 			}
 		}
 	}

@@ -17,39 +17,40 @@ templ Filter() {
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Filter",
-			Description: "Search-bar–style filter row for data views. Renders a \"+ Filter\" menu plus one editable chip per active filter; multiple filters apply at once (AND), laid out left-to-right in add order. HTMX-driven: the whole row is one <form> that fires hx-get on submit.",
+			Description: "Filter row: a \"+ Filter\" menu plus one chip per active filter (AND).",
 			Items: []modules.APITableItem{
-				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the form element"},
-				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the row styles"},
-				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes on the form (data-*, hx-*, etc.)"},
-				{Name: "BaseURL", Type: "string", Default: "", Description: "The form's hx-get target. Active filter values become query params on this URL"},
-				{Name: "Target", Type: "string", Default: "", Description: "hx-target selector — the region swapped on submit. Scope it to the data region (not the row) so the row survives swaps"},
-				{Name: "Select", Type: "string", Default: "Target", Description: "hx-select selector — extracts a matching region from the response. Defaults to Target when empty"},
-				{Name: "Swap", Type: "string", Default: "outerHTML", Description: "hx-swap mode (innerHTML, outerHTML, …). Defaults to outerHTML when empty"},
-				{Name: "PageSize", Type: "int", Default: "0", Description: "Carried as a hidden size input so page size survives filter changes. 0 omits it"},
-				{Name: "Inputs", Type: "[]FilterInput", Default: "", Description: "The filterable fields — one editable chip each"},
+				{Name: "ID", Type: "string", Default: "", Description: "Form element id."},
+				{Name: "Class", Type: "string", Default: "", Description: "Extra CSS classes."},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra form attributes."},
+				{Name: "BaseURL", Type: "string", Default: "", Description: "hx-get target; values become query params."},
+				{Name: "Target", Type: "string", Default: "", Description: "hx-target region to swap (the data region, not the row)."},
+				{Name: "Select", Type: "string", Default: "Target", Description: "hx-select region. Defaults to Target."},
+				{Name: "Swap", Type: "string", Default: "outerHTML", Description: "hx-swap mode. Defaults to outerHTML."},
+				{Name: "PageSize", Type: "int", Default: "0", Description: "Hidden size input; 0 omits."},
+				{Name: "Inputs", Type: "[]FilterInput", Default: "", Description: "Filterable fields (one chip each)."},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
 			Title:       "FilterInput",
-			Description: "One filterable field. Type picks the value editor and operator: text → free-text input (\"matches\"); select → single-choice option list (\"matches\"); multiple → multi-choice option list (\"is any of\"); calendar → date-range calendar (\"is between\"). select and multiple share the inline option list — an option's Color adds a TagStatus dot.",
+			Description: "One filterable field; Type picks the editor.",
 			Items: []modules.APITableItem{
-				{Name: "Name", Type: "string", Default: "", Description: "Form field name / query-param key"},
-				{Name: "Label", Type: "string", Default: "", Description: "Shown in the \"+ Filter\" menu and on the chip"},
-				{Name: "Type", Type: "string", Default: "text", Description: "Editor type: FilterTypeText, FilterTypeSelect, FilterTypeMultiple, or FilterTypeCalendar. Empty defaults to text"},
-				{Name: "PluralLabel", Type: "string", Default: "", Description: "Overrides the auto-pluralised label in the multiple summary (\"3 statuses\"). Empty uses the built-in English pluralizer; set for irregulars (e.g. \"people\")"},
-				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Rendered in the \"+ Filter\" menu and on the chip"},
-				{Name: "Values", Type: "[]string", Default: "", Description: "Currently-applied values (typically from the URL). Non-empty means the chip starts active on render"},
-				{Name: "Options", Type: "[]FilterOption", Default: "", Description: "Choices for FilterTypeSelect and FilterTypeMultiple"},
+				{Name: "Name", Type: "string", Default: "", Description: "Query-param key."},
+				{Name: "Label", Type: "string", Default: "", Description: "Menu + chip text."},
+				{Name: "Type", Type: "string", Default: "text", Description: "text, select, multiple, or calendar."},
+				{Name: "PluralLabel", Type: "string", Default: "", Description: "Plural for the multiple summary (irregulars)."},
+				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Menu + chip icon."},
+				{Name: "Values", Type: "[]string", Default: "", Description: "Applied values (from URL). Non-empty = active."},
+				{Name: "Options", Type: "[]FilterOption", Default: "", Description: "Choices for select / multiple."},
+				{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Preset rail for calendar type."},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
 			Title:       "FilterOption",
-			Description: "One option in a select/multiple FilterInput's value list. A non-empty Color shows the matching TagStatus dot beside the option.",
+			Description: "One select/multiple option.",
 			Items: []modules.APITableItem{
-				{Name: "Value", Type: "string", Default: "", Description: "The submitted value"},
-				{Name: "Label", Type: "string", Default: "", Description: "The displayed text"},
-				{Name: "Color", Type: "string", Default: "", Description: "A TagStatus status (green, orange, blue, grey, …). Non-empty shows a colored dot beside the option"},
+				{Name: "Value", Type: "string", Default: "", Description: "Submitted value."},
+				{Name: "Label", Type: "string", Default: "", Description: "Displayed text."},
+				{Name: "Color", Type: "string", Default: "", Description: "TagStatus status; adds a dot."},
 			},
 		})
 	}

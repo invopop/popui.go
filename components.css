@@ -623,6 +623,21 @@ form {
 /* Stacked: align the label's left edge with the value (which carries the
    value-wrap's 0.5rem left padding). */
 .popui-detail-stacked > .popui-detail-label { min-width: 0; padding-left: 0.5rem; }
+/* Stacked rows are shorter than the value-wrap's 2rem min-height, so center
+   the value + hover action buttons vertically. A non-stacked row's taller
+   content already fills the min-height, so it reads centered with flex-start;
+   this gives stacked rows the same balanced look. The extra `.popui-detail-row`
+   class keeps this ahead of the base value-wrap rule's `align-items: flex-start`
+   regardless of source order. */
+.popui-detail-row.popui-detail-stacked > .popui-detail-value-wrap { align-items: center; }
+
+/* 16px icon button (ButtonSizeIconExtraSmall): icons ship at a fixed 16px
+   (inline width/height on the wrapper), which would fill the bordered 16px box
+   edge-to-edge. Scale the glyph to 12px so it reads as a centered icon with the
+   same breathing room as the larger icon buttons. !important is needed to beat
+   the icon's inline sizing. */
+.popui-icon-xs > div,
+.popui-icon-xs > div > svg { width: 0.75rem !important; height: 0.75rem !important; }
 .popui-detail-row > .popui-detail-label {
   min-width: 148px;
   color: var(--color-foreground-default-secondary);

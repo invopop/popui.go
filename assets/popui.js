@@ -712,7 +712,11 @@ document.addEventListener('alpine:init', () => {
     viewY: 2000,
     viewM: 0,
     dows: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-    presets: [
+    // The preset rail is supplied by the Go component (props.Calendar.Presets /
+    // FilterInput.Presets, defaulting to props.DefaultCalendarPresets); the date
+    // math per key lives in setPreset below. The inline list is only a fallback
+    // for callers that instantiate rangeCalendar without presets.
+    presets: (init && init.presets) || [
       { key: 'thisWeek', label: 'This Week' },
       { key: 'lastWeek', label: 'Last Week' },
       { key: 'thisMonth', label: 'This month' },
@@ -838,36 +842,36 @@ document.addEventListener('alpine:init', () => {
   }))
 })
 
-// Alpine controller for popui.Drawer — a fixed-position floating side
+// Alpine controller for popui.SidePanel — a fixed-position floating side
 // panel that overlays one edge of the viewport. Non-blocking (no
 // backdrop, rest of the app stays interactive), fades in/out on the
 // open state, closes on Escape. Stays mounted across HTMX content
 // swaps so the caller can re-fill the panel's inner content slot
 // without the open/close state flickering.
 //
-// Open/close protocol: dispatch a `popui-drawer-open` /
-// `popui-drawer-close` event on `window` with `detail` set to the
-// drawer's ID. Scoped by ID so multiple drawers can coexist on a
+// Open/close protocol: dispatch a `popui-sidepanel-open` /
+// `popui-sidepanel-close` event on `window` with `detail` set to the
+// panel's ID. Scoped by ID so multiple side panels can coexist on a
 // single page without trampling each other.
 document.addEventListener('alpine:init', () => {
   if (!window.Alpine) return
-  Alpine.data('drawer', (id) => ({
+  Alpine.data('sidePanel', (id) => ({
     open: false,
     init() {
       const matches = (e) => e && e.detail === id
       this._onOpen = (e) => { if (matches(e)) this.open = true }
       this._onClose = (e) => { if (matches(e)) this.open = false }
       this._onKeydown = (e) => {
-        // Escape only closes the drawer when it's actually open — lets
+        // Escape only closes the panel when it's actually open — lets
         // page-level Escape handlers (search bars, popovers) keep
-        // working when the drawer is dismissed.
+        // working when the panel is dismissed.
         if (e.key === 'Escape' && this.open) {
           this.open = false
           e.stopPropagation()
         }
       }
-      window.addEventListener('popui-drawer-open', this._onOpen)
-      window.addEventListener('popui-drawer-close', this._onClose)
+      window.addEventListener('popui-sidepanel-open', this._onOpen)
+      window.addEventListener('popui-sidepanel-close', this._onClose)
       document.addEventListener('keydown', this._onKeydown)
 
       // Re-broadcast the matching window event whenever `open` flips
@@ -878,13 +882,13 @@ document.addEventListener('alpine:init', () => {
       // property to the value it already had.
       this.$watch('open', (newVal, oldVal) => {
         if (newVal === oldVal) return
-        const name = newVal ? 'popui-drawer-open' : 'popui-drawer-close'
+        const name = newVal ? 'popui-sidepanel-open' : 'popui-sidepanel-close'
         window.dispatchEvent(new CustomEvent(name, { detail: id }))
       })
     },
     destroy() {
-      window.removeEventListener('popui-drawer-open', this._onOpen)
-      window.removeEventListener('popui-drawer-close', this._onClose)
+      window.removeEventListener('popui-sidepanel-open', this._onOpen)
+      window.removeEventListener('popui-sidepanel-close', this._onClose)
       document.removeEventListener('keydown', this._onKeydown)
     },
   }))

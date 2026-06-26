@@ -7,6 +7,13 @@ const (
 	ButtonSizeSmall string = "sm"
 	ButtonSizeLarge string = "lg"
 	ButtonSizeIcon  string = "icon"
+	// ButtonSizeIconSmall is a 24px-square icon button — a compact step
+	// down from ButtonSizeIcon (28px). Used for inline row actions.
+	ButtonSizeIconSmall string = "icon-sm"
+	// ButtonSizeIconExtraSmall is a 16px-square icon button — the most
+	// compact icon button, matching the icon glyph itself with no padding.
+	// Used for dense, stacked rows where 24px would crowd the value.
+	ButtonSizeIconExtraSmall string = "icon-xs"
 )
 
 // Button Variants

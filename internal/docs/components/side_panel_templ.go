@@ -15,7 +15,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func Drawer() templ.Component {
+func SidePanel() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -48,14 +48,14 @@ func Drawer() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DrawerExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SidePanelExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("drawer.templ"),
+			Code: examples.LoadExample("side_panel.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,14 +73,14 @@ func Drawer() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "Drawer",
-				Description: "Fixed-position side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive. Open / close is driven by `popui-drawer-open` / `popui-drawer-close` window events whose `event.detail` must match the drawer's ID; the controller also re-broadcasts those events on every open transition so external listeners react to all close paths (X click, Escape, programmatic).",
+				Title:       "SidePanel",
+				Description: "Fixed-position side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive. Open / close is driven by `popui-sidepanel-open` / `popui-sidepanel-close` window events whose `event.detail` must match the panel's ID; the controller also re-broadcasts those events on every open transition so external listeners react to all close paths (X click, Escape, programmatic).",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the drawer's <aside> element and the event scope for open/close."},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the drawer's base styling."},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the panel's <aside> element and the event scope for open/close."},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the panel's base styling."},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the <aside> element."},
-					{Name: "Position", Type: "string", Default: "right", Description: "Edge of the viewport to anchor to. One of `props.DrawerPositionRight` or `props.DrawerPositionLeft`."},
-					{Name: "Width", Type: "int", Default: "400", Description: "Drawer width in pixels. 0 falls back to 400."},
+					{Name: "Position", Type: "string", Default: "right", Description: "Edge of the viewport to anchor to. One of `props.SidePanelPositionRight` or `props.SidePanelPositionLeft`."},
+					{Name: "Width", Type: "int", Default: "400", Description: "Panel width in pixels. 0 falls back to 400."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -91,15 +91,15 @@ func Drawer() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "DrawerHeader",
-				Description: "Sticky header bar at the top of a Drawer: X close button on the leading edge, truncated h1 title in the middle, optional action slot via children on the trailing edge. The default close button dispatches `popui-drawer-close` with the matching `DrawerID`.",
+				Title:       "SidePanelHeader",
+				Description: "Sticky header bar at the top of a SidePanel: X close button on the leading edge, truncated h1 title in the middle, optional action slot via children on the trailing edge. The default close button dispatches `popui-sidepanel-close` with the matching `SidePanelID`.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the header element."},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the header's base styling."},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the header element."},
-					{Name: "DrawerID", Type: "string", Default: "", Description: "ID of the parent Drawer — used by the default close button to dispatch `popui-drawer-close` with the matching `event.detail`."},
+					{Name: "SidePanelID", Type: "string", Default: "", Description: "ID of the parent SidePanel — used by the default close button to dispatch `popui-sidepanel-close` with the matching `event.detail`."},
 					{Name: "Title", Type: "string", Default: "", Description: "h1 heading rendered in the centre cell. Truncates on overflow."},
-					{Name: "CloseAttributes", Type: "templ.Attributes", Default: "", Description: "Replace the close button's default attributes. The override is responsible for dispatching `popui-drawer-close` to keep the drawer's Alpine state in sync."},
+					{Name: "CloseAttributes", Type: "templ.Attributes", Default: "", Description: "Replace the close button's default attributes. The override is responsible for dispatching `popui-sidepanel-close` to keep the panel's Alpine state in sync."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

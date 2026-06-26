@@ -1,0 +1,30 @@
+package components
+
+import (
+	_ "embed"
+
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Calendar() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("calendar.templ"),
+	}) {
+		@examples.CalendarExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Calendar",
+			Description: "Dual-month range picker with a preset rail.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Root element id."},
+				{Name: "Class", Type: "string", Default: "", Description: "Extra CSS classes."},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra HTML attributes."},
+				{Name: "Name", Type: "string", Default: "", Description: "Self-scopes + bordered box. Empty = markup-only."},
+				{Name: "From / To", Type: "string", Default: "", Description: "Initial range (ISO), with Name."},
+				{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Preset rail; Keys are CalendarPreset* consts."},
+			},
+		})
+	}
+}

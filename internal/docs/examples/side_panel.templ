@@ -1,0 +1,70 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SidePanelExample() {
+	@popui.Button(props.Button{
+		Attributes: templ.Attributes{
+			"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-open', {detail: 'side-panel-example'}))",
+		},
+	}) {
+		Open side panel
+	}
+	@popui.SidePanel(props.SidePanel{ID: "side-panel-example", Width: 480}) {
+		@popui.SidePanelHeader(props.SidePanelHeader{
+			SidePanelID: "side-panel-example",
+			Title:       "SIREN 552100554",
+		})
+		@popui.SidePanelHeading(props.SidePanelHeading{Title: "Details"})
+		@popui.SidePanelList(props.SidePanelList{Indent: true, Bordered: true}) {
+			@popui.SidePanelItem(props.SidePanelItem{Label: "Given name", Value: "Camille"})
+			@popui.SidePanelItem(props.SidePanelItem{Label: "Surname", Value: "Durand"})
+			@popui.SidePanelItem(props.SidePanelItem{Label: "Role", Value: "Director"})
+			@popui.SidePanelItem(props.SidePanelItem{Label: "Reporting", Value: "Enabled"})
+			@popui.SidePanelItem(props.SidePanelItem{Label: "VAT regime", Value: "Réel normal mensuel"})
+			@popui.SidePanelItem(props.SidePanelItem{Label: "Decided", Value: "2026-03-14"})
+			@popui.SidePanelCopyRow(props.SidePanelCopyRow{
+				Label:        "Silo Entry ID",
+				Value:        "01J8X2K9P3QF4R5S6T7U8V9W0X",
+				PrefixLength: 23,
+				URL:          templ.SafeURL("https://app.invopop.com/silo-entry/01J8X2K9P3QF4R5S6T7U8V9W0X"),
+			})
+		}
+		@popui.SegmentedTabView(props.SegmentedTabView{
+			FullWidth: true,
+			Class:     "text-base",
+			Tabs: []props.SegmentedTab{
+				{Value: "directory", Label: "Directory"},
+				{Value: "reporting", Label: "Reporting"},
+			},
+		}) {
+			@popui.SegmentedTabPanel(props.SegmentedTabPanel{For: "directory"}) {
+				<ul class="space-y-2">
+					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Name", Value: "Durand SARL", Stacked: true})
+					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Endpoint", Value: "0009:552100554", Stacked: true})
+				</ul>
+			}
+			@popui.SegmentedTabPanel(props.SegmentedTabPanel{For: "reporting"}) {
+				<ul class="space-y-2">
+					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "SIREN", Value: "552100554", Stacked: true})
+					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Cadence", Value: "Monthly", Stacked: true})
+					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Next period", Value: "2026-07-31", Stacked: true})
+					@popui.SidePanelActionRow(props.SidePanelActionRow{
+						Label:   "Last period",
+						Value:   "2026-06-30",
+						Stacked: true,
+						Icon:    icons.ExternalLink(),
+						URL:     templ.SafeURL("https://app.invopop.com/"),
+						ButtonAttributes: templ.Attributes{
+							"aria-label": "Open in a new tab",
+						},
+					})
+				</ul>
+			}
+		}
+	}
+}

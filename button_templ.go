@@ -506,6 +506,11 @@ func buttonBaseClasses() string {
 }
 
 func buttonClasses(variant string, size string) string {
+	// isIcon is true for any of the square icon-button sizes, which share
+	// glyph-centric padding and svg-color treatment.
+	isIcon := size == props.ButtonSizeIcon ||
+		size == props.ButtonSizeIconSmall ||
+		size == props.ButtonSizeIconExtraSmall
 	return tailwind.Merge(
 		// Variant classes
 		classes.If(variant == props.ButtonVariantTransparent, "border-0 shadow-none hover:bg-background-default-tertiary-hover hover:shadow-button-default"),
@@ -516,11 +521,18 @@ func buttonClasses(variant string, size string) string {
 		classes.If(size == props.ButtonSizeSmall, "text-sm rounded"),
 		classes.If(size == props.ButtonSizeLarge, "py-[5px] px-3 rounded-lg"),
 		classes.If(size == props.ButtonSizeIcon, "p-[5px] leading-none size-7"),
+		// 24px icon button — keeps the bordered chrome, glyph centered.
+		classes.If(size == props.ButtonSizeIconSmall, "p-1 leading-none size-6"),
+		// 16px icon button — keeps the standard bordered chrome (same as
+		// ButtonSizeIcon) at a 16px box. The popui-icon-xs marker scales the
+		// (otherwise 16px) icon down so it sits contained and centered inside
+		// the border instead of filling the box edge-to-edge.
+		classes.If(size == props.ButtonSizeIconExtraSmall, "popui-icon-xs p-0 leading-none size-4"),
 		// Icon color based on size
-		classes.If(size != props.ButtonSizeIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-icon"),
-		classes.If(size != props.ButtonSizeIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-icon-inverse"),
-		classes.If(size == props.ButtonSizeIcon && variant != props.ButtonVariantPrimary, "[&_svg]:text-foreground"),
-		classes.If(size == props.ButtonSizeIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-foreground-inverse"),
+		classes.If(!isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-icon"),
+		classes.If(!isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-icon-inverse"),
+		classes.If(isIcon && variant != props.ButtonVariantPrimary, "[&_svg]:text-foreground"),
+		classes.If(isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-foreground-inverse"),
 	)
 }
 
