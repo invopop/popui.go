@@ -237,6 +237,12 @@ var groups = []*Group{
 				Template: components.TagStatus(),
 			},
 			{
+				Title:    "Tag Status Icon",
+				Desc:     "Status indicators with a leading status icon and an optional label.",
+				Path:     "tag-status-icon",
+				Template: components.TagStatusIcon(),
+			},
+			{
 				Title:    "Textarea",
 				Desc:     "Multi-line text input field for capturing longer user input with support for labels and validation.",
 				Path:     "textarea",
