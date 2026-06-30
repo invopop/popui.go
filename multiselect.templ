@@ -191,9 +191,9 @@ templ Multiselect(p ...props.Multiselect) {
 						<span class="flex items-baseline gap-1.5 min-w-0">
 							<span class="text-base text-foreground shrink-0" x-text="option.label"></span>
 							<template x-if="option.description">
-								<span class="flex items-baseline gap-1.5 min-w-0 text-base text-foreground-default-secondary">
+								<span class="flex items-baseline gap-1.5 min-w-0 flex-1 text-base text-foreground-default-secondary">
 									<span class="shrink-0" aria-hidden="true">·</span>
-									<span class="truncate" x-text="option.description"></span>
+									<span class="truncate min-w-0 flex-1" x-text="option.description"></span>
 								</span>
 							</template>
 						</span>
