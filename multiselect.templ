@@ -71,7 +71,7 @@ templ Multiselect(p ...props.Multiselect) {
 				tailwind.Merge(
 					classes.FormField(),
 					classes.FormFieldState(!prp.Error.Empty()),
-					"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5",
+					"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5 mb-0",
 					classes.If(prp.Disabled, "cursor-not-allowed bg-background-default-secondary"),
 					prp.Class,
 				),

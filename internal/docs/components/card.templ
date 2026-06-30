@@ -55,6 +55,20 @@ templ Card() {
 	}) {
 		@examples.CardFileExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Fieldset",
+		Description: "CardFieldset groups form fields inside a tinted card body, with an optional title and secondary description above it.",
+		Code:        examples.LoadExample("card_fieldset.templ"),
+	}) {
+		@examples.CardFieldsetExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Fieldset with Form Grid",
+		Description: "Wrap fields in a grid to lay them out in multiple columns inside a CardFieldset.",
+		Code:        examples.LoadExample("card_fieldset_form.templ"),
+	}) {
+		@examples.CardFieldsetFormExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Card",
@@ -74,6 +88,17 @@ templ Card() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the content element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with content styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "CardFieldset",
+			Description: "Groups form fields inside a tinted card body with an optional title and description. Expects form fields as children.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the fieldset element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with fieldset styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Title", Type: "string", Default: "", Description: "Bold heading rendered above the card body"},
+				{Name: "Description", Type: "string", Default: "", Description: "Muted text rendered next to the title, separated by a middot"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

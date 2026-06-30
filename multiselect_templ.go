@@ -188,7 +188,7 @@ func Multiselect(p ...props.Multiselect) templ.Component {
 		var templ_7745c5c3_Var8 = []any{tailwind.Merge(
 			classes.FormField(),
 			classes.FormFieldState(!prp.Error.Empty()),
-			"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5",
+			"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5 mb-0",
 			classes.If(prp.Disabled, "cursor-not-allowed bg-background-default-secondary"),
 			prp.Class,
 		),
