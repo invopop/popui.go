@@ -188,7 +188,15 @@ templ Multiselect(p ...props.Multiselect) {
 						>
 							@multiselectCheckIcon()
 						</span>
-						<span class="text-base text-foreground" x-text="option.label"></span>
+						<span class="flex items-baseline gap-1.5 min-w-0">
+							<span class="text-base text-foreground shrink-0" x-text="option.label"></span>
+							<template x-if="option.description">
+								<span class="flex items-baseline gap-1.5 min-w-0 flex-1 text-base text-foreground-default-secondary">
+									<span class="shrink-0" aria-hidden="true">·</span>
+									<span class="truncate min-w-0 flex-1" x-text="option.description"></span>
+								</span>
+							</template>
+						</span>
 					</li>
 				</template>
 				<li role="presentation" x-show="filtered.length === 0" class="px-2 py-1.5 text-base text-foreground-default-tertiary">
@@ -215,14 +223,15 @@ templ multiselectCheckIcon() {
 // providing the selection + keyboard navigation behaviour.
 func multiselectData(p props.Multiselect) string {
 	type jsOption struct {
-		Value    string `json:"value"`
-		Label    string `json:"label"`
-		Disabled bool   `json:"disabled"`
+		Value       string `json:"value"`
+		Label       string `json:"label"`
+		Description string `json:"description"`
+		Disabled    bool   `json:"disabled"`
 	}
 	opts := make([]jsOption, 0, len(p.Options))
 	selected := make([]string, 0)
 	for _, o := range p.Options {
-		opts = append(opts, jsOption{Value: o.Value, Label: o.Label, Disabled: o.Disabled})
+		opts = append(opts, jsOption{Value: o.Value, Label: o.Label, Description: o.Description, Disabled: o.Disabled})
 		if o.Selected {
 			selected = append(selected, o.Value)
 		}
