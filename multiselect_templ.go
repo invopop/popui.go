@@ -370,7 +370,7 @@ func Multiselect(p ...props.Multiselect) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</span> <span class=\"text-base text-foreground\" x-text=\"option.label\"></span></li></template><li role=\"presentation\" x-show=\"filtered.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No options found</li></ul></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</span> <span class=\"flex items-baseline gap-1.5 min-w-0\"><span class=\"text-base text-foreground shrink-0\" x-text=\"option.label\"></span><template x-if=\"option.description\"><span class=\"flex items-baseline gap-1.5 min-w-0 text-base text-foreground-default-secondary\"><span class=\"shrink-0\" aria-hidden=\"true\">·</span> <span class=\"truncate\" x-text=\"option.description\"></span></span></template></span></li></template><li role=\"presentation\" x-show=\"filtered.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No options found</li></ul></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -424,14 +424,15 @@ func multiselectCheckIcon() templ.Component {
 // providing the selection + keyboard navigation behaviour.
 func multiselectData(p props.Multiselect) string {
 	type jsOption struct {
-		Value    string `json:"value"`
-		Label    string `json:"label"`
-		Disabled bool   `json:"disabled"`
+		Value       string `json:"value"`
+		Label       string `json:"label"`
+		Description string `json:"description"`
+		Disabled    bool   `json:"disabled"`
 	}
 	opts := make([]jsOption, 0, len(p.Options))
 	selected := make([]string, 0)
 	for _, o := range p.Options {
-		opts = append(opts, jsOption{Value: o.Value, Label: o.Label, Disabled: o.Disabled})
+		opts = append(opts, jsOption{Value: o.Value, Label: o.Label, Description: o.Description, Disabled: o.Disabled})
 		if o.Selected {
 			selected = append(selected, o.Value)
 		}

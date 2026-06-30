@@ -9,10 +9,13 @@ import (
 
 // MultiselectOption defines an option for a Multiselect component.
 type MultiselectOption struct {
-	Value    string
-	Label    string
-	Selected bool
-	Disabled bool
+	Value string
+	Label string
+	// Description renders next to the label in a dimmed color, giving extra
+	// context for the option within the dropdown list.
+	Description string
+	Selected    bool
+	Disabled    bool
 }
 
 // Multiselect Templ component props. The Multiselect renders a select-like

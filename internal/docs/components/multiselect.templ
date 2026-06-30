@@ -21,6 +21,13 @@ templ Multiselect() {
 		@examples.MultiselectWithLabelExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "With Description",
+		Description: "Give an option a Description to render dimmed text next to its label in the dropdown.",
+		Code:        examples.LoadExample("multiselect_with_description.templ"),
+	}) {
+		@examples.MultiselectWithDescriptionExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Searchable",
 		Description: "Set Searchable to add a filter box inside the dropdown. Useful when there are many options.",
 		Code:        examples.LoadExample("multiselect_searchable.templ"),
@@ -65,6 +72,7 @@ templ Multiselect() {
 			Items: []modules.APITableItem{
 				{Name: "Value", Type: "string", Default: "", Description: "The value submitted when the option is selected"},
 				{Name: "Label", Type: "string", Default: "", Description: "The text displayed for the option and its tag chip"},
+				{Name: "Description", Type: "string", Default: "", Description: "Dimmed text rendered next to the label in the dropdown for extra context"},
 				{Name: "Selected", Type: "bool", Default: "false", Description: "Whether the option is initially selected"},
 				{Name: "Disabled", Type: "bool", Default: "false", Description: "Whether the option cannot be toggled"},
 			},
