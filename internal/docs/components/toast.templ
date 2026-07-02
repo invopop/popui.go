@@ -1,0 +1,64 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Toast() {
+	@modules.Example(modules.ExampleProps{
+		Description: "Toasts are hidden by default and shown with popui.showToast(id), or declaratively from any button with a data-toast-trigger attribute. They appear at the bottom right of the screen and hide after three seconds. Only one toast is visible at a time.",
+		Code:        examples.LoadExample("toast.templ"),
+	}) {
+		@examples.ToastExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Description",
+		Description: "Add a Description to show secondary detail below the message in a muted color.",
+		Code:        examples.LoadExample("toast_description.templ"),
+	}) {
+		@examples.ToastDescriptionExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Action",
+		Description: "ActionLabel renders an action button on the right. Set ActionHref to render it as a link, or use ActionAttributes to attach a click handler.",
+		Code:        examples.LoadExample("toast_action.templ"),
+	}) {
+		@examples.ToastActionExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Position",
+		Description: "Position fixes the toast to any screen corner or edge. Defaults to bottom-right.",
+		Code:        examples.LoadExample("toast_position.templ"),
+	}) {
+		@examples.ToastPositionExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Duration",
+		Description: "Duration controls how long the toast stays visible, in milliseconds. Defaults to 3000.",
+		Code:        examples.LoadExample("toast_duration.templ"),
+	}) {
+		@examples.ToastDurationExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Toast",
+			Description: "Dark floating notification with a type icon, message, optional description, and optional action. Shown via popui.showToast(id) or a data-toast-trigger attribute; only one toast is visible at a time.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier, used to trigger the toast"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with toast styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Type", Type: "string", Default: "", Description: "Leading icon type: \"success\", \"error\" or \"info\""},
+				{Name: "Message", Type: "string", Default: "", Description: "Main toast text"},
+				{Name: "Description", Type: "string", Default: "", Description: "Secondary text rendered below the message in a muted color"},
+				{Name: "Position", Type: "string", Default: "bottom-right", Description: "Screen position: top-left, top-center, top-right, bottom-left, bottom-center or bottom-right"},
+				{Name: "Duration", Type: "int", Default: "3000", Description: "How long the toast stays visible, in milliseconds"},
+				{Name: "ActionLabel", Type: "string", Default: "", Description: "Label for the action button on the right side"},
+				{Name: "ActionHref", Type: "templ.SafeURL", Default: "", Description: "Renders the action as a link instead of a button"},
+				{Name: "ActionAttributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes for the action element"},
+			},
+		})
+	}
+}

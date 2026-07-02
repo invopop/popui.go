@@ -319,6 +319,28 @@ form {
   }
 }
 
+/* Toast */
+.popui-toast {
+  position: fixed;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s;
+}
+
+.popui-toast--top {
+  transform: translateY(-0.5rem);
+}
+
+.popui-toast--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 /* Animated sidebar hide icon */
 
 .icon-sidebar-hide_anim_line,

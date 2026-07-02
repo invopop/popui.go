@@ -1,0 +1,103 @@
+package popui
+
+import (
+	"strconv"
+
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Toast provides a dark floating notification with a type icon, a message,
+// an optional secondary description, and an optional action button.
+// Valid types are: success, error, info.
+//
+// Toasts are hidden by default and shown by calling popui.showToast(id) from
+// JavaScript, or by adding a data-toast-trigger="<toast-id>" attribute to any
+// button. They appear fixed on screen at Position (default bottom-right) and
+// hide automatically after Duration milliseconds (default 3000). Only one
+// toast is visible at a time; showing a toast hides any other.
+templ Toast(p ...props.Toast) {
+	{{ toast := props.First(p) }}
+	<div
+		if toast.ID != "" {
+			id={ toast.ID }
+		}
+		role="status"
+		if toast.Duration > 0 {
+			data-duration={ strconv.Itoa(toast.Duration) }
+		}
+		class={
+			tailwind.Merge(
+				"popui-toast z-50 flex items-center gap-2 w-fit min-w-80 py-3 px-4 rounded-lg bg-background-default-negative",
+				toastPositionClasses(toast.Position),
+				toast.Class,
+			),
+		}
+		{ toast.Attributes... }
+	>
+		if toast.Type != "" {
+			<div
+				class={
+					tailwind.Merge(
+						"shrink-0 text-foreground-inverse",
+						classes.If(toast.Description != "", "self-start mt-1"),
+					),
+				}
+			>
+				if toast.Type == props.ToastTypeSuccess {
+					@icons.Success()
+				} else if toast.Type == props.ToastTypeError {
+					@icons.Failure()
+				} else {
+					@icons.Info()
+				}
+			</div>
+		}
+		<div class="flex-1 min-w-0">
+			if toast.Message != "" || toast.Description != "" {
+				<p class="truncate text-base font-medium text-foreground-inverse">{ toast.Message }</p>
+				if toast.Description != "" {
+					<p class="truncate text-base text-foreground-inverse-secondary">{ toast.Description }</p>
+				}
+			} else {
+				{ children... }
+			}
+		</div>
+		if toast.ActionLabel != "" {
+			if toast.ActionHref != "" {
+				<a
+					href={ toast.ActionHref }
+					class={ toastActionClasses }
+					{ toast.ActionAttributes... }
+				>{ toast.ActionLabel }</a>
+			} else {
+				<button
+					type="button"
+					class={ toastActionClasses }
+					{ toast.ActionAttributes... }
+				>{ toast.ActionLabel }</button>
+			}
+		}
+	</div>
+}
+
+const toastActionClasses = "shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap text-foreground-inverse bg-background-selected-inverse hover:bg-background-selected-inverse-hover active:bg-background-selected-inverse-press"
+
+func toastPositionClasses(position string) string {
+	switch position {
+	case props.ToastPositionTopLeft:
+		return "popui-toast--top top-4 left-4"
+	case props.ToastPositionTopCenter:
+		return "popui-toast--top top-4 left-0 right-0 mx-auto"
+	case props.ToastPositionTopRight:
+		return "popui-toast--top top-4 right-4"
+	case props.ToastPositionBottomLeft:
+		return "bottom-4 left-4"
+	case props.ToastPositionBottomCenter:
+		return "bottom-4 left-0 right-0 mx-auto"
+	default:
+		return "bottom-4 right-4"
+	}
+}

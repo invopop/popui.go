@@ -249,6 +249,12 @@ var groups = []*Group{
 				Template: components.Textarea(),
 			},
 			{
+				Title:    "Toast",
+				Desc:     "Dark floating notification with a type icon, message, optional description, and optional action button.",
+				Path:     "toast",
+				Template: components.Toast(),
+			},
+			{
 				Title:    "Typography",
 				Desc:     "Text components for headings, paragraphs, descriptions, and formatted content.",
 				Path:     "typography",
