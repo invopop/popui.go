@@ -57,7 +57,9 @@ templ Toast(p ...props.Toast) {
 		}
 		<div class="flex-1 min-w-0">
 			if toast.Message != "" || toast.Description != "" {
-				<p class="truncate text-base font-medium text-foreground-inverse">{ toast.Message }</p>
+				if toast.Message != "" {
+					<p class="truncate text-base font-medium text-foreground-inverse">{ toast.Message }</p>
+				}
 				if toast.Description != "" {
 					<p class="truncate text-base text-foreground-inverse-secondary">{ toast.Description }</p>
 				}
