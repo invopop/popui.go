@@ -83,7 +83,9 @@ templ Toast(p ...props.Toast) {
 	</div>
 }
 
-const toastActionClasses = "shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap text-foreground-inverse bg-background-selected-inverse hover:bg-background-selected-inverse-hover active:bg-background-selected-inverse-press"
+// toastActionClasses matches the metrics of the small Button size (4px
+// radius, text-sm, same padding) with inverse colors for the dark surface.
+const toastActionClasses = "shrink-0 rounded px-2 py-[3px] text-sm font-medium tracking-tight whitespace-nowrap text-foreground-inverse bg-background-selected-inverse hover:bg-background-selected-inverse-hover active:bg-background-selected-inverse-press"
 
 func toastPositionClasses(position string) string {
 	switch position {
