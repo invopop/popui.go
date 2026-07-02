@@ -21,18 +21,32 @@ templ Fieldset() {
 		@examples.FieldsetWithLegendExample()
 	}
 	@modules.Example(modules.ExampleProps{
-		Title:       "Card Style",
-		Description: "Card variant provides a bordered, card-style container for form fields.",
+		Title:       "Card Variant",
+		Description: "The card variant wraps the fields in a bordered, white card-style container.",
 		Code:        examples.LoadExample("fieldset_card_style.templ"),
 	}) {
 		@examples.FieldsetCardStyleExample()
 	}
 	@modules.Example(modules.ExampleProps{
-		Title:       "Custom Card Style",
+		Title:       "Custom Card Variant",
 		Description: "Card variant with custom classes.",
 		Code:        examples.LoadExample("fieldset_highlighted.templ"),
 	}) {
 		@examples.FieldsetHighlightedExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "FieldsetCard",
+		Description: "FieldsetCard is a separate component that groups form fields inside a tinted card body, with an optional title and secondary description above it — unlike the bordered card variant, the heading sits outside the body.",
+		Code:        examples.LoadExample("fieldset_card.templ"),
+	}) {
+		@examples.FieldsetCardExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "FieldsetCard with Form Grid",
+		Description: "Wrap fields in a grid to lay them out in multiple columns inside a FieldsetCard.",
+		Code:        examples.LoadExample("fieldset_card_form.templ"),
+	}) {
+		@examples.FieldsetCardFormExample()
 	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
@@ -44,6 +58,17 @@ templ Fieldset() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Legend", Type: "string", Default: "", Description: "Text to display as the fieldset legend"},
 				{Name: "Variant", Type: "string", Default: "", Description: "Visual variant: \"card\" for bordered card style"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "FieldsetCard",
+			Description: "Groups form fields inside a tinted card body with an optional title and description. Expects form fields as children.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the fieldset element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with fieldset styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Title", Type: "string", Default: "", Description: "Bold heading rendered above the card body"},
+				{Name: "Description", Type: "string", Default: "", Description: "Muted text rendered next to the title, separated by a middot"},
 			},
 		})
 	}
