@@ -201,6 +201,12 @@ var groups = []*Group{
 				Template: components.Label(),
 			},
 			{
+				Title:    "Multiselect",
+				Desc:     "Dropdown for choosing multiple options, displayed as removable tag chips.",
+				Path:     "multiselect",
+				Template: components.Multiselect(),
+			},
+			{
 				Title:    "Notification",
 				Desc:     "Feedback messages with different severity types and icons.",
 				Path:     "notification",
@@ -247,6 +253,12 @@ var groups = []*Group{
 				Desc:     "Status indicators with optional dots and different color variants.",
 				Path:     "tag-status",
 				Template: components.TagStatus(),
+			},
+			{
+				Title:    "Tag Status Icon",
+				Desc:     "Status indicators with a leading status icon and an optional label.",
+				Path:     "tag-status-icon",
+				Template: components.TagStatusIcon(),
 			},
 			{
 				Title:    "Textarea",
