@@ -22,6 +22,11 @@ type CardContent struct {
 	Attributes templ.Attributes
 }
 
+// CardFieldset is an alias kept for backwards compatibility.
+//
+// Deprecated: Use FieldsetCard instead.
+type CardFieldset = FieldsetCard
+
 // CardHeader Templ component props
 type CardHeader struct {
 	ID         string

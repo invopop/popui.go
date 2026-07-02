@@ -73,6 +73,16 @@ templ CardContent(p ...props.CardContent) {
 	</div>
 }
 
+// CardFieldset forwards to FieldsetCard and is kept for backwards
+// compatibility.
+//
+// Deprecated: Use FieldsetCard instead.
+templ CardFieldset(p ...props.CardFieldset) {
+	@FieldsetCard(p...) {
+		{ children... }
+	}
+}
+
 // CardHeader can be used as part of a Card component or standalone.
 // Expects Avatar and/or flag as children via slots.
 templ CardHeader(p ...props.CardHeader) {
