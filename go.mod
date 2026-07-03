@@ -1,6 +1,6 @@
 module github.com/invopop/popui.go
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
@@ -11,7 +11,7 @@ require (
 	github.com/invopop/icons v0.19.0
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/spf13/cobra v1.9.1
-	golang.org/x/text v0.34.0
+	golang.org/x/text v0.37.0
 )
 
 require (
@@ -22,7 +22,7 @@ require (
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.47.0 // indirect
-	golang.org/x/net v0.48.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
+	golang.org/x/crypto v0.51.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 )
