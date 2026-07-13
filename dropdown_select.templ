@@ -26,7 +26,7 @@ import (
 templ DropdownSelect(opts ...props.DropdownSelect) {
 	{{ p := props.First(opts).GenerateID() }}
 	<div
-		x-data={ "dropdownSelect({values: " + p.InitialValuesJSON() + ", multiple: " + boolStr(p.Multiple) + ", multipleLabel: '" + p.MultipleLabelOr() + "', autoOpen: " + boolStr(p.AutoOpen) + ", name: '" + p.Name + "'})" }
+		x-data={ "dropdownSelect({values: " + p.InitialValuesJSON() + ", multiple: " + boolStr(p.Multiple) + ", multipleLabel: '" + jsSingleQuoteEscape(p.MultipleLabelOr()) + "', autoOpen: " + boolStr(p.AutoOpen) + ", name: '" + jsSingleQuoteEscape(p.Name) + "'})" }
 		x-id="['dropdown-select']"
 		role="combobox"
 		:style="'anchor-name: --dropdown-select-' + $id('dropdown-select')"

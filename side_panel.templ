@@ -63,7 +63,7 @@ templ SidePanel(opts ...props.SidePanel) {
 		if p.ID != "" {
 			id={ p.ID }
 		}
-		x-data={ "sidePanel('" + p.ID + "')" }
+		x-data={ "sidePanel('" + jsSingleQuoteEscape(p.ID) + "')" }
 		x-cloak
 		style={ "position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px; transition: transform 300ms ease, opacity 300ms ease, visibility 300ms ease; will-change: transform;" }
 		:style={ "{ transform: open ? 'translateX(0)' : 'translateX(" + offEdge + ")', opacity: open ? 1 : 0, visibility: open ? 'visible' : 'hidden' }" }
@@ -96,7 +96,7 @@ templ SidePanelHeader(opts ...props.SidePanelHeader) {
 		if closeAttrs == nil {
 			closeAttrs = templ.Attributes{
 				"type":   "button",
-				"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-close', {detail:'" + p.SidePanelID + "'}))",
+				"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-close', {detail:'" + jsSingleQuoteEscape(p.SidePanelID) + "'}))",
 			}
 		}
 	}}

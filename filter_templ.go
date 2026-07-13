@@ -339,9 +339,9 @@ func filterAddMenu(inputs []props.FilterInput) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("available('" + in.Name + "')")
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("available('" + jsSingleQuoteEscape(in.Name) + "')")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 130, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 130, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -352,9 +352,9 @@ func filterAddMenu(inputs []props.FilterInput) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("add('" + in.Name + "'); $el.closest('[popover]').hidePopover()")
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("add('" + jsSingleQuoteEscape(in.Name) + "'); $el.closest('[popover]').hidePopover()")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 136, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 136, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -421,9 +421,9 @@ func filterChip(in props.FilterInput) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs("isActive('" + in.Name + "')")
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs("isActive('" + jsSingleQuoteEscape(in.Name) + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 155, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 155, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -434,9 +434,9 @@ func filterChip(in props.FilterInput) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs("{ order: orderOf('" + in.Name + "') }")
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs("{ order: orderOf('" + jsSingleQuoteEscape(in.Name) + "') }")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 156, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 156, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -556,9 +556,9 @@ func filterChip(in props.FilterInput) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var25 string
-		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs("remove('" + in.Name + "')")
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs("remove('" + jsSingleQuoteEscape(in.Name) + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 193, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 193, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -657,9 +657,9 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs("values.length === 1 && values[0] === '" + opt.Value + "'")
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs("values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 233, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 233, Col: 98}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -704,9 +704,9 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var32 string
-				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs("values.includes('" + opt.Value + "')")
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs("values.includes('" + jsSingleQuoteEscape(opt.Value) + "')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 246, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 246, Col: 76}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 				if templ_7745c5c3_Err != nil {
@@ -759,7 +759,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 				Label:          opt.Label,
 				Color:          opt.Color,
 				Multiple:       in.Type == props.FilterTypeMultiple,
-				IsSelectedExpr: "values.includes('" + opt.Value + "')",
+				IsSelectedExpr: "values.includes('" + jsSingleQuoteEscape(opt.Value) + "')",
 				// choose(i) syncs the highlight to the clicked row before
 				// toggling, so a mouse click and a keyboard Enter always act
 				// on the same option (the rows are tabindex=-1; the parent
@@ -770,7 +770,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 				Attributes: templ.Attributes{
 					"role":           "option",
 					":id":            "$id('flb') + '-opt-" + strconv.Itoa(i) + "'",
-					":aria-selected": "values.includes('" + opt.Value + "')",
+					":aria-selected": "values.includes('" + jsSingleQuoteEscape(opt.Value) + "')",
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -880,13 +880,13 @@ func filterRangeCalendarData(in props.FilterInput) string {
 	}
 	fromJS := "null"
 	if from != "" {
-		fromJS = "'" + from + "'"
+		fromJS = "'" + jsSingleQuoteEscape(from) + "'"
 	}
 	toJS := "null"
 	if to != "" {
-		toJS = "'" + to + "'"
+		toJS = "'" + jsSingleQuoteEscape(to) + "'"
 	}
-	return "rangeCalendar({name: '" + in.Name + "', from: " + fromJS + ", to: " + toJS +
+	return "rangeCalendar({name: '" + jsSingleQuoteEscape(in.Name) + "', from: " + fromJS + ", to: " + toJS +
 		", presets: " + calendarPresetsJS(in.Presets) + "})"
 }
 
@@ -897,9 +897,10 @@ func filterRangeCalendarData(in props.FilterInput) string {
 func filterRowAlpine(inputs []props.FilterInput) string {
 	var active, all []string
 	for _, in := range inputs {
-		all = append(all, "'"+in.Name+"'")
+		name := jsSingleQuoteEscape(in.Name)
+		all = append(all, "'"+name+"'")
 		if len(in.Values) > 0 {
-			active = append(active, "'"+in.Name+"'")
+			active = append(active, "'"+name+"'")
 		}
 	}
 	return "filterRow([" + strings.Join(active, ",") + "], [" + strings.Join(all, ",") + "])"
@@ -951,8 +952,8 @@ func filterOptionListData(in props.FilterInput) string {
 	optionValuesJSON, _ := json.Marshal(optionValues)
 	return "filterOptionList({values: " + string(valuesJSON) +
 		", multiple: " + boolStr(in.Type == props.FilterTypeMultiple) +
-		", multipleLabel: '" + plural + "'" +
-		", name: '" + in.Name + "'" +
+		", multipleLabel: '" + jsSingleQuoteEscape(plural) + "'" +
+		", name: '" + jsSingleQuoteEscape(in.Name) + "'" +
 		", optionValues: " + string(optionValuesJSON) + "})"
 }
 

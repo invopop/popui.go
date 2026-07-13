@@ -120,9 +120,9 @@ func SidePanel(opts ...props.SidePanel) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("sidePanel('" + p.ID + "')")
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("sidePanel('" + jsSingleQuoteEscape(p.ID) + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 66, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `side_panel.templ`, Line: 66, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -227,7 +227,7 @@ func SidePanelHeader(opts ...props.SidePanelHeader) templ.Component {
 		if closeAttrs == nil {
 			closeAttrs = templ.Attributes{
 				"type":   "button",
-				"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-close', {detail:'" + p.SidePanelID + "'}))",
+				"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-close', {detail:'" + jsSingleQuoteEscape(p.SidePanelID) + "'}))",
 			}
 		}
 		var templ_7745c5c3_Var9 = []any{tailwind.Merge(

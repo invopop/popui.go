@@ -70,11 +70,12 @@ templ App(opts ...props.App) {
 }
 
 // appViewportFill pins the document to the viewport so App's `h-full` grid
-// resolves to a bounded height, and stops the body (the #app-container) from
-// scrolling so vertical scrolling happens inside the content instead of the
-// page. Emitted into the head when props.App.FillViewport is set. Scoped to
-// the App container so a bare HTML/Body document isn't affected. (Tailwind's
-// preflight already zeroes the body margin, so only height + overflow remain.)
+// resolves to a bounded height, and stops the page from scrolling so vertical
+// scrolling happens inside the content instead. Emitted into the head when
+// props.App.FillViewport is set. Note this is a global document-level change:
+// `html, body` are given full height and the #app-container is clipped, so
+// only use it on pages that App owns end-to-end. (Tailwind's preflight already
+// zeroes the body margin, so only height + overflow remain.)
 templ appViewportFill() {
 	<style>
 		html, body { height: 100%; }

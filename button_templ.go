@@ -531,7 +531,10 @@ func buttonClasses(variant string, size string) string {
 		// Icon color based on size
 		classes.If(!isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-icon"),
 		classes.If(!isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-icon-inverse"),
-		classes.If(isIcon && variant != props.ButtonVariantPrimary, "[&_svg]:text-foreground"),
+		// Danger keeps its own [&_svg]:text-critical (set with the variant
+		// classes above); excluded here so the generic icon color doesn't
+		// override it.
+		classes.If(isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-foreground"),
 		classes.If(isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-foreground-inverse"),
 	)
 }

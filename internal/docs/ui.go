@@ -141,12 +141,6 @@ var groups = []*Group{
 				Template: components.DescriptionList(),
 			},
 			{
-				Title:    "Side panel",
-				Desc:     "Floating side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive — and stays mounted across content swaps.",
-				Path:     "side-panel",
-				Template: components.SidePanel(),
-			},
-			{
 				Title:    "Fieldset",
 				Desc:     "Groups form fields together with proper spacing and optional legend.",
 				Path:     "fieldset",
@@ -223,6 +217,12 @@ var groups = []*Group{
 				Desc:     "Dropdown selection control for choosing one or more options from a list.",
 				Path:     "select",
 				Template: components.Select(),
+			},
+			{
+				Title:    "Side panel",
+				Desc:     "Floating side panel that overlays one edge of the viewport.",
+				Path:     "side-panel",
+				Template: components.SidePanel(),
 			},
 			{
 				Title:    "Slider",

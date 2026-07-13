@@ -351,11 +351,13 @@ form {
 .icon-pulse_r0 { animation: icon-pulse-animation 1.6s ease-in-out infinite 0s; }
 .icon-pulse_r1 { animation: icon-pulse-animation 1.6s ease-in-out infinite 0.16s; }
 
-/* Table — sticky header / frozen first column / column dividers, toggled by
-   popui.Table's StickyHeader / FreezeFirstColumn / ColumnDividers props.
-   These can't be expressed as Tailwind utilities: sticky cells need an opaque
-   base to sit over the alpha hover/border tokens, and the header dividers are
-   pseudo-elements that scale with the label height. */
+/* Table — sticky header, frozen first column, and column dividers. The sticky
+   header is toggled by popui.Table's StickyHeader prop; the frozen first column
+   is driven by ScrollHorizontal (it auto-freezes); column dividers, row hover,
+   and full width are always applied. These can't be expressed as Tailwind
+   utilities: sticky cells need an opaque base to sit over the alpha
+   hover/border tokens, and the header dividers are pseudo-elements that scale
+   with the label height. */
 
 /* FullWidth — stretch the table to fill its container while still growing
    past it when the columns need more (horizontal scroll). min-width pins it

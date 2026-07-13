@@ -196,13 +196,13 @@ func Calendar(opts ...props.Calendar) templ.Component {
 func calendarScope(p props.Calendar) string {
 	fromJS := "null"
 	if p.From != "" {
-		fromJS = "'" + p.From + "'"
+		fromJS = "'" + jsSingleQuoteEscape(p.From) + "'"
 	}
 	toJS := "null"
 	if p.To != "" {
-		toJS = "'" + p.To + "'"
+		toJS = "'" + jsSingleQuoteEscape(p.To) + "'"
 	}
-	return "rangeCalendar({name: '" + p.Name + "', from: " + fromJS + ", to: " + toJS +
+	return "rangeCalendar({name: '" + jsSingleQuoteEscape(p.Name) + "', from: " + fromJS + ", to: " + toJS +
 		", presets: " + calendarPresetsJS(p.Presets) + "})"
 }
 
