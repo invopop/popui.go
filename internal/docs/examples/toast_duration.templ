@@ -1,0 +1,33 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ToastDurationExample() {
+	<div class="flex flex-wrap gap-2">
+		@popui.Button(props.Button{
+			Attributes: templ.Attributes{"data-toast-trigger": "toast-short"},
+		}) {
+			Show for 1 second
+		}
+		@popui.Button(props.Button{
+			Attributes: templ.Attributes{"data-toast-trigger": "toast-long"},
+		}) {
+			Show for 10 seconds
+		}
+	</div>
+	@popui.Toast(props.Toast{
+		ID:       "toast-short",
+		Type:     props.ToastTypeInfo,
+		Message:  "This toast lasts one second",
+		Duration: 1000,
+	})
+	@popui.Toast(props.Toast{
+		ID:       "toast-long",
+		Type:     props.ToastTypeInfo,
+		Message:  "This toast lasts ten seconds",
+		Duration: 10000,
+	})
+}

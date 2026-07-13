@@ -1,0 +1,35 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+var toastPositions = []string{
+	props.ToastPositionTopLeft,
+	props.ToastPositionTopCenter,
+	props.ToastPositionTopRight,
+	props.ToastPositionBottomLeft,
+	props.ToastPositionBottomCenter,
+	props.ToastPositionBottomRight,
+}
+
+templ ToastPositionExample() {
+	<div class="flex flex-wrap gap-2">
+		for _, position := range toastPositions {
+			@popui.Button(props.Button{
+				Attributes: templ.Attributes{"data-toast-trigger": "toast-" + position},
+			}) {
+				{ position }
+			}
+		}
+	</div>
+	for _, position := range toastPositions {
+		@popui.Toast(props.Toast{
+			ID:       "toast-" + position,
+			Type:     props.ToastTypeInfo,
+			Message:  "Toast at " + position,
+			Position: position,
+		})
+	}
+}

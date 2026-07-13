@@ -1,0 +1,15 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TagStatusIconExample() {
+	<div class="flex flex-wrap items-center gap-2">
+		@popui.TagStatusIcon(props.TagStatusIcon{Label: "Agreement", Status: "success"})
+		@popui.TagStatusIcon(props.TagStatusIcon{Label: "Company", Status: "failed"})
+		@popui.TagStatusIcon(props.TagStatusIcon{Label: "Identity", Status: "warning"})
+		@popui.TagStatusIcon(props.TagStatusIcon{Label: "Processing", Status: "running"})
+	</div>
+}

@@ -128,6 +128,56 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       })
   };
 
+  // Public API: Toasts. Only one toast is visible at a time; showing a toast
+  // hides any other. Toasts hide automatically after their data-duration
+  // (milliseconds, default 3000).
+  const TOAST_VISIBLE_CLASS = 'popui-toast--visible'
+  const TOAST_DEFAULT_DURATION = 3000
+  let activeToast = null
+  let activeToastTimer = null
+
+  popui.showToast = function(toast) {
+    if (typeof toast === 'string') toast = document.getElementById(toast)
+    if (!toast) return
+
+    if (activeToastTimer) {
+      clearTimeout(activeToastTimer)
+      activeToastTimer = null
+    }
+    if (activeToast && activeToast !== toast) {
+      activeToast.classList.remove(TOAST_VISIBLE_CLASS)
+    }
+
+    activeToast = toast
+    toast.classList.add(TOAST_VISIBLE_CLASS)
+
+    const duration = parseInt(toast.dataset.duration) || TOAST_DEFAULT_DURATION
+    activeToastTimer = setTimeout(() => {
+      popui.hideToast(toast)
+    }, duration)
+  };
+
+  popui.hideToast = function(toast) {
+    if (typeof toast === 'string') toast = document.getElementById(toast)
+    if (!toast) return
+
+    toast.classList.remove(TOAST_VISIBLE_CLASS)
+    if (activeToast === toast) {
+      activeToast = null
+      if (activeToastTimer) {
+        clearTimeout(activeToastTimer)
+        activeToastTimer = null
+      }
+    }
+  };
+
+  // Show toasts from any element with a data-toast-trigger attribute
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-toast-trigger]')
+    if (!trigger) return
+    popui.showToast(trigger.dataset.toastTrigger)
+  })
+
   // Public API: Authentication token management
   popui.setAuthToken = function(token) {
     sessionStorage.setItem('_popui_auth_token', token);
