@@ -1,0 +1,190 @@
+package popui
+
+import "github.com/invopop/popui.go/props"
+
+// SignaturePad renders the signature capture modal: a hidden submit form, a dialog
+// with a typed-preview tab and a freehand drawing tab, plus the required styles
+// and script. Render SignaturePad before any trigger buttons so that
+// window.popuiSignPad is defined before the onclick fires. The caller places
+// the trigger button with onclick="popuiSignPad.open()" and can read the result
+// from the "signature" hidden field as a PNG data-URI (typed name rendered in Caveat, or drawn image).
+//
+// Note: only one SignaturePad per page is supported (fixed element IDs, single global API).
+templ SignaturePad(opts ...props.SignaturePad) {
+	{{ p := props.First(opts).WithDefaults() }}
+	{{ l := spLabels(p.Locale) }}
+	<form id="popui-sign-form" method="post" action={ templ.URL(p.Action) } style="display:none">
+		<input type="hidden" name="signature" id="popui-sign-input"/>
+	</form>
+	<dialog id="popui-sign-dialog" class="popui-sign-dialog" data-draw-first={ l.DrawFirst } data-export-error={ l.ExportError } data-signer={ p.Signer } aria-labelledby="popui-sign-title">
+		<div class="popui-sign-dialog-body">
+			<div class="popui-sign-dialog-head">
+				<span id="popui-sign-title" class="text-lg font-medium">{ l.Title }</span>
+				<button type="button" class="popui-sign-x" onclick="popuiSignPad.close()" aria-label={ l.CloseLabel }>
+					@CloseIcon()
+				</button>
+			</div>
+			@Tabs(props.Tabs{ID: "popui-sign-tabs", Variant: "pill", Class: "h-8 mb-0 px-1"}) {
+				@Tab(props.Tab{ID: "popui-sign-tab-generated", Variant: "pill", Active: true, Attributes: templ.Attributes{"onclick": "popuiSignPad.tab('generated')"}}) {
+					{ l.TabTyped }
+				}
+				@Tab(props.Tab{ID: "popui-sign-tab-draw", Variant: "pill", Attributes: templ.Attributes{"onclick": "popuiSignPad.tab('draw')"}}) {
+					{ l.TabDraw }
+				}
+			}
+			<div id="popui-sign-choose-view">
+				<div id="popui-sign-typed-preview" class="popui-sign-typed-preview">{ p.Signer }</div>
+			</div>
+			<div id="popui-sign-draw-view" hidden>
+				<div class="popui-sign-pad-wrap">
+					<canvas id="popui-sign-pad" class="popui-sign-canvas"></canvas>
+					@Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.clear()"}}) {
+						{ l.ClearLabel }
+					}
+				</div>
+			</div>
+			@Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.use()"}}) {
+				{ l.UseLabel }
+			}
+		</div>
+	</dialog>
+	@signaturePadStyles()
+	@signaturePadScript()
+}
+
+templ signaturePadStyles() {
+	<style>
+		@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500; font-display: block; src: url('/_popui/assets/caveat.woff2') format('woff2'); }
+		.popui-sign-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; border: 0; border-radius: 0.75rem; padding: 0; width: min(92vw, 560px); box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
+		.popui-sign-dialog::backdrop { background: rgba(0,0,0,0.5); }
+		.popui-sign-dialog-body { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.5rem 1.5rem; }
+		.popui-sign-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+		.popui-sign-pad-wrap { position: relative; }
+		.popui-sign-clear-btn { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1; }
+		.popui-sign-use-btn { width: 100%; height: 32px !important; min-height: 32px !important; }
+		.popui-sign-x { border: 0; background: transparent; font-size: 1.5rem; line-height: 1; color: var(--color-foreground-default-secondary); cursor: pointer; padding: 0 0.25rem; }
+		.popui-sign-x:hover { color: var(--color-foreground); }
+		.popui-sign-canvas { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background); touch-action: none; }
+		#popui-sign-choose-view, #popui-sign-draw-view { display: flex; flex-direction: column; gap: 1rem; }
+		.popui-sign-typed-preview { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background-default-secondary); display: flex; align-items: center; justify-content: center; padding: 0 1rem; overflow: hidden; white-space: nowrap; font-family: 'Caveat', cursive; font-weight: 500; font-size: 4rem; line-height: 1; color: var(--color-foreground); }
+	</style>
+}
+
+// signaturePadScript drives the signature dialog: draw, crop to the ink, store for submit.
+templ signaturePadScript() {
+	<script>
+		(function () {
+			const dialog = document.getElementById("popui-sign-dialog");
+			const canvas = document.getElementById("popui-sign-pad");
+			if (!dialog || !canvas) return;
+			if (dialog.dataset.popuiSignInit === "1") return;
+			dialog.dataset.popuiSignInit = "1";
+			const ctx = canvas.getContext("2d");
+			const input = document.getElementById("popui-sign-input");
+			if (!ctx || !input) return;
+			let drawing = false, dirty = false, minX, minY, maxX, maxY;
+			function bound(p) {
+				if (!dirty) { minX = maxX = p.x; minY = maxY = p.y; return; }
+				minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+				maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+			}
+			function at(e) {
+				const r = canvas.getBoundingClientRect();
+				const t = e.touches ? e.touches[0] : e;
+				return { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };
+			}
+			function start(e) {
+				drawing = true; const p = at(e); bound(p);
+				ctx.lineWidth = 2 * (window.devicePixelRatio || 1); ctx.lineCap = "round"; ctx.strokeStyle = (getComputedStyle(document.documentElement).getPropertyValue("--color-foreground") || "#111").trim();
+				ctx.beginPath(); ctx.moveTo(p.x, p.y);
+				ctx.lineTo(p.x, p.y); ctx.stroke(); dirty = true; e.preventDefault();
+			}
+			function move(e) {
+				if (!drawing) return;
+				const p = at(e);
+				ctx.lineTo(p.x, p.y); ctx.stroke();
+				if (!dirty) dirty = true;
+				bound(p); e.preventDefault();
+			}
+			function stop() { drawing = false; }
+			canvas.addEventListener("mousedown", start);
+			canvas.addEventListener("mousemove", move);
+			window.addEventListener("mouseup", stop);
+			canvas.addEventListener("touchstart", start, { passive: false });
+			canvas.addEventListener("touchmove", move, { passive: false });
+			window.addEventListener("touchend", stop);
+			window.addEventListener("touchcancel", stop);
+			function reset() { ctx.clearRect(0, 0, canvas.width, canvas.height); dirty = false; }
+			dialog.addEventListener("click", function (e) { if (e.target === dialog) dialog.close(); });
+			const chooseView = document.getElementById("popui-sign-choose-view");
+			const drawView = document.getElementById("popui-sign-draw-view");
+			const tabGenerated = document.getElementById("popui-sign-tab-generated");
+			const tabDraw = document.getElementById("popui-sign-tab-draw");
+			const typedPreview = document.getElementById("popui-sign-typed-preview");
+			if (document.fonts && document.fonts.load) { document.fonts.load("500 96px Caveat"); }
+			let mode = "generated";
+			function caveatFont(px) { return "500 " + px + "px Caveat, cursive"; }
+			function fittedSize(text, maxW, base, min) {
+				const cx = document.createElement("canvas").getContext("2d");
+				if (!cx) return base;
+				cx.font = caveatFont(base);
+				const w = cx.measureText(text).width;
+				if (w <= maxW || w === 0) return base;
+				return Math.max(min, Math.floor(base * maxW / w));
+			}
+			function fitPreview() {
+				const avail = typedPreview.clientWidth - 32;
+				if (avail <= 0) return;
+				typedPreview.style.fontSize = fittedSize((dialog.dataset.signer || "").trim(), avail, 64, 20) + "px";
+			}
+			function sizePad() {
+				const dpr = window.devicePixelRatio || 1;
+				const w = Math.floor(canvas.clientWidth * dpr), h = Math.floor(canvas.clientHeight * dpr);
+				if (w <= 0 || h <= 0) return;
+				if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; reset(); }
+			}
+			function doSubmit() { dialog.close(); input.form.requestSubmit ? input.form.requestSubmit() : input.form.submit(); }
+			function submitTyped() { input.value = ""; doSubmit(); }
+			function submitDrawn() {
+				if (!dirty) { alert(dialog.dataset.drawFirst || "Please draw your signature first."); return; }
+				const pad = 12;
+				let x0 = Math.max(0, Math.floor(minX - pad)), x1 = Math.min(canvas.width, Math.ceil(maxX + pad));
+				const y0 = Math.max(0, Math.floor(minY - pad)), y1 = Math.min(canvas.height, Math.ceil(maxY + pad));
+				let cw = Math.max(1, x1 - x0), ch = Math.max(1, y1 - y0);
+				// If the crop is portrait-oriented, use the full canvas width so that a
+				// fixed-width PDF renderer doesn't scale the image to an extreme height.
+				if (cw < ch) { x0 = 0; x1 = canvas.width; cw = canvas.width; }
+				const out = document.createElement("canvas");
+				out.width = cw; out.height = ch;
+				const outCtx = out.getContext("2d");
+				if (!outCtx) { alert(dialog.dataset.exportError); return; }
+				outCtx.drawImage(canvas, x0, y0, cw, ch, 0, 0, cw, ch);
+				input.value = out.toDataURL("image/png");
+				doSubmit();
+			}
+			const api = {
+				open: function () { input.value = ""; reset(); if (!dialog.open) { dialog.showModal(); } api.tab("generated"); },
+				close: function () { dialog.close(); },
+				clear: reset,
+				tab: function (m) {
+					mode = m;
+					const gen = m === "generated";
+					if (tabGenerated) tabGenerated.setAttribute("data-state", gen ? "active" : "inactive");
+					if (tabDraw) tabDraw.setAttribute("data-state", gen ? "inactive" : "active");
+					chooseView.hidden = !gen;
+					drawView.hidden = gen;
+					if (gen) {
+						fitPreview();
+						if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitPreview); }
+					} else {
+						sizePad();
+					}
+				},
+				use: function () { if (mode === "generated") { submitTyped(); } else { submitDrawn(); } },
+			};
+			window.popuiSignPad = api;
+			window.popui = window.popui || {};
+			window.popui.signPad = api;
+		})();
+	</script>
+}
