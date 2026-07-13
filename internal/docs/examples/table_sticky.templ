@@ -9,6 +9,7 @@ templ TableStickyExample() {
 	@popui.Table(props.Table{
 		RootClass:        "max-h-64 overflow-auto",
 		ScrollHorizontal: true,
+		StickyColumn:     true,
 		StickyHeader:     true,
 		Resizable:        true,
 	}) {
@@ -25,58 +26,58 @@ templ TableStickyExample() {
 		</thead>
 		<tbody>
 			<tr>
-				<td>@popui.TableCell(props.TableCell{Value: "usr_001", Mono: true})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "John Doe"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "john@example.com"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Admin"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Platform"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Berlin"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+				<td><span class="font-mono">usr001</span></td>
+				<td>John Doe</td>
+				<td>john@example.com</td>
+				<td>Admin</td>
+				<td>Platform</td>
+				<td>Berlin</td>
+				<td>Active</td>
 			</tr>
 			<tr>
-				<td>@popui.TableCell(props.TableCell{Value: "usr_002", Mono: true})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Jane Smith"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "jane@example.com"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "User"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Billing"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Madrid"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+				<td><span class="font-mono">usr002</span></td>
+				<td>Jane Smith</td>
+				<td>jane@example.com</td>
+				<td>User</td>
+				<td>Billing</td>
+				<td>Madrid</td>
+				<td>Active</td>
 			</tr>
 			<tr>
-				<td>@popui.TableCell(props.TableCell{Value: "usr_003", Mono: true})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Bob Johnson"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "bob@example.com"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Editor"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Content"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: ""})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Invited"})</td>
+				<td><span class="font-mono">usr003</span></td>
+				<td>Bob Johnson</td>
+				<td>bob@example.com</td>
+				<td>Editor</td>
+				<td>Content</td>
+				<td>-</td>
+				<td>Invited</td>
 			</tr>
 			<tr>
-				<td>@popui.TableCell(props.TableCell{Value: "usr_004", Mono: true})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Alice Brown"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "alice@example.com"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Admin"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Platform"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Lisbon"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+				<td><span class="font-mono">usr004</span></td>
+				<td>Alice Brown</td>
+				<td>alice@example.com</td>
+				<td>Admin</td>
+				<td>Platform</td>
+				<td>Lisbon</td>
+				<td>Active</td>
 			</tr>
 			<tr>
-				<td>@popui.TableCell(props.TableCell{Value: "usr_005", Mono: true})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Charlie Davis"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "charlie@example.com"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "User"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Support"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Paris"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Suspended"})</td>
+				<td><span class="font-mono">usr005</span></td>
+				<td>Charlie Davis</td>
+				<td>charlie@example.com</td>
+				<td>User</td>
+				<td>Support</td>
+				<td>Paris</td>
+				<td>Suspended</td>
 			</tr>
 			<tr>
-				<td>@popui.TableCell(props.TableCell{Value: "usr_006", Mono: true})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Dana Evans"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "dana@example.com"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Editor"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Content"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Rome"})</td>
-				<td>@popui.TableCell(props.TableCell{Value: "Active"})</td>
+				<td><span class="font-mono">usr006</span></td>
+				<td>Dana Evans</td>
+				<td>dana@example.com</td>
+				<td>Editor</td>
+				<td>Content</td>
+				<td>Rome</td>
+				<td>Active</td>
 			</tr>
 		</tbody>
 	}

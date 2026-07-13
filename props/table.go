@@ -15,10 +15,15 @@ type Table struct {
 	Variant    string // "card" adds outer border
 
 	// ScrollHorizontal turns the table into a wide, horizontally-scrolling
-	// table: the body scrolls sideways and the first column is automatically
-	// frozen — pinned to the left with a full-height divider that stays put
-	// during the scroll, so the identity column never detaches from the rows.
+	// table: the body scrolls sideways. Pair it with StickyColumn to keep the
+	// first column pinned during the scroll.
 	ScrollHorizontal bool
+
+	// StickyColumn pins the first column to the left — a full-height divider
+	// stays put during a horizontal scroll so the identity column never
+	// detaches from the rows. Only has a visible effect alongside
+	// ScrollHorizontal (there's nothing to scroll past otherwise).
+	StickyColumn bool
 
 	// StickyHeader pins the <thead> row to the top while the body scrolls.
 	// The RootClass must make the wrapper a vertical scroll container with a

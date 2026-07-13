@@ -76,17 +76,17 @@ func Filter() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Filter",
-				Description: "Filter row: a \"+ Filter\" menu plus one chip per active filter (AND).",
+				Description: "Filter renders a search bar style filter row with a Filter menu and one editable chip for each active field. All active filters apply together on every submission.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Form element id."},
-					{Name: "Class", Type: "string", Default: "", Description: "Extra CSS classes."},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra form attributes."},
-					{Name: "BaseURL", Type: "string", Default: "", Description: "hx-get target; values become query params."},
-					{Name: "Target", Type: "string", Default: "", Description: "hx-target region to swap (the data region, not the row)."},
-					{Name: "Select", Type: "string", Default: "Target", Description: "hx-select region. Defaults to Target."},
-					{Name: "Swap", Type: "string", Default: "outerHTML", Description: "hx-swap mode. Defaults to outerHTML."},
-					{Name: "PageSize", Type: "int", Default: "0", Description: "Hidden size input; 0 omits."},
-					{Name: "Inputs", Type: "[]FilterInput", Default: "", Description: "Filterable fields (one chip each)."},
+					{Name: "ID", Type: "string", Default: "", Description: "Sets the unique identifier of the form element."},
+					{Name: "Class", Type: "string", Default: "", Description: "Adds CSS classes that are merged with the base styling of the row."},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Applies additional HTML attributes to the form element."},
+					{Name: "BaseURL", Type: "string", Default: "", Description: "Defines the URL the form submits to through `hx-get`. The active filter values are serialised as query parameters."},
+					{Name: "Target", Type: "string", Default: "", Description: "Selects the region that is swapped when the filters change. Point it at the data region so the filter row itself survives each submission."},
+					{Name: "Select", Type: "string", Default: "Target", Description: "Chooses the fragment of the response to swap in through `hx-select`. It defaults to the same region as Target."},
+					{Name: "Swap", Type: "string", Default: "outerHTML", Description: "Controls the HTMX swap mode. It defaults to `outerHTML` so the region element is replaced whole."},
+					{Name: "PageSize", Type: "int", Default: "0", Description: "Adds a hidden size input with this value to every submission. A value of zero omits the input."},
+					{Name: "Inputs", Type: "[]FilterInput", Default: "", Description: "Declares the filterable fields. Each field renders one chip while it is active."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -98,16 +98,16 @@ func Filter() templ.Component {
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "FilterInput",
-				Description: "One filterable field; Type picks the editor.",
+				Description: "FilterInput describes one filterable field. The Type field picks which value editor the chip shows.",
 				Items: []modules.APITableItem{
-					{Name: "Name", Type: "string", Default: "", Description: "Query-param key."},
-					{Name: "Label", Type: "string", Default: "", Description: "Menu + chip text."},
-					{Name: "Type", Type: "string", Default: "text", Description: "text, select, multiple, or calendar."},
-					{Name: "PluralLabel", Type: "string", Default: "", Description: "Plural for the multiple summary (irregulars)."},
-					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Menu + chip icon."},
-					{Name: "Values", Type: "[]string", Default: "", Description: "Applied values (from URL). Non-empty = active."},
-					{Name: "Options", Type: "[]FilterOption", Default: "", Description: "Choices for select / multiple."},
-					{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Preset rail for calendar type."},
+					{Name: "Name", Type: "string", Default: "", Description: "Sets the query parameter key the field submits under."},
+					{Name: "Label", Type: "string", Default: "", Description: "Provides the text shown in the Filter menu and on the chip."},
+					{Name: "Type", Type: "string", Default: "text", Description: "Selects the value editor. Valid values are `text`, `select`, `multiple` and `calendar`."},
+					{Name: "PluralLabel", Type: "string", Default: "", Description: "Overrides the pluralised label the multiple editor shows in its summary. Set it for irregular plurals."},
+					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Provides the icon shown in the Filter menu and on the chip."},
+					{Name: "Values", Type: "[]string", Default: "", Description: "Seeds the values that are already applied, usually parsed from the URL. A field with values renders as an active chip."},
+					{Name: "Options", Type: "[]FilterOption", Default: "", Description: "Lists the choices available to the select and multiple editors."},
+					{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Configures the preset rail shown by the calendar editor. It defaults to the standard presets."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -119,11 +119,11 @@ func Filter() templ.Component {
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "FilterOption",
-				Description: "One select/multiple option.",
+				Description: "FilterOption is one choice offered by a select or multiple editor.",
 				Items: []modules.APITableItem{
-					{Name: "Value", Type: "string", Default: "", Description: "Submitted value."},
-					{Name: "Label", Type: "string", Default: "", Description: "Displayed text."},
-					{Name: "Color", Type: "string", Default: "", Description: "TagStatus status; adds a dot."},
+					{Name: "Value", Type: "string", Default: "", Description: "Sets the value submitted when the option is selected."},
+					{Name: "Label", Type: "string", Default: "", Description: "Provides the text displayed for the option."},
+					{Name: "Color", Type: "string", Default: "", Description: "Applies a TagStatus color and renders a matching dot next to the label."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

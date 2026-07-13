@@ -19,52 +19,66 @@ templ SidePanelExample() {
 			SidePanelID: "side-panel-example",
 			Title:       "SIREN 552100554",
 		})
-		@popui.SidePanelHeading(props.SidePanelHeading{Title: "Details"})
-		@popui.SidePanelList(props.SidePanelList{Indent: true, Bordered: true}) {
-			@popui.SidePanelItem(props.SidePanelItem{Label: "Given name", Value: "Camille"})
-			@popui.SidePanelItem(props.SidePanelItem{Label: "Surname", Value: "Durand"})
-			@popui.SidePanelItem(props.SidePanelItem{Label: "Role", Value: "Director"})
-			@popui.SidePanelItem(props.SidePanelItem{Label: "Reporting", Value: "Enabled"})
-			@popui.SidePanelItem(props.SidePanelItem{Label: "VAT regime", Value: "Réel normal mensuel"})
-			@popui.SidePanelItem(props.SidePanelItem{Label: "Decided", Value: "2026-03-14"})
-			@popui.SidePanelCopyRow(props.SidePanelCopyRow{
+		@popui.Label(props.Label{Class: "px-4 py-3 text-base text-foreground"}) {
+			Details
+		}
+		@popui.DescriptionList(props.DescriptionList{Class: "w-auto space-y-1 mx-4 pb-4 border-b border-border"}) {
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Given name", Value: "Camille"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Surname", Value: "Durand"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Role", Value: "Director"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Reporting", Value: "Enabled"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "VAT regime", Value: "Réel normal mensuel"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Decided", Value: "2026-03-14"})
+			@popui.DescriptionListItem(props.DescriptionListItem{
+				Inline:       true,
 				Label:        "Silo Entry ID",
-				Value:        "01J8X2K9P3QF4R5S6T7U8V9W0X",
+				Value:        "ee42413c-79fc-42d0-a7f7-65f76990ab20",
 				PrefixLength: 23,
-				URL:          templ.SafeURL("https://app.invopop.com/silo-entry/01J8X2K9P3QF4R5S6T7U8V9W0X"),
+				Actions: []props.DescriptionListAction{
+					{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy", "data-toast-trigger": "toast-success"}},
+					{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+				},
 			})
 		}
-		@popui.SegmentedTabView(props.SegmentedTabView{
-			FullWidth: true,
-			Class:     "text-base",
-			Tabs: []props.SegmentedTab{
+		@popui.Tabs(props.Tabs{
+			Variant: "pill",
+			Class:   "px-4 pt-4 text-base",
+			Tabs: []props.TabItem{
 				{Value: "directory", Label: "Directory"},
 				{Value: "reporting", Label: "Reporting"},
 			},
 		}) {
-			@popui.SegmentedTabPanel(props.SegmentedTabPanel{For: "directory"}) {
-				<ul class="space-y-2">
-					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Name", Value: "Durand SARL", Stacked: true})
-					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Endpoint", Value: "0009:552100554", Stacked: true})
-				</ul>
+			@popui.Tab(props.Tab{Value: "directory"}) {
+				@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-2"}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Name", Value: "Durand SARL", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "Durand SARL", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Endpoint", Value: "0009:552100554", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "0009:552100554", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+				}
 			}
-			@popui.SegmentedTabPanel(props.SegmentedTabPanel{For: "reporting"}) {
-				<ul class="space-y-2">
-					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "SIREN", Value: "552100554", Stacked: true})
-					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Cadence", Value: "Monthly", Stacked: true})
-					@popui.SidePanelCopyRow(props.SidePanelCopyRow{Label: "Next period", Value: "2026-07-31", Stacked: true})
-					@popui.SidePanelActionRow(props.SidePanelActionRow{
-						Label:   "Last period",
-						Value:   "2026-06-30",
-						Stacked: true,
-						Icon:    icons.ExternalLink(),
-						URL:     templ.SafeURL("https://app.invopop.com/"),
-						ButtonAttributes: templ.Attributes{
-							"aria-label": "Open in a new tab",
-						},
-					})
-				</ul>
+			@popui.Tab(props.Tab{Value: "reporting"}) {
+				@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-2"}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "SIREN", Value: "552100554", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "552100554", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Cadence", Value: "Monthly", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "Monthly", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Next period", Value: "2026-07-31", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "2026-07-31", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Last period", Value: "2026-06-30", Actions: []props.DescriptionListAction{
+						{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+					}})
+				}
 			}
 		}
 	}
+	@popui.Toast(props.Toast{
+		ID:      "toast-success",
+		Type:    props.ToastTypeSuccess,
+		Message: "Copied to clipboard",
+	})
 }

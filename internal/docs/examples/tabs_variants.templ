@@ -7,31 +7,15 @@ import (
 
 templ TabsVariantsExample() {
 	<div class="space-y-6">
-		<div>
-			@popui.Tabs(props.Tabs{}) {
-				@popui.Tab(props.Tab{Active: true}) {
-					Overview
-				}
-				@popui.Tab(props.Tab{}) {
-					Details
-				}
-				@popui.Tab(props.Tab{}) {
-					History
-				}
-			}
-		</div>
-		<div>
-			@popui.Tabs(props.Tabs{Variant: "pill"}) {
-				@popui.Tab(props.Tab{Active: true, Variant: "pill"}) {
-					Profile
-				}
-				@popui.Tab(props.Tab{Variant: "pill"}) {
-					Preferences
-				}
-				@popui.Tab(props.Tab{Variant: "pill"}) {
-					Security
-				}
-			}
-		</div>
+		@popui.Tabs(props.Tabs{Tabs: []props.TabItem{
+			{Value: "overview", Label: "Overview"},
+			{Value: "details", Label: "Details"},
+			{Value: "history", Label: "History"},
+		}})
+		@popui.Tabs(props.Tabs{Variant: "pill", Tabs: []props.TabItem{
+			{Value: "profile", Label: "Profile"},
+			{Value: "preferences", Label: "Preferences"},
+			{Value: "security", Label: "Security"},
+		}})
 	</div>
 }

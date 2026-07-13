@@ -58,7 +58,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		p := props.First(opts)
 		cls := "popui-cal flex"
 		if p.Name != "" {
-			cls = "popui-cal inline-flex context-menu border border-border rounded-xl bg-background overflow-hidden"
+			cls = "popui-cal inline-flex w-fit self-start context-menu border border-border rounded-xl bg-background overflow-hidden"
 		}
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(cls, p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)

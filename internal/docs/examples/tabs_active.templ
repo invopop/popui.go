@@ -6,15 +6,9 @@ import (
 )
 
 templ TabsActiveExample() {
-	@popui.Tabs(props.Tabs{}) {
-		@popui.Tab(props.Tab{}) {
-			Overview
-		}
-		@popui.Tab(props.Tab{Active: true}) {
-			Details
-		}
-		@popui.Tab(props.Tab{}) {
-			History
-		}
-	}
+	@popui.Tabs(props.Tabs{Active: "details", Tabs: []props.TabItem{
+		{Value: "overview", Label: "Overview"},
+		{Value: "details", Label: "Details"},
+		{Value: "history", Label: "History"},
+	}})
 }

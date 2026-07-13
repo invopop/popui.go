@@ -81,7 +81,7 @@ func Tabs() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Active State",
-			Description: "Control which tab is active using the Active prop.",
+			Description: "Seed the initially-active tab with the Tabs Active prop (matches a tab's Value).",
 			Code:        examples.LoadExample("tabs_active.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -153,12 +153,15 @@ func Tabs() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Tabs",
-				Description: "The main tabs container component.",
+				Description: "Self-contained tabbed view: renders the trigger row from Tabs, owns the Alpine scope + switching logic, and hosts one Tab content panel per tab in its children. Omit the children for a stand-alone trigger row.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tabs element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the tabs container"},
 					{Name: "Variant", Type: "string", Default: "default", Description: "Style variant: \"default\" for underline tabs or \"pill\" for pill-style tabs"},
+					{Name: "Model", Type: "string", Default: "tab", Description: "The Alpine variable holding the active tab Value. Match it on the child Tabs (their default is also \"tab\")."},
+					{Name: "Active", Type: "string", Default: "first tab", Description: "Tab Value selected on first render. Defaults to the first tab's Value."},
+					{Name: "Tabs", Type: "[]props.TabItem", Default: "", Description: "The ordered trigger row."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -169,14 +172,30 @@ func Tabs() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "Tab",
-				Description: "Individual tab button component used inside Tabs.",
+				Title:       "TabItem",
+				Description: "One entry in the Tabs trigger row.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tab element"},
+					{Name: "Value", Type: "string", Default: "", Description: "Identifies the tab; assigned to the Alpine Model on click and matched by the content Tab."},
+					{Name: "Label", Type: "string", Default: "", Description: "Visible trigger text."},
+					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Optional leading icon rendered before the label."},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "Tab",
+				Description: "One tab's content panel, placed inside Tabs. Shown only while the active tab equals Value.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the panel element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the tab button"},
-					{Name: "Active", Type: "bool", Default: "false", Description: "Whether this tab is currently active"},
-					{Name: "Variant", Type: "string", Default: "default", Description: "Style variant: \"default\" for underline tabs or \"pill\" for pill-style tabs (should match parent Tabs variant)"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the panel"},
+					{Name: "Value", Type: "string", Default: "", Description: "The tab this panel belongs to (matches a TabItem.Value)."},
+					{Name: "Model", Type: "string", Default: "tab", Description: "The Alpine variable to test. Set only when the parent Tabs uses a custom Model."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

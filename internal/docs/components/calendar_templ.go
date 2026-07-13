@@ -55,7 +55,8 @@ func Calendar() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("calendar.templ"),
+			Code:    examples.LoadExample("calendar.templ"),
+			Stacked: true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -74,14 +75,30 @@ func Calendar() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Calendar",
-				Description: "Dual-month range picker with a preset rail.",
+				Description: "Calendar renders a dual month range picker with a preset rail and month navigation. All interactive state lives in the `rangeCalendar` Alpine controller that ships with popui.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Root element id."},
-					{Name: "Class", Type: "string", Default: "", Description: "Extra CSS classes."},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra HTML attributes."},
-					{Name: "Name", Type: "string", Default: "", Description: "Self-scopes + bordered box. Empty = markup-only."},
-					{Name: "From / To", Type: "string", Default: "", Description: "Initial range (ISO), with Name."},
-					{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Preset rail; Keys are CalendarPreset* consts."},
+					{Name: "ID", Type: "string", Default: "", Description: "Sets the unique identifier of the root element."},
+					{Name: "Class", Type: "string", Default: "", Description: "Adds CSS classes that are merged with the base styling."},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Applies additional HTML attributes to the root element."},
+					{Name: "Name", Type: "string", Default: "", Description: "Makes the calendar own its state. It declares its own `rangeCalendar` Alpine scope under this field name and wraps the grid in a bordered container. Leave it empty to render markup only inside a scope provided by an ancestor, which is how the Filter date range chip embeds it."},
+					{Name: "From", Type: "string", Default: "", Description: "Seeds the start of the initially selected range as an ISO date. It only applies when Name is set."},
+					{Name: "To", Type: "string", Default: "", Description: "Seeds the end of the initially selected range as an ISO date. It only applies when Name is set."},
+					{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Configures the shortcuts shown in the preset rail. It defaults to the standard presets."},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "CalendarPreset",
+				Description: "CalendarPreset is one shortcut in the preset rail. The date computation for each key lives in the `rangeCalendar` controller.",
+				Items: []modules.APITableItem{
+					{Name: "Key", Type: "string", Default: "", Description: "Selects the built in date range. Use one of the `CalendarPreset` constants such as `CalendarPresetThisMonth` or `CalendarPresetCustom`."},
+					{Name: "Label", Type: "string", Default: "Key default", Description: "Overrides the text shown in the rail. It falls back to the standard label for the key when empty."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

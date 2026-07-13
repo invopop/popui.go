@@ -48,7 +48,7 @@ func Table(p ...props.Table) templ.Component {
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			classes.If(prp.ScrollHorizontal, "overflow-x-auto"),
 			classes.If(!prp.ScrollHorizontal, "overflow-hidden has-[[role=menu]]:overflow-visible"),
-			classes.If(prp.ScrollHorizontal, "popui-table-freeze-scroll"),
+			classes.If(prp.StickyColumn, "popui-table-freeze-scroll"),
 			classes.If(prp.Variant == "card", "border border-border rounded-lg"),
 			prp.RootClass,
 		),
@@ -84,8 +84,8 @@ func Table(p ...props.Table) templ.Component {
 			"popui-table-row-hover",
 			classes.If(prp.ScrollHorizontal, "popui-table-scroll-cells"),
 			classes.If(prp.StickyHeader, "popui-table-sticky-header"),
-			// ScrollHorizontal auto-freezes the first column.
-			classes.If(prp.ScrollHorizontal, "popui-table-freeze-first"),
+			// StickyColumn freezes (pins) the first column.
+			classes.If(prp.StickyColumn, "popui-table-freeze-first"),
 			classes.If(prp.Resizable, "popui-table-resizable"),
 			"border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background",
 			"[&_tr]:data-[state=disabled]:opacity-30",

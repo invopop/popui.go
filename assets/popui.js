@@ -890,7 +890,8 @@ document.addEventListener('alpine:init', () => {
     openPanel() { this.open = true },
     clear() { this.from = null; this.to = null; this.preset = 'custom' },
     apply() {
-      this.open = false
+      // Submit the filter as soon as a full range is set, but leave the
+      // calendar open — it closes on outside click (see _onDocClick in init).
       const form = this.$root && this.$root.closest && this.$root.closest('form')
       if (form && typeof form.requestSubmit === 'function') {
         this.$nextTick(() => form.requestSubmit())

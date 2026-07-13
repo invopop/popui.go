@@ -408,11 +408,10 @@ form {
 
 /* Table — sticky header, frozen first column, and column dividers. The sticky
    header is toggled by popui.Table's StickyHeader prop; the frozen first column
-   is driven by ScrollHorizontal (it auto-freezes); column dividers, row hover,
-   and full width are always applied. These can't be expressed as Tailwind
-   utilities: sticky cells need an opaque base to sit over the alpha
-   hover/border tokens, and the header dividers are pseudo-elements that scale
-   with the label height. */
+   by StickyColumn; column dividers, row hover, and full width are always
+   applied. These can't be expressed as Tailwind utilities: sticky cells need an
+   opaque base to sit over the alpha hover/border tokens, and the header
+   dividers are pseudo-elements that scale with the label height. */
 
 /* FullWidth — stretch the table to fill its container while still growing
    past it when the columns need more (horizontal scroll). min-width pins it
@@ -622,47 +621,6 @@ form {
   background-color: var(--color-background-accent);
   color: var(--color-foreground-inverse);
   font-weight: 600;
-}
-
-/* Segmented tabs (popui.SegmentedTabs) — a pill-style toggle group: a tinted
-   track holding equal-width triggers, the active one lifted onto a card
-   surface. Active state is driven by a data-state="active" attribute the
-   component binds from its Alpine Model. */
-.popui-segmented {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  height: 1.75rem;
-  padding: 0.125rem;
-  border-radius: 0.375rem;
-  background-color: var(--color-background-default-tertiary);
-  color: var(--color-foreground);
-  font-family: var(--font-sans);
-}
-.popui-segmented-full { width: 100%; }
-.popui-segmented-trigger {
-  display: inline-flex;
-  flex: 1 1 0%;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  height: 100%;
-  padding: 0.125rem 0.75rem;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: 500;
-  line-height: inherit;
-  border: 0;
-  border-radius: 0.25rem;
-  background-color: transparent;
-  color: inherit;
-  cursor: pointer;
-  transition: background-color 150ms, box-shadow 150ms;
-}
-.popui-segmented-trigger[data-state="active"] {
-  background-color: var(--color-background);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 /* Detail view (popui.DetailList / DetailItem / DetailRow) — console-ui-style

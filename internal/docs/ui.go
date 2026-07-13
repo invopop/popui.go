@@ -118,7 +118,7 @@ var groups = []*Group{
 			},
 			{
 				Title:    "Calendar",
-				Desc:     "Dual-month, range-selection calendar with a preset rail and month navigation. Backed by the rangeCalendar Alpine controller; used by the Filter calendar chip.",
+				Desc:     "Dual-month, range-selection calendar with a preset rail and month navigation. Backed by the rangeCalendar Alpine controller.",
 				Path:     "calendar",
 				Template: components.Calendar(),
 			},

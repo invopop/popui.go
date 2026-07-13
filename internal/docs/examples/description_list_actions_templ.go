@@ -9,11 +9,12 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
 
-func TableStickyExample() templ.Component {
+func DescriptionListActionsExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -46,19 +47,45 @@ func TableStickyExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Team</th><th>Location</th><th>Status</th></tr></thead> <tbody><tr><td><span class=\"font-mono\">usr001</span></td><td>John Doe</td><td>john@example.com</td><td>Admin</td><td>Platform</td><td>Berlin</td><td>Active</td></tr><tr><td><span class=\"font-mono\">usr002</span></td><td>Jane Smith</td><td>jane@example.com</td><td>User</td><td>Billing</td><td>Madrid</td><td>Active</td></tr><tr><td><span class=\"font-mono\">usr003</span></td><td>Bob Johnson</td><td>bob@example.com</td><td>Editor</td><td>Content</td><td>-</td><td>Invited</td></tr><tr><td><span class=\"font-mono\">usr004</span></td><td>Alice Brown</td><td>alice@example.com</td><td>Admin</td><td>Platform</td><td>Lisbon</td><td>Active</td></tr><tr><td><span class=\"font-mono\">usr005</span></td><td>Charlie Davis</td><td>charlie@example.com</td><td>User</td><td>Support</td><td>Paris</td><td>Suspended</td></tr><tr><td><span class=\"font-mono\">usr006</span></td><td>Dana Evans</td><td>dana@example.com</td><td>Editor</td><td>Content</td><td>Rome</td><td>Active</td></tr></tbody>")
+			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Role", Value: "Director"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+				Inline:       true,
+				Label:        "Entry ID",
+				Value:        "ee42413c-79fc-42d0-a7f7-65f76990ab20",
+				PrefixLength: 8,
+				SuffixLength: 4,
+				Actions: []props.DescriptionListAction{
+					{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+				Label: "Endpoint",
+				Value: "0009:552100554",
+				Actions: []props.DescriptionListAction{
+					{Icon: icons.Duplicate(), Copy: "0009:552100554", Attributes: templ.Attributes{"aria-label": "Copy"}},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Table(props.Table{
-			RootClass:        "max-h-64 overflow-auto",
-			ScrollHorizontal: true,
-			StickyColumn:     true,
-			StickyHeader:     true,
-			Resizable:        true,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

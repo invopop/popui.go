@@ -74,7 +74,7 @@ func SidePanel() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "SidePanel",
-				Description: "Fixed-position side panel that overlays one edge of the viewport. Non-blocking — no backdrop, the rest of the app stays interactive. Open / close is driven by `popui-sidepanel-open` / `popui-sidepanel-close` window events whose `event.detail` must match the panel's ID; the controller also re-broadcasts those events on every open transition so external listeners react to all close paths (X click, Escape, programmatic).",
+				Description: "Fixed-position side panel that overlays one edge of the viewport. Open / close is driven by `popui-sidepanel-open` / `popui-sidepanel-close` window events whose `event.detail` must match the panel's ID.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the panel's <aside> element and the event scope for open/close."},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the panel's base styling."},
@@ -92,7 +92,7 @@ func SidePanel() templ.Component {
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "SidePanelHeader",
-				Description: "Sticky header bar at the top of a SidePanel: X close button on the leading edge, truncated h1 title in the middle, optional action slot via children on the trailing edge. The default close button dispatches `popui-sidepanel-close` with the matching `SidePanelID`.",
+				Description: "Sticky header bar at the top of a SidePanel. The default close button dispatches `popui-sidepanel-close` with the matching `SidePanelID`.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the header element."},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the header's base styling."},

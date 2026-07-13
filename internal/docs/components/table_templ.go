@@ -261,7 +261,7 @@ func Table() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Sticky Header & Frozen First Column",
-			Description: "Pin the header (StickyHeader) and scroll wide tables horizontally (ScrollHorizontal auto-freezes the first column); RootClass must be a bounded vertical scroll container. Scroll both directions.",
+			Description: "Pin the header (StickyHeader), scroll wide tables horizontally (ScrollHorizontal), and freeze the first column (StickyColumn); RootClass must be a bounded vertical scroll container. Scroll both directions.",
 			Code:        examples.LoadExample("table_sticky.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -281,14 +281,15 @@ func Table() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
-				Description: "A table component with automatic styling for borders, spacing, and typography. Full-width layout, row-hover tint, and column-title dividers are always applied — no configuration needed. Supports horizontal scrolling (which auto-freezes the first column).",
+				Description: "A table component with automatic styling for borders, spacing, and typography. Full-width layout, row-hover tint, and column-title dividers are always applied — no configuration needed. Compose cells with plain <td> / <th>.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the table element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles. Use Tailwind's arbitrary variants like [&_tr:hover_td]:bg-gray-100 for advanced styling"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the table element"},
 					{Name: "Variant", Type: "string", Default: "", Description: "Visual style: 'card' adds outer border and rounded corners"},
 					{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the scroll wrapper around the table. Use to bound height + enable vertical scroll for StickyHeader (e.g. 'flex-1 min-h-0 overflow-y-auto')"},
-					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Wide, horizontally-scrolling table: the body scrolls sideways and the first column is automatically frozen (pinned left with a full-height divider) so the identity column never detaches"},
+					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Wide, horizontally-scrolling table: the body scrolls sideways. Pair with StickyColumn to keep the first column pinned during the scroll"},
+					{Name: "StickyColumn", Type: "bool", Default: "false", Description: "Pin the first column to the left with a full-height divider so the identity column never detaches during a horizontal scroll. Only visible alongside ScrollHorizontal"},
 					{Name: "StickyHeader", Type: "bool", Default: "false", Description: "Pin the <thead> row to the top while the body scrolls. Requires RootClass to make the wrapper a bounded vertical scroll container"},
 					{Name: "Resizable", Type: "bool", Default: "false", Description: "Let the user drag the right edge of each header cell to resize the column. Drag handles + behavior are provided by popui (CSS + popui.js); no consumer script needed"},
 				},
@@ -297,24 +298,6 @@ func Table() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "TableCell",
-				Description: "Renders the content of a single table cell with consistent styling. Place inside a <td> (or <th>) within Table. An empty Value renders a muted dash so missing data reads differently from a real value. For non-text content (buttons, tags, links), put that directly in the cell instead.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the cell content element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the cell content element"},
-					{Name: "Value", Type: "string", Default: "", Description: "Text content of the cell. An empty value renders a muted dash placeholder"},
-					{Name: "Mono", Type: "bool", Default: "false", Description: "Render the value in the monospace face — for ids, hashes, and other fixed-width values"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -342,7 +325,7 @@ func Table() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
