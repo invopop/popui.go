@@ -1,0 +1,20 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SignaturePadExample() {
+	@popui.SignaturePad(props.SignaturePad{
+		Signer: "Jane Smith",
+		Action: "/sign",
+		Locale: "fr",
+	})
+	@popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Attributes: templ.Attributes{"onclick": "popuiSignPad.open()"}}) {
+		Sign document
+	}
+	<script>
+		document.getElementById("popui-sign-form").addEventListener("submit", function(e) { e.preventDefault(); });
+	</script>
+}

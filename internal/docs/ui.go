@@ -201,6 +201,12 @@ var groups = []*Group{
 				Template: components.Popover(),
 			},
 			{
+				Title:    "Signature Pad",
+				Desc:     "A signature capture dialog with typed-name preview and freehand drawing tabs.",
+				Path:     "signature-pad",
+				Template: components.SignaturePad(),
+			},
+			{
 				Title:    "Radio",
 				Desc:     "Radio button inputs for selecting a single option from a group.",
 				Path:     "radio",
