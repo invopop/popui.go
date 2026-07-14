@@ -1,0 +1,32 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ SignaturePad() {
+	@modules.Example(modules.ExampleProps{
+		Description: "A signature capture dialog with a typed-name preview tab and a freehand drawing tab. Place a trigger button with onclick=\"popuiSignPad.open()\". On confirm, POSTs to Action with the signature field (empty = typed name, data-URI = drawn image).",
+		Code:        examples.LoadExample("signature_pad.templ"),
+	}) {
+		@examples.SignaturePadExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "SignaturePad",
+			Description: "Renders a hidden POST form and a modal dialog for capturing a signature. The Caveat font is served from /_popui/assets/caveat.woff2 via the standard popui asset mount.",
+			Items: []modules.APITableItem{
+				{Name: "Action", Type: "string", Default: "", Description: "Form POST action URL", Required: true},
+				{Name: "Signer", Type: "string", Default: "", Description: "Full name shown in the typed-signature preview", Required: true},
+				{Name: "Title", Type: "string", Default: "", Description: "Dialog heading"},
+				{Name: "TabTyped", Type: "string", Default: "", Description: "Label for the typed-name tab"},
+				{Name: "TabDraw", Type: "string", Default: "", Description: "Label for the freehand drawing tab"},
+				{Name: "UseLabel", Type: "string", Default: "", Description: "Label for the confirm button"},
+				{Name: "ClearLabel", Type: "string", Default: "", Description: "Label for the clear button"},
+			},
+		})
+	}
+}
