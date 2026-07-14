@@ -35,7 +35,7 @@ templ SidePanelExample() {
 				Value:        "ee42413c-79fc-42d0-a7f7-65f76990ab20",
 				PrefixLength: 23,
 				Actions: []props.DescriptionListAction{
-					{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy", "data-toast-trigger": "toast-success"}},
+					{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy"}},
 					{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
 				},
 			})
@@ -76,9 +76,4 @@ templ SidePanelExample() {
 			}
 		}
 	}
-	@popui.Toast(props.Toast{
-		ID:      "toast-success",
-		Type:    props.ToastTypeSuccess,
-		Message: "Copied to clipboard",
-	})
 }

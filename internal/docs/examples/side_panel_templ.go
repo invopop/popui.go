@@ -176,7 +176,7 @@ func SidePanelExample() templ.Component {
 					Value:        "ee42413c-79fc-42d0-a7f7-65f76990ab20",
 					PrefixLength: 23,
 					Actions: []props.DescriptionListAction{
-						{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy", "data-toast-trigger": "toast-success"}},
+						{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy"}},
 						{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -349,14 +349,6 @@ func SidePanelExample() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = popui.SidePanel(props.SidePanel{ID: "side-panel-example", Width: 480}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = popui.Toast(props.Toast{
-			ID:      "toast-success",
-			Type:    props.ToastTypeSuccess,
-			Message: "Copied to clipboard",
-		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

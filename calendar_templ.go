@@ -16,19 +16,24 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Calendar renders a dual-month, range-selection calendar: a preset rail
-// (this/last week, month, quarter + custom) on the left, then month
-// navigation and two side-by-side month grids. See props.Calendar.
+// Calendar renders a dual-month, range-selection date picker replicating the
+// console-ui DatePicker: a preset rail (this/last week, month, quarter +
+// custom) on the left, two side-by-side month grids with overlay month
+// navigation, and a Cancel / Confirm footer. Selection only applies on
+// Confirm; Cancel clears it. See props.Calendar.
 //
 // The component is markup-only — all state (presets, visible months,
-// selected range, navigation) comes from the `rangeCalendar` Alpine
-// controller in popui.js, so it must be rendered inside an
+// selected range, navigation, confirmation) comes from the `rangeCalendar`
+// Alpine controller in popui.js, so it must be rendered inside an
 // `x-data="rangeCalendar({...})"` scope. popui.Filter's calendar chip
 // supplies that scope; for standalone use, wrap it yourself:
 //
 //	<div x-data="rangeCalendar({name: 'period', from: null, to: null})">
 //	    @popui.Calendar()
 //	</div>
+//
+// Confirm and Cancel dispatch bubbling `popui-cal-confirm` /
+// `popui-cal-cancel` events, so a wrapper can react (e.g. hide its popover).
 //
 // The root carries `popui-cal`, which defines the `--popui-cal-cell` sizing
 // variable the grid cells rely on, so the component styles itself without a
@@ -56,9 +61,9 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
-		cls := "popui-cal flex"
+		cls := "popui-cal flex flex-col"
 		if p.Name != "" {
-			cls = "popui-cal inline-flex w-fit self-start context-menu border border-border rounded-xl bg-background overflow-hidden"
+			cls = "popui-cal inline-flex w-fit self-start flex-col context-menu border border-border rounded-xl bg-background shadow-lg overflow-hidden"
 		}
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(cls, p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -77,7 +82,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 39, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 44, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -96,7 +101,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(calendarScope(p))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 42, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 47, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -128,7 +133,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "><div class=\"popui-cal-presets flex flex-col gap-1 items-stretch p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div><div class=\"p-3\"><div class=\"relative flex items-center justify-between mb-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "><div class=\"flex border-b border-border min-h-[300px]\"><div class=\"popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div><div class=\"px-3 pb-2 pt-1\"><div class=\"relative flex gap-4\"><nav class=\"absolute inset-x-0 top-2 flex items-center justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -144,14 +149,14 @@ func Calendar(opts ...props.Calendar) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = icons.ArrowLeft().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = icons.ChevronLeft().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = Button(props.Button{
-			Size:       props.ButtonSizeIcon,
+			Size:       props.ButtonSizeIconSmall,
 			Attributes: templ.Attributes{"type": "button", "@click": "prev()", "aria-label": "Previous month"},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -169,20 +174,76 @@ func Calendar(opts ...props.Calendar) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = icons.ArrowRight().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = icons.ChevronRight().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = Button(props.Button{
-			Size:       props.ButtonSizeIcon,
+			Size:       props.ButtonSizeIconSmall,
 			Attributes: templ.Attributes{"type": "button", "@click": "next()", "aria-label": "Next month"},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"flex gap-6\"><template x-for=\"(mon, mi) in monthsView\" :key=\"mi\"><div class=\"flex flex-col\"><header class=\"h-9 flex items-center justify-center text-base font-medium text-foreground\" x-text=\"mon.label\"></header><table class=\"popui-cal-grid border-collapse\"><thead><tr><template x-for=\"dow in dows\" :key=\"dow\"><th class=\"popui-cal-head\" x-text=\"dow\"></th></template></tr></thead> <tbody><template x-for=\"(week, wi) in mon.weeks\" :key=\"wi\"><tr><template x-for=\"(cell, ci) in week\" :key=\"ci\"><td class=\"p-0 text-center\"><button type=\"button\" class=\"popui-cal-day\" @click=\"selectDay(cell.iso)\" :data-state=\"dayState(cell.iso)\" :data-outside=\"cell.outside ? '' : null\" :data-today=\"cell.today ? '' : null\" x-text=\"cell.day\"></button></td></template></tr></template></tbody></table></div></template></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</nav><template x-for=\"(mon, mi) in monthsView\" :key=\"mi\"><div class=\"flex flex-col\"><header class=\"h-11 flex items-center justify-center gap-1.5 pt-2 pb-3 text-base font-medium text-foreground\" x-text=\"mon.label\"></header><table class=\"popui-cal-grid\"><thead><tr class=\"popui-cal-row select-none\"><template x-for=\"dow in dows\" :key=\"dow\"><th class=\"popui-cal-head\" x-text=\"dow\"></th></template></tr></thead> <tbody><template x-for=\"(week, wi) in mon.weeks\" :key=\"wi\"><tr class=\"popui-cal-row popui-cal-week\"><template x-for=\"(cell, ci) in week\" :key=\"ci\"><td class=\"popui-cal-cell\"><button type=\"button\" class=\"popui-cal-day\" @click=\"selectDay(cell.iso, cell.outside)\" :data-state=\"dayState(cell.iso, cell.outside)\" :data-outside=\"cell.outside ? '' : null\" :data-today=\"cell.today ? '' : null\" x-text=\"cell.day\"></button></td></template></tr></template></tbody></table></div></template></div></div></div><div class=\"p-3 flex items-center justify-end gap-3\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Cancel")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = Button(props.Button{
+			Variant:    props.ButtonVariantSecondary,
+			Size:       props.ButtonSizeLarge,
+			Attributes: templ.Attributes{"type": "button", "@click": "cancel()"},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Confirm")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = Button(props.Button{
+			Variant:    props.ButtonVariantPrimary,
+			Size:       props.ButtonSizeLarge,
+			Attributes: templ.Attributes{"type": "button", "@click": "confirm()", ":disabled": "!to"},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -6,7 +6,13 @@ import (
 )
 
 templ CalendarExample() {
-	<div x-data="{ show: false }" @click.outside="show = false" class="w-fit">
+	<div
+		x-data="{ show: false }"
+		@click.outside="show = false"
+		@popui-cal-confirm="show = false"
+		@popui-cal-cancel="show = false"
+		class="w-fit"
+	>
 		@popui.Button(props.Button{
 			Attributes: templ.Attributes{
 				"@click": "show = !show",

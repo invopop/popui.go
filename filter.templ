@@ -72,6 +72,30 @@ templ Filter(opts ...props.Filter) {
 			@filterChip(in)
 		}
 		@filterAddMenu(p.Inputs)
+		// Clear button — removes every active filter at once. Trails the "+"
+		// add button (flex order) and only shows while at least one filter is
+		// active, mirroring console-ui's SiloEntries layout.
+		@Button(props.Button{
+			Variant: props.ButtonVariantSecondary,
+			Attributes: templ.Attributes{
+				"type":    "button",
+				"x-show":  "hasActive()",
+				"x-cloak": "",
+				"style":   "order: 10000",
+				"@click":  "clearAll()",
+			},
+		}) {
+			Clear
+		}
+		// Thin vertical separator after the Clear button — console-ui's
+		// FilterSeparator, which delimits Clear from whatever action cluster
+		// a consumer renders next.
+		<div
+			class="w-px h-4 bg-background-default-tertiary mx-1"
+			x-show="hasActive()"
+			x-cloak
+			style="order: 10001"
+		></div>
 		// Hidden submit button — keeps Enter-to-submit behaviour even
 		// when there are no visible <button type="submit"> children.
 		<button

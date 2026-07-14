@@ -561,14 +561,17 @@ form {
   border-color: transparent;
 }
 
-/* Range calendar (popui FilterRow Range chip) — a dual-month date-range
-   picker with a preset rail, replicating console-ui's range calendar. */
-.popui-cal { --popui-cal-cell: 1.75rem; min-height: 300px; }
+/* Range calendar — a dual-month date-range picker with a preset rail and a
+   Cancel / Confirm footer, replicating the console-ui DatePicker. The range
+   band is painted on the CELL (so the row gaps break it up), the day button
+   carries the start/end accent, and outside-month days render invisible and
+   inert so a selection can never bleed into the neighbouring month. */
+.popui-cal { --popui-cal-cell: 2rem; }
 .popui-cal-preset {
   white-space: nowrap;
   text-align: left;
-  font-size: 0.8125rem;
-  padding: 0.1875rem 0.5rem;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 0.375rem;
   color: var(--color-foreground-default-secondary);
   background-color: transparent;
@@ -581,12 +584,57 @@ form {
   background-color: var(--color-background-selected);
   font-weight: 500;
 }
+/* The grid is a real <table> (matching bits-ui's markup) laid out with flex:
+   the table is a column flex whose children are thead/tbody (gap separates
+   head from body), and each row is a flex line. thead/tbody are blockified
+   explicitly so the flex layout is identical across browsers. */
+.popui-cal-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.popui-cal-grid > thead,
+.popui-cal-grid > tbody {
+  display: block;
+}
+.popui-cal-row { display: flex; }
+.popui-cal-week { margin-top: 0.5rem; }
 .popui-cal-head {
   width: var(--popui-cal-cell);
   height: var(--popui-cal-cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.75rem;
   font-weight: 400;
   color: var(--color-foreground-default-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+.popui-cal-cell {
+  position: relative;
+  width: var(--popui-cal-cell);
+  height: var(--popui-cal-cell);
+  padding: 0;
+  text-align: center;
+}
+/* Range band on the cell — day buttons with a range state tint their cell,
+   rounded off at the range ends and the row edges. Outside-month days never
+   carry a data-state, so the band stops at the month boundary. */
+.popui-cal-cell:has(> .popui-cal-day[data-state]) {
+  background-color: var(--color-background-default-secondary);
+}
+.popui-cal-cell:has(> .popui-cal-day[data-state="start"]),
+.popui-cal-cell:first-child:has(> .popui-cal-day[data-state]) {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+.popui-cal-cell:has(> .popui-cal-day[data-state="end"]),
+.popui-cal-cell:last-child:has(> .popui-cal-day[data-state]) {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
 }
 .popui-cal-day {
   width: var(--popui-cal-cell);
@@ -594,8 +642,9 @@ form {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
+  line-height: 1;
   border: 0;
   border-radius: 0.5rem;
   background-color: transparent;
@@ -603,24 +652,29 @@ form {
   cursor: pointer;
 }
 .popui-cal-day:hover { background-color: var(--color-background-default-tertiary-hover); }
-.popui-cal-day[data-outside] {
-  color: transparent;
-  background-color: transparent;
-  pointer-events: none;
-}
 .popui-cal-day[data-today]:not([data-state]) {
   border-radius: 0;
-  box-shadow: inset 0 -2px 0 0 var(--color-background-accent);
+  box-shadow: inset 0 -1px 0 0 var(--color-background-accent);
 }
+/* Middle days paint the same alpha tint as the cell band beneath them —
+   console-ui stacks both layers (~3% alpha twice), which is what gives the
+   band its darker tone. Painting only one layer reads noticeably lighter. */
 .popui-cal-day[data-state="middle"] {
-  background-color: var(--color-background-default-secondary);
   border-radius: 0;
+  background-color: var(--color-background-default-secondary);
 }
 .popui-cal-day[data-state="start"],
 .popui-cal-day[data-state="end"] {
   background-color: var(--color-background-accent);
   color: var(--color-foreground-inverse);
   font-weight: 600;
+  box-shadow: 0 0 0 2px rgba(22, 153, 88, 0.12);
+}
+.popui-cal-day[data-outside] {
+  color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
 }
 
 /* Detail view (popui.DetailList / DetailItem / DetailRow) — console-ui-style
@@ -635,16 +689,23 @@ form {
   align-items: stretch;
   gap: 0.25rem;
 }
-/* Stacked: align the label's left edge with the value (which carries the
-   value-wrap's 0.5rem left padding). */
-.popui-detail-stacked > .popui-detail-label { min-width: 0; padding-left: 0.5rem; }
+/* Stacked: the label sits flush left; the value keeps the value-wrap's base
+   0.5rem left padding so the hover tint has breathing room around the text. */
+.popui-detail-stacked > .popui-detail-label { min-width: 0; padding-left: 0; }
 /* Stacked rows are shorter than the value-wrap's 2rem min-height, so center
    the value + hover action buttons vertically. A non-stacked row's taller
    content already fills the min-height, so it reads centered with flex-start;
    this gives stacked rows the same balanced look. The extra `.popui-detail-row`
    class keeps this ahead of the base value-wrap rule's `align-items: flex-start`
    regardless of source order. */
-.popui-detail-row.popui-detail-stacked > .popui-detail-value-wrap { align-items: center; }
+/* Stacked value cell: keep the 0.5rem left padding (the hover tint's
+   breathing room) but pull the box left by the same amount, so the value
+   text's left edge lines up exactly with the flush-left label while the
+   tint bleeds into the gutter — the standard hover-pill alignment trick. */
+.popui-detail-row.popui-detail-stacked > .popui-detail-value-wrap {
+  align-items: center;
+  margin-left: -0.5rem;
+}
 
 /* 16px icon button (ButtonSizeIconExtraSmall): icons ship at a fixed 16px
    (inline width/height on the wrapper), which would fill the bordered 16px box

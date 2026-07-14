@@ -8,19 +8,24 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Calendar renders a dual-month, range-selection calendar: a preset rail
-// (this/last week, month, quarter + custom) on the left, then month
-// navigation and two side-by-side month grids. See props.Calendar.
+// Calendar renders a dual-month, range-selection date picker replicating the
+// console-ui DatePicker: a preset rail (this/last week, month, quarter +
+// custom) on the left, two side-by-side month grids with overlay month
+// navigation, and a Cancel / Confirm footer. Selection only applies on
+// Confirm; Cancel clears it. See props.Calendar.
 //
 // The component is markup-only — all state (presets, visible months,
-// selected range, navigation) comes from the `rangeCalendar` Alpine
-// controller in popui.js, so it must be rendered inside an
+// selected range, navigation, confirmation) comes from the `rangeCalendar`
+// Alpine controller in popui.js, so it must be rendered inside an
 // `x-data="rangeCalendar({...})"` scope. popui.Filter's calendar chip
 // supplies that scope; for standalone use, wrap it yourself:
 //
 //	<div x-data="rangeCalendar({name: 'period', from: null, to: null})">
 //	    @popui.Calendar()
 //	</div>
+//
+// Confirm and Cancel dispatch bubbling `popui-cal-confirm` /
+// `popui-cal-cancel` events, so a wrapper can react (e.g. hide its popover).
 //
 // The root carries `popui-cal`, which defines the `--popui-cal-cell` sizing
 // variable the grid cells rely on, so the component styles itself without a
@@ -29,9 +34,9 @@ import (
 templ Calendar(opts ...props.Calendar) {
 	{{ p := props.First(opts) }}
 	{{
-		cls := "popui-cal flex"
+		cls := "popui-cal flex flex-col"
 		if p.Name != "" {
-			cls = "popui-cal inline-flex w-fit self-start context-menu border border-border rounded-xl bg-background overflow-hidden"
+			cls = "popui-cal inline-flex w-fit self-start flex-col context-menu border border-border rounded-xl bg-background shadow-lg overflow-hidden"
 		}
 	}}
 	<div
@@ -44,67 +49,85 @@ templ Calendar(opts ...props.Calendar) {
 		class={ tailwind.Merge(cls, p.Class) }
 		{ p.Attributes... }
 	>
-		<div class="popui-cal-presets flex flex-col gap-1 items-stretch p-3 border-r border-border">
-			<template x-for="p in presets" :key="p.key">
-				<button
-					type="button"
-					class="popui-cal-preset"
-					:data-active="preset === p.key ? '' : null"
-					@click="setPreset(p.key)"
-					x-text="p.label"
-				></button>
-			</template>
-		</div>
-		<div class="p-3">
-			<div class="relative flex items-center justify-between mb-1">
-				@Button(props.Button{
-					Size:       props.ButtonSizeIcon,
-					Attributes: templ.Attributes{"type": "button", "@click": "prev()", "aria-label": "Previous month"},
-				}) {
-					@icons.ArrowLeft()
-				}
-				@Button(props.Button{
-					Size:       props.ButtonSizeIcon,
-					Attributes: templ.Attributes{"type": "button", "@click": "next()", "aria-label": "Next month"},
-				}) {
-					@icons.ArrowRight()
-				}
-			</div>
-			<div class="flex gap-6">
-				<template x-for="(mon, mi) in monthsView" :key="mi">
-					<div class="flex flex-col">
-						<header class="h-9 flex items-center justify-center text-base font-medium text-foreground" x-text="mon.label"></header>
-						<table class="popui-cal-grid border-collapse">
-							<thead>
-								<tr>
-									<template x-for="dow in dows" :key="dow">
-										<th class="popui-cal-head" x-text="dow"></th>
-									</template>
-								</tr>
-							</thead>
-							<tbody>
-								<template x-for="(week, wi) in mon.weeks" :key="wi">
-									<tr>
-										<template x-for="(cell, ci) in week" :key="ci">
-											<td class="p-0 text-center">
-												<button
-													type="button"
-													class="popui-cal-day"
-													@click="selectDay(cell.iso)"
-													:data-state="dayState(cell.iso)"
-													:data-outside="cell.outside ? '' : null"
-													:data-today="cell.today ? '' : null"
-													x-text="cell.day"
-												></button>
-											</td>
-										</template>
-									</tr>
-								</template>
-							</tbody>
-						</table>
-					</div>
+		<div class="flex border-b border-border min-h-[300px]">
+			<div class="popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border">
+				<template x-for="p in presets" :key="p.key">
+					<button
+						type="button"
+						class="popui-cal-preset"
+						:data-active="preset === p.key ? '' : null"
+						@click="setPreset(p.key)"
+						x-text="p.label"
+					></button>
 				</template>
 			</div>
+			<div class="px-3 pb-2 pt-1">
+				<div class="relative flex gap-4">
+					<nav class="absolute inset-x-0 top-2 flex items-center justify-between">
+						@Button(props.Button{
+							Size:       props.ButtonSizeIconSmall,
+							Attributes: templ.Attributes{"type": "button", "@click": "prev()", "aria-label": "Previous month"},
+						}) {
+							@icons.ChevronLeft()
+						}
+						@Button(props.Button{
+							Size:       props.ButtonSizeIconSmall,
+							Attributes: templ.Attributes{"type": "button", "@click": "next()", "aria-label": "Next month"},
+						}) {
+							@icons.ChevronRight()
+						}
+					</nav>
+					<template x-for="(mon, mi) in monthsView" :key="mi">
+						<div class="flex flex-col">
+							<header class="h-11 flex items-center justify-center gap-1.5 pt-2 pb-3 text-base font-medium text-foreground" x-text="mon.label"></header>
+							<table class="popui-cal-grid">
+								<thead>
+									<tr class="popui-cal-row select-none">
+										<template x-for="dow in dows" :key="dow">
+											<th class="popui-cal-head" x-text="dow"></th>
+										</template>
+									</tr>
+								</thead>
+								<tbody>
+									<template x-for="(week, wi) in mon.weeks" :key="wi">
+										<tr class="popui-cal-row popui-cal-week">
+											<template x-for="(cell, ci) in week" :key="ci">
+												<td class="popui-cal-cell">
+													<button
+														type="button"
+														class="popui-cal-day"
+														@click="selectDay(cell.iso, cell.outside)"
+														:data-state="dayState(cell.iso, cell.outside)"
+														:data-outside="cell.outside ? '' : null"
+														:data-today="cell.today ? '' : null"
+														x-text="cell.day"
+													></button>
+												</td>
+											</template>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</template>
+				</div>
+			</div>
+		</div>
+		<div class="p-3 flex items-center justify-end gap-3">
+			@Button(props.Button{
+				Variant:    props.ButtonVariantSecondary,
+				Size:       props.ButtonSizeLarge,
+				Attributes: templ.Attributes{"type": "button", "@click": "cancel()"},
+			}) {
+				Cancel
+			}
+			@Button(props.Button{
+				Variant:    props.ButtonVariantPrimary,
+				Size:       props.ButtonSizeLarge,
+				Attributes: templ.Attributes{"type": "button", "@click": "confirm()", ":disabled": "!to"},
+			}) {
+				Confirm
+			}
 		</div>
 	</div>
 }
