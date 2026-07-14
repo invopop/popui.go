@@ -65,6 +65,11 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 		log.Fatalf("Error: %v", err)
 	}
 	log.Printf("JS file published")
+	err = copyFile(path.Join(buildAssetsPath, "caveat.woff2"), path.Join(publicAssetPath, "caveat.woff2"))
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+	log.Printf("Caveat font published")
 
 	// Copy over the docs specific assets
 	docsAssetsOutPath := path.Join(buildOutputPath, "assets")

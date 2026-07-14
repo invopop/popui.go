@@ -16,7 +16,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func TagStatusIcon() templ.Component {
+func SignaturePad() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +49,15 @@ func TagStatusIcon() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.TagStatusIconExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.SignaturePadExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("tag_status_icon.templ"),
+			Description: "A signature capture dialog with a typed-name preview tab and a freehand drawing tab. Place a trigger button with onclick=\"popuiSignPad.open()\". On confirm, POSTs to Action with the signature field (empty = typed name, data-URI = drawn image).",
+			Code:        examples.LoadExample("signature_pad.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -74,14 +75,16 @@ func TagStatusIcon() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "TagStatusIcon",
-				Description: "Status tag component with a leading status icon and an optional label.",
+				Title:       "SignaturePad",
+				Description: "Renders a hidden POST form and a modal dialog for capturing a signature. The Caveat font is served from /_popui/assets/caveat.woff2 via the standard popui asset mount.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tag element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the tag element"},
-					{Name: "Label", Type: "string", Default: "", Description: "Optional text label displayed next to the icon"},
-					{Name: "Status", Type: "string", Default: "success", Description: "Icon variant: success, failed, warning, running"},
+					{Name: "Action", Type: "string", Default: "", Description: "Form POST action URL", Required: true},
+					{Name: "Signer", Type: "string", Default: "", Description: "Full name shown in the typed-signature preview", Required: true},
+					{Name: "Title", Type: "string", Default: "", Description: "Dialog heading"},
+					{Name: "TabTyped", Type: "string", Default: "", Description: "Label for the typed-name tab"},
+					{Name: "TabDraw", Type: "string", Default: "", Description: "Label for the freehand drawing tab"},
+					{Name: "UseLabel", Type: "string", Default: "", Description: "Label for the confirm button"},
+					{Name: "ClearLabel", Type: "string", Default: "", Description: "Label for the clear button"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
