@@ -1,0 +1,402 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+// Compat is a regression page for the Table and DescriptionList components:
+// it renders every format these components supported before the dashboard
+// changes (StickyColumn, DescriptionListItem Inline/Actions), using only
+// popui components, so any visual break in the old usage shapes shows up
+// immediately. Served at /examples/compat.
+templ Compat() {
+	@popui.App(props.App{Title: "PopUI — Table & DescriptionList compatibility"}) {
+		@popui.Main() {
+			@popui.Article() {
+				@popui.Title() {
+					Table — prior formats
+				}
+				@popui.Subtitle() {
+					Basic table. Full width, row hover, and column dividers are baked in.
+				}
+				@compatTableBasic()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Card variant. Adds the outer border and rounded corners.
+				}
+				@compatTableCard()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Clickable rows. The Class prop adds the hover and cursor treatment.
+				}
+				@compatTableClickable()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Right aligned cells. The Class prop right aligns the last column.
+				}
+				@compatTableRightAlign()
+				@popui.Separator()
+				@popui.Subtitle() {
+					With avatars. Cells host arbitrary components such as Avatar.
+				}
+				@compatTableAvatars()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Horizontal scroll. The body scrolls sideways. Before the dashboard changes this also froze the first column, which now requires StickyColumn.
+				}
+				@compatTableScroll()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Sticky header. The RootClass bounds the height so the header pins while the body scrolls.
+				}
+				@compatTableStickyHeader()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Resizable columns. Drag the right edge of a header cell.
+				}
+				@compatTableResizable()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Combined prior shape. ScrollHorizontal with StickyHeader and Resizable, exactly as consumers wrote it before StickyColumn existed.
+				}
+				@compatTableCombined()
+				@popui.Separator()
+				@popui.Subtitle() {
+					Pagination.
+				}
+				@popui.TablePagination(props.TablePagination{
+					CurrentPage:     2,
+					TotalPages:      9,
+					TotalItems:      842,
+					RowsPerPage:     100,
+					ShowRowsPerPage: true,
+					FirstPageURL:    templ.SafeURL("#"),
+					PrevPageURL:     templ.SafeURL("#"),
+					NextPageURL:     templ.SafeURL("#"),
+					LastPageURL:     templ.SafeURL("#"),
+				})
+				@popui.Separator()
+				@popui.Title() {
+					DescriptionList — prior formats
+				}
+				@popui.Subtitle() {
+					Basic list. Label and Value props, a DD child for rich values, and a DT child for a custom term.
+				}
+				@popui.DescriptionList() {
+					@popui.DescriptionListItem(props.DescriptionListItem{
+						Label: "Name",
+						Value: "John Doe",
+					})
+					@popui.DescriptionListItem(props.DescriptionListItem{
+						Label: "Email",
+					}) {
+						@popui.DD() {
+							<a href="mailto:john@example.com">john@example.com</a>
+						}
+					}
+					@popui.DescriptionListItem(props.DescriptionListItem{
+						Value: "Administrator",
+					}) {
+						@popui.DT() {
+							Role
+						}
+					}
+				}
+				@popui.Separator()
+				@popui.Subtitle() {
+					Custom width. The Class prop overrides the default width.
+				}
+				@popui.DescriptionList(props.DescriptionList{
+					Class: "w-full",
+				}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{
+						Label: "Company",
+						Value: "Acme Corporation",
+					})
+					@popui.DescriptionListItem(props.DescriptionListItem{
+						Label: "Address",
+						Value: "123 Main Street, City, Country",
+					})
+				}
+				@popui.Separator()
+				@popui.Subtitle() {
+					Rich text content. DT and DD components hosting complex HTML.
+				}
+				@popui.DescriptionList() {
+					@popui.DescriptionListItem(props.DescriptionListItem{
+						Label: "Name",
+						Value: "John Doe",
+					})
+					@popui.DescriptionListItem() {
+						@popui.DT() {
+							Bio
+						}
+						@popui.DD() {
+							@popui.Prose() {
+								<p>Software engineer with expertise in <strong>Go</strong> and <strong>TypeScript</strong>.</p>
+								<ul>
+									<li>10+ years experience</li>
+									<li>Open source contributor</li>
+								</ul>
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+templ compatTableRows() {
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Role</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>John Doe</td>
+			<td>john@example.com</td>
+			<td>Admin</td>
+		</tr>
+		<tr>
+			<td>Jane Smith</td>
+			<td>jane@example.com</td>
+			<td>User</td>
+		</tr>
+		<tr>
+			<td>Bob Johnson</td>
+			<td>bob@example.com</td>
+			<td>Editor</td>
+		</tr>
+	</tbody>
+}
+
+templ compatWideTableRows() {
+	<colgroup>
+		<col style="width: 150px;"/>
+		<col style="width: 200px;"/>
+		<col style="width: 150px;"/>
+		<col style="width: 120px;"/>
+		<col style="width: 150px;"/>
+		<col style="width: 150px;"/>
+		<col style="width: 120px;"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Department</th>
+			<th>Role</th>
+			<th>Location</th>
+			<th>Started</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>John Doe</td>
+			<td>john@example.com</td>
+			<td>Platform</td>
+			<td>Admin</td>
+			<td>Berlin</td>
+			<td>2021-04-12</td>
+			<td>Active</td>
+		</tr>
+		<tr>
+			<td>Jane Smith</td>
+			<td>jane@example.com</td>
+			<td>Billing</td>
+			<td>User</td>
+			<td>Madrid</td>
+			<td>2022-09-01</td>
+			<td>Active</td>
+		</tr>
+		<tr>
+			<td>Bob Johnson</td>
+			<td>bob@example.com</td>
+			<td>Content</td>
+			<td>Editor</td>
+			<td>Rome</td>
+			<td>2020-01-20</td>
+			<td>Invited</td>
+		</tr>
+		<tr>
+			<td>Alice Brown</td>
+			<td>alice@example.com</td>
+			<td>Platform</td>
+			<td>Admin</td>
+			<td>Lisbon</td>
+			<td>2023-03-08</td>
+			<td>Active</td>
+		</tr>
+		<tr>
+			<td>Charlie Davis</td>
+			<td>charlie@example.com</td>
+			<td>Support</td>
+			<td>User</td>
+			<td>Paris</td>
+			<td>2019-11-30</td>
+			<td>Suspended</td>
+		</tr>
+		<tr>
+			<td>Dana Evans</td>
+			<td>dana@example.com</td>
+			<td>Content</td>
+			<td>Editor</td>
+			<td>Rome</td>
+			<td>2024-06-17</td>
+			<td>Active</td>
+		</tr>
+	</tbody>
+}
+
+templ compatTableBasic() {
+	@popui.Table() {
+		@compatTableRows()
+	}
+}
+
+templ compatTableCard() {
+	@popui.Table(props.Table{Variant: "card"}) {
+		@compatTableRows()
+	}
+}
+
+templ compatTableScroll() {
+	@popui.Table(props.Table{
+		ScrollHorizontal: true,
+		Variant:          "card",
+	}) {
+		@compatWideTableRows()
+	}
+}
+
+templ compatTableStickyHeader() {
+	@popui.Table(props.Table{
+		StickyHeader: true,
+		Variant:      "card",
+		RootClass:    "max-h-64 overflow-auto",
+	}) {
+		@compatWideTableRows()
+	}
+}
+
+templ compatTableClickable() {
+	@popui.Table(props.Table{
+		Class: "[&_tr:hover_td]:bg-background-default-secondary [&_tr:hover_td]:cursor-pointer",
+	}) {
+		<thead>
+			<tr>
+				<th>Product</th>
+				<th>Status</th>
+				<th>Price</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Widget A</td>
+				<td>Available</td>
+				<td>$29.99</td>
+			</tr>
+			<tr>
+				<td>Widget B</td>
+				<td>Out of Stock</td>
+				<td>$39.99</td>
+			</tr>
+			<tr>
+				<td>Widget C</td>
+				<td>Available</td>
+				<td>$49.99</td>
+			</tr>
+		</tbody>
+	}
+}
+
+templ compatTableRightAlign() {
+	@popui.Table(props.Table{
+		Class: "[&_th:last-child]:text-right [&_td:last-child]:text-right",
+	}) {
+		<thead>
+			<tr>
+				<th>Item</th>
+				<th>Quantity</th>
+				<th>Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Product A</td>
+				<td>3</td>
+				<td>$89.97</td>
+			</tr>
+			<tr>
+				<td>Product B</td>
+				<td>1</td>
+				<td>$39.99</td>
+			</tr>
+			<tr>
+				<td>Product C</td>
+				<td>2</td>
+				<td>$99.98</td>
+			</tr>
+		</tbody>
+	}
+}
+
+templ compatTableAvatars() {
+	@popui.Table() {
+		<thead>
+			<tr>
+				<th>User</th>
+				<th>Email</th>
+				<th>Role</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<div class="flex items-center gap-2">
+						@popui.Avatar(props.Avatar{Initial: "J"})
+						<span>John Doe</span>
+					</div>
+				</td>
+				<td>john@example.com</td>
+				<td>Admin</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="flex items-center gap-2">
+						@popui.Avatar(props.Avatar{Initial: "S"})
+						<span>Jane Smith</span>
+					</div>
+				</td>
+				<td>jane@example.com</td>
+				<td>Editor</td>
+			</tr>
+		</tbody>
+	}
+}
+
+templ compatTableResizable() {
+	@popui.Table(props.Table{
+		Resizable: true,
+		Variant:   "card",
+	}) {
+		@compatTableRows()
+	}
+}
+
+templ compatTableCombined() {
+	@popui.Table(props.Table{
+		ScrollHorizontal: true,
+		StickyHeader:     true,
+		Resizable:        true,
+		RootClass:        "max-h-64 overflow-auto",
+	}) {
+		@compatWideTableRows()
+	}
+}
