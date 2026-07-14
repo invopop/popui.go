@@ -63,16 +63,16 @@ var groups = []*Group{
 				Template: components.Card(),
 			},
 			{
-				Title:    "Segmented Card",
-				Desc:     "Segmented card style with a tinted outer container wrapping a bordered inner content area.",
-				Path:     "segmented-card",
-				Template: components.SegmentedCard(),
-			},
-			{
 				Title:    "Page State",
 				Desc:     "Layout for displaying page states with illustrations and call-to-action.",
 				Path:     "page-state",
 				Template: components.PageState(),
+			},
+			{
+				Title:    "Segmented Card",
+				Desc:     "Segmented card style with a tinted outer container wrapping a bordered inner content area.",
+				Path:     "segmented-card",
+				Template: components.SegmentedCard(),
 			},
 			{
 				Title:    "Separator",
@@ -229,6 +229,12 @@ var groups = []*Group{
 				Desc:     "Floating side panel that overlays one edge of the viewport.",
 				Path:     "side-panel",
 				Template: components.SidePanel(),
+			},
+			{
+				Title:    "Signature Pad",
+				Desc:     "A signature capture dialog with typed-name preview and freehand drawing tabs.",
+				Path:     "signature-pad",
+				Template: components.SignaturePad(),
 			},
 			{
 				Title:    "Slider",
