@@ -5,8 +5,8 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-templ CardFieldsetFormExample() {
-	@popui.CardFieldset(props.CardFieldset{Title: "URLs"}) {
+templ FieldsetCardFormExample() {
+	@popui.FieldsetCard(props.FieldsetCard{Title: "URLs"}) {
 		<div class="grid grid-cols-2 gap-4">
 			@popui.Input(props.Input{
 				ID:          "config-url",

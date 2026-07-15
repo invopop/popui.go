@@ -22,18 +22,10 @@ type CardContent struct {
 	Attributes templ.Attributes
 }
 
-// CardFieldset Templ component props. CardFieldset groups a set of form fields
-// inside a tinted card body, with an optional title and a secondary description
-// rendered above it. Use it for settings sections and grouped form blocks.
-type CardFieldset struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-	// Title renders a bold heading above the card body.
-	Title string
-	// Description renders next to the Title, separated by a middot, in a muted color.
-	Description string
-}
+// CardFieldset is an alias kept for backwards compatibility.
+//
+// Deprecated: Use FieldsetCard instead.
+type CardFieldset = FieldsetCard
 
 // CardHeader Templ component props
 type CardHeader struct {

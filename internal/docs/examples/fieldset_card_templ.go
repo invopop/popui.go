@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func CardFieldsetExample() templ.Component {
+func FieldsetCardExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -61,7 +61,7 @@ func CardFieldsetExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.CardFieldset(props.CardFieldset{
+		templ_7745c5c3_Err = popui.FieldsetCard(props.FieldsetCard{
 			Title:       "Categories",
 			Description: "Select all that apply",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
