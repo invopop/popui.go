@@ -22,6 +22,9 @@ const (
 	ButtonVariantSecondary   string = "secondary"
 	ButtonVariantDanger      string = "danger"
 	ButtonVariantTransparent string = "transparent"
+	// ButtonVariantInverse is a borderless button with inverse colors for
+	// dark surfaces, such as the Toast action.
+	ButtonVariantInverse string = "inverse"
 )
 
 // ButtonGroup Alignments

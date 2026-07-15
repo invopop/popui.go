@@ -94,7 +94,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a key-value list" | `DescriptionList` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (bordered) or `FieldsetCard` (titled, tinted body) |
 | "an empty state / zero state" | `PageState` |
-| "a success toast" | `Toast` |
+| "a success toast" | `Toast` with `Type: "success"` |
 | "a collapsible / expandable section" | `Accordion` |
 | "a copy button for an ID or hash" | `ButtonCopy` |
 
@@ -359,7 +359,7 @@ Shadow system is minimal — only buttons use shadows. Cards and containers rely
 
 ### Buttons
 
-**Variants:** `default` | `primary` | `secondary` | `danger` | `transparent`
+**Variants:** `default` | `primary` | `secondary` | `danger` | `transparent` | `inverse`
 
 **Sizes:** `sm` | `md` (default) | `lg` | `icon`
 
@@ -370,6 +370,7 @@ Shadow system is minimal — only buttons use shadows. Cards and containers rely
 | `secondary` | Outlined — border visible, lower visual weight than primary |
 | `danger` | Destructive — critical color background |
 | `transparent` | Ghost — no background, no border; for icon buttons and inline actions |
+| `inverse` | Inverse colors for dark surfaces (e.g. the `Toast` action) |
 
 - Buttons are grouped in `ButtonGroup` containers with `gap-2` spacing
 - `ButtonGroup` supports `Align` prop: `left` (default), `center`, `right`
@@ -479,7 +480,7 @@ Breadcrumbs
 | `ContextMenu` | Trigger button + dropdown menu; supports `RightAlign` |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
-| `Toast` | Floating toast notification (popui.showToast) |
+| `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
 | `ButtonCopy` | Copy-to-clipboard with truncation (prefix/suffix lengths) |
 | `Popover` | Floating content panel |
 | `Notification` | In-app notification display |

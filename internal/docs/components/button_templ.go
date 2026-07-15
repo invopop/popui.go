@@ -81,7 +81,7 @@ func Button() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Variants",
-			Description: "Buttons come in different variants to communicate different actions: default, primary, secondary, danger, and transparent.",
+			Description: "Buttons come in different variants to communicate different actions: default, primary, secondary, danger, transparent, and inverse (for dark surfaces).",
 			Code:        examples.LoadExample("button_variants.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -253,7 +253,7 @@ func Button() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with button styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-					{Name: "Variant", Type: "string", Default: "primary", Description: "Visual style: 'primary', 'secondary', 'danger', or 'transparent'"},
+					{Name: "Variant", Type: "string", Default: "primary", Description: "Visual style: 'primary', 'secondary', 'danger', 'transparent', or 'inverse' (for dark surfaces)"},
 					{Name: "Size", Type: "string", Default: "md", Description: "Button size: 'sm', 'md' (default), 'lg', or 'icon'"},
 					{Name: "Type", Type: "string", Default: "", Description: "Button type: 'button', 'submit', or 'reset' (form buttons only)"},
 					{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission (form buttons only)"},

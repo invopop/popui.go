@@ -517,6 +517,7 @@ func buttonClasses(variant string, size string) string {
 		classes.If(variant == props.ButtonVariantDanger, "border-border-default-secondary bg-background-default-tertiary text-foreground-critical hover:border-transparent hover:bg-background-critical-bold hover:text-foreground-inverse [&_svg]:text-critical"),
 		classes.If(variant == props.ButtonVariantPrimary, "bg-background-accent text-foreground-inverse shadow-button-primary hover:bg-background-accent-hover active:bg-background-accent-hover"),
 		classes.If(variant == props.ButtonVariantSecondary, "border-0 bg-background-default-tertiary hover:bg-background-default-tertiary-hover"),
+		classes.If(variant == props.ButtonVariantInverse, "border-0 shadow-none active:shadow-none text-foreground-inverse bg-background-selected-inverse hover:bg-background-selected-inverse-hover active:bg-background-selected-inverse-press"),
 		// Size classes
 		classes.If(size == props.ButtonSizeSmall, "text-sm rounded"),
 		classes.If(size == props.ButtonSizeLarge, "py-[5px] px-3 rounded-lg"),
@@ -529,10 +530,11 @@ func buttonClasses(variant string, size string) string {
 		// the border instead of filling the box edge-to-edge.
 		classes.If(size == props.ButtonSizeIconExtraSmall, "popui-icon-xs p-0 leading-none size-4"),
 		// Icon color based on size
-		classes.If(!isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-icon"),
+		classes.If(!isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger && variant != props.ButtonVariantInverse, "[&_svg]:text-icon"),
 		classes.If(!isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-icon-inverse"),
-		classes.If(isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger, "[&_svg]:text-foreground"),
+		classes.If(isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger && variant != props.ButtonVariantInverse, "[&_svg]:text-foreground"),
 		classes.If(isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-foreground-inverse"),
+		classes.If(variant == props.ButtonVariantInverse, "[&_svg]:text-foreground-inverse"),
 	)
 }
 
