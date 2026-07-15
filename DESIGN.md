@@ -34,7 +34,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Segmented content card | `SegmentedCard` |
 | Metric display | `CardDashboard` > `CardDashboardItem` |
 | Progress bar | `CardProgressBar` |
-| File attachment display | `CardFile` > `CardFileInfo` |
+| File attachment display | `FileDownload` > `FileDownloadInfo` |
 | Data table | `Table` |
 | Table pagination | `TablePagination` |
 | Text input | `Input` |
@@ -59,7 +59,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Tab navigation | `Tabs` |
 | Horizontal divider | `Separator` |
 | Workflow/invoice status | `TagStatus` |
-| Toast / success message | `FlashMessage` |
+| Toast / success message | `Toast` |
 | In-app notification | `Notification` |
 | Empty / error state | `PageState` |
 | Country flag | `Flag` |
@@ -94,7 +94,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a key-value list" | `DescriptionList` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (bordered) or `FieldsetCard` (titled, tinted body) |
 | "an empty state / zero state" | `PageState` |
-| "a success toast" | `FlashMessage` |
+| "a success toast" | `Toast` |
 | "a collapsible / expandable section" | `Accordion` |
 | "a copy button for an ID or hash" | `ButtonCopy` |
 
@@ -391,9 +391,10 @@ Card
 ├── CardHeader (avatar + title + subtitle)
 ├── CardContent (flexible content area)
 ├── CardProgressBar (metric with progress)
-├── CardDashboard > CardDashboardItem (metrics grid)
-└── CardFile > CardFileInfo (file attachments)
+└── CardDashboard > CardDashboardItem (metrics grid)
 ```
+
+File attachments are the `File` family: `FileDownload` > `FileDownloadInfo`.
 
 - Cards can render as links via `Href` prop
 - Cards support `Disabled` state
@@ -478,7 +479,7 @@ Breadcrumbs
 | `ContextMenu` | Trigger button + dropdown menu; supports `RightAlign` |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
-| `FlashMessage` | Toast-style success/error feedback |
+| `Toast` | Floating toast notification (popui.showToast) |
 | `ButtonCopy` | Copy-to-clipboard with truncation (prefix/suffix lengths) |
 | `Popover` | Floating content panel |
 | `Notification` | In-app notification display |

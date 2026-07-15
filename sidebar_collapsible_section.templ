@@ -7,7 +7,7 @@ import (
 )
 
 // SidebarCollapsibleSection is a collapsible wrapper for SidebarItems or `<li>`.
-templ SidebarCollapsibleSection(opts ...props.SidebarCollapseSection) {
+templ SidebarCollapsibleSection(opts ...props.SidebarCollapsibleSection) {
 	{{ p := props.First(opts) }}
 	<details
 		class={

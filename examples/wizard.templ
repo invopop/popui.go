@@ -324,8 +324,8 @@ templ WizardStepFour() {
 							}
 						</div>
 						<div class="mb-2">
-							@popui.CardFile(props.CardFile{}) {
-								@popui.CardFileInfo(props.CardFileInfo{
+							@popui.FileDownload() {
+								@popui.FileDownloadInfo(props.FileDownloadInfo{
 									Label: "dni_back_already_stored.png",
 								}) {
 									<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Spanish_ID_card_%28back_side%29.webp/473px-Spanish_ID_card_%28back_side%29.webp.png?20210720095942" height="32" width="50"/>
@@ -448,8 +448,8 @@ templ WizardConfirm() {
 								Editar
 							}
 						</div>
-						@popui.CardFile(props.CardFile{}) {
-							@popui.CardFileInfo(props.CardFileInfo{
+						@popui.FileDownload() {
+							@popui.FileDownloadInfo(props.FileDownloadInfo{
 								Label: "acuerdo_veri*factu.pdf",
 							}) {
 								@popui.IconFile()
@@ -474,8 +474,8 @@ templ WizardConfirm() {
 							}
 						</div>
 						<div class="mb-3">
-							@popui.CardFile(props.CardFile{}) {
-								@popui.CardFileInfo(props.CardFileInfo{
+							@popui.FileDownload() {
+								@popui.FileDownloadInfo(props.FileDownloadInfo{
 									Label: "dni_front.png",
 								}) {
 									<img src="https://sede.agenciatributaria.gob.es/static_files/Sede/Consultas_Inf/Firmas_digitales_Clave_PIN/Clave_PIN/Incidencias_tecnicas/Obtencion_fecha_DNI/img/3ValDNI.PNG" height="32" width="50"/>
@@ -486,8 +486,8 @@ templ WizardConfirm() {
 								}
 							}
 						</div>
-						@popui.CardFile(props.CardFile{}) {
-							@popui.CardFileInfo(props.CardFileInfo{
+						@popui.FileDownload() {
+							@popui.FileDownloadInfo(props.FileDownloadInfo{
 								Label: "dni_back.png",
 							}) {
 								<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Spanish_ID_card_%28back_side%29.webp/473px-Spanish_ID_card_%28back_side%29.webp.png?20210720095942" height="32" width="50"/>

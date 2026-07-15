@@ -8,11 +8,6 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-const (
-	// https://github.com/HatScripts/circle-flags
-	flagProviderURL = "https://hatscripts.github.io/circle-flags/flags/"
-)
-
 // Card provides a UI element for wrapping general information.
 // Supports URL prop to render as an anchor element.
 templ Card(p ...props.Card) {
@@ -71,16 +66,6 @@ templ CardContent(p ...props.CardContent) {
 	>
 		{ children... }
 	</div>
-}
-
-// CardFieldset forwards to FieldsetCard and is kept for backwards
-// compatibility.
-//
-// Deprecated: Use FieldsetCard instead.
-templ CardFieldset(p ...props.CardFieldset) {
-	@FieldsetCard(p...) {
-		{ children... }
-	}
 }
 
 // CardHeader can be used as part of a Card component or standalone.
@@ -192,47 +177,6 @@ templ CardDashboardItem(p ...props.CardDashboardItem) {
 		<p class="text-foreground-default-secondary text-sm">{ item.Label }</p>
 		<p class="text-foreground text-xl font-medium">{ item.Value }</p>
 	</li>
-}
-
-// CardFile provides a card for displaying file details
-templ CardFile(p ...props.CardFile) {
-	{{ file := props.First(p) }}
-	<div
-		if file.ID != "" {
-			id={ file.ID }
-		}
-		class={
-			tailwind.Merge(
-				"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg border border-border bg-background text-base text-foreground font-medium",
-				file.Class,
-			),
-		}
-		{ file.Attributes... }
-	>
-		{ children... }
-	</div>
-}
-
-// CardFileInfo provides structured layout for file information within CardFile
-templ CardFileInfo(p ...props.CardFileInfo) {
-	{{ info := props.First(p) }}
-	<div
-		if info.ID != "" {
-			id={ info.ID }
-		}
-		class={
-			tailwind.Merge(
-				"flex gap-2 items-center",
-				info.Class,
-			),
-		}
-		{ info.Attributes... }
-	>
-		{ children... }
-		if info.Label != "" {
-			<p>{ info.Label }</p>
-		}
-	</div>
 }
 
 func cardClasses(card props.Card) string {

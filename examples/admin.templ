@@ -33,19 +33,17 @@ templ Admin() {
 			}
 		}
 		@popui.Main() {
-			@popui.PageSections() {
-				@popui.PageSection(props.PageSection{
-					Title:       "Live",
-					Description: "A production workspace which produces valid invoices",
-				}) {
-					@liveWorkspaces()
-				}
-				@popui.PageSection(props.PageSection{
-					Title:       "Sandbox",
-					Description: "A testing workspace which simulates invoicing and doesn't incur in costs",
-				}) {
-					@sandboxWorkspaces()
-				}
+			@popui.Section(props.Section{
+				Title:       "Live",
+				Description: "A production workspace which produces valid invoices",
+			}) {
+				@liveWorkspaces()
+			}
+			@popui.Section(props.Section{
+				Title:       "Sandbox",
+				Description: "A testing workspace which simulates invoicing and doesn't incur in costs",
+			}) {
+				@sandboxWorkspaces()
 			}
 		}
 		@adminSidebar()

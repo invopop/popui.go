@@ -599,30 +599,4 @@ func detailValueOrDash(s string) string {
 	return s
 }
 
-// detailCopyDisplay returns the value truncated to "prefix…suffix" (or
-// "prefix…" when suffix is 0), or the value unchanged when neither is set.
-// Empty falls back to the em-dash placeholder.
-func detailCopyDisplay(value string, prefix, suffix int) string {
-	if value == "" {
-		return detailValueOrDash(value)
-	}
-	if prefix <= 0 && suffix <= 0 {
-		return value
-	}
-	if prefix < 0 {
-		prefix = 0
-	}
-	if suffix < 0 {
-		suffix = 0
-	}
-	runes := []rune(value)
-	if prefix+suffix >= len(runes) {
-		return value
-	}
-	if suffix == 0 {
-		return string(runes[:prefix]) + "…"
-	}
-	return string(runes[:prefix]) + "…" + string(runes[len(runes)-suffix:])
-}
-
 var _ = templruntime.GeneratedTemplate

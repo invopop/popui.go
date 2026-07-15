@@ -48,13 +48,6 @@ templ Card() {
 	}) {
 		@examples.CardDashboardExample()
 	}
-	@modules.Example(modules.ExampleProps{
-		Title:       "File Card",
-		Description: "CardFile provides a container for displaying file information.",
-		Code:        examples.LoadExample("card_file.templ"),
-	}) {
-		@examples.CardFileExample()
-	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Card",
@@ -119,25 +112,6 @@ templ Card() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				{Name: "Label", Type: "string", Default: "", Description: "Label text for the metric"},
 				{Name: "Value", Type: "string", Default: "", Description: "Value text for the metric"},
-			},
-		})
-		@modules.APITable(modules.APITableProps{
-			Title:       "CardFile",
-			Description: "Container for displaying file information. Expects CardFileInfo and action buttons as children.",
-			Items: []modules.APITableItem{
-				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file card element"},
-				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file card styles"},
-				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-			},
-		})
-		@modules.APITable(modules.APITableProps{
-			Title:       "CardFileInfo",
-			Description: "Structured layout for file information within CardFile (icon, name, etc.).",
-			Items: []modules.APITableItem{
-				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file info element"},
-				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file info styles"},
-				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-				{Name: "Label", Type: "string", Default: "", Description: "File name or label text to display"},
 			},
 		})
 	}

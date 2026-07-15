@@ -171,12 +171,6 @@ var groups = []*Group{
 				Template: components.Flag(),
 			},
 			{
-				Title:    "Flash Message",
-				Desc:     "Toast-style success message for quick feedback.",
-				Path:     "flash-message",
-				Template: components.FlashMessage(),
-			},
-			{
 				Title:    "Form",
 				Desc:     "Form element with proper spacing and standard HTML form attributes for handling submissions.",
 				Path:     "form",

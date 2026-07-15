@@ -22,11 +22,6 @@ type CardContent struct {
 	Attributes templ.Attributes
 }
 
-// CardFieldset is an alias kept for backwards compatibility.
-//
-// Deprecated: Use FieldsetCard instead.
-type CardFieldset = FieldsetCard
-
 // CardHeader Templ component props
 type CardHeader struct {
 	ID         string
@@ -62,21 +57,6 @@ type CardDashboardItem struct {
 	Attributes templ.Attributes
 	Label      string
 	Value      string
-}
-
-// CardFile Templ component props
-type CardFile struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-}
-
-// CardFileInfo Templ component props
-type CardFileInfo struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-	Label      string
 }
 
 // PercentValue returns the progress percentage, capped at 100.

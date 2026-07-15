@@ -252,33 +252,7 @@ templ filterInlineOptions(in props.FilterInput) {
 			@click="togglePanel()"
 			class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
 		>
-			<span x-show="values.length === 0" class="text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
-			for _, opt := range in.Options {
-				<span x-show={ "values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'" } class="inline-flex items-center gap-1.5">
-					if opt.Color != "" {
-						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
-					}
-					<span class="font-medium text-base text-foreground">{ opt.Label }</span>
-				</span>
-			}
-			<span x-show="values.length > 1" class="inline-flex items-center gap-1.5">
-				<span class="inline-flex items-center -space-x-0.5">
-					for i, opt := range in.Options {
-						if i < props.MaxStackedDots && opt.Color != "" {
-							<span
-								class="border-l border-background rounded-xs flex first:border-l-0"
-								x-show={ "values.includes('" + jsSingleQuoteEscape(opt.Value) + "')" }
-							>
-								@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
-							</span>
-						}
-					}
-				</span>
-				<span class="font-medium text-base text-foreground">
-					<span x-text="values.length"></span>
-					<span x-text="multipleLabel"></span>
-				</span>
-			</span>
+			@selectionSummary("Select "+strings.ToLower(in.Label)+"…", in.Options)
 		</div>
 		// Always-open option list — rendered below the summary box (top-full)
 		// and left-aligned to it (left-0), so it falls right beneath the box

@@ -297,28 +297,6 @@ form {
   box-shadow: inset 0 0 0 1px var(--color-border-inverse-default);
 }
 
-/* Flash message animation */
-@keyframes flashMessage {
-  0% {
-    opacity: 0;
-    transform: translateY(25%);
-  }
-  9.09% {
-    /* 0.5s of 5.5s total */
-    opacity: 1;
-    transform: translateY(0);
-  }
-  90.9% {
-    /* Stay visible till ~5s */
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(25%);
-  }
-}
-
 /* Toast */
 .popui-toast {
   position: fixed;

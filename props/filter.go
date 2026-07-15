@@ -101,10 +101,7 @@ type FilterInput struct {
 }
 
 // FilterOption is one row in a select/multiple FilterInput's value list.
-// Color is a TagStatus.Status value (green, orange, blue, etc.); a
-// non-empty Color shows the matching dot beside the option.
-type FilterOption struct {
-	Value string
-	Label string
-	Color string
-}
+// It is the same shape as DropdownSelectOption — Color is a
+// TagStatus.Status value (green, orange, blue, etc.); a non-empty Color
+// shows the matching dot beside the option.
+type FilterOption = DropdownSelectOption
