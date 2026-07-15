@@ -42,7 +42,7 @@ func FileDownload(p ...props.FileDownload) templ.Component {
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg bg-background text-base text-foreground font-medium",
 			classes.If(!file.Borderless, "border border-border"),
-			classes.If(file.Hover, "hover:bg-background-default-secondary"),
+			classes.If(file.Preview != "", "hover:bg-background-default-secondary cursor-pointer"),
 			file.Class,
 		),
 		}
@@ -90,7 +90,7 @@ func FileDownload(p ...props.FileDownload) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, file.Attributes)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, file.PreviewAttributes())
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

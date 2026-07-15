@@ -19,11 +19,11 @@ templ FileDownload(p ...props.FileDownload) {
 			tailwind.Merge(
 				"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg bg-background text-base text-foreground font-medium",
 				classes.If(!file.Borderless, "border border-border"),
-				classes.If(file.Hover, "hover:bg-background-default-secondary"),
+				classes.If(file.Preview != "", "hover:bg-background-default-secondary cursor-pointer"),
 				file.Class,
 			),
 		}
-		{ file.Attributes... }
+		{ file.PreviewAttributes()... }
 	>
 		{ children... }
 	</div>
