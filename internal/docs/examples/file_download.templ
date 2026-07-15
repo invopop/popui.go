@@ -11,7 +11,12 @@ templ FileDownloadExample() {
 		@popui.FileDownloadInfo(props.FileDownloadInfo{
 			Label: "dni_back_already_stored.png",
 		}) {
-			@popui.FileBadge(props.FileBadge{Type: "png"})
+			@popui.Avatar(props.Avatar{
+				Initial: "PNG",
+				Color:   "document-png",
+				Size:    props.AvatarSizeLarge,
+				Class:   "rounded-md font-mono",
+			})
 		}
 		@popui.Button(props.Button{
 			Variant:  "transparent",

@@ -16,7 +16,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func TagStatusIcon() templ.Component {
+func StatusBadge() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +49,14 @@ func TagStatusIcon() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.TagStatusIconExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.StatusBadgeExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("tag_status_icon.templ"),
+			Code: examples.LoadExample("status_badge.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -74,7 +74,7 @@ func TagStatusIcon() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "TagStatusIcon",
+				Title:       "StatusBadge",
 				Description: "Status tag component with a leading status icon and an optional label.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tag element"},

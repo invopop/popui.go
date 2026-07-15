@@ -15,7 +15,9 @@ import (
 )
 
 // Avatar displays a user avatar with an image or initials.
-// Expects either an @popui.Image as child or uses Initial prop for text.
+// Expects either an @popui.Image as child or uses Initial prop for text
+// (up to three characters). Initials take an optional Color token — see
+// props.Avatar.Color.
 func Avatar(p ...props.Avatar) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -60,7 +62,7 @@ func Avatar(p ...props.Avatar) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(avatar.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `avatar.templ`, Line: 16, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `avatar.templ`, Line: 18, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -98,9 +100,9 @@ func Avatar(p ...props.Avatar) templ.Component {
 		}
 		if avatar.Initial != "" {
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(avatar.Initial)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(avatar.Initials())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `avatar.templ`, Line: 28, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `avatar.templ`, Line: 30, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -121,11 +123,42 @@ func Avatar(p ...props.Avatar) templ.Component {
 }
 
 func avatarClasses(avatar props.Avatar) string {
+	multi := len([]rune(avatar.Initial)) > 1
 	return tailwind.Merge(
 		classes.If(avatar.Size == props.AvatarSizeLarge, "!h-8 !w-8 rounded-lg text-lg"),
 		classes.If(avatar.Size != props.AvatarSizeLarge, "h-5 w-5 rounded-md text-sm"),
+		// Multi-character initials step the text down a size so up to
+		// three characters fit inside the box.
+		classes.If(multi && avatar.Size == props.AvatarSizeLarge, "text-sm"),
+		classes.If(multi && avatar.Size != props.AvatarSizeLarge, "text-xs"),
 		classes.If(avatar.Initial != "", "border border-border"),
+		avatarColor(avatar.Color),
 	)
+}
+
+// avatarColor maps a foreground color token name to its text class. The
+// switch keeps the class names literal so Tailwind compiles them.
+func avatarColor(c string) string {
+	switch c {
+	case "accent":
+		return "text-foreground-accent"
+	case "success":
+		return "text-foreground-success"
+	case "warning":
+		return "text-foreground-warning"
+	case "critical":
+		return "text-foreground-critical"
+	case "info":
+		return "text-foreground-info"
+	case "document-xml":
+		return "text-foreground-document-xml"
+	case "document-pdf":
+		return "text-foreground-document-pdf"
+	case "document-png":
+		return "text-foreground-document-png"
+	default:
+		return ""
+	}
 }
 
 var _ = templruntime.GeneratedTemplate

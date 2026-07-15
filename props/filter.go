@@ -101,7 +101,14 @@ type FilterInput struct {
 }
 
 // FilterOption is one row in a select/multiple FilterInput's value list.
-// It is the same shape as DropdownSelectOption — Color is a
-// TagStatus.Status value (green, orange, blue, etc.); a non-empty Color
-// shows the matching dot beside the option.
-type FilterOption = DropdownSelectOption
+// Color is a TagStatus.Status value (green, orange, blue, etc.); a
+// non-empty Color shows the matching dot beside the option.
+type FilterOption struct {
+	Value string
+	Label string
+	Color string
+}
+
+// MaxStackedDots caps how many overlapping colour dots are rendered in a
+// multi-selection summary before it falls back to just the count label.
+const MaxStackedDots = 3

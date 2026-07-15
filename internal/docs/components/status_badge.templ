@@ -7,15 +7,15 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-templ TagStatusIcon() {
+templ StatusBadge() {
 	@modules.Example(modules.ExampleProps{
-		Code: examples.LoadExample("tag_status_icon.templ"),
+		Code: examples.LoadExample("status_badge.templ"),
 	}) {
-		@examples.TagStatusIconExample()
+		@examples.StatusBadgeExample()
 	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
-			Title:       "TagStatusIcon",
+			Title:       "StatusBadge",
 			Description: "Status tag component with a leading status icon and an optional label.",
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tag element"},

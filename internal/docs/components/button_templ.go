@@ -229,6 +229,32 @@ func Button() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.ButtonCopyToClipboardExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Copy to Clipboard",
+			Description: "Setting Copy turns the button into a copy-to-clipboard control: the value renders in mono with a duplicate icon that flips to a tick on success. CopyPrefixLength / CopySuffixLength truncate the displayed value; the full value is copied.",
+			Code:        examples.LoadExample("button_copy_to_clipboard.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "ButtonGroup",
 				Description: "Container component for grouping multiple buttons horizontally with consistent spacing.",
@@ -258,6 +284,9 @@ func Button() templ.Component {
 					{Name: "Type", Type: "string", Default: "", Description: "Button type: 'button', 'submit', or 'reset' (form buttons only)"},
 					{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission (form buttons only)"},
 					{Name: "Value", Type: "string", Default: "", Description: "Value attribute for form submission (form buttons only)"},
+					{Name: "Copy", Type: "string", Default: "", Description: "Turns the button into a copy-to-clipboard control for this value (form buttons only)"},
+					{Name: "CopyPrefixLength", Type: "int", Default: "0", Description: "Characters of the Copy value shown before the ellipsis; 0 with CopySuffixLength 0 shows it untruncated"},
+					{Name: "CopySuffixLength", Type: "int", Default: "0", Description: "Characters of the Copy value shown after the ellipsis"},
 					{Name: "Form", Type: "string", Default: "", Description: "Associates button with a form by ID (form buttons only)"},
 					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the button (form buttons only)"},
 					{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the button on page load (form buttons only)"},
@@ -272,7 +301,7 @@ func Button() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

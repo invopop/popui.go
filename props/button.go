@@ -75,6 +75,19 @@ type Button struct {
 	// Autofocus when true sets the autofocus attribute on the button.
 	Autofocus bool
 
+	/* Copy-to-clipboard fields */
+
+	// Copy, when set, turns the button into a copy-to-clipboard control:
+	// the (truncated) value renders in mono next to a duplicate icon that
+	// flips to a tick on success, and clicking copies the full value.
+	// Children render after the copy content. Ignored on anchor buttons.
+	Copy string
+	// CopyPrefixLength / CopySuffixLength truncate the DISPLAYED value to
+	// "prefix…suffix"; the full Copy value is what lands on the clipboard.
+	// Both 0 show the value untruncated.
+	CopyPrefixLength int
+	CopySuffixLength int
+
 	/* Anchor button fields */
 
 	// Href enables anchor button behavior as opposed to a form button.

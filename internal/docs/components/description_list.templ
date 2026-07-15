@@ -34,6 +34,13 @@ templ DescriptionList() {
 	}) {
 		@examples.DescriptionListActionsExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Detail View",
+		Description: "A console-style side-panel detail view: section headings, inline rows with an em-dash for absent values, and a copyable mono id row.",
+		Code:        examples.LoadExample("description_list_detail_view.templ"),
+	}) {
+		@examples.DescriptionListDetailViewExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "DescriptionList",

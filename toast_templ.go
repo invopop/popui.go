@@ -263,7 +263,7 @@ func Toast(p ...props.Toast) templ.Component {
 				Size:       props.ButtonSizeSmall,
 				Type:       "button",
 				Href:       toast.ActionHref,
-				Class:      "shrink-0 whitespace-nowrap",
+				Class:      "shrink-0",
 				Attributes: toast.ActionAttributes,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

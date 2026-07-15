@@ -6,9 +6,9 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// TagStatusIcon provides a status tag with a leading status icon and an optional label.
+// StatusBadge provides a status tag with a leading status icon and an optional label.
 // Supports status variants: success, failed, warning, running
-templ TagStatusIcon(p ...props.TagStatusIcon) {
+templ StatusBadge(p ...props.StatusBadge) {
 	{{ prp := props.First(p) }}
 	<span
 		if prp.ID != "" {
@@ -20,7 +20,7 @@ templ TagStatusIcon(p ...props.TagStatusIcon) {
 		) }
 		{ prp.Attributes... }
 	>
-		<span data-tag-status-icon-icon class="shrink-0">
+		<span data-status-badge-icon class="shrink-0">
 			switch prp.Status {
 				case "failed":
 					@icons.Failure()
@@ -33,7 +33,7 @@ templ TagStatusIcon(p ...props.TagStatusIcon) {
 			}
 		</span>
 		if prp.Label != "" {
-			<span data-tag-status-icon-label class="font-sans text-sm font-medium text-foreground">{ prp.Label }</span>
+			<span data-status-badge-label class="font-sans text-sm font-medium text-foreground">{ prp.Label }</span>
 		}
 	</span>
 }

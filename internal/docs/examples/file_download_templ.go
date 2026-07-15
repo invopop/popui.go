@@ -59,7 +59,12 @@ func FileDownloadExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = popui.FileBadge(props.FileBadge{Type: "png"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.Avatar(props.Avatar{
+					Initial: "PNG",
+					Color:   "document-png",
+					Size:    props.AvatarSizeLarge,
+					Class:   "rounded-md font-mono",
+				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

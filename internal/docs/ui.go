@@ -28,8 +28,8 @@ type Group struct {
 // DocsIndex is the index of all documentation pages.
 var groups = []*Group{
 	{
-		Title: "Guides",
-		Path:  "guides",
+		Title: "Foundations",
+		Path:  "foundations",
 		Pages: []*Page{
 			{
 				Title:    "Icons",
@@ -46,8 +46,8 @@ var groups = []*Group{
 		},
 	},
 	{
-		Title: "Layout",
-		Path:  "layout",
+		Title: "Components",
+		Path:  "components",
 		Pages: []*Page{
 			{
 				Title: "App",
@@ -83,12 +83,6 @@ var groups = []*Group{
 				Path:     "separator",
 				Template: components.Separator(),
 			},
-		},
-	},
-	{
-		Title: "Components",
-		Path:  "components",
-		Pages: []*Page{
 			{
 				Title:    "Accordion",
 				Desc:     "Vertically stacked interactive sections to organize content.",
@@ -112,12 +106,6 @@ var groups = []*Group{
 				Desc:     "Trigger actions and events with customizable button components.",
 				Path:     "button",
 				Template: components.Button(),
-			},
-			{
-				Title:    "Button Copy",
-				Desc:     "Copy-to-clipboard button with text truncation and visual feedback.",
-				Path:     "button-copy",
-				Template: components.ButtonCopy(),
 			},
 			{
 				Title:    "Calendar",
@@ -154,12 +142,6 @@ var groups = []*Group{
 				Desc:     "File components for selecting, uploading and displaying files. Use InputFile for basic file selection, FileUpload for avatar/image uploads with preview, and FileDownload for displaying stored files.",
 				Path:     "file",
 				Template: components.File(),
-			},
-			{
-				Title:    "File Badge",
-				Desc:     "Small square badge showing a file extension, colored by document type.",
-				Path:     "file-badge",
-				Template: components.FileBadge(),
 			},
 			{
 				Title:    "Filter",
@@ -264,10 +246,10 @@ var groups = []*Group{
 				Template: components.TagStatus(),
 			},
 			{
-				Title:    "Tag Status Icon",
-				Desc:     "Status indicators with a leading status icon and an optional label.",
-				Path:     "tag-status-icon",
-				Template: components.TagStatusIcon(),
+				Title:    "Status Badge",
+				Desc:     "Icon-led outcome pill with an optional label: success, failed, warning or running.",
+				Path:     "status-badge",
+				Template: components.StatusBadge(),
 			},
 			{
 				Title:    "Textarea",
@@ -291,13 +273,11 @@ var groups = []*Group{
 	},
 }
 
-// The Components group is presented alphabetically regardless of the order
-// entries are added in above. Guides and Layout keep their authored order.
+// Every group is presented alphabetically regardless of the order entries
+// are added in above. The Get Started guide is pinned above the groups by
+// the sidebar template.
 func init() {
 	for _, g := range groups {
-		if g.Title != "Components" {
-			continue
-		}
 		sort.Slice(g.Pages, func(i, j int) bool {
 			return strings.ToLower(g.Pages[i].Title) < strings.ToLower(g.Pages[j].Title)
 		})

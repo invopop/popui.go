@@ -23,7 +23,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Any clickable action | `Button` (variants: default, primary, secondary, danger, transparent) |
 | Icon-only action | `Button` with `Size: "icon"` |
 | Group of buttons | `ButtonGroup` |
-| Copy-to-clipboard | `ButtonCopy` |
+| Copy-to-clipboard | `Button` with `Copy` |
 | Page/app shell | `App` |
 | Top bar with actions | `Header` |
 | Bottom bar with actions | `Footer` |
@@ -51,6 +51,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Grouped checkboxes/radios | `OptionGroup` |
 | Text field label | `Label` |
 | User avatar | `Avatar` |
+| File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
 | Expandable section | `Accordion` > `AccordionTrigger` + `AccordionContent` |
 | Dropdown/context actions | `ContextMenu` > `ContextMenuItem` |
@@ -88,7 +89,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a subtle/ghost action" | `Button` with `Variant: "transparent"` |
 | "a settings gear icon button" | `Button` with `Variant: "transparent"`, `Size: "icon"`, `@icons.Settings()` |
 | "a toggle / on-off switch" | `Checkbox` with `Variant: "switch"` |
-| "a status badge / pill" | `TagStatus` |
+| "a status badge / pill" | `TagStatus` (color dot) or `StatusBadge` (icon outcome: success/failed/warning/running) |
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a dropdown menu / three-dot menu" | `ContextMenu` |
 | "a key-value list" | `DescriptionList` |
@@ -96,7 +97,7 @@ Some requests sound custom but map directly to PopUI components:
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
 | "a collapsible / expandable section" | `Accordion` |
-| "a copy button for an ID or hash" | `ButtonCopy` |
+| "a copy button for an ID or hash" | `Button` with `Copy` (PrefixLength/SuffixLength truncate the display) |
 
 ---
 
@@ -481,7 +482,7 @@ Breadcrumbs
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
-| `ButtonCopy` | Copy-to-clipboard with truncation (prefix/suffix lengths) |
+| `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |
 | `Popover` | Floating content panel |
 | `Notification` | In-app notification display |
 | `PageState` | Empty/error state with illustration, title, description, CTA |

@@ -228,7 +228,7 @@ templ filterChip(in props.FilterInput) {
 // rendered directly beneath it (and to the right of the operator label).
 // Keyboard: Down/Up move the highlight, Enter toggles the highlighted option.
 // Backed by the `filterOptionList` Alpine controller in popui.js; selection is
-// emitted as reactive hidden inputs, the same approach DropdownSelect uses.
+// emitted as reactive hidden inputs.
 templ filterInlineOptions(in props.FilterInput) {
 	<div
 		x-data={ filterOptionListData(in) }
@@ -437,4 +437,48 @@ func pluralizeLabel(label string) string {
 		return s[:len(s)-1] + "ies"
 	}
 	return s + "s"
+}
+
+// selectionSummary renders the current selection of a coloured option list:
+// the placeholder when empty, `[•dot] Label` for a single selection, and a
+// stack of dots (capped at props.MaxStackedDots) plus `{N} {multipleLabel}`
+// for a multiple selection. Binds against the Alpine `values`/`multipleLabel`
+// state of the enclosing filterOptionList controller.
+templ selectionSummary(placeholder string, options []props.FilterOption) {
+	<span x-show="values.length === 0" class="text-foreground-default-tertiary font-normal text-base">{ placeholder }</span>
+	for _, opt := range options {
+		<span x-show={ "values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'" } class="inline-flex items-center gap-1.5">
+			if opt.Color != "" {
+				@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
+			}
+			<span class="font-medium text-base text-foreground">{ opt.Label }</span>
+		</span>
+	}
+	<span x-show="values.length > 1" class="inline-flex items-center gap-1.5">
+		<span class="inline-flex items-center -space-x-0.5">
+			for i, opt := range options {
+				if i < props.MaxStackedDots && opt.Color != "" {
+					<span
+						class="border-l border-background rounded-xs flex first:border-l-0"
+						x-show={ "values.includes('" + jsSingleQuoteEscape(opt.Value) + "')" }
+					>
+						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
+					</span>
+				}
+			}
+		</span>
+		<span class="font-medium text-base text-foreground">
+			<span x-text="values.length"></span>
+			<span x-text="multipleLabel"></span>
+		</span>
+	</span>
+}
+
+// boolStr renders a Go bool as the JS literal string "true"/"false", for
+// embedding flags inside inline x-data object expressions.
+func boolStr(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
 }

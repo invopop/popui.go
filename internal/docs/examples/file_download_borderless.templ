@@ -15,7 +15,12 @@ templ FileDownloadBorderlessExample() {
 			Label: "invoice.xml",
 			Value: "Jul 14, 2026 at 04:14 PM · 3 KB",
 		}) {
-			@popui.FileBadge(props.FileBadge{Type: "xml"})
+			@popui.Avatar(props.Avatar{
+				Initial: "XML",
+				Color:   "document-xml",
+				Size:    props.AvatarSizeLarge,
+				Class:   "rounded-md font-mono",
+			})
 		}
 		@popui.Button(props.Button{
 			Variant:  "transparent",

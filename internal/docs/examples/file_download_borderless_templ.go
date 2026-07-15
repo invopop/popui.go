@@ -59,7 +59,12 @@ func FileDownloadBorderlessExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = popui.FileBadge(props.FileBadge{Type: "xml"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.Avatar(props.Avatar{
+					Initial: "XML",
+					Color:   "document-xml",
+					Size:    props.AvatarSizeLarge,
+					Class:   "rounded-md font-mono",
+				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
