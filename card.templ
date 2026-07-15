@@ -232,9 +232,7 @@ templ CardFile(p ...props.CardFile) {
 		}
 		class={
 			tailwind.Merge(
-				"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg bg-background text-base text-foreground font-medium",
-				classes.If(!file.Borderless, "border border-border"),
-				classes.If(file.Borderless, "hover:bg-background-default-secondary"),
+				"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg border border-border bg-background text-base text-foreground font-medium",
 				file.Class,
 			),
 		}
@@ -253,22 +251,15 @@ templ CardFileInfo(p ...props.CardFileInfo) {
 		}
 		class={
 			tailwind.Merge(
-				"flex gap-2 items-center min-w-0",
+				"flex gap-2 items-center",
 				info.Class,
 			),
 		}
 		{ info.Attributes... }
 	>
 		{ children... }
-		if info.Label != "" || info.Value != "" {
-			<div class="flex flex-col min-w-0">
-				if info.Label != "" {
-					<p class="truncate">{ info.Label }</p>
-				}
-				if info.Value != "" {
-					<p class="truncate text-sm font-normal text-foreground-default-secondary">{ info.Value }</p>
-				}
-			</div>
+		if info.Label != "" {
+			<p>{ info.Label }</p>
 		}
 	</div>
 }

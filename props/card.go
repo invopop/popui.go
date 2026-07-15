@@ -77,10 +77,6 @@ type CardFile struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	// Borderless removes the card border and highlights the row on
-	// hover, for embedding the file row directly inside another
-	// container.
-	Borderless bool
 }
 
 // CardFileInfo Templ component props
@@ -89,9 +85,6 @@ type CardFileInfo struct {
 	Class      string
 	Attributes templ.Attributes
 	Label      string
-	// Value renders as smaller, muted text below the Label, e.g. a
-	// timestamp or file size.
-	Value string
 }
 
 // PercentValue returns the progress percentage, capped at 100.

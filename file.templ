@@ -7,6 +7,58 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
+// FileDownload displays details for an existing file, with space for
+// actions. Expects FileDownloadInfo and action buttons as children.
+templ FileDownload(p ...props.FileDownload) {
+	{{ file := props.First(p) }}
+	<div
+		if file.ID != "" {
+			id={ file.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg bg-background text-base text-foreground font-medium",
+				classes.If(!file.Borderless, "border border-border"),
+				classes.If(file.Hover, "hover:bg-background-default-secondary"),
+				file.Class,
+			),
+		}
+		{ file.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// FileDownloadInfo provides structured layout for file information within
+// FileDownload
+templ FileDownloadInfo(p ...props.FileDownloadInfo) {
+	{{ info := props.First(p) }}
+	<div
+		if info.ID != "" {
+			id={ info.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex gap-2 items-center min-w-0",
+				info.Class,
+			),
+		}
+		{ info.Attributes... }
+	>
+		{ children... }
+		if info.Label != "" || info.Value != "" {
+			<div class="flex flex-col min-w-0">
+				if info.Label != "" {
+					<p class="truncate">{ info.Label }</p>
+				}
+				if info.Value != "" {
+					<p class="truncate text-sm font-normal text-foreground-default-secondary">{ info.Value }</p>
+				}
+			</div>
+		}
+	</div>
+}
+
 // fileInput is a helper that renders a file input element with common attributes.
 templ fileInput(file props.InputFile, class string) {
 	<input

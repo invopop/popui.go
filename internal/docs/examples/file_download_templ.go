@@ -14,7 +14,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func CardFileExample() templ.Component {
+func FileDownloadExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -59,19 +59,19 @@ func CardFileExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Spanish_ID_card_%28back_side%29.webp/473px-Spanish_ID_card_%28back_side%29.webp.png?20210720095942\" height=\"32\" width=\"50\">")
+				templ_7745c5c3_Err = popui.FileBadge(props.FileBadge{Type: "png"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = popui.CardFileInfo(props.CardFileInfo{
+			templ_7745c5c3_Err = popui.FileDownloadInfo(props.FileDownloadInfo{
 				Label: "dni_back_already_stored.png",
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -91,7 +91,7 @@ func CardFileExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " Download")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " Download")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -107,7 +107,7 @@ func CardFileExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.CardFile().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.FileDownload().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -14,7 +14,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func CardFileBorderlessExample() templ.Component {
+func FileDownloadBorderlessExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -65,7 +65,7 @@ func CardFileBorderlessExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = popui.CardFileInfo(props.CardFileInfo{
+			templ_7745c5c3_Err = popui.FileDownloadInfo(props.FileDownloadInfo{
 				Label: "invoice.xml",
 				Value: "Jul 14, 2026 at 04:14 PM · 3 KB",
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
@@ -108,8 +108,9 @@ func CardFileBorderlessExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.CardFile(props.CardFile{
+		templ_7745c5c3_Err = popui.FileDownload(props.FileDownload{
 			Borderless: true,
+			Hover:      true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

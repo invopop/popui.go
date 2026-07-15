@@ -17,7 +17,7 @@ import (
 
 // FileBadge renders a small square badge with a file extension, colored
 // according to the document type (xml, pdf, or image formats). Use it as
-// the leading slot of CardFileInfo to identify a file's format.
+// the leading slot of FileDownloadInfo to identify a file's format.
 func FileBadge(p ...props.FileBadge) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

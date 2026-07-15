@@ -72,7 +72,7 @@ func FileBadge() templ.Component {
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "FileBadge",
-				Description: "Small square badge showing a file extension, colored by document type. Use as the leading slot of CardFileInfo.",
+				Description: "Small square badge showing a file extension, colored by document type. Use as the leading slot of FileDownloadInfo.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the badge element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with badge styles"},
