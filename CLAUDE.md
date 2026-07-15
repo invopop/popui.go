@@ -1,5 +1,12 @@
 # Claude Notes — popui.go
 
+## Removed components
+
+When a component or prop type no longer exists (in this repo or in a consumer
+upgrading popui.go), check [MIGRATIONS.md](./MIGRATIONS.md) — it maps every
+removed/renamed identifier to its replacement with before/after snippets.
+When removing or renaming a component, add an entry there in the same pass.
+
 ## Design
 
 **Read [DESIGN.md](./DESIGN.md) before producing or editing any UI.** It defines the component inventory, semantic token system, layout templates, and the do/don't list. Treat it as authoritative — when DESIGN.md and this file disagree, DESIGN.md wins.

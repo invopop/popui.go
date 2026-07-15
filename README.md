@@ -4,6 +4,8 @@ This Go package uses Templ for creating template wrappers to define Popui compon
 
 See the [live demo site](https://popui-go.netlify.app/) for code examples and usage details.
 
+Upgrading and a component no longer exists? [MIGRATIONS.md](./MIGRATIONS.md) maps every removed or renamed component to its replacement.
+
 ### Building
 
 In order to generate the CSS, the `tailwindcss` application must be installed in your system. In general we recommend using brew for this:
