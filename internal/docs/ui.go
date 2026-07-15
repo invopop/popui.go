@@ -273,9 +273,10 @@ var groups = []*Group{
 	},
 }
 
-// Every group is presented alphabetically regardless of the order entries
-// are added in above. The Get Started guide is pinned above the groups by
-// the sidebar template.
+// Pages within each group are presented alphabetically regardless of the
+// order they are added in above; the groups themselves keep their authored
+// order. The Get Started guide is pinned above the groups by the sidebar
+// template.
 func init() {
 	for _, g := range groups {
 		sort.Slice(g.Pages, func(i, j int) bool {

@@ -110,5 +110,6 @@ type FilterOption struct {
 }
 
 // MaxStackedDots caps how many overlapping colour dots are rendered in a
-// multi-selection summary before it falls back to just the count label.
+// multi-selection summary; selected options beyond the cap add to the
+// count label but draw no dot.
 const MaxStackedDots = 3
