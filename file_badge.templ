@@ -1,0 +1,44 @@
+package popui
+
+import (
+	"strings"
+
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// FileBadge renders a small square badge with a file extension, colored
+// according to the document type (xml, pdf, or image formats). Use it as
+// the leading slot of CardFileInfo to identify a file's format.
+templ FileBadge(p ...props.FileBadge) {
+	{{ badge := props.First(p) }}
+	<div
+		if badge.ID != "" {
+			id={ badge.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex size-8 shrink-0 items-center justify-center rounded-md border border-border font-mono text-sm font-semibold leading-4 uppercase",
+				fileBadgeColor(badge.Type),
+				badge.Class,
+			),
+		}
+		{ badge.Attributes... }
+	>
+		{ badge.Type }
+	</div>
+}
+
+// fileBadgeColor maps a file extension to its document color token.
+func fileBadgeColor(t string) string {
+	switch strings.ToLower(t) {
+	case "xml":
+		return "text-foreground-document-xml"
+	case "pdf":
+		return "text-foreground-document-pdf"
+	case "png", "jpg", "jpeg", "gif", "webp", "svg":
+		return "text-foreground-document-png"
+	default:
+		return "text-foreground-default-secondary"
+	}
+}

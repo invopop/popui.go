@@ -153,6 +153,12 @@ var groups = []*Group{
 				Template: components.File(),
 			},
 			{
+				Title:    "File Badge",
+				Desc:     "Small square badge showing a file extension, colored by document type.",
+				Path:     "file-badge",
+				Template: components.FileBadge(),
+			},
+			{
 				Title:    "Filter",
 				Desc:     "Search-bar style filter for data views: a \"+ Filter\" menu plus one editable chip per active filter, with multi-field filtering, colored option lists, and keyboard navigation.",
 				Path:     "filter",

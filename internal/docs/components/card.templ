@@ -56,6 +56,13 @@ templ Card() {
 		@examples.CardFileExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Borderless File Card",
+		Description: "CardFile can render without a border, and CardFileInfo accepts a Value shown as muted text below the label.",
+		Code:        examples.LoadExample("card_file_borderless.templ"),
+	}) {
+		@examples.CardFileBorderlessExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Fieldset",
 		Description: "CardFieldset groups form fields inside a tinted card body, with an optional title and secondary description above it.",
 		Code:        examples.LoadExample("card_fieldset.templ"),
@@ -153,6 +160,7 @@ templ Card() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file card element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file card styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Borderless", Type: "bool", Default: "false", Description: "Removes the card border and highlights the row on hover, for embedding the file row inside another container"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
@@ -163,6 +171,7 @@ templ Card() {
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file info styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				{Name: "Label", Type: "string", Default: "", Description: "File name or label text to display"},
+				{Name: "Value", Type: "string", Default: "", Description: "Smaller, muted text rendered below the label (e.g. timestamp or file size)"},
 			},
 		})
 	}
