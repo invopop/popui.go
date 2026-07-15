@@ -2,6 +2,8 @@
 package modules
 
 import (
+	"strings"
+
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
@@ -29,7 +31,7 @@ templ APITable(p APITableProps) {
 		}
 		if p.Description != "" {
 			@popui.Subtitle(props.Subtitle{Class: "text-lg mb-4"}) {
-				{ p.Description }
+				@apiInlineCode(p.Description)
 			}
 		}
 		@popui.Table(props.Table{Variant: "card"}) {
@@ -62,7 +64,7 @@ templ APITable(p APITableProps) {
 						</td>
 						<td class="text-foreground-default-secondary">
 							if item.Description != "" {
-								{ item.Description }
+								@apiInlineCode(item.Description)
 							} else {
 								<span class="text-foreground-default-secondary">-</span>
 							}
@@ -72,4 +74,18 @@ templ APITable(p APITableProps) {
 			</tbody>
 		}
 	</div>
+}
+
+// apiInlineCode renders a description string, turning `backtick`-delimited
+// spans into inline <code> chips (event names, field names, tokens) while
+// leaving the rest as plain text. Segments alternate text / code / text …
+// since splitting on the backtick puts code segments at the odd indices.
+templ apiInlineCode(text string) {
+	for i, seg := range strings.Split(text, "`") {
+		if i%2 == 1 {
+			<code class="text-sm bg-background-default-secondary rounded px-1 py-0.5">{ seg }</code>
+		} else {
+			{ seg }
+		}
+	}
 }

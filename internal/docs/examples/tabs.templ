@@ -6,15 +6,9 @@ import (
 )
 
 templ TabsExample() {
-	@popui.Tabs(props.Tabs{}) {
-		@popui.Tab(props.Tab{Active: true}) {
-			Account
-		}
-		@popui.Tab(props.Tab{}) {
-			Settings
-		}
-		@popui.Tab(props.Tab{}) {
-			Privacy
-		}
-	}
+	@popui.Tabs(props.Tabs{Tabs: []props.TabItem{
+		{Value: "account", Label: "Account"},
+		{Value: "settings", Label: "Settings"},
+		{Value: "privacy", Label: "Privacy"},
+	}})
 }

@@ -125,6 +125,32 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.DescriptionListActionsExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Inline Rows & Actions",
+			Description: "Inline lays the item out label-left / value-right. Actions add hover-revealed buttons (copy, external-link) next to the value, and PrefixLength / SuffixLength truncate long values (the full value is still copied). Leaving Inline unset stacks the label above the value while keeping the hover reveal.",
+			Code:        examples.LoadExample("description_list_actions.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "DescriptionList",
 				Description: "Container for definition list items (dl element).",
@@ -150,12 +176,34 @@ func DescriptionList() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Label", Type: "string", Default: "", Description: "The term or label to display (dt element)"},
 					{Name: "Value", Type: "string", Default: "", Description: "The description or value to display (dd element)"},
+					{Name: "Inline", Type: "bool", Default: "false", Description: "Lay the item out label-left / value-right instead of the default stacked (label above value)."},
+					{Name: "Mono", Type: "bool", Default: "false", Description: "Render the value in the monospace face (ids, hashes)."},
+					{Name: "PrefixLength", Type: "int", Default: "0", Description: "Truncate the DISPLAYED value to prefix…suffix (the full value is still copied). 0 with SuffixLength 0 shows it untruncated."},
+					{Name: "SuffixLength", Type: "int", Default: "0", Description: "Suffix length for prefix…suffix truncation; 0 renders prefix… only."},
+					{Name: "Actions", Type: "[]props.DescriptionListAction", Default: "", Description: "Hover-revealed action buttons rendered next to the value, in order of placement."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "DescriptionListAction",
+				Description: "One hover-revealed action button on a DescriptionListItem's value. Provide an Icon plus a behavior: Copy (clipboard), URL (external link), or a plain button via Attributes.",
+				Items: []modules.APITableItem{
+					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Glyph rendered inside the button (e.g. `icons.Duplicate()`, `icons.ExternalLink()`)."},
+					{Name: "Copy", Type: "string", Default: "", Description: "When set, the button copies this text to the clipboard."},
+					{Name: "URL", Type: "templ.SafeURL", Default: "", Description: "When set, the button is an anchor opening the URL in a new tab (target=_blank, rel=noopener noreferrer)."},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra attributes (aria-label, onclick, …); override the defaults a Copy / URL action sets."},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -171,7 +219,7 @@ func DescriptionList() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -189,7 +237,7 @@ func DescriptionList() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

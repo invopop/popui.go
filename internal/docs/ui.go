@@ -117,6 +117,12 @@ var groups = []*Group{
 				Template: components.ButtonCopy(),
 			},
 			{
+				Title:    "Calendar",
+				Desc:     "Dual-month, range-selection calendar with a preset rail and month navigation. Backed by the rangeCalendar Alpine controller.",
+				Path:     "calendar",
+				Template: components.Calendar(),
+			},
+			{
 				Title:    "Checkbox",
 				Desc:     "Checkbox inputs with optional toggle switch variant.",
 				Path:     "checkbox",
@@ -145,6 +151,12 @@ var groups = []*Group{
 				Desc:     "File input components for selecting and uploading files. Use InputFile for basic file selection or FileUpload for avatar/image uploads with preview.",
 				Path:     "file",
 				Template: components.File(),
+			},
+			{
+				Title:    "Filter",
+				Desc:     "Search-bar style filter for data views: a \"+ Filter\" menu plus one editable chip per active filter, with multi-field filtering, colored option lists, and keyboard navigation.",
+				Path:     "filter",
+				Template: components.Filter(),
 			},
 			{
 				Title:    "Flag",
@@ -211,6 +223,12 @@ var groups = []*Group{
 				Desc:     "Dropdown selection control for choosing one or more options from a list.",
 				Path:     "select",
 				Template: components.Select(),
+			},
+			{
+				Title:    "Side panel",
+				Desc:     "Floating side panel that overlays one edge of the viewport.",
+				Path:     "side-panel",
+				Template: components.SidePanel(),
 			},
 			{
 				Title:    "Signature Pad",

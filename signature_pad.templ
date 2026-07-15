@@ -23,14 +23,15 @@ templ SignaturePad(opts ...props.SignaturePad) {
 					@CloseIcon()
 				</button>
 			</div>
-			@Tabs(props.Tabs{ID: "popui-sign-tabs", Variant: "pill", Class: "h-8 mb-0 px-1"}) {
-				@Tab(props.Tab{ID: "popui-sign-tab-generated", Variant: "pill", Active: true, Attributes: templ.Attributes{"onclick": "popuiSignPad.tab('generated')"}}) {
-					{ p.TabTyped }
-				}
-				@Tab(props.Tab{ID: "popui-sign-tab-draw", Variant: "pill", Attributes: templ.Attributes{"onclick": "popuiSignPad.tab('draw')"}}) {
-					{ p.TabDraw }
-				}
-			}
+			@Tabs(props.Tabs{
+				ID:      "popui-sign-tabs",
+				Variant: "pill",
+				Class:   "[&>[role=tablist]]:h-8 [&>[role=tablist]]:mb-0 [&>[role=tablist]]:px-1",
+				Tabs: []props.TabItem{
+					{Value: "generated", Label: p.TabTyped},
+					{Value: "draw", Label: p.TabDraw},
+				},
+			})
 			<div id="popui-sign-choose-view">
 				<div id="popui-sign-typed-preview" class="popui-sign-typed-preview">{ p.Signer }</div>
 			</div>
@@ -121,8 +122,7 @@ templ signaturePadScript() {
 			dialog.addEventListener("click", function (e) { if (e.target === dialog) dialog.close(); });
 			const chooseView = document.getElementById("popui-sign-choose-view");
 			const drawView = document.getElementById("popui-sign-draw-view");
-			const tabGenerated = document.getElementById("popui-sign-tab-generated");
-			const tabDraw = document.getElementById("popui-sign-tab-draw");
+			const tabsEl = document.getElementById("popui-sign-tabs");
 			const typedPreview = document.getElementById("popui-sign-typed-preview");
 			if (document.fonts && document.fonts.load) { document.fonts.load("500 96px Caveat"); }
 			let mode = "generated";
@@ -171,14 +171,19 @@ templ signaturePadScript() {
 				doSubmit();
 			}
 			const api = {
-				open: function () { input.value = ""; reset(); if (!dialog.open) { dialog.showModal(); } api.tab("generated"); },
+				open: function () {
+					input.value = "";
+					reset();
+					if (!dialog.open) { dialog.showModal(); }
+					// Clicking the first trigger syncs the tab row's active state and switches the view.
+					const first = tabsEl && tabsEl.querySelector('[role="tab"]');
+					if (first) { first.click(); } else { api.tab("generated"); }
+				},
 				close: function () { dialog.close(); },
 				clear: reset,
 				tab: function (m) {
 					mode = m;
 					const gen = m === "generated";
-					if (tabGenerated) { if (gen) { tabGenerated.setAttribute("data-state", "active"); } else { tabGenerated.removeAttribute("data-state"); } }
-					if (tabDraw) { if (gen) { tabDraw.removeAttribute("data-state"); } else { tabDraw.setAttribute("data-state", "active"); } }
 					chooseView.hidden = !gen;
 					drawView.hidden = gen;
 					if (gen) {
@@ -190,6 +195,15 @@ templ signaturePadScript() {
 				},
 				use: function () { if (mode === "generated") { submitTyped(); } else { submitDrawn(); } },
 			};
+			// The tab row owns its active styling; view switching hangs off its trigger clicks.
+			if (tabsEl) {
+				tabsEl.addEventListener("click", function (e) {
+					const btn = e.target.closest('[role="tab"]');
+					if (!btn) return;
+					const btns = Array.prototype.slice.call(tabsEl.querySelectorAll('[role="tab"]'));
+					api.tab(btns.indexOf(btn) === 0 ? "generated" : "draw");
+				});
+			}
 			window.popuiSignPad = api;
 			window.popui = window.popui || {};
 			window.popui.signPad = api;

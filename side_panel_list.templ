@@ -1,0 +1,176 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// SidePanelList wraps a set of popui.SidePanelItem / popui.SidePanelRow rows
+// into a console-ui-style detail view. See props.SidePanelList for the field
+// reference. The list styling (row layout, label column, hover-tinted value
+// cell) ships with popui's stylesheet, so any app can drop this into a panel
+// or side panel without copying CSS.
+//
+//	@popui.SidePanelList(props.SidePanelList{Bordered: true, Indent: true}) {
+//	    @popui.SidePanelItem(props.SidePanelItem{Label: "Role", Value: "Seller"})
+//	    @popui.SidePanelItem(props.SidePanelItem{Label: "Status", Value: status})
+//	    @popui.SidePanelRow(props.SidePanelRow{Label: "ID", Copyable: true}) {
+//	        <span class="popui-detail-value">{ id }</span>
+//	        @popui.ButtonCopy(props.ButtonCopy{Value: id, Variant: props.ButtonVariantTransparent})
+//	    }
+//	}
+templ SidePanelList(opts ...props.SidePanelList) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"popui-detail-list",
+				classes.If(p.Indent, "popui-detail-indent"),
+				classes.If(p.Bordered, "border-b border-border"),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<ul class="space-y-1">
+			{ children... }
+		</ul>
+	</div>
+}
+
+// SidePanelItem renders one text row — Label on the left, Value on the right.
+// Empty Value renders an em-dash. See props.SidePanelItem.
+templ SidePanelItem(opts ...props.SidePanelItem) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Class != "" {
+			class={ p.Class }
+		}
+		{ p.Attributes... }
+	>
+		<div class="popui-detail-row">
+			<div class="popui-detail-label">{ p.Label }</div>
+			<div class="popui-detail-value-wrap">
+				<div class="popui-detail-value">{ detailValueOrDash(p.Value) }</div>
+			</div>
+		</div>
+	</li>
+}
+
+// SidePanelRow renders a detail row whose value cell is filled by children
+// (tags, links, copy buttons, …). See props.SidePanelRow; set Copyable for an
+// id/copy row with reveal-on-hover actions.
+templ SidePanelRow(opts ...props.SidePanelRow) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Class != "" {
+			class={ p.Class }
+		}
+		{ p.Attributes... }
+	>
+		<div
+			class={
+				tailwind.Merge(
+					"popui-detail-row",
+					classes.If(p.Stacked, "popui-detail-stacked"),
+				),
+			}
+		>
+			<div class="popui-detail-label">{ p.Label }</div>
+			<div
+				class={
+					tailwind.Merge(
+						"popui-detail-value-wrap",
+						classes.If(p.Copyable, "popui-detail-copyable"),
+					),
+				}
+			>
+				{ children... }
+			</div>
+		</div>
+	</li>
+}
+
+// SidePanelHeading renders a section title for a detail view (standard padding +
+// typography). See props.SidePanelHeading.
+templ SidePanelHeading(opts ...props.SidePanelHeading) {
+	{{ p := props.First(opts) }}
+	<h3
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("px-4 py-3 text-base font-medium text-foreground", p.Class) }
+		{ p.Attributes... }
+	>
+		if p.Title != "" {
+			{ p.Title }
+		} else {
+			{ children... }
+		}
+	</h3>
+}
+
+// SidePanelEmpty renders the muted placeholder shown when a detail section has no
+// data. See props.SidePanelEmpty.
+templ SidePanelEmpty(opts ...props.SidePanelEmpty) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("px-4 py-3 text-base text-foreground-default-secondary", p.Class) }
+		{ p.Attributes... }
+	>
+		if p.Text != "" {
+			{ p.Text }
+		} else {
+			{ children... }
+		}
+	</div>
+}
+
+// detailValueOrDash keeps a uniform em-dash placeholder for missing detail
+// values so the value column stays aligned regardless of which fields are
+// populated.
+func detailValueOrDash(s string) string {
+	if s == "" {
+		return "—"
+	}
+	return s
+}
+
+// detailCopyDisplay returns the value truncated to "prefix…suffix" (or
+// "prefix…" when suffix is 0), or the value unchanged when neither is set.
+// Empty falls back to the em-dash placeholder.
+func detailCopyDisplay(value string, prefix, suffix int) string {
+	if value == "" {
+		return detailValueOrDash(value)
+	}
+	if prefix <= 0 && suffix <= 0 {
+		return value
+	}
+	if prefix < 0 {
+		prefix = 0
+	}
+	if suffix < 0 {
+		suffix = 0
+	}
+	runes := []rune(value)
+	if prefix+suffix >= len(runes) {
+		return value
+	}
+	if suffix == 0 {
+		return string(runes[:prefix]) + "…"
+	}
+	return string(runes[:prefix]) + "…" + string(runes[len(runes)-suffix:])
+}

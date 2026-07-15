@@ -91,7 +91,36 @@ func SignaturePad(opts ...props.SignaturePad) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Err = Tabs(props.Tabs{
+			ID:      "popui-sign-tabs",
+			Variant: "pill",
+			Class:   "[&>[role=tablist]]:h-8 [&>[role=tablist]]:mb-0 [&>[role=tablist]]:px-1",
+			Tabs: []props.TabItem{
+				{Value: "generated", Label: p.TabTyped},
+				{Value: "draw", Label: p.TabDraw},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"popui-sign-choose-view\"><div id=\"popui-sign-typed-preview\" class=\"popui-sign-typed-preview\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Signer)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 36, Col: 82}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><div id=\"popui-sign-draw-view\" hidden><div class=\"popui-sign-pad-wrap\"><canvas id=\"popui-sign-pad\" class=\"popui-sign-canvas\"></canvas>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -103,88 +132,26 @@ func SignaturePad(opts ...props.SignaturePad) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.TabTyped)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 28, Col: 17}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Tab(props.Tab{ID: "popui-sign-tab-generated", Variant: "pill", Active: true, Attributes: templ.Attributes{"onclick": "popuiSignPad.tab('generated')"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.ClearLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 42, Col: 20}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(p.TabDraw)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 31, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Tab(props.Tab{ID: "popui-sign-tab-draw", Variant: "pill", Attributes: templ.Attributes{"onclick": "popuiSignPad.tab('draw')"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Tabs(props.Tabs{ID: "popui-sign-tabs", Variant: "pill", Class: "h-8 mb-0 px-1"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.clear()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"popui-sign-choose-view\"><div id=\"popui-sign-typed-preview\" class=\"popui-sign-typed-preview\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(p.Signer)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 35, Col: 82}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div id=\"popui-sign-draw-view\" hidden><div class=\"popui-sign-pad-wrap\"><canvas id=\"popui-sign-pad\" class=\"popui-sign-canvas\"></canvas>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -196,53 +163,22 @@ func SignaturePad(opts ...props.SignaturePad) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.ClearLabel)
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(p.UseLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 41, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 47, Col: 16}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.clear()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(p.UseLabel)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `signature_pad.templ`, Line: 46, Col: 16}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.use()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.use()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></dialog>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -274,12 +210,12 @@ func signaturePadStyles() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<style>\n\t\t@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500; font-display: block; src: url('/_popui/assets/caveat.woff2') format('woff2'); }\n\t\t.popui-sign-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; border: 0; border-radius: 0.75rem; padding: 0; width: min(92vw, 560px); box-shadow: 0 10px 40px rgba(0,0,0,0.25); }\n\t\t.popui-sign-dialog::backdrop { background: rgba(0,0,0,0.5); }\n\t\t.popui-sign-dialog-body { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.5rem 1.5rem; }\n\t\t.popui-sign-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }\n\t\t.popui-sign-pad-wrap { position: relative; }\n\t\t.popui-sign-clear-btn { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1; }\n\t\t.popui-sign-use-btn { width: 100%; height: 32px !important; min-height: 32px !important; }\n\t\t.popui-sign-x { border: 0; background: transparent; font-size: 1.5rem; line-height: 1; color: var(--color-foreground-default-secondary); cursor: pointer; padding: 0 0.25rem; }\n\t\t.popui-sign-x:hover { color: var(--color-foreground); }\n\t\t.popui-sign-canvas { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background); touch-action: none; }\n\t\t@keyframes popui-sign-shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1px)} 75%{transform:translateX(1px)} }\n\t\t.popui-sign-canvas-error { animation: popui-sign-shake 0.3s ease; border-color: var(--color-danger, #ef4444) !important; }\n\t\t#popui-sign-choose-view, #popui-sign-draw-view { display: flex; flex-direction: column; gap: 1rem; }\n\t\t.popui-sign-typed-preview { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background-default-secondary); display: flex; align-items: center; justify-content: center; padding: 0 1rem; overflow: hidden; white-space: nowrap; font-family: 'Caveat', cursive; font-weight: 500; font-size: 4rem; line-height: 1; color: var(--color-foreground); }\n\t\t@media (max-height: 600px) { .popui-sign-canvas, .popui-sign-typed-preview { height: 120px; } }\n\t</style>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<style>\n\t\t@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500; font-display: block; src: url('/_popui/assets/caveat.woff2') format('woff2'); }\n\t\t.popui-sign-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; border: 0; border-radius: 0.75rem; padding: 0; width: min(92vw, 560px); box-shadow: 0 10px 40px rgba(0,0,0,0.25); }\n\t\t.popui-sign-dialog::backdrop { background: rgba(0,0,0,0.5); }\n\t\t.popui-sign-dialog-body { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.5rem 1.5rem; }\n\t\t.popui-sign-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }\n\t\t.popui-sign-pad-wrap { position: relative; }\n\t\t.popui-sign-clear-btn { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1; }\n\t\t.popui-sign-use-btn { width: 100%; height: 32px !important; min-height: 32px !important; }\n\t\t.popui-sign-x { border: 0; background: transparent; font-size: 1.5rem; line-height: 1; color: var(--color-foreground-default-secondary); cursor: pointer; padding: 0 0.25rem; }\n\t\t.popui-sign-x:hover { color: var(--color-foreground); }\n\t\t.popui-sign-canvas { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background); touch-action: none; }\n\t\t@keyframes popui-sign-shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1px)} 75%{transform:translateX(1px)} }\n\t\t.popui-sign-canvas-error { animation: popui-sign-shake 0.3s ease; border-color: var(--color-danger, #ef4444) !important; }\n\t\t#popui-sign-choose-view, #popui-sign-draw-view { display: flex; flex-direction: column; gap: 1rem; }\n\t\t.popui-sign-typed-preview { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background-default-secondary); display: flex; align-items: center; justify-content: center; padding: 0 1rem; overflow: hidden; white-space: nowrap; font-family: 'Caveat', cursive; font-weight: 500; font-size: 4rem; line-height: 1; color: var(--color-foreground); }\n\t\t@media (max-height: 600px) { .popui-sign-canvas, .popui-sign-typed-preview { height: 120px; } }\n\t</style>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -304,12 +240,12 @@ func signaturePadScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<script>\n\t\t(function () {\n\t\t\tconst dialog = document.getElementById(\"popui-sign-dialog\");\n\t\t\tconst canvas = document.getElementById(\"popui-sign-pad\");\n\t\t\tif (!dialog || !canvas) return;\n\t\t\tif (dialog.dataset.popuiSignInit === \"1\") return;\n\t\t\tdialog.dataset.popuiSignInit = \"1\";\n\t\t\tconst ctx = canvas.getContext(\"2d\");\n\t\t\tconst input = document.getElementById(\"popui-sign-input\");\n\t\t\tif (!ctx || !input) return;\n\t\t\tlet drawing = false, dirty = false, minX, minY, maxX, maxY;\n\t\t\tfunction bound(p) {\n\t\t\t\tif (!dirty) { minX = maxX = p.x; minY = maxY = p.y; return; }\n\t\t\t\tminX = Math.min(minX, p.x); minY = Math.min(minY, p.y);\n\t\t\t\tmaxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);\n\t\t\t}\n\t\t\tfunction at(e) {\n\t\t\t\tconst r = canvas.getBoundingClientRect();\n\t\t\t\tconst t = e.touches ? e.touches[0] : e;\n\t\t\t\treturn { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };\n\t\t\t}\n\t\t\tfunction start(e) {\n\t\t\t\tcanvas.classList.remove(\"popui-sign-canvas-error\");\n\t\t\t\tdrawing = true; const p = at(e); bound(p);\n\t\t\t\tctx.lineWidth = 2 * (window.devicePixelRatio || 1); ctx.lineCap = \"round\"; ctx.strokeStyle = (getComputedStyle(document.documentElement).getPropertyValue(\"--color-foreground\") || \"#111\").trim();\n\t\t\t\tctx.beginPath(); ctx.moveTo(p.x, p.y);\n\t\t\t\tctx.lineTo(p.x, p.y); ctx.stroke(); dirty = true; e.preventDefault();\n\t\t\t}\n\t\t\tfunction move(e) {\n\t\t\t\tif (!drawing) return;\n\t\t\t\tconst p = at(e);\n\t\t\t\tctx.lineTo(p.x, p.y); ctx.stroke();\n\t\t\t\tif (!dirty) dirty = true;\n\t\t\t\tbound(p); e.preventDefault();\n\t\t\t}\n\t\t\tfunction stop() { drawing = false; }\n\t\t\tcanvas.addEventListener(\"mousedown\", start);\n\t\t\tcanvas.addEventListener(\"mousemove\", move);\n\t\t\twindow.addEventListener(\"mouseup\", stop);\n\t\t\tcanvas.addEventListener(\"touchstart\", start, { passive: false });\n\t\t\tcanvas.addEventListener(\"touchmove\", move, { passive: false });\n\t\t\twindow.addEventListener(\"touchend\", stop);\n\t\t\twindow.addEventListener(\"touchcancel\", stop);\n\t\t\tfunction reset() { ctx.clearRect(0, 0, canvas.width, canvas.height); dirty = false; canvas.classList.remove(\"popui-sign-canvas-error\"); }\n\t\t\tdialog.addEventListener(\"click\", function (e) { if (e.target === dialog) dialog.close(); });\n\t\t\tconst chooseView = document.getElementById(\"popui-sign-choose-view\");\n\t\t\tconst drawView = document.getElementById(\"popui-sign-draw-view\");\n\t\t\tconst tabGenerated = document.getElementById(\"popui-sign-tab-generated\");\n\t\t\tconst tabDraw = document.getElementById(\"popui-sign-tab-draw\");\n\t\t\tconst typedPreview = document.getElementById(\"popui-sign-typed-preview\");\n\t\t\tif (document.fonts && document.fonts.load) { document.fonts.load(\"500 96px Caveat\"); }\n\t\t\tlet mode = \"generated\";\n\t\t\tfunction caveatFont(px) { return \"500 \" + px + \"px Caveat, cursive\"; }\n\t\t\tfunction fittedSize(text, maxW, base, min) {\n\t\t\t\tconst cx = document.createElement(\"canvas\").getContext(\"2d\");\n\t\t\t\tif (!cx) return base;\n\t\t\t\tcx.font = caveatFont(base);\n\t\t\t\tconst w = cx.measureText(text).width;\n\t\t\t\tif (w <= maxW || w === 0) return base;\n\t\t\t\treturn Math.max(min, Math.floor(base * maxW / w));\n\t\t\t}\n\t\t\tfunction fitPreview() {\n\t\t\t\tconst avail = typedPreview.clientWidth - 32;\n\t\t\t\tif (avail <= 0) return;\n\t\t\t\ttypedPreview.style.fontSize = fittedSize((dialog.dataset.signer || \"\").trim(), avail, 64, 20) + \"px\";\n\t\t\t}\n\t\t\tfunction sizePad() {\n\t\t\t\tconst dpr = window.devicePixelRatio || 1;\n\t\t\t\tconst w = Math.floor(canvas.clientWidth * dpr), h = Math.floor(canvas.clientHeight * dpr);\n\t\t\t\tif (w <= 0 || h <= 0) return;\n\t\t\t\tif (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; reset(); }\n\t\t\t}\n\t\t\tfunction doSubmit() { dialog.close(); input.form.requestSubmit ? input.form.requestSubmit() : input.form.submit(); }\n\t\t\tfunction submitTyped() { input.value = \"\"; doSubmit(); }\n\t\t\tfunction submitDrawn() {\n\t\t\t\tif (!dirty) {\n\t\t\t\t\tcanvas.classList.remove(\"popui-sign-canvas-error\");\n\t\t\t\t\tvoid canvas.offsetWidth;\n\t\t\t\t\tcanvas.classList.add(\"popui-sign-canvas-error\");\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tconst pad = 12;\n\t\t\t\tlet x0 = Math.max(0, Math.floor(minX - pad)), x1 = Math.min(canvas.width, Math.ceil(maxX + pad));\n\t\t\t\tconst y0 = Math.max(0, Math.floor(minY - pad)), y1 = Math.min(canvas.height, Math.ceil(maxY + pad));\n\t\t\t\tlet cw = Math.max(1, x1 - x0), ch = Math.max(1, y1 - y0);\n\t\t\t\t// If the crop is portrait-oriented, use the full canvas width so that a\n\t\t\t\t// fixed-width PDF renderer doesn't scale the image to an extreme height.\n\t\t\t\tif (cw < ch) { x0 = 0; x1 = canvas.width; cw = canvas.width; }\n\t\t\t\tconst out = document.createElement(\"canvas\");\n\t\t\t\tout.width = cw; out.height = ch;\n\t\t\t\tconst outCtx = out.getContext(\"2d\");\n\t\t\t\tif (!outCtx) { alert(\"Unable to export the signature in this browser.\"); return; }\n\t\t\t\toutCtx.drawImage(canvas, x0, y0, cw, ch, 0, 0, cw, ch);\n\t\t\t\tinput.value = out.toDataURL(\"image/png\");\n\t\t\t\tdoSubmit();\n\t\t\t}\n\t\t\tconst api = {\n\t\t\t\topen: function () { input.value = \"\"; reset(); if (!dialog.open) { dialog.showModal(); } api.tab(\"generated\"); },\n\t\t\t\tclose: function () { dialog.close(); },\n\t\t\t\tclear: reset,\n\t\t\t\ttab: function (m) {\n\t\t\t\t\tmode = m;\n\t\t\t\t\tconst gen = m === \"generated\";\n\t\t\t\t\tif (tabGenerated) { if (gen) { tabGenerated.setAttribute(\"data-state\", \"active\"); } else { tabGenerated.removeAttribute(\"data-state\"); } }\n\t\t\t\t\tif (tabDraw) { if (gen) { tabDraw.removeAttribute(\"data-state\"); } else { tabDraw.setAttribute(\"data-state\", \"active\"); } }\n\t\t\t\t\tchooseView.hidden = !gen;\n\t\t\t\t\tdrawView.hidden = gen;\n\t\t\t\t\tif (gen) {\n\t\t\t\t\t\tfitPreview();\n\t\t\t\t\t\tif (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitPreview); }\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsizePad();\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\tuse: function () { if (mode === \"generated\") { submitTyped(); } else { submitDrawn(); } },\n\t\t\t};\n\t\t\twindow.popuiSignPad = api;\n\t\t\twindow.popui = window.popui || {};\n\t\t\twindow.popui.signPad = api;\n\t\t})();\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<script>\n\t\t(function () {\n\t\t\tconst dialog = document.getElementById(\"popui-sign-dialog\");\n\t\t\tconst canvas = document.getElementById(\"popui-sign-pad\");\n\t\t\tif (!dialog || !canvas) return;\n\t\t\tif (dialog.dataset.popuiSignInit === \"1\") return;\n\t\t\tdialog.dataset.popuiSignInit = \"1\";\n\t\t\tconst ctx = canvas.getContext(\"2d\");\n\t\t\tconst input = document.getElementById(\"popui-sign-input\");\n\t\t\tif (!ctx || !input) return;\n\t\t\tlet drawing = false, dirty = false, minX, minY, maxX, maxY;\n\t\t\tfunction bound(p) {\n\t\t\t\tif (!dirty) { minX = maxX = p.x; minY = maxY = p.y; return; }\n\t\t\t\tminX = Math.min(minX, p.x); minY = Math.min(minY, p.y);\n\t\t\t\tmaxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);\n\t\t\t}\n\t\t\tfunction at(e) {\n\t\t\t\tconst r = canvas.getBoundingClientRect();\n\t\t\t\tconst t = e.touches ? e.touches[0] : e;\n\t\t\t\treturn { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };\n\t\t\t}\n\t\t\tfunction start(e) {\n\t\t\t\tcanvas.classList.remove(\"popui-sign-canvas-error\");\n\t\t\t\tdrawing = true; const p = at(e); bound(p);\n\t\t\t\tctx.lineWidth = 2 * (window.devicePixelRatio || 1); ctx.lineCap = \"round\"; ctx.strokeStyle = (getComputedStyle(document.documentElement).getPropertyValue(\"--color-foreground\") || \"#111\").trim();\n\t\t\t\tctx.beginPath(); ctx.moveTo(p.x, p.y);\n\t\t\t\tctx.lineTo(p.x, p.y); ctx.stroke(); dirty = true; e.preventDefault();\n\t\t\t}\n\t\t\tfunction move(e) {\n\t\t\t\tif (!drawing) return;\n\t\t\t\tconst p = at(e);\n\t\t\t\tctx.lineTo(p.x, p.y); ctx.stroke();\n\t\t\t\tif (!dirty) dirty = true;\n\t\t\t\tbound(p); e.preventDefault();\n\t\t\t}\n\t\t\tfunction stop() { drawing = false; }\n\t\t\tcanvas.addEventListener(\"mousedown\", start);\n\t\t\tcanvas.addEventListener(\"mousemove\", move);\n\t\t\twindow.addEventListener(\"mouseup\", stop);\n\t\t\tcanvas.addEventListener(\"touchstart\", start, { passive: false });\n\t\t\tcanvas.addEventListener(\"touchmove\", move, { passive: false });\n\t\t\twindow.addEventListener(\"touchend\", stop);\n\t\t\twindow.addEventListener(\"touchcancel\", stop);\n\t\t\tfunction reset() { ctx.clearRect(0, 0, canvas.width, canvas.height); dirty = false; canvas.classList.remove(\"popui-sign-canvas-error\"); }\n\t\t\tdialog.addEventListener(\"click\", function (e) { if (e.target === dialog) dialog.close(); });\n\t\t\tconst chooseView = document.getElementById(\"popui-sign-choose-view\");\n\t\t\tconst drawView = document.getElementById(\"popui-sign-draw-view\");\n\t\t\tconst tabsEl = document.getElementById(\"popui-sign-tabs\");\n\t\t\tconst typedPreview = document.getElementById(\"popui-sign-typed-preview\");\n\t\t\tif (document.fonts && document.fonts.load) { document.fonts.load(\"500 96px Caveat\"); }\n\t\t\tlet mode = \"generated\";\n\t\t\tfunction caveatFont(px) { return \"500 \" + px + \"px Caveat, cursive\"; }\n\t\t\tfunction fittedSize(text, maxW, base, min) {\n\t\t\t\tconst cx = document.createElement(\"canvas\").getContext(\"2d\");\n\t\t\t\tif (!cx) return base;\n\t\t\t\tcx.font = caveatFont(base);\n\t\t\t\tconst w = cx.measureText(text).width;\n\t\t\t\tif (w <= maxW || w === 0) return base;\n\t\t\t\treturn Math.max(min, Math.floor(base * maxW / w));\n\t\t\t}\n\t\t\tfunction fitPreview() {\n\t\t\t\tconst avail = typedPreview.clientWidth - 32;\n\t\t\t\tif (avail <= 0) return;\n\t\t\t\ttypedPreview.style.fontSize = fittedSize((dialog.dataset.signer || \"\").trim(), avail, 64, 20) + \"px\";\n\t\t\t}\n\t\t\tfunction sizePad() {\n\t\t\t\tconst dpr = window.devicePixelRatio || 1;\n\t\t\t\tconst w = Math.floor(canvas.clientWidth * dpr), h = Math.floor(canvas.clientHeight * dpr);\n\t\t\t\tif (w <= 0 || h <= 0) return;\n\t\t\t\tif (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; reset(); }\n\t\t\t}\n\t\t\tfunction doSubmit() { dialog.close(); input.form.requestSubmit ? input.form.requestSubmit() : input.form.submit(); }\n\t\t\tfunction submitTyped() { input.value = \"\"; doSubmit(); }\n\t\t\tfunction submitDrawn() {\n\t\t\t\tif (!dirty) {\n\t\t\t\t\tcanvas.classList.remove(\"popui-sign-canvas-error\");\n\t\t\t\t\tvoid canvas.offsetWidth;\n\t\t\t\t\tcanvas.classList.add(\"popui-sign-canvas-error\");\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tconst pad = 12;\n\t\t\t\tlet x0 = Math.max(0, Math.floor(minX - pad)), x1 = Math.min(canvas.width, Math.ceil(maxX + pad));\n\t\t\t\tconst y0 = Math.max(0, Math.floor(minY - pad)), y1 = Math.min(canvas.height, Math.ceil(maxY + pad));\n\t\t\t\tlet cw = Math.max(1, x1 - x0), ch = Math.max(1, y1 - y0);\n\t\t\t\t// If the crop is portrait-oriented, use the full canvas width so that a\n\t\t\t\t// fixed-width PDF renderer doesn't scale the image to an extreme height.\n\t\t\t\tif (cw < ch) { x0 = 0; x1 = canvas.width; cw = canvas.width; }\n\t\t\t\tconst out = document.createElement(\"canvas\");\n\t\t\t\tout.width = cw; out.height = ch;\n\t\t\t\tconst outCtx = out.getContext(\"2d\");\n\t\t\t\tif (!outCtx) { alert(\"Unable to export the signature in this browser.\"); return; }\n\t\t\t\toutCtx.drawImage(canvas, x0, y0, cw, ch, 0, 0, cw, ch);\n\t\t\t\tinput.value = out.toDataURL(\"image/png\");\n\t\t\t\tdoSubmit();\n\t\t\t}\n\t\t\tconst api = {\n\t\t\t\topen: function () {\n\t\t\t\t\tinput.value = \"\";\n\t\t\t\t\treset();\n\t\t\t\t\tif (!dialog.open) { dialog.showModal(); }\n\t\t\t\t\t// Clicking the first trigger syncs the tab row's active state and switches the view.\n\t\t\t\t\tconst first = tabsEl && tabsEl.querySelector('[role=\"tab\"]');\n\t\t\t\t\tif (first) { first.click(); } else { api.tab(\"generated\"); }\n\t\t\t\t},\n\t\t\t\tclose: function () { dialog.close(); },\n\t\t\t\tclear: reset,\n\t\t\t\ttab: function (m) {\n\t\t\t\t\tmode = m;\n\t\t\t\t\tconst gen = m === \"generated\";\n\t\t\t\t\tchooseView.hidden = !gen;\n\t\t\t\t\tdrawView.hidden = gen;\n\t\t\t\t\tif (gen) {\n\t\t\t\t\t\tfitPreview();\n\t\t\t\t\t\tif (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitPreview); }\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsizePad();\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\tuse: function () { if (mode === \"generated\") { submitTyped(); } else { submitDrawn(); } },\n\t\t\t};\n\t\t\t// The tab row owns its active styling; view switching hangs off its trigger clicks.\n\t\t\tif (tabsEl) {\n\t\t\t\ttabsEl.addEventListener(\"click\", function (e) {\n\t\t\t\t\tconst btn = e.target.closest('[role=\"tab\"]');\n\t\t\t\t\tif (!btn) return;\n\t\t\t\t\tconst btns = Array.prototype.slice.call(tabsEl.querySelectorAll('[role=\"tab\"]'));\n\t\t\t\t\tapi.tab(btns.indexOf(btn) === 0 ? \"generated\" : \"draw\");\n\t\t\t\t});\n\t\t\t}\n\t\t\twindow.popuiSignPad = api;\n\t\t\twindow.popui = window.popui || {};\n\t\t\twindow.popui.signPad = api;\n\t\t})();\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

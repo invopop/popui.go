@@ -31,6 +31,15 @@ type App struct {
 	// for applications that provide their own CSS on top of those used by PopUI.
 	SkipCSS bool
 
+	// FillViewport pins the document to the viewport height and stops the
+	// body from scrolling, so the App's `h-full` grid resolves and any
+	// vertical scrolling happens inside the content (e.g. popui.Main or a
+	// Table's scroll wrapper) rather than the page. Required for a Table with
+	// StickyHeader to actually pin — without it the body absorbs the scroll
+	// and the header has nothing to stick within. Safe in an embedded iframe;
+	// leave false for documents that should scroll as a normal page.
+	FillViewport bool
+
 	// Importmap is a list of module specifier mappings for an ES import map.
 	// When non-empty, rendered before module and regular scripts.
 	Importmap []Import
