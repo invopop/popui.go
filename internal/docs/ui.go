@@ -148,9 +148,15 @@ var groups = []*Group{
 			},
 			{
 				Title:    "File",
-				Desc:     "File input components for selecting and uploading files. Use InputFile for basic file selection or FileUpload for avatar/image uploads with preview.",
+				Desc:     "File components for selecting, uploading and displaying files. Use InputFile for basic file selection, FileUpload for avatar/image uploads with preview, and FileDownload for displaying stored files.",
 				Path:     "file",
 				Template: components.File(),
+			},
+			{
+				Title:    "File Badge",
+				Desc:     "Small square badge showing a file extension, colored by document type.",
+				Path:     "file-badge",
+				Template: components.FileBadge(),
 			},
 			{
 				Title:    "Filter",
