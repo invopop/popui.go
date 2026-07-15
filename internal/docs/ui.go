@@ -2,6 +2,9 @@
 package docs
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/a-h/templ"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/popui.go/internal/docs/components"
@@ -286,4 +289,17 @@ var groups = []*Group{
 			},
 		},
 	},
+}
+
+// The Components group is presented alphabetically regardless of the order
+// entries are added in above. Guides and Layout keep their authored order.
+func init() {
+	for _, g := range groups {
+		if g.Title != "Components" {
+			continue
+		}
+		sort.Slice(g.Pages, func(i, j int) bool {
+			return strings.ToLower(g.Pages[i].Title) < strings.ToLower(g.Pages[j].Title)
+		})
+	}
 }
