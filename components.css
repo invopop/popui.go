@@ -54,6 +54,10 @@ body {
   left: anchor(left);
   width: fit-content;
   height: fit-content;
+  /* When the left-anchored menu would overflow the viewport (e.g. the
+     filter row's trailing "+" button near the right screen edge), flip to
+     the trigger's right edge instead of rendering off-screen. */
+  position-try-fallbacks: flip-inline;
 }
 [popover].context-menu:not(:popover-open) {
   display: none;

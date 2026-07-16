@@ -36,6 +36,34 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     return values.includes(v) ? values.filter((x) => x !== v) : [...values, v]
   }
 
+  // Keeps a filter chip's dropdown panel (option list, range calendar) inside
+  // the viewport. Panels open left-aligned to their chip, and the row's
+  // flex-wrap only accounts for the chips themselves — so a chip near the
+  // right edge of the screen would push its panel off-screen. Shifts the
+  // panel left just enough to fit, never past the left edge. A zero-width
+  // panel hasn't been laid out yet (when a chip is auto-opened right after
+  // being added, its x-show applies a frame after the caller's $nextTick) —
+  // retry on the next frames until it has.
+  function clampPanelX(panel, attempt = 0) {
+    if (!panel) return
+    const margin = 8
+    // Derive the panel's natural (unshifted) position from the current rect
+    // and the inline offset already applied, rather than reset-measure-apply:
+    // a re-clamp is then a single idempotent style write with no transient
+    // layout where the panel pokes further out of the row.
+    const cur = parseFloat(panel.style.left) || 0
+    const rect = panel.getBoundingClientRect()
+    if (!rect.width) {
+      if (attempt < 10) requestAnimationFrame(() => clampPanelX(panel, attempt + 1))
+      return
+    }
+    const naturalLeft = rect.left - cur
+    const overflow = naturalLeft + rect.width - (window.innerWidth - margin)
+    const shift = Math.min(Math.max(overflow, 0), Math.max(naturalLeft - margin, 0))
+    const next = shift > 0 ? `${-shift}px` : ''
+    if (panel.style.left !== next) panel.style.left = next
+  }
+
   // Applies the workspace accent color from the URL or a data attribute.
   function prepareAccentColor() {
     const urlParams = new URLSearchParams(window.location.search)
@@ -320,15 +348,17 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     const positionContextMenu = (contextMenu, trigger) => {
       const triggerRect = trigger.getBoundingClientRect()
       const isRightAlign = contextMenu.classList.contains('context-menu-right-align')
+      const menuWidth = contextMenu.offsetWidth
+      // Clamp to the viewport so a menu whose trigger sits near the screen
+      // edge stays fully visible (the anchor-positioning path gets the same
+      // via position-try-fallbacks in components.css).
+      let left = isRightAlign ? triggerRect.right - menuWidth : triggerRect.left
+      left = Math.min(left, window.innerWidth - menuWidth - 8)
+      left = Math.max(left, 8)
       contextMenu.style.position = 'fixed'
       contextMenu.style.top = `${triggerRect.bottom + 8}px`
-      if (isRightAlign) {
-        contextMenu.style.left = 'auto'
-        contextMenu.style.right = `${window.innerWidth - triggerRect.right}px`
-      } else {
-        contextMenu.style.left = `${triggerRect.left}px`
-        contextMenu.style.right = 'auto'
-      }
+      contextMenu.style.left = `${left}px`
+      contextMenu.style.right = 'auto'
     }
 
     document.addEventListener('toggle', (e) => {
@@ -491,6 +521,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       openPanel() {
         this.open = true
         if (this.activeIndex < 0 && this.optionValues.length) this.activeIndex = 0
+        this.$nextTick(() => clampPanelX(this.$refs.panel))
       },
       closePanel() {
         this.open = false
@@ -527,10 +558,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         this.toggle(this.optionValues[i])
       },
       // Applies a value and submits after Alpine has rendered the hidden inputs.
+      // The summary box is re-rendered too, which can change the chip's width
+      // and move the still-open panel — so it is re-clamped to the viewport.
       toggle(v) {
         this.values = toggleValue(this.values, v, this.multiple)
         this.initial = JSON.stringify(this.values)
-        this.$nextTick(() => this.submitForm())
+        this.$nextTick(() => {
+          clampPanelX(this.$refs.panel)
+          this.submitForm()
+        })
       },
     }))
 
@@ -794,8 +830,13 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         }
         return ''
       },
-      togglePanel() { this.open = !this.open },
-      openPanel() { this.open = true },
+      togglePanel() { this.open ? this.open = false : this.openPanel() },
+      // The panel ref only exists when the calendar is hosted in a filter
+      // chip's popover; the standalone inline Calendar has no panel to clamp.
+      openPanel() {
+        this.open = true
+        this.$nextTick(() => clampPanelX(this.$refs.panel))
+      },
       // Resets the pending and committed selection without submitting.
       clear() {
         this.from = null; this.to = null
