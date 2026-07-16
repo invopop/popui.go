@@ -36,21 +36,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     return values.includes(v) ? values.filter((x) => x !== v) : [...values, v]
   }
 
-  // Keeps a filter chip's dropdown panel (option list, range calendar) inside
-  // the viewport. Panels open left-aligned to their chip, and the row's
-  // flex-wrap only accounts for the chips themselves — so a chip near the
-  // right edge of the screen would push its panel off-screen. Shifts the
-  // panel left just enough to fit, never past the left edge. A zero-width
-  // panel hasn't been laid out yet (when a chip is auto-opened right after
-  // being added, its x-show applies a frame after the caller's $nextTick) —
-  // retry on the next frames until it has.
+  // Shifts a filter chip's dropdown panel left just enough to keep it inside
+  // the viewport, retrying on the next frames while the panel has no layout yet.
   function clampPanelX(panel, attempt = 0) {
     if (!panel) return
     const margin = 8
-    // Derive the panel's natural (unshifted) position from the current rect
-    // and the inline offset already applied, rather than reset-measure-apply:
-    // a re-clamp is then a single idempotent style write with no transient
-    // layout where the panel pokes further out of the row.
     const cur = parseFloat(panel.style.left) || 0
     const rect = panel.getBoundingClientRect()
     if (!rect.width) {
@@ -349,9 +339,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       const triggerRect = trigger.getBoundingClientRect()
       const isRightAlign = contextMenu.classList.contains('context-menu-right-align')
       const menuWidth = contextMenu.offsetWidth
-      // Clamp to the viewport so a menu whose trigger sits near the screen
-      // edge stays fully visible (the anchor-positioning path gets the same
-      // via position-try-fallbacks in components.css).
       let left = isRightAlign ? triggerRect.right - menuWidth : triggerRect.left
       left = Math.min(left, window.innerWidth - menuWidth - 8)
       left = Math.max(left, 8)
@@ -558,8 +545,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         this.toggle(this.optionValues[i])
       },
       // Applies a value and submits after Alpine has rendered the hidden inputs.
-      // The summary box is re-rendered too, which can change the chip's width
-      // and move the still-open panel — so it is re-clamped to the viewport.
       toggle(v) {
         this.values = toggleValue(this.values, v, this.multiple)
         this.initial = JSON.stringify(this.values)
@@ -831,8 +816,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return ''
       },
       togglePanel() { this.open ? this.open = false : this.openPanel() },
-      // The panel ref only exists when the calendar is hosted in a filter
-      // chip's popover; the standalone inline Calendar has no panel to clamp.
+      // Opens the panel and keeps it inside the viewport.
       openPanel() {
         this.open = true
         this.$nextTick(() => clampPanelX(this.$refs.panel))

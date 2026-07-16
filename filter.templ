@@ -248,12 +248,6 @@ templ filterInlineOptions(in props.FilterInput) {
 		</template>
 		// Summary box — shows the current selection. Click toggles the option
 		// panel open/closed (no chevron); the panel also closes on outside click.
-		// An inline-grid stacking every possible summary state in the same cell:
-		// invisible static "sizer" copies (placeholder, each single option, the
-		// full multi-select count) fix the box width to the widest state, so
-		// changing the selection never resizes the chip — a resize would re-wrap
-		// the whole filter row and bounce the chip between lines while its
-		// option panel is open.
 		<div
 			@click="togglePanel()"
 			class="inline-grid items-center px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
@@ -312,12 +306,7 @@ templ filterInlineOptions(in props.FilterInput) {
 		// Always-open option list — rendered below the summary box (top-full)
 		// and left-aligned to it (left-0), so it falls right beneath the box
 		// and to the right of the operator label. Absolute so the chip keeps
-		// its height. The panel ref lets the controller clamp it inside the
-		// viewport on open (clampPanelX in popui.js). Mousedown is prevented so
-		// clicking a row never focuses it — focus stays on the combobox (which
-		// owns the keyboard), and the browser doesn't scroll-reveal a panel
-		// that pokes out of an overflow-hidden ancestor, which would drag the
-		// whole page sideways on every click.
+		// its height.
 		<ul
 			x-ref="panel"
 			onmousedown="event.preventDefault()"
@@ -381,9 +370,6 @@ templ filterRangeCalendar(in props.FilterInput) {
 			<span x-show="!summary" class="text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
 			<span x-show="summary" x-text="summary" class="font-medium text-base text-foreground whitespace-nowrap"></span>
 		</div>
-		// Mousedown is prevented for the same reason as the option list panel:
-		// day/preset/nav clicks must not focus their buttons, or the browser
-		// scroll-reveals the clipped panel inside overflow-hidden ancestors.
 		<div
 			x-ref="panel"
 			onmousedown="event.preventDefault()"
@@ -483,8 +469,8 @@ func filterOptionListData(in props.FilterInput) string {
 		", optionValues: " + string(optionValuesJSON) + "})"
 }
 
-// filterPluralLabel returns the label used by the multi-select summary
-// ("3 statuses"): the explicit PluralLabel override or the pluralised Label.
+// filterPluralLabel returns the explicit PluralLabel override, or the
+// pluralised Label when it is unset.
 func filterPluralLabel(in props.FilterInput) string {
 	if in.PluralLabel != "" {
 		return in.PluralLabel

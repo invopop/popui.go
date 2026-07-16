@@ -672,7 +672,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs("Select " + strings.ToLower(in.Label) + "…")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 261, Col: 190}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 255, Col: 190}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -700,7 +700,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(opt.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 267, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 261, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
@@ -739,7 +739,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(in.Options)) + " " + filterPluralLabel(in))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 281, Col: 118}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 275, Col: 118}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
@@ -757,7 +757,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs("Select " + strings.ToLower(in.Label) + "…")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 284, Col: 172}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 278, Col: 172}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
@@ -775,7 +775,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs("values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 286, Col: 98}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 280, Col: 98}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 			if templ_7745c5c3_Err != nil {
@@ -798,7 +798,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 			var templ_7745c5c3_Var35 string
 			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(opt.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 290, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 284, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 			if templ_7745c5c3_Err != nil {
@@ -822,7 +822,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 				var templ_7745c5c3_Var36 string
 				templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs("values.includes('" + jsSingleQuoteEscape(opt.Value) + "')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 299, Col: 76}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 293, Col: 76}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 				if templ_7745c5c3_Err != nil {
@@ -849,7 +849,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(in.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 326, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 315, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 		if templ_7745c5c3_Err != nil {
@@ -936,7 +936,7 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(filterRangeCalendarData(in))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 369, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 358, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 		if templ_7745c5c3_Err != nil {
@@ -949,7 +949,7 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var40 string
 		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(in.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 372, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 361, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 		if templ_7745c5c3_Err != nil {
@@ -962,7 +962,7 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		var templ_7745c5c3_Var41 string
 		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs("Select " + strings.ToLower(in.Label) + "…")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 381, Col: 137}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `filter.templ`, Line: 370, Col: 137}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 		if templ_7745c5c3_Err != nil {
@@ -1070,8 +1070,8 @@ func filterOptionListData(in props.FilterInput) string {
 		", optionValues: " + string(optionValuesJSON) + "})"
 }
 
-// filterPluralLabel returns the label used by the multi-select summary
-// ("3 statuses"): the explicit PluralLabel override or the pluralised Label.
+// filterPluralLabel returns the explicit PluralLabel override, or the
+// pluralised Label when it is unset.
 func filterPluralLabel(in props.FilterInput) string {
 	if in.PluralLabel != "" {
 		return in.PluralLabel
