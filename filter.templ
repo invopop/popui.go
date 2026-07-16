@@ -250,15 +250,66 @@ templ filterInlineOptions(in props.FilterInput) {
 		// panel open/closed (no chevron); the panel also closes on outside click.
 		<div
 			@click="togglePanel()"
-			class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
+			class="inline-grid items-center px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
 		>
-			@selectionSummary("Select "+strings.ToLower(in.Label)+"…", in.Options)
+			<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
+			for _, opt := range in.Options {
+				<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap inline-flex items-center gap-1.5">
+					if opt.Color != "" {
+						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
+					}
+					<span class="font-medium text-base text-foreground">{ opt.Label }</span>
+				</span>
+			}
+			if in.Type == props.FilterTypeMultiple && len(in.Options) > 1 {
+				<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap inline-flex items-center gap-1.5">
+					<span class="inline-flex items-center -space-x-0.5">
+						for i, opt := range in.Options {
+							if i < props.MaxStackedDots && opt.Color != "" {
+								<span class="border-l border-background rounded-xs flex first:border-l-0">
+									@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
+								</span>
+							}
+						}
+					</span>
+					<span class="font-medium text-base text-foreground">{ strconv.Itoa(len(in.Options)) + " " + filterPluralLabel(in) }</span>
+				</span>
+			}
+			<span x-show="values.length === 0" class="col-start-1 row-start-1 text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
+			for _, opt := range in.Options {
+				<span x-show={ "values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'" } class="col-start-1 row-start-1 inline-flex items-center gap-1.5">
+					if opt.Color != "" {
+						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
+					}
+					<span class="font-medium text-base text-foreground">{ opt.Label }</span>
+				</span>
+			}
+			<span x-show="values.length > 1" class="col-start-1 row-start-1 inline-flex items-center gap-1.5">
+				<span class="inline-flex items-center -space-x-0.5">
+					for i, opt := range in.Options {
+						if i < props.MaxStackedDots && opt.Color != "" {
+							<span
+								class="border-l border-background rounded-xs flex first:border-l-0"
+								x-show={ "values.includes('" + jsSingleQuoteEscape(opt.Value) + "')" }
+							>
+								@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
+							</span>
+						}
+					}
+				</span>
+				<span class="font-medium text-base text-foreground">
+					<span x-text="values.length"></span>
+					<span x-text="multipleLabel"></span>
+				</span>
+			</span>
 		</div>
 		// Always-open option list — rendered below the summary box (top-full)
 		// and left-aligned to it (left-0), so it falls right beneath the box
 		// and to the right of the operator label. Absolute so the chip keeps
 		// its height.
 		<ul
+			x-ref="panel"
+			onmousedown="event.preventDefault()"
 			role="listbox"
 			:id="$id('flb')"
 			aria-label={ in.Label }
@@ -320,6 +371,8 @@ templ filterRangeCalendar(in props.FilterInput) {
 			<span x-show="summary" x-text="summary" class="font-medium text-base text-foreground whitespace-nowrap"></span>
 		</div>
 		<div
+			x-ref="panel"
+			onmousedown="event.preventDefault()"
 			x-show="open"
 			x-cloak
 			style="top:100%;z-index:50"
@@ -406,10 +459,7 @@ func filterOptionListData(in props.FilterInput) string {
 	for i, o := range in.Options {
 		optionValues[i] = o.Value
 	}
-	plural := in.PluralLabel
-	if plural == "" {
-		plural = pluralizeLabel(in.Label)
-	}
+	plural := filterPluralLabel(in)
 	valuesJSON, _ := json.Marshal(values)
 	optionValuesJSON, _ := json.Marshal(optionValues)
 	return "filterOptionList({values: " + string(valuesJSON) +
@@ -417,6 +467,15 @@ func filterOptionListData(in props.FilterInput) string {
 		", multipleLabel: '" + jsSingleQuoteEscape(plural) + "'" +
 		", name: '" + jsSingleQuoteEscape(in.Name) + "'" +
 		", optionValues: " + string(optionValuesJSON) + "})"
+}
+
+// filterPluralLabel returns the explicit PluralLabel override, or the
+// pluralised Label when it is unset.
+func filterPluralLabel(in props.FilterInput) string {
+	if in.PluralLabel != "" {
+		return in.PluralLabel
+	}
+	return pluralizeLabel(in.Label)
 }
 
 // pluralizeLabel returns a lowercase English plural of a field label for the
@@ -437,41 +496,6 @@ func pluralizeLabel(label string) string {
 		return s[:len(s)-1] + "ies"
 	}
 	return s + "s"
-}
-
-// selectionSummary renders the current selection of a coloured option list:
-// the placeholder when empty, `[•dot] Label` for a single selection, and a
-// stack of dots (capped at props.MaxStackedDots) plus `{N} {multipleLabel}`
-// for a multiple selection. Binds against the Alpine `values`/`multipleLabel`
-// state of the enclosing filterOptionList controller.
-templ selectionSummary(placeholder string, options []props.FilterOption) {
-	<span x-show="values.length === 0" class="text-foreground-default-tertiary font-normal text-base">{ placeholder }</span>
-	for _, opt := range options {
-		<span x-show={ "values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'" } class="inline-flex items-center gap-1.5">
-			if opt.Color != "" {
-				@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
-			}
-			<span class="font-medium text-base text-foreground">{ opt.Label }</span>
-		</span>
-	}
-	<span x-show="values.length > 1" class="inline-flex items-center gap-1.5">
-		<span class="inline-flex items-center -space-x-0.5">
-			for i, opt := range options {
-				if i < props.MaxStackedDots && opt.Color != "" {
-					<span
-						class="border-l border-background rounded-xs flex first:border-l-0"
-						x-show={ "values.includes('" + jsSingleQuoteEscape(opt.Value) + "')" }
-					>
-						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
-					</span>
-				}
-			}
-		</span>
-		<span class="font-medium text-base text-foreground">
-			<span x-text="values.length"></span>
-			<span x-text="multipleLabel"></span>
-		</span>
-	</span>
 }
 
 // boolStr renders a Go bool as the JS literal string "true"/"false", for
