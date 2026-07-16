@@ -39,8 +39,6 @@ func FilterExample() templ.Component {
 			BaseURL:  "/data",
 			Target:   "#table-body",
 			PageSize: 20,
-			// Name is the query parameter key the server filters on; Label is the
-			// text shown in the menu and on the chip — they are independent.
 			Inputs: []props.FilterInput{
 				{
 					Name:  "doc_status",
