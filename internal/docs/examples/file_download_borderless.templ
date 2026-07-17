@@ -10,6 +10,7 @@ templ FileDownloadBorderlessExample() {
 	@popui.FileDownload(props.FileDownload{
 		Borderless: true,
 		Hover:      true,
+		Preview:    props.ShowPopover("file-download-preview"),
 	}) {
 		@popui.FileDownloadInfo(props.FileDownloadInfo{
 			Label: "invoice.xml",
@@ -29,6 +30,29 @@ templ FileDownloadBorderlessExample() {
 		}) {
 			@icons.Download()
 			Download
+		}
+	}
+	@popui.Popover(props.Popover{
+		ID: "file-download-preview",
+	}) {
+		@popui.Block() {
+			@popui.Title() {
+				invoice.xml
+			}
+			@popui.P() {
+				The preview content is managed by the app implementing this
+				component: the Preview prop only wires the row's click to your
+				own function, which decides what to display.
+			}
+			@popui.ButtonGroup(props.ButtonGroup{Align: "right"}) {
+				@popui.Button(props.Button{
+					Variant:             props.ButtonVariantSecondary,
+					PopoverTarget:       "file-download-preview",
+					PopoverTargetAction: "hide",
+				}) {
+					Close
+				}
+			}
 		}
 	}
 }

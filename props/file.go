@@ -1,6 +1,8 @@
 package props
 
 import (
+	"maps"
+
 	"github.com/a-h/templ"
 	"github.com/google/uuid"
 )
@@ -15,7 +17,19 @@ type FileDownload struct {
 	// inside another container.
 	Borderless bool
 	// Hover highlights the whole row with a background color on hover.
-	Hover bool
+	Hover   bool
+	Preview string
+}
+
+// PreviewAttributes returns the component attributes with an onclick handler that runs the Preview JavaScript expression, ignoring clicks on nested links and buttons.
+func (f FileDownload) PreviewAttributes() templ.Attributes {
+	if f.Preview == "" {
+		return f.Attributes
+	}
+	attrs := templ.Attributes{}
+	maps.Copy(attrs, f.Attributes)
+	attrs["onclick"] = "if (!event.target.closest('a,button')) { " + f.Preview + " }"
+	return attrs
 }
 
 // FileDownloadInfo Templ component props
