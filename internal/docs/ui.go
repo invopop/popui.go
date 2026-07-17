@@ -66,13 +66,13 @@ var groups = []*Group{
 				Template: components.Card(),
 			},
 			{
-				Title:    "Page State",
+				Title:    "PageState",
 				Desc:     "Layout for displaying page states with illustrations and call-to-action.",
 				Path:     "page-state",
 				Template: components.PageState(),
 			},
 			{
-				Title:    "Card Deck",
+				Title:    "CardDeck",
 				Desc:     "Tinted container that stacks regular Cards into one visual unit.",
 				Path:     "card-deck",
 				Template: components.CardDeck(),
@@ -126,7 +126,7 @@ var groups = []*Group{
 				Template: components.Menu(),
 			},
 			{
-				Title:    "Description List",
+				Title:    "DescriptionList",
 				Desc:     "Semantic HTML definition list for displaying term-description pairs.",
 				Path:     "description-list",
 				Template: components.DescriptionList(),
@@ -198,13 +198,13 @@ var groups = []*Group{
 				Template: components.Select(),
 			},
 			{
-				Title:    "Side panel",
+				Title:    "SidePanel",
 				Desc:     "Floating side panel that overlays one edge of the viewport.",
 				Path:     "side-panel",
 				Template: components.SidePanel(),
 			},
 			{
-				Title:    "Signature Pad",
+				Title:    "SignaturePad",
 				Desc:     "A signature capture dialog with typed-name preview and freehand drawing tabs.",
 				Path:     "signature-pad",
 				Template: components.SignaturePad(),
@@ -228,13 +228,13 @@ var groups = []*Group{
 				Template: components.Tabs(),
 			},
 			{
-				Title:    "Tag Status",
+				Title:    "TagStatus",
 				Desc:     "Status indicators with optional dots and different color variants.",
 				Path:     "tag-status",
 				Template: components.TagStatus(),
 			},
 			{
-				Title:    "Status Badge",
+				Title:    "StatusBadge",
 				Desc:     "Icon-led outcome pill with an optional label: success, failed, warning or running.",
 				Path:     "status-badge",
 				Template: components.StatusBadge(),
