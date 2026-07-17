@@ -41,6 +41,13 @@ templ Fieldset() {
 	}) {
 		@examples.FieldsetCardFormExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Titled Section",
+		Description: "Pair a TitleGroup with the card variant for a titled settings section: the heading sits outside the tinted body.",
+		Code:        examples.LoadExample("fieldset_titled.templ"),
+	}) {
+		@examples.FieldsetTitledExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Fieldset",

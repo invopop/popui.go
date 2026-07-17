@@ -16,6 +16,20 @@ type Title struct {
 	Attributes templ.Attributes
 }
 
+// TitleGroup defines the props for the TitleGroup component: a title with
+// an optional secondary description, stacked by default or arranged on one
+// baseline with Horizontal.
+type TitleGroup struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Title      string
+	Description string
+	// Horizontal places the description next to the title on the same
+	// baseline, separated by a middot, instead of stacking it below.
+	Horizontal bool
+}
+
 // Subtitle defines the props for the Subtitle component.
 type Subtitle struct {
 	ID         string

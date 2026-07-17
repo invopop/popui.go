@@ -7,8 +7,9 @@ import (
 )
 
 // Fieldset groups a set of form fields together with correct vertical spacing and padding
-// between fields. If the Variant is set to "card" it also adds a border and a light gray
-// background to visually separate the group from the rest of the form.
+// between fields. If the Variant is set to "card" it also adds a rounded light gray
+// background to visually separate the group from the rest of the form. Pair with a
+// TitleGroup above it for a titled settings section.
 templ Fieldset(p ...props.Fieldset) {
 	{{ fieldset := props.First(p) }}
 	<fieldset
@@ -18,7 +19,7 @@ templ Fieldset(p ...props.Fieldset) {
 		class={
 			tailwind.Merge(
 				"relative w-full flex-1 flex flex-col gap-4",
-				classes.If(fieldset.Variant == props.FieldsetVariantCard, "border border-border-default-secondary rounded-md bg-background-default-secondary p-4"),
+				classes.If(fieldset.Variant == props.FieldsetVariantCard, "rounded-md bg-background-default-secondary p-4"),
 				fieldset.Class,
 			),
 		}

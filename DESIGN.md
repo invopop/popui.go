@@ -93,7 +93,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `DescriptionList` |
-| "a settings section / form card" | `Fieldset` with `Variant: "card"` (bordered, tinted body) |
+| "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
 | "a collapsible / expandable section" | `Accordion` |
@@ -419,7 +419,7 @@ File attachments are the `File` family: `FileDownload` > `FileDownloadInfo`.
 Form structure:
 ```
 Form
-└── Fieldset (optional card variant: bordered, tinted body)
+└── Fieldset (optional card variant: tinted body; TitleGroup above for a heading)
     ├── Input (with Label, Placeholder, optional hint)
     ├── Textarea
     ├── Select
@@ -429,7 +429,7 @@ Form
     └── ButtonGroup (submit/cancel)
 ```
 
-- `Fieldset` with `Variant: "card"` renders as a bordered container with a light gray background — use for grouped settings sections and form blocks
+- `Fieldset` with `Variant: "card"` renders a rounded light gray body — use for grouped settings sections and form blocks; pair with `TitleGroup` for a heading
 - `OptionGroup` wraps multiple checkboxes or radios with a shared label
 - `Label` can be separate from `Input` for custom hint/link patterns
 - `Checkbox` supports `Variant: "switch"` for toggle switches
@@ -835,8 +835,8 @@ bg-background-default-secondary (passed as Class to Fieldset with card variant)
 
 **Titled settings section (tinted body):**
 ```go
+@popui.TitleGroup(props.TitleGroup{Title: "URLs", Description: "Endpoints used by the integration", Horizontal: true})
 @popui.Fieldset(props.Fieldset{
-    Legend: "URLs",
     Variant: props.FieldsetVariantCard,
 }) {
     @popui.Input(props.Input{Label: "Config URL", Placeholder: "https://"})

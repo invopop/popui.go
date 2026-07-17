@@ -55,15 +55,16 @@ variants and a `Value` secondary line on the info slot.
 ### CardFieldset / FieldsetCard → Fieldset with Variant "card"
 
 Both intermediate components are gone; the card variant of `Fieldset` now
-carries the bordered, light-gray-background treatment. The `Title` +
-`Description` heading pair has no successor — use `Legend` for the group
-title.
+carries the rounded light-gray-body treatment. The `Title` + `Description`
+heading pair lives on as the `TitleGroup` typography component — place it
+above the fieldset.
 
 ```templ
 // before
 @popui.FieldsetCard(props.FieldsetCard{Title: "URLs", Description: "Endpoints"}) { ... }
 // after
-@popui.Fieldset(props.Fieldset{Legend: "URLs", Variant: props.FieldsetVariantCard}) { ... }
+@popui.TitleGroup(props.TitleGroup{Title: "URLs", Description: "Endpoints", Horizontal: true})
+@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) { ... }
 ```
 
 ### FlashMessage → Toast
