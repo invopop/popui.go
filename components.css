@@ -54,6 +54,7 @@ body {
   left: anchor(left);
   width: fit-content;
   height: fit-content;
+  position-try-fallbacks: flip-inline;
 }
 [popover].context-menu:not(:popover-open) {
   display: none;

@@ -36,6 +36,24 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     return values.includes(v) ? values.filter((x) => x !== v) : [...values, v]
   }
 
+  // Shifts a filter chip's dropdown panel left just enough to keep it inside
+  // the viewport, retrying on the next frames while the panel has no layout yet.
+  function clampPanelX(panel, attempt = 0) {
+    if (!panel) return
+    const margin = 8
+    const cur = parseFloat(panel.style.left) || 0
+    const rect = panel.getBoundingClientRect()
+    if (!rect.width) {
+      if (attempt < 10) requestAnimationFrame(() => clampPanelX(panel, attempt + 1))
+      return
+    }
+    const naturalLeft = rect.left - cur
+    const overflow = naturalLeft + rect.width - (window.innerWidth - margin)
+    const shift = Math.min(Math.max(overflow, 0), Math.max(naturalLeft - margin, 0))
+    const next = shift > 0 ? `${-shift}px` : ''
+    if (panel.style.left !== next) panel.style.left = next
+  }
+
   // Applies the workspace accent color from the URL or a data attribute.
   function prepareAccentColor() {
     const urlParams = new URLSearchParams(window.location.search)
@@ -320,15 +338,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     const positionContextMenu = (contextMenu, trigger) => {
       const triggerRect = trigger.getBoundingClientRect()
       const isRightAlign = contextMenu.classList.contains('context-menu-right-align')
+      const menuWidth = contextMenu.offsetWidth
+      let left = isRightAlign ? triggerRect.right - menuWidth : triggerRect.left
+      left = Math.min(left, window.innerWidth - menuWidth - 8)
+      left = Math.max(left, 8)
       contextMenu.style.position = 'fixed'
       contextMenu.style.top = `${triggerRect.bottom + 8}px`
-      if (isRightAlign) {
-        contextMenu.style.left = 'auto'
-        contextMenu.style.right = `${window.innerWidth - triggerRect.right}px`
-      } else {
-        contextMenu.style.left = `${triggerRect.left}px`
-        contextMenu.style.right = 'auto'
-      }
+      contextMenu.style.left = `${left}px`
+      contextMenu.style.right = 'auto'
     }
 
     document.addEventListener('toggle', (e) => {
@@ -451,6 +468,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       openPanel() {
         this.open = true
         if (this.activeIndex < 0 && this.optionValues.length) this.activeIndex = 0
+        this.$nextTick(() => clampPanelX(this.$refs.panel))
       },
       closePanel() {
         this.open = false
@@ -490,7 +508,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       toggle(v) {
         this.values = toggleValue(this.values, v, this.multiple)
         this.initial = JSON.stringify(this.values)
-        this.$nextTick(() => this.submitForm())
+        this.$nextTick(() => {
+          clampPanelX(this.$refs.panel)
+          this.submitForm()
+        })
       },
     }))
 
@@ -754,8 +775,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         }
         return ''
       },
-      togglePanel() { this.open = !this.open },
-      openPanel() { this.open = true },
+      togglePanel() { this.open ? this.open = false : this.openPanel() },
+      // Opens the panel and keeps it inside the viewport.
+      openPanel() {
+        this.open = true
+        this.$nextTick(() => clampPanelX(this.$refs.panel))
+      },
       // Resets the pending and committed selection without submitting.
       clear() {
         this.from = null; this.to = null

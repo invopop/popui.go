@@ -14,6 +14,7 @@ templ Card(p ...props.Card) {
 	{{ card := props.First(p) }}
 	if card.Href != "" {
 		<a
+			data-card
 			if card.ID != "" {
 				id={ card.ID }
 			}
@@ -32,6 +33,7 @@ templ Card(p ...props.Card) {
 		</a>
 	} else {
 		<div
+			data-card
 			if card.ID != "" {
 				id={ card.ID }
 			}
@@ -138,45 +140,6 @@ templ CardProgressBar(p ...props.CardProgressBar) {
 			<div class={ percentageStyle(bar.PercentValue(), bar.PercentColor()) }></div>
 		</div>
 	</div>
-}
-
-// CardDashboard provides a grid of small info cards for showing dashboard-like information
-templ CardDashboard(p ...props.CardDashboard) {
-	{{ dash := props.First(p) }}
-	<ul
-		if dash.ID != "" {
-			id={ dash.ID }
-		}
-		class={
-			tailwind.Merge(
-				"grid grid-cols-3 gap-x-3",
-				dash.Class,
-			),
-		}
-		{ dash.Attributes... }
-	>
-		{ children... }
-	</ul>
-}
-
-// CardDashboardItem represents a single metric item in the dashboard grid
-templ CardDashboardItem(p ...props.CardDashboardItem) {
-	{{ item := props.First(p) }}
-	<li
-		if item.ID != "" {
-			id={ item.ID }
-		}
-		class={
-			tailwind.Merge(
-				"flex flex-col items-center py-3 px-2 rounded-md border border-border bg-background-default-secondary",
-				item.Class,
-			),
-		}
-		{ item.Attributes... }
-	>
-		<p class="text-foreground-default-secondary text-sm">{ item.Label }</p>
-		<p class="text-foreground text-xl font-medium">{ item.Value }</p>
-	</li>
 }
 
 func cardClasses(card props.Card) string {

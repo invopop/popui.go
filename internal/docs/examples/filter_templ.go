@@ -41,7 +41,7 @@ func FilterExample() templ.Component {
 			PageSize: 20,
 			Inputs: []props.FilterInput{
 				{
-					Name:  "status",
+					Name:  "doc_status",
 					Label: "Status",
 					Icon:  icons.Status(),
 					Type:  props.FilterTypeMultiple,
@@ -52,7 +52,7 @@ func FilterExample() templ.Component {
 					},
 				},
 				{
-					Name:  "priority",
+					Name:  "priority_level",
 					Label: "Priority",
 					Icon:  icons.Tag(),
 					Type:  props.FilterTypeSelect,
@@ -62,8 +62,8 @@ func FilterExample() templ.Component {
 						{Value: "low", Label: "Low", Color: "grey"},
 					},
 				},
-				{Name: "name", Label: "Name", Icon: icons.Search(), Type: props.FilterTypeText},
-				{Name: "created", Label: "Created Date", Icon: icons.Calendar(), Type: props.FilterTypeCalendar},
+				{Name: "customer_name", Label: "Customer", Icon: icons.Search(), Type: props.FilterTypeText},
+				{Name: "created_at", Label: "Created Date", Icon: icons.Calendar(), Type: props.FilterTypeCalendar},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

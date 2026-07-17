@@ -1,0 +1,21 @@
+package popui
+
+import "github.com/invopop/popui.go/props"
+
+// ButtonCopy forwards to Button's copy-to-clipboard fields and is kept so
+// upgrading consumers don't break on a mechanical rename.
+//
+// Deprecated: use Button with props.Button.Copy instead.
+templ ButtonCopy(opts ...props.ButtonCopy) {
+	{{ p := props.First(opts) }}
+	@Button(props.Button{
+		ID:               p.ID,
+		Class:            p.Class,
+		Variant:          p.Variant,
+		Size:             p.Size,
+		Attributes:       p.Attributes,
+		Copy:             p.Value,
+		CopyPrefixLength: p.PrefixLength,
+		CopySuffixLength: p.SuffixLength,
+	})
+}

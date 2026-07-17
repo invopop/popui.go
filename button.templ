@@ -82,6 +82,8 @@ templ Button(p ...props.Button) {
 			}
 			if btn.Type != "" {
 				type={ btn.Type }
+			} else if btn.Copy != "" {
+				type="button"
 			}
 			if btn.Name != "" {
 				name={ btn.Name }

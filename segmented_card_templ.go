@@ -13,6 +13,7 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
+// Deprecated: use CardDeck with Card children instead.
 func SegmentedCard(opts ...props.SegmentedCard) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -68,6 +69,7 @@ func SegmentedCard(opts ...props.SegmentedCard) templ.Component {
 	})
 }
 
+// Deprecated: use CardDeckHead instead.
 func SegmentedCardHead(opts ...props.SegmentedCardHead) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -110,7 +112,7 @@ func SegmentedCardHead(opts ...props.SegmentedCardHead) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `segmented_card.templ`, Line: 26, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `segmented_card.templ`, Line: 28, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -158,6 +160,7 @@ func SegmentedCardHead(opts ...props.SegmentedCardHead) templ.Component {
 	})
 }
 
+// Deprecated: place Card children directly inside CardDeck instead.
 func SegmentedCardBody(opts ...props.SegmentedCardBody) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -200,7 +203,7 @@ func SegmentedCardBody(opts ...props.SegmentedCardBody) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `segmented_card.templ`, Line: 42, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `segmented_card.templ`, Line: 45, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -248,6 +251,7 @@ func SegmentedCardBody(opts ...props.SegmentedCardBody) templ.Component {
 	})
 }
 
+// Deprecated: use a plain Card inside CardDeck instead.
 func SegmentedCardContent(opts ...props.SegmentedCardContent) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

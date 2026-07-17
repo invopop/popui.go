@@ -6,14 +6,15 @@ import (
 )
 
 templ FieldsetCardExample() {
-	@popui.FieldsetCard(props.FieldsetCard{
-		Title:       "Categories",
-		Description: "Select all that apply",
+	@popui.Fieldset(props.Fieldset{
+		Legend:  "Categories",
+		Variant: props.FieldsetVariantCard,
 	}) {
-		@popui.Multiselect(props.Multiselect{
+		@popui.Select(props.Select{
+			Multiple: true,
 			Name:        "categories",
 			Placeholder: "Select categories",
-			Options: []props.MultiselectOption{
+			Options: []props.SelectOption{
 				{Value: "document", Label: "Document", Selected: true},
 				{Value: "accounting", Label: "Accounting"},
 				{Value: "payments", Label: "Payments"},

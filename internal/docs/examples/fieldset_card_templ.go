@@ -46,10 +46,11 @@ func FieldsetCardExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = popui.Multiselect(props.Multiselect{
+			templ_7745c5c3_Err = popui.Select(props.Select{
+				Multiple:    true,
 				Name:        "categories",
 				Placeholder: "Select categories",
-				Options: []props.MultiselectOption{
+				Options: []props.SelectOption{
 					{Value: "document", Label: "Document", Selected: true},
 					{Value: "accounting", Label: "Accounting"},
 					{Value: "payments", Label: "Payments"},
@@ -61,9 +62,9 @@ func FieldsetCardExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.FieldsetCard(props.FieldsetCard{
-			Title:       "Categories",
-			Description: "Select all that apply",
+		templ_7745c5c3_Err = popui.Fieldset(props.Fieldset{
+			Legend:  "Categories",
+			Variant: props.FieldsetVariantCard,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
