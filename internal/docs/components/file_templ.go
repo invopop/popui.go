@@ -289,39 +289,13 @@ func File() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Borderless File Download",
-			Description: "FileDownload can render without a border. FileDownloadInfo accepts a Value shown as muted text below the label.",
+			Description: "FileDownload can render without a border and highlight the row via the Hover prop. FileDownloadInfo accepts a Value shown as muted text below the label.",
 			Code:        examples.LoadExample("file_download_borderless.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.FileDownloadPreviewExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "File Download with Preview",
-			Description: "Set Preview to a JavaScript call that opens your app's preview UI: the row highlights on hover and clicking anywhere (except the action buttons) runs it. Rendering the preview content is left to the app implementing the component — this example simply opens a Popover.",
-			Code:        examples.LoadExample("file_download_preview.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -390,7 +364,8 @@ func File() templ.Component {
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 					{Name: "Borderless", Type: "bool", Default: "false", Description: "Removes the border for embedding the file row inside another container"},
-					{Name: "Preview", Type: "string", Default: "", Description: "JavaScript expression run when the row is clicked (e.g. a call to the function opening your app's file preview); when set, the row highlights on hover and becomes clickable"},
+					{Name: "Hover", Type: "bool", Default: "false", Description: "Highlights the whole row with a background color on hover"},
+					{Name: "Preview", Type: "string", Default: "", Description: "JavaScript expression run when the row is clicked, e.g. props.ShowPopover(id) or a call to your app's own preview function; clicks on nested links and buttons are ignored"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -416,7 +391,7 @@ func File() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
