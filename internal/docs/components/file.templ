@@ -121,7 +121,7 @@ templ File() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				{Name: "Borderless", Type: "bool", Default: "false", Description: "Removes the border for embedding the file row inside another container"},
 				{Name: "Hover", Type: "bool", Default: "false", Description: "Highlights the whole row with a background color on hover"},
-				{Name: "Preview", Type: "string", Default: "", Description: "JavaScript expression run when the row is clicked, e.g. props.ShowPopover(id) or a call to your app's own preview function; clicks on nested links and buttons are ignored"},
+				{Name: "Preview", Type: "string", Default: "", Description: "JavaScript expression run when the row is clicked, e.g. props.ShowPopover(id)"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
