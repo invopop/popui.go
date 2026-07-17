@@ -24,3 +24,8 @@ func (p Popover) GenerateID() Popover {
 	p.ID = fmt.Sprintf("popover-%06d", rand.Intn(100000))
 	return p
 }
+
+// ShowPopover returns a JavaScript expression that opens the popover with the given ID.
+func ShowPopover(id string) string {
+	return "document.getElementById('" + id + "').showPopover()"
+}

@@ -365,6 +365,7 @@ func File() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 					{Name: "Borderless", Type: "bool", Default: "false", Description: "Removes the border for embedding the file row inside another container"},
 					{Name: "Hover", Type: "bool", Default: "false", Description: "Highlights the whole row with a background color on hover"},
+					{Name: "Preview", Type: "string", Default: "", Description: "JavaScript expression run when the row is clicked, e.g. props.ShowPopover(id)"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
