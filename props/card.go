@@ -43,22 +43,6 @@ type CardProgressBar struct {
 	HideCounter bool
 }
 
-// CardDashboard Templ component props
-type CardDashboard struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-}
-
-// CardDashboardItem Templ component props
-type CardDashboardItem struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-	Label      string
-	Value      string
-}
-
 // PercentValue returns the progress percentage, capped at 100.
 func (p CardProgressBar) PercentValue() int64 {
 	if p.Total == 0 {

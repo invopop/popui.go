@@ -46,10 +46,11 @@ func FieldsetCardExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = popui.Multiselect(props.Multiselect{
+			templ_7745c5c3_Err = popui.Select(props.Select{
+				Multiple:    true,
 				Name:        "categories",
 				Placeholder: "Select categories",
-				Options: []props.MultiselectOption{
+				Options: []props.SelectOption{
 					{Value: "document", Label: "Document", Selected: true},
 					{Value: "accounting", Label: "Accounting"},
 					{Value: "payments", Label: "Payments"},

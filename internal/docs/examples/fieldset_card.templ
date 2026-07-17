@@ -10,10 +10,11 @@ templ FieldsetCardExample() {
 		Title:       "Categories",
 		Description: "Select all that apply",
 	}) {
-		@popui.Multiselect(props.Multiselect{
+		@popui.Select(props.Select{
+			Multiple: true,
 			Name:        "categories",
 			Placeholder: "Select categories",
-			Options: []props.MultiselectOption{
+			Options: []props.SelectOption{
 				{Value: "document", Label: "Document", Selected: true},
 				{Value: "accounting", Label: "Accounting"},
 				{Value: "payments", Label: "Payments"},

@@ -31,8 +31,8 @@ Before writing any UI element, check whether PopUI already covers it:
 | Side navigation | `Sidebar` > `SidebarSection` > `SidebarItem` |
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
-| Segmented content card | `SegmentedCard` |
-| Metric display | `CardDashboard` > `CardDashboardItem` |
+| Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
+| Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `FileDownload` > `FileDownloadInfo` |
 | Data table | `Table` |
@@ -40,6 +40,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Text input | `Input` |
 | Multi-line text | `Textarea` |
 | Dropdown / select | `Select` |
+| Multi-select with tag chips | `Select` with `Multiple: true` |
 | Checkbox | `Checkbox` |
 | Toggle switch | `Checkbox` with `Variant: "switch"` |
 | Radio buttons | `Radio` |
@@ -54,7 +55,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
 | Expandable section | `Accordion` > `AccordionTrigger` + `AccordionContent` |
-| Dropdown/context actions | `ContextMenu` > `ContextMenuItem` |
+| Dropdown/context actions | `Menu` > `MenuItem` |
 | Floating content panel | `Popover` |
 | Key-value data display | `DescriptionList` > `DescriptionListItem` |
 | Tab navigation | `Tabs` |
@@ -63,7 +64,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Toast / success message | `Toast` |
 | In-app notification | `Notification` |
 | Empty / error state | `PageState` |
-| Country flag | `Flag` |
+| Country flag | `Image` with `https://assets.invopop.com/flags/<cc>.svg` |
 | Range slider | `Slider` |
 | Image | `Image` |
 | Inline icon | Any icon from `github.com/invopop/icons` |
@@ -91,7 +92,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a toggle / on-off switch" | `Checkbox` with `Variant: "switch"` |
 | "a status badge / pill" | `TagStatus` (color dot) or `StatusBadge` (icon outcome: success/failed/warning/running) |
 | "a modal or drawer" (if side panel) | `Aside` |
-| "a dropdown menu / three-dot menu" | `ContextMenu` |
+| "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `DescriptionList` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (bordered) or `FieldsetCard` (titled, tinted body) |
 | "an empty state / zero state" | `PageState` |
@@ -345,11 +346,16 @@ Common spacings in use:
 
 ## 5. Shadows
 
-Shadow system is minimal — only buttons use shadows. Cards and containers rely entirely on borders.
+Shadow system is minimal — buttons use their own shadows, and floating
+surfaces use the elevation scale below. Cards and in-flow containers rely
+entirely on borders.
 
 | Token | Use |
 |-------|-----|
 | `shadow` | Default shadow (card-level ambient) |
+| `shadow-sm` | Elevation: cards and rows (0 2px 20px @ 4%) |
+| `shadow-lg` | Elevation: panels and popovers (0 8px 30px @ 12%) |
+| `shadow-xl` | Elevation: dialogs and drawers (layered 28px + 88px) |
 | `shadow-button-default` | Default/secondary button |
 | `shadow-button-primary` | Primary button |
 | `shadow-none` | Explicit no-shadow override |
@@ -392,9 +398,11 @@ Cards are the primary content container. They combine a `Card` > `CardHeader` > 
 Card
 ├── CardHeader (avatar + title + subtitle)
 ├── CardContent (flexible content area)
-├── CardProgressBar (metric with progress)
-└── CardDashboard > CardDashboardItem (metrics grid)
+└── CardProgressBar (metric with progress)
 ```
+
+Metric grids are plain markup inside `CardContent` — a `ul` grid of stat
+tiles (see the Card docs "Dashboard" example).
 
 File attachments are the `File` family: `FileDownload` > `FileDownloadInfo`.
 
@@ -478,7 +486,7 @@ Breadcrumbs
 |-----------|-------------|
 | `Avatar` | Circular user avatar; `Size: "lg"` or default (small). Accepts `Initial` text or `Image` child |
 | `Accordion` | Native `details/summary` expandable sections |
-| `ContextMenu` | Trigger button + dropdown menu; supports `RightAlign` |
+| `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign` |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
@@ -488,7 +496,6 @@ Breadcrumbs
 | `PageState` | Empty/error state with illustration, title, description, CTA |
 | `Slider` | Range input |
 | `Tabs` | Tab navigation component |
-| `Flag` | Country flag via ISO 3166-1 alpha-2 code (requires `flag-icons` CSS) |
 
 ---
 

@@ -8,7 +8,6 @@ import (
 )
 
 templ Admin() {
-	// @css.Flag() - missing
 	@popui.App(props.App{
 		Title: "Invopop - Admin panel",
 		Description: here.Doc(`
@@ -136,7 +135,7 @@ templ liveWorkspaces() {
 						}
 						<span class="flex items-center gap-2 font-medium">
 							<span>Cyberdyne Mexico</span>
-							@popui.Flag(props.Flag{Country: "MX", Class: "mt-0.5"})
+							@popui.Image(props.Image{Src: "https://assets.invopop.com/flags/mx.svg", Alt: "MX", Class: "w-3.5 h-2.5 rounded-[1.5px] mt-0.5"})
 						</span>
 					</div>
 				</td>
@@ -158,7 +157,7 @@ templ liveWorkspaces() {
 						}
 						<span class="flex items-center gap-2 font-medium">
 							<span>Cyberdyne France</span>
-							@popui.Flag(props.Flag{Country: "FR", Class: "mt-0.5"})
+							@popui.Image(props.Image{Src: "https://assets.invopop.com/flags/fr.svg", Alt: "FR", Class: "w-3.5 h-2.5 rounded-[1.5px] mt-0.5"})
 						</span>
 					</div>
 				</td>

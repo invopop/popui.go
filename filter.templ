@@ -96,6 +96,10 @@ templ Filter(opts ...props.Filter) {
 			x-cloak
 			style="order: 10001"
 		></div>
+		// Consumer action cluster (e.g. table-settings buttons). Rendered
+		// after the separator; children needing a fixed position can set a
+		// flex order above 10001.
+		{ children... }
 		// Hidden submit button — keeps Enter-to-submit behaviour even
 		// when there are no visible <button type="submit"> children.
 		<button

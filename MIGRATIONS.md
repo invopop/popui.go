@@ -21,6 +21,11 @@ Entries are grouped by the release that removed them, newest first.
 | `popui.ButtonCopyLink`, `props.ButtonCopyLink` | compose two `popui.Button`s (copy + link) |
 | `popui.FileBadge`, `props.FileBadge` | `popui.Avatar` with `Color` + initials |
 | `popui.TagStatusIcon`, `props.TagStatusIcon` | renamed `popui.StatusBadge`, `props.StatusBadge` |
+| `popui.Multiselect`, `props.Multiselect`, `props.MultiselectOption` | `popui.Select` with `Multiple: true`, `props.SelectOption` (deprecated aliases still ship) |
+| `popui.ContextMenu`, `popui.ContextMenuItem`, `props.ContextMenu`, `props.ContextMenuItem` | renamed `popui.Menu`, `popui.MenuItem` (deprecated aliases still ship) |
+| `popui.SegmentedCardBody`, `popui.SegmentedCardContent` | `popui.CardDeck` with plain `Card` children (deprecated components still ship; `SegmentedCard`→`CardDeck`, `SegmentedCardHead`→`CardDeckHead`) |
+| `popui.Flag`, `props.Flag`, `css.Flag` (the `css` package) | `popui.Image` with `https://assets.invopop.com/flags/<cc>.svg` — see entry (deprecated `Flag` wrapper still ships) |
+| `popui.CardDashboard`, `popui.CardDashboardItem`, `props.CardDashboard`, `props.CardDashboardItem` | plain markup — see entry |
 | `popui.DropdownSelect`, `props.DropdownSelect`, `props.DropdownSelectOption` | none — see entry; option struct is `props.FilterOption` |
 | `popui.SidePanelList` family | `popui.DescriptionList` + `popui.DescriptionListItem` |
 | `popui.SidebarCollapsibleSection` | `popui.SidebarSection` (non-collapsing) |
@@ -117,6 +122,95 @@ name (`document-xml`, `document-pdf`, `document-png`, `accent`, `success`,
 Pure rename: component, props type, and the `data-tag-status-icon-*`
 attributes (now `data-status-badge-*`). Same `Status` vocabulary
 (`success`, `failed`, `warning`, `running`) and `Label` prop.
+
+### Multiselect → Select with Multiple
+
+Multi-selection is a `Select` variant now — same tag-chip combobox, same
+props (plus `Autofocus`, which only applies to the single variant).
+Deprecated `Multiselect`/`MultiselectOption` aliases still ship, so existing
+call sites keep compiling — migrate at leisure.
+
+```templ
+// before
+@popui.Multiselect(props.Multiselect{Name: "tags", Options: opts})
+// after
+@popui.Select(props.Select{Multiple: true, Name: "tags", Options: opts})
+```
+
+### Flag → Image with the assets CDN
+
+Country flags come from `https://assets.invopop.com/flags/<cc>.svg` (`<cc>`
+is the lowercase ISO 3166-1 alpha-2 code). The `css` package and its
+flag-icons stylesheet (`css.Flag()` in the head) are gone — remove that call.
+A deprecated `Flag` wrapper still ships and renders the CDN image, so
+existing `popui.Flag` call sites keep working without the stylesheet.
+
+```templ
+// before (plus @css.Flag() in the head)
+@popui.Flag(props.Flag{Country: "ES"})
+// after
+@popui.Image(props.Image{Src: "https://assets.invopop.com/flags/es.svg", Alt: "ES", Class: "w-3.5 h-2.5 rounded-[1.5px]"})
+```
+
+### SegmentedCard family → CardDeck with Card children
+
+`CardDeck` replaces the four-component SegmentedCard family: the deck is the
+tinted container (absorbing SegmentedCardBody's job), `CardDeckHead` is the
+label/action row, and the segments are plain `popui.Card` children (the deck
+rounds their corners to run concentric with its own). The deprecated
+SegmentedCard components still ship with their original markup.
+
+```templ
+// before
+@popui.SegmentedCard() {
+	@popui.SegmentedCardHead() { ... }
+	@popui.SegmentedCardBody() {
+		@popui.SegmentedCardContent() { ... }
+	}
+}
+// after
+@popui.CardDeck() {
+	@popui.CardDeckHead() { ... }
+	@popui.Card(props.Card{Class: "flex-row items-center gap-1.5 p-3"}) { ... }
+}
+```
+
+### CardDashboard / CardDashboardItem → plain markup
+
+The components were a thin wrapper over a grid of stat tiles; write the
+markup directly inside a `CardContent`:
+
+```templ
+// before
+@popui.CardDashboard() {
+	@popui.CardDashboardItem(props.CardDashboardItem{Label: "Revenue", Value: "$12.5k"})
+}
+// after
+<ul class="grid grid-cols-3 gap-x-3">
+	<li class="flex flex-col items-center py-3 px-2 rounded-md border border-border bg-background-default-secondary">
+		<p class="text-foreground-default-secondary text-sm">Revenue</p>
+		<p class="text-foreground text-xl font-medium">$12.5k</p>
+	</li>
+</ul>
+```
+
+### ContextMenu → Menu
+
+Pure rename — the component is an action menu opened from a trigger button,
+not a right-click context menu, and the old name was welded to its default
+kebab trigger. Same props (`ButtonLabel`, `ButtonVariant`, `RightAlign`),
+same markup. Deprecated `ContextMenu`/`ContextMenuItem` wrappers still ship.
+
+```templ
+// before
+@popui.ContextMenu() {
+	@popui.ContextMenuItem() { Edit }
+}
+// after
+@popui.Menu() {
+	@popui.MenuItem() { Edit }
+}
+```
 
 ### DropdownSelect — removed without direct replacement
 

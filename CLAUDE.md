@@ -18,7 +18,7 @@ Non-negotiables (from DESIGN.md, repeated here so they don't get missed):
 - Use existing PopUI components instead of writing raw `<button>`, `<input>`, `<select>`, `<form>`, `<table>`, `<nav>`, etc.
 - Use semantic tokens (`text-foreground`, `bg-background`, `border-border`, `text-foreground-default-secondary`, `bg-background-default-secondary`, …). No `bg-red-50`, `text-gray-500`, `text-white`, raw hex, etc.
 - Three font weights only: 400, 500, 600. No `font-bold`.
-- "Three-dot menu" is `popui.ContextMenu`, not a hand-rolled button.
+- "Three-dot menu" is `popui.Menu`, not a hand-rolled button.
 - Company/user logos with initials are `popui.Avatar`, not a styled `<div>`.
 - Token names are exactly as listed in DESIGN.md §2. There is no `text-foreground-default`, no `border-border-default` — it's `text-foreground` and `border-border`.
 

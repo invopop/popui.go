@@ -69,50 +69,7 @@ func CardDashboardExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-					if !templ_7745c5c3_IsBuffer {
-						defer func() {
-							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-							if templ_7745c5c3_Err == nil {
-								templ_7745c5c3_Err = templ_7745c5c3_BufErr
-							}
-						}()
-					}
-					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = popui.CardDashboardItem(props.CardDashboardItem{
-						Label: "Revenue",
-						Value: "$12.5k",
-					}).Render(ctx, templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = popui.CardDashboardItem(props.CardDashboardItem{
-						Label: "Orders",
-						Value: "243",
-					}).Render(ctx, templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = popui.CardDashboardItem(props.CardDashboardItem{
-						Label: "Customers",
-						Value: "89",
-					}).Render(ctx, templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					return nil
-				})
-				templ_7745c5c3_Err = popui.CardDashboard().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<ul class=\"grid grid-cols-3 gap-x-3\"><li class=\"flex flex-col items-center py-3 px-2 rounded-md border border-border bg-background-default-secondary\"><p class=\"text-foreground-default-secondary text-sm\">Revenue</p><p class=\"text-foreground text-xl font-medium\">$12.5k</p></li><li class=\"flex flex-col items-center py-3 px-2 rounded-md border border-border bg-background-default-secondary\"><p class=\"text-foreground-default-secondary text-sm\">Orders</p><p class=\"text-foreground text-xl font-medium\">243</p></li><li class=\"flex flex-col items-center py-3 px-2 rounded-md border border-border bg-background-default-secondary\"><p class=\"text-foreground-default-secondary text-sm\">Customers</p><p class=\"text-foreground text-xl font-medium\">89</p></li></ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

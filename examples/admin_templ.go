@@ -520,7 +520,7 @@ func liveWorkspaces() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = popui.Flag(props.Flag{Country: "MX", Class: "mt-0.5"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Image(props.Image{Src: "https://assets.invopop.com/flags/mx.svg", Alt: "MX", Class: "w-3.5 h-2.5 rounded-[1.5px] mt-0.5"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -586,7 +586,7 @@ func liveWorkspaces() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = popui.Flag(props.Flag{Country: "FR", Class: "mt-0.5"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Image(props.Image{Src: "https://assets.invopop.com/flags/fr.svg", Alt: "FR", Class: "w-3.5 h-2.5 rounded-[1.5px] mt-0.5"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

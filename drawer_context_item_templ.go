@@ -15,7 +15,7 @@ import (
 )
 
 // DrawerContextItem mirrors @invopop/popui Svelte DrawerContextItem.svelte.
-// Use it for option rows inside a Filter option list, ContextMenu, or
+// Use it for option rows inside a Filter option list, Menu, or
 // any other drawer-style list. See props.DrawerContextItem for the field
 // reference.
 //

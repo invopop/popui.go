@@ -72,10 +72,10 @@ var groups = []*Group{
 				Template: components.PageState(),
 			},
 			{
-				Title:    "Segmented Card",
-				Desc:     "Segmented card style with a tinted outer container wrapping a bordered inner content area.",
-				Path:     "segmented-card",
-				Template: components.SegmentedCard(),
+				Title:    "Card Deck",
+				Desc:     "Tinted container that stacks regular Cards into one visual unit.",
+				Path:     "card-deck",
+				Template: components.CardDeck(),
 			},
 			{
 				Title:    "Separator",
@@ -120,10 +120,10 @@ var groups = []*Group{
 				Template: components.Checkbox(),
 			},
 			{
-				Title:    "Context Menu",
-				Desc:     "A context menu that displays when a button is clicked.",
-				Path:     "context-menu",
-				Template: components.ContextMenu(),
+				Title:    "Menu",
+				Desc:     "A dropdown menu of actions that opens from a trigger button.",
+				Path:     "menu",
+				Template: components.Menu(),
 			},
 			{
 				Title:    "Description List",
@@ -150,12 +150,6 @@ var groups = []*Group{
 				Template: components.Filter(),
 			},
 			{
-				Title:    "Flag",
-				Desc:     "Display country flags using ISO 3166-1 alpha-2 country codes.",
-				Path:     "flag",
-				Template: components.Flag(),
-			},
-			{
 				Title:    "Form",
 				Desc:     "Form element with proper spacing and standard HTML form attributes for handling submissions.",
 				Path:     "form",
@@ -178,12 +172,6 @@ var groups = []*Group{
 				Desc:     "Form label element with optional hint tooltip.",
 				Path:     "label",
 				Template: components.Label(),
-			},
-			{
-				Title:    "Multiselect",
-				Desc:     "Dropdown for choosing multiple options, displayed as removable tag chips.",
-				Path:     "multiselect",
-				Template: components.Multiselect(),
 			},
 			{
 				Title:    "Notification",

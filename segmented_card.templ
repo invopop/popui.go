@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
+// Deprecated: use CardDeck with Card children instead.
 templ SegmentedCard(opts ...props.SegmentedCard) {
 	{{ p := props.First(opts) }}
 	@Card(props.Card{
@@ -19,6 +20,7 @@ templ SegmentedCard(opts ...props.SegmentedCard) {
 	}
 }
 
+// Deprecated: use CardDeckHead instead.
 templ SegmentedCardHead(opts ...props.SegmentedCardHead) {
 	{{ p := props.First(opts) }}
 	<div
@@ -35,6 +37,7 @@ templ SegmentedCardHead(opts ...props.SegmentedCardHead) {
 	</div>
 }
 
+// Deprecated: place Card children directly inside CardDeck instead.
 templ SegmentedCardBody(opts ...props.SegmentedCardBody) {
 	{{ p := props.First(opts) }}
 	<div
@@ -51,6 +54,7 @@ templ SegmentedCardBody(opts ...props.SegmentedCardBody) {
 	</div>
 }
 
+// Deprecated: use a plain Card inside CardDeck instead.
 templ SegmentedCardContent(opts ...props.SegmentedCardContent) {
 	{{ p := props.First(opts) }}
 	@CardContent(props.CardContent{

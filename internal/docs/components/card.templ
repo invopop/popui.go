@@ -43,7 +43,7 @@ templ Card() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Dashboard",
-		Description: "CardDashboard displays multiple metrics in a grid layout.",
+		Description: "Display multiple metrics with a plain grid of stat tiles inside CardContent — no dedicated component needed.",
 		Code:        examples.LoadExample("card_dashboard.templ"),
 	}) {
 		@examples.CardDashboardExample()
@@ -92,26 +92,6 @@ templ Card() {
 				{Name: "Current", Type: "int64", Default: "0", Description: "Current progress value"},
 				{Name: "Total", Type: "int64", Default: "0", Description: "Total/maximum value for progress"},
 				{Name: "HideCounter", Type: "bool", Default: "false", Description: "Hides the numeric counter display"},
-			},
-		})
-		@modules.APITable(modules.APITableProps{
-			Title:       "CardDashboard",
-			Description: "Grid layout for displaying multiple metrics. Expects CardDashboardItem components as children.",
-			Items: []modules.APITableItem{
-				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the dashboard element"},
-				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with dashboard styles"},
-				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-			},
-		})
-		@modules.APITable(modules.APITableProps{
-			Title:       "CardDashboardItem",
-			Description: "Individual metric item for CardDashboard.",
-			Items: []modules.APITableItem{
-				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
-				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
-				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-				{Name: "Label", Type: "string", Default: "", Description: "Label text for the metric"},
-				{Name: "Value", Type: "string", Default: "", Description: "Value text for the metric"},
 			},
 		})
 	}

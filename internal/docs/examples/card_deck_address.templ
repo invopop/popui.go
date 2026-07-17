@@ -1,0 +1,42 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CardDeckAddressExample() {
+	@popui.CardDeck() {
+		@popui.CardDeckHead() {
+			<span>Address</span>
+			@popui.Button(props.Button{Size: "sm"}) {
+				Manage
+			}
+		}
+		@popui.Card(props.Card{Class: "p-3"}) {
+			@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-3"}) {
+				@popui.DescriptionListItem(props.DescriptionListItem{
+					Label: "Company legal name",
+					Value: "Invopop S.L. Billing",
+				})
+				@popui.DescriptionListItem(props.DescriptionListItem{
+					Label: "Billing email",
+					Value: "juan@invopop.com",
+				})
+				@popui.DescriptionListItem() {
+					@popui.DT() {
+						Address
+					}
+					@popui.DD(props.DD{Class: "flex flex-col"}) {
+						<span>Calle Pradillo 42, Madrid</span>
+						<span>Madrid, 28002, ES</span>
+					}
+				}
+				@popui.DescriptionListItem(props.DescriptionListItem{
+					Label: "Tax ID",
+					Value: "ESX3157928M",
+				})
+			}
+		}
+	}
+}

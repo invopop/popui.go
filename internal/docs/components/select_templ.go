@@ -203,20 +203,178 @@ func Select() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SelectMultipleExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Multiple",
+			Description: "Set Multiple to select any number of options, shown as removable tag chips inside the field. Each value is submitted under Name via a hidden native select, and the field is fully keyboard operable.",
+			Code:        examples.LoadExample("select_multiple.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SelectMultipleWithLabelExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Multiple With Label",
+			Description: "Use the Label prop for a simple text label above the field.",
+			Code:        examples.LoadExample("select_multiple_with_label.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SelectMultipleWithDescriptionExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Multiple With Description",
+			Description: "Give an option a Description to render dimmed text next to its label in the dropdown.",
+			Code:        examples.LoadExample("select_multiple_with_description.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SelectMultipleSearchableExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Multiple Searchable",
+			Description: "Set Searchable to add a filter box inside the dropdown. Useful when there are many options.",
+			Code:        examples.LoadExample("select_multiple_searchable.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SelectMultipleDisabledExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Multiple Disabled",
+			Description: "The field can be disabled to prevent user interaction. Selected values are still displayed but cannot be changed.",
+			Code:        examples.LoadExample("select_multiple_disabled.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SelectMultipleWithErrorExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Multiple With Error",
+			Description: "The field can display error messages for validation feedback.",
+			Code:        examples.LoadExample("select_multiple_with_error.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Select",
-				Description: "Dropdown selection control with support for labels, validation, and multiple selection.",
+				Description: "Dropdown selection control. Renders a native single-choice select by default, or a tag-chip combobox with Multiple.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the select element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with select styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-					{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission"},
-					{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the select"},
-					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the select"},
-					{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the select on page load"},
-					{Name: "Multiple", Type: "bool", Default: "false", Description: "Enables multiple option selection"},
-					{Name: "Required", Type: "bool", Default: "false", Description: "Marks the select as required for form validation"},
-					{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the select"},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier. The Multiple variant auto-generates one when omitted so the label links correctly"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the field styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.), applied to the select or the combobox control"},
+					{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission. With Multiple, each selected value is submitted under this name"},
+					{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the field"},
+					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the field"},
+					{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the select on page load (single variant only)"},
+					{Name: "Multiple", Type: "bool", Default: "false", Description: "Switches to the multi-selection tag-chip combobox variant"},
+					{Name: "Required", Type: "bool", Default: "false", Description: "Marks the field as required for form validation"},
+					{Name: "Placeholder", Type: "string", Default: "\"Select options\"", Description: "Text shown inside the field when nothing is selected (Multiple variant only)"},
+					{Name: "Searchable", Type: "bool", Default: "false", Description: "Adds a search box inside the dropdown to filter options (Multiple variant only)"},
+					{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the field"},
 					{Name: "Options", Type: "[]SelectOption", Default: "", Description: "Array of options to render. When provided, child option elements are ignored"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
@@ -233,6 +391,7 @@ func Select() templ.Component {
 				Items: []modules.APITableItem{
 					{Name: "Value", Type: "string", Default: "", Description: "The value attribute of the option element"},
 					{Name: "Label", Type: "string", Default: "", Description: "The text displayed for the option"},
+					{Name: "Description", Type: "string", Default: "", Description: "Dimmed text rendered next to the label in the dropdown (Multiple variant only)"},
 					{Name: "Selected", Type: "bool", Default: "false", Description: "Whether the option is initially selected"},
 					{Name: "Disabled", Type: "bool", Default: "false", Description: "Whether the option is disabled"},
 				},
@@ -259,7 +418,7 @@ func Select() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
