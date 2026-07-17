@@ -17,7 +17,7 @@ Entries are grouped by the release that removed them, newest first.
 | `popui.CardFileInfo`, `props.CardFileInfo` | `popui.FileDownloadInfo`, `props.FileDownloadInfo` |
 | `popui.CardFieldset`, `props.CardFieldset` | `popui.FieldsetCard`, `props.FieldsetCard` |
 | `popui.FlashMessage`, `props.FlashMessage` | `popui.Toast`, `props.Toast` |
-| `popui.ButtonCopy`, `props.ButtonCopy` | `popui.Button` with `props.Button.Copy` |
+| `popui.ButtonCopy`, `props.ButtonCopy` | `popui.Button` with `props.Button.Copy` (deprecated wrapper still ships) |
 | `popui.ButtonCopyLink`, `props.ButtonCopyLink` | compose two `popui.Button`s (copy + link) |
 | `popui.FileBadge`, `props.FileBadge` | `popui.Avatar` with `Color` + initials |
 | `popui.TagStatusIcon`, `props.TagStatusIcon` | renamed `popui.StatusBadge`, `props.StatusBadge` |
@@ -71,7 +71,9 @@ works with Toast.
 
 ### ButtonCopy → Button with Copy
 
-Copy-to-clipboard is a `Button` capability now.
+Copy-to-clipboard is a `Button` capability now. A deprecated `ButtonCopy`
+wrapper that forwards to it still ships, so existing call sites keep
+compiling — migrate at leisure.
 
 ```templ
 // before
@@ -169,7 +171,34 @@ All were deprecated aliases of the App layout system:
 `scripts.ButtonCopy()` (a standalone `<script>` for copy buttons) is
 redundant: `popui.EmbeddedJS()` already wires copy buttons via popui.js.
 
-## Docs-site anchors (same release)
+## July 2026 Tabs/Table consolidation (commit b926151, pre-#53)
+
+| Removed | Replacement |
+|---|---|
+| `popui.SegmentedTabs`, `props.SegmentedTabs` | `popui.Tabs` with `Variant: "pill"` |
+| `popui.SegmentedTabView`, `props.SegmentedTabView` | `popui.Tabs` + one `popui.Tab` panel per tab |
+| `popui.TableCell`, `props.TableCell` | plain `<td>` cells inside `popui.Table` |
+| `popui.SidePanelCopyRow`, `popui.SidePanelActionRow` | `popui.DescriptionListItem` with `Actions` |
+
+### SegmentedTabs / SegmentedTabView → Tabs with Variant "pill"
+
+The segmented control (tinted track, active segment raised) is the "pill"
+variant of the consolidated Tabs:
+
+```templ
+// before
+@popui.SegmentedTabs(props.SegmentedTabs{Tabs: [...]})
+// after
+@popui.Tabs(props.Tabs{Variant: "pill", Tabs: []props.TabItem{
+	{Value: "files", Label: "Files"},
+	{Value: "activity", Label: "Activity"},
+}})
+```
+
+Panel content per tab renders through `popui.Tab(props.Tab{Value: "files"})`
+children.
+
+## Docs-site anchors (July 2026 consolidation)
 
 Sidebar groups changed: `#guides-*` pages are now `#foundations-*`
 (`#guides-icons` → `#foundations-icons`, `#guides-tokens` →
