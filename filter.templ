@@ -150,7 +150,7 @@ templ filterAddMenu(inputs []props.FilterInput) {
 			popover
 			:id="$id('filter-menu')"
 			:style="'position-anchor: --filter-menu-' + $id('filter-menu')"
-			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background"
+			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg"
 		>
 			<ul>
 				for _, in := range inputs {
@@ -323,7 +323,7 @@ templ filterInlineOptions(in props.FilterInput) {
 			x-show="open"
 			x-cloak
 			style="top:100%;z-index:50"
-			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0"
+			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0 shadow-lg"
 		>
 			for i, opt := range in.Options {
 				@DrawerContextItem(props.DrawerContextItem{
@@ -380,7 +380,7 @@ templ filterRangeCalendar(in props.FilterInput) {
 			x-show="open"
 			x-cloak
 			style="top:100%;z-index:50"
-			class="context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden"
+			class="context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden shadow-lg"
 		>
 			@Calendar()
 		</div>

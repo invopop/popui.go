@@ -368,7 +368,7 @@ func filterAddMenu(inputs []props.FilterInput) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div popover :id=\"$id('filter-menu')\" :style=\"'position-anchor: --filter-menu-' + $id('filter-menu')\" class=\"context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background\"><ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div popover :id=\"$id('filter-menu')\" :style=\"'position-anchor: --filter-menu-' + $id('filter-menu')\" class=\"context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg\"><ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -873,7 +873,7 @@ func filterInlineOptions(in props.FilterInput) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, " x-show=\"open\" x-cloak style=\"top:100%;z-index:50\" class=\"context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, " x-show=\"open\" x-cloak style=\"top:100%;z-index:50\" class=\"context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0 shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -976,7 +976,7 @@ func filterRangeCalendar(in props.FilterInput) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</span> <span x-show=\"summary\" x-text=\"summary\" class=\"font-medium text-base text-foreground whitespace-nowrap\"></span></div><div x-ref=\"panel\" onmousedown=\"event.preventDefault()\" x-show=\"open\" x-cloak style=\"top:100%;z-index:50\" class=\"context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</span> <span x-show=\"summary\" x-text=\"summary\" class=\"font-medium text-base text-foreground whitespace-nowrap\"></span></div><div x-ref=\"panel\" onmousedown=\"event.preventDefault()\" x-show=\"open\" x-cloak style=\"top:100%;z-index:50\" class=\"context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
