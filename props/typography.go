@@ -20,10 +20,10 @@ type Title struct {
 // an optional secondary description, stacked by default or arranged on one
 // baseline with Horizontal.
 type TitleGroup struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-	Title      string
+	ID          string
+	Class       string
+	Attributes  templ.Attributes
+	Title       string
 	Description string
 	// Horizontal places the description next to the title on the same
 	// baseline, separated by a middot, instead of stacking it below.

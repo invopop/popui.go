@@ -15,4 +15,3 @@ type Fieldset struct {
 	Legend     string
 	Variant    string
 }
-
