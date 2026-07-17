@@ -554,7 +554,7 @@ func selectMultiple(prp props.Select) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span> <span class=\"multiselect-arrow ml-auto shrink-0 size-5 transition-transform\" :class=\"{ 'rotate-180': open }\"></span></button></div><div popover x-ref=\"panel\" :id=\"$id('multiselect')\" :style=\"'position-anchor: --' + $id('multiselect')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span> <span class=\"multiselect-arrow ml-auto shrink-0 size-5 transition-transform\" :class=\"{ 'rotate-180': open }\"></span></button></div><div popover x-ref=\"panel\" :id=\"$id('multiselect')\" :style=\"'position-anchor: --' + $id('multiselect')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

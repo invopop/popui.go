@@ -208,7 +208,7 @@ templ selectMultiple(prp props.Select) {
 			:style="'position-anchor: --' + $id('multiselect')"
 			@toggle="onToggle($event)"
 			@keydown="onKeydown($event)"
-			class="multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background"
+			class="multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
 		>
 			if prp.Searchable {
 				<div class="p-1">
