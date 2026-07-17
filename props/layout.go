@@ -56,11 +56,6 @@ type Body struct {
 	Attributes templ.Attributes
 }
 
-// PopupLayout Templ component props
-type PopupLayout struct {
-	Title string
-}
-
 // Import defines a single module specifier mapping for an import map.
 // See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap
 type Import struct {

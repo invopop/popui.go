@@ -1,0 +1,19 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ButtonCopyToClipboardExample() {
+	<div class="flex items-center gap-4">
+		@popui.Button(props.Button{
+			Copy: "go get github.com/invopop/popui.go",
+		})
+		@popui.Button(props.Button{
+			Copy:             "123e4567-e89b-12d3-a456-426614174000",
+			CopyPrefixLength: 8,
+			CopySuffixLength: 4,
+		})
+	</div>
+}

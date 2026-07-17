@@ -1,0 +1,84 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TableStickyExample() {
+	@popui.Table(props.Table{
+		RootClass:        "max-h-64 overflow-auto",
+		ScrollHorizontal: true,
+		StickyColumn:     true,
+		StickyHeader:     true,
+		Resizable:        true,
+	}) {
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Role</th>
+				<th>Team</th>
+				<th>Location</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>usr001</td>
+				<td>John Doe</td>
+				<td>john@example.com</td>
+				<td>Admin</td>
+				<td>Platform</td>
+				<td>Berlin</td>
+				<td>Active</td>
+			</tr>
+			<tr>
+				<td>usr002</td>
+				<td>Jane Smith</td>
+				<td>jane@example.com</td>
+				<td>User</td>
+				<td>Billing</td>
+				<td>Madrid</td>
+				<td>Active</td>
+			</tr>
+			<tr>
+				<td>usr003</td>
+				<td>Bob Johnson</td>
+				<td>bob@example.com</td>
+				<td>Editor</td>
+				<td>Content</td>
+				<td>-</td>
+				<td>Invited</td>
+			</tr>
+			<tr>
+				<td>usr004</td>
+				<td>Alice Brown</td>
+				<td>alice@example.com</td>
+				<td>Admin</td>
+				<td>Platform</td>
+				<td>Lisbon</td>
+				<td>Active</td>
+			</tr>
+			<tr>
+				<td>usr005</td>
+				<td>Charlie Davis</td>
+				<td>charlie@example.com</td>
+				<td>User</td>
+				<td>Support</td>
+				<td>Paris</td>
+				<td>Suspended</td>
+			</tr>
+			<tr>
+				<td>usr006</td>
+				<td>Dana Evans</td>
+				<td>dana@example.com</td>
+				<td>Editor</td>
+				<td>Content</td>
+				<td>Rome</td>
+				<td>Active</td>
+			</tr>
+		</tbody>
+	}
+}

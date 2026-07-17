@@ -1,0 +1,33 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ToastDescriptionExample() {
+	<div class="flex flex-wrap gap-2">
+		@popui.Button(props.Button{
+			Attributes: templ.Attributes{"data-toast-trigger": "toast-run"},
+		}) {
+			Run workflow
+		}
+		@popui.Button(props.Button{
+			Attributes: templ.Attributes{"data-toast-trigger": "toast-run-failed"},
+		}) {
+			Fail workflow
+		}
+	</div>
+	@popui.Toast(props.Toast{
+		ID:          "toast-run",
+		Type:        props.ToastTypeSuccess,
+		Message:     "Run workflow",
+		Description: "Triggered “Send invoice”",
+	})
+	@popui.Toast(props.Toast{
+		ID:          "toast-run-failed",
+		Type:        props.ToastTypeError,
+		Message:     "Run workflow failed",
+		Description: "Triggered “Send invoice”",
+	})
+}

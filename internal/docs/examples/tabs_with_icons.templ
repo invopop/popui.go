@@ -7,18 +7,9 @@ import (
 )
 
 templ TabsWithIconsExample() {
-	@popui.Tabs(props.Tabs{}) {
-		@popui.Tab(props.Tab{Active: true}) {
-			@icons.User()
-			Account
-		}
-		@popui.Tab(props.Tab{}) {
-			@icons.Settings()
-			Settings
-		}
-		@popui.Tab(props.Tab{}) {
-			@icons.Lock()
-			Privacy
-		}
-	}
+	@popui.Tabs(props.Tabs{Tabs: []props.TabItem{
+		{Value: "account", Label: "Account", Icon: icons.User()},
+		{Value: "settings", Label: "Settings", Icon: icons.Settings()},
+		{Value: "privacy", Label: "Privacy", Icon: icons.Lock()},
+	}})
 }

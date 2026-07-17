@@ -1,0 +1,54 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Menu() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("menu.templ"),
+	}) {
+		@examples.MenuExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Right Aligned",
+		Description: "Align the menu to the right side of the button",
+		Code:        examples.LoadExample("menu_right_aligned.templ"),
+	}) {
+		@examples.MenuRightAlignedExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Custom Trigger",
+		Description: "Set Trigger to open the menu from any component — an avatar, an icon, a styled row — instead of the default kebab button. The trigger content is wrapped in an unstyled button carrying the popover wiring, so pass non-interactive content.",
+		Code:        examples.LoadExample("menu_custom_trigger.templ"),
+	}) {
+		@examples.MenuCustomTriggerExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Menu",
+			Description: "The main menu component that displays a menu.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Optional identifier for the container. If not provided, Alpine.js x-id generates unique IDs automatically for each instance", Required: false},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
+				{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
+				{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
+				{Name: "Trigger", Type: "templ.Component", Default: "", Description: "Replaces the default button with any component as the menu opener. ButtonLabel and ButtonVariant are ignored when set"},
+				{Name: "RightAlign", Type: "bool", Default: "false", Description: "Align the menu to the right side of the button"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "MenuItem",
+			Description: "Individual menu item within the menu.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
+			},
+		})
+	}
+}

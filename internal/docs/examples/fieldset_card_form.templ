@@ -1,0 +1,40 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ FieldsetCardFormExample() {
+	@popui.Fieldset(props.Fieldset{
+		Legend:  "URLs",
+		Variant: props.FieldsetVariantCard,
+	}) {
+		<div class="grid grid-cols-2 gap-4">
+			@popui.Input(props.Input{
+				ID:          "config-url",
+				Name:        "config_url",
+				Label:       "Config URL",
+				Placeholder: "https://",
+			})
+			@popui.Input(props.Input{
+				ID:          "launch-url",
+				Name:        "launch_url",
+				Label:       "Launch URL",
+				Placeholder: "https://",
+			})
+			@popui.Input(props.Input{
+				ID:          "info-url",
+				Name:        "info_url",
+				Label:       "Info URL",
+				Placeholder: "https://",
+			})
+			@popui.Input(props.Input{
+				ID:          "api-url",
+				Name:        "api_url",
+				Label:       "API URL",
+				Placeholder: "https://",
+			})
+		</div>
+	}
+}

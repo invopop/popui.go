@@ -1,0 +1,16 @@
+package popui
+
+import "github.com/invopop/popui.go/props"
+
+// Multiselect forwards to Select's Multiple variant and is kept so upgrading
+// consumers don't break on the consolidation.
+//
+// Deprecated: use Select with props.Select.Multiple instead.
+templ Multiselect(p ...props.Multiselect) {
+	@Select(selectWithMultiple(props.First(p)))
+}
+
+func selectWithMultiple(p props.Select) props.Select {
+	p.Multiple = true
+	return p
+}

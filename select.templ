@@ -1,81 +1,396 @@
 package popui
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Select provides a select element. By default it renders a native dropdown control
-// with custom styling.
+// Select provides a select element. By default it renders a native dropdown
+// control with custom styling; with Multiple it renders a select-like
+// combobox where any number of options can be chosen, shown as removable tag
+// chips inside the field (Alpine.js + the native HTML popover API).
 //
-// If the Label property is provided, a simple label will be rendered above the select.
-// Options can be provided either via the Options property in props.Select or by using
-// the children slot for option elements.
+// If the Label property is provided, a simple label will be rendered above
+// the field. Options can be provided via the Options property; the native
+// single variant alternatively accepts option elements via the children
+// slot.
+//
+// The Multiple variant is fully keyboard operable: the trigger is an ARIA
+// combobox that owns a listbox; Arrow keys move the active option,
+// Enter/Space toggle it, Home/End jump to the ends, and Escape closes the
+// dropdown. Its values submit under Name via a visually hidden native
+// <select multiple>, so standard form submission and required validation
+// work without extra wiring.
 templ Select(p ...props.Select) {
 	{{ prp := props.First(p) }}
-	<div class="flex flex-col space-y-2">
+	if prp.Multiple {
+		@selectMultiple(prp.GenerateID())
+	} else {
+		<div class="flex flex-col space-y-2">
+			if prp.Label != "" {
+				@Label(props.Label{ID: prp.ID}) {
+					{ prp.Label }
+				}
+			}
+			<select
+				id={ prp.ID }
+				class={ tailwind.Merge(
+					classes.FormField(),
+					"pl-2 h-8 pr-9",
+					classes.FormFieldState(!prp.Error.Empty()),
+					prp.Class,
+				) }
+				data-select-arrow
+				if prp.Disabled {
+					disabled
+				}
+				if prp.Autofocus {
+					autofocus
+				}
+				if prp.Required {
+					required
+				}
+				if prp.Name != "" {
+					name={ prp.Name }
+				}
+				{ prp.Attributes... }
+			>
+				if prp.Options != nil {
+					for _, option := range prp.Options {
+						<option
+							value={ option.Value }
+							if option.Selected {
+								selected
+							}
+							if option.Disabled {
+								disabled
+							}
+						>
+							{ option.Label }
+						</option>
+					}
+				} else {
+					{ children... }
+				}
+			</select>
+			if !prp.Error.Empty() {
+				@InputError(prp.Error)
+			}
+		</div>
+	}
+}
+
+// selectMultiple renders the Multiple variant: a tag-chip combobox backed by
+// a visually hidden native <select multiple> for form submission.
+templ selectMultiple(prp props.Select) {
+	// relative keeps the sr-only <select> (position: absolute) contained by
+	// the component: without a positioned ancestor its containing block is
+	// the body, where it stretches the page's scroll area and lets the
+	// viewport scroll past the app.
+	<div
+		class="relative flex flex-col space-y-2 w-full"
+		x-data={ selectMultipleData(prp) }
+		x-id="['multiselect']"
+		x-modelable="selected"
+	>
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID}) {
 				{ prp.Label }
 			}
 		}
 		<select
-			id={ prp.ID }
-			class={ tailwind.Merge(
-					classes.FormField(),
-					"pl-2",
-					selectHeightClasses(prp),
-					classes.FormFieldState(!prp.Error.Empty()),
-					prp.Class,
-				) }
-			if !prp.Multiple {
-				data-select-arrow
-			}
-			if prp.Disabled {
-				disabled
-			}
-			if prp.Autofocus {
-				autofocus
-			}
-			if prp.Multiple {
-				multiple
+			x-model="selected"
+			multiple
+			class="sr-only"
+			tabindex="-1"
+			aria-hidden="true"
+			if prp.Name != "" {
+				name={ prp.Name }
 			}
 			if prp.Required {
 				required
 			}
-			if prp.Name != "" {
-				name={ prp.Name }
+			if prp.Disabled {
+				disabled
 			}
-			{ prp.Attributes... }
 		>
-			if prp.Options != nil {
-				for _, option := range prp.Options {
-					<option
-						value={ option.Value }
-						if option.Selected {
-							selected
-						}
-						if option.Disabled {
-							disabled
-						}
-					>
-						{ option.Label }
-					</option>
-				}
-			} else {
-				{ children... }
+			for _, option := range prp.Options {
+				<option
+					value={ option.Value }
+					if option.Selected {
+						selected
+					}
+				>
+					{ option.Label }
+				</option>
 			}
 		</select>
+		<div
+			x-ref="field"
+			:style="'anchor-name: --' + $id('multiselect')"
+			class={
+				tailwind.Merge(
+					classes.FormField(),
+					classes.FormFieldState(!prp.Error.Empty()),
+					"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5 mb-0",
+					classes.If(prp.Disabled, "cursor-not-allowed bg-background-default-secondary"),
+					prp.Class,
+				),
+			}
+		>
+			<template x-for="value in selected" :key="value">
+				<span
+					class={
+						tailwind.Merge(
+							"inline-flex items-center gap-1 rounded h-6 bg-background-default-secondary pl-2 text-sm font-medium text-foreground",
+							classes.If(prp.Disabled, "pr-2"),
+						),
+					}
+					if !prp.Disabled {
+						:class="optionDisabled(value) ? 'pr-2' : 'pr-1'"
+					}
+				>
+					<span x-text="labelFor(value)"></span>
+					if !prp.Disabled {
+						<template x-if="!optionDisabled(value)">
+							<button
+								type="button"
+								class="flex items-center text-foreground-default-secondary hover:text-foreground"
+								:aria-label="'Remove ' + labelFor(value)"
+								@click="remove(value)"
+							>
+								@icons.Close()
+							</button>
+						</template>
+					}
+				</span>
+			</template>
+			<button
+				type="button"
+				if prp.ID != "" {
+					id={ prp.ID }
+				}
+				role="combobox"
+				aria-haspopup="listbox"
+				:aria-expanded="open"
+				:aria-controls="$id('multiselect') + '-listbox'"
+				:aria-activedescendant="activeId"
+				:popovertarget="$id('multiselect')"
+				@keydown="onKeydown($event)"
+				if prp.Required {
+					aria-required="true"
+				}
+				if prp.Disabled {
+					disabled
+				}
+				class="flex flex-1 items-center gap-1 min-w-12 bg-transparent outline-none text-left text-base text-foreground disabled:cursor-not-allowed"
+				{ prp.Attributes... }
+			>
+				<span x-show="selected.length === 0" class="truncate text-foreground-default-tertiary">
+					if prp.Placeholder != "" {
+						{ prp.Placeholder }
+					} else {
+						Select options
+					}
+				</span>
+				<span class="multiselect-arrow ml-auto shrink-0 size-5 transition-transform" :class="{ 'rotate-180': open }"></span>
+			</button>
+		</div>
+		<div
+			popover
+			x-ref="panel"
+			:id="$id('multiselect')"
+			:style="'position-anchor: --' + $id('multiselect')"
+			@toggle="onToggle($event)"
+			@keydown="onKeydown($event)"
+			class="multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
+		>
+			if prp.Searchable {
+				<div class="p-1">
+					@Input(props.Input{
+						Type:        "search",
+						Placeholder: "Search…",
+						Size:        props.InputSizeSmall,
+						Icon:        icons.Search(),
+						Attributes: templ.Attributes{
+							"x-ref":                  "search",
+							"x-model":                "query",
+							"@input":                 "$nextTick(() => { active = -1; moveActive(1) })",
+							":aria-controls":         "$id('multiselect') + '-listbox'",
+							":aria-activedescendant": "activeId",
+							"aria-autocomplete":      "list",
+						},
+					})
+				</div>
+			}
+			<ul
+				x-ref="list"
+				tabindex="-1"
+				role="listbox"
+				aria-multiselectable="true"
+				:id="$id('multiselect') + '-listbox'"
+				:aria-activedescendant="activeId"
+				class="max-h-60 overflow-y-auto overflow-x-hidden outline-none"
+			>
+				<template x-for="(option, index) in filtered" :key="option.value">
+					<li
+						role="option"
+						:id="$id('multiselect') + '-opt-' + index"
+						:aria-selected="isSelected(option.value)"
+						:aria-disabled="option.disabled"
+						:class="{ 'opacity-40 pointer-events-none': option.disabled, 'bg-background-default-secondary': active === index }"
+						class="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer"
+						@click="toggle(option)"
+						@mouseenter="active = index"
+					>
+						<span
+							class="flex items-center justify-center w-4 h-4 shrink-0 rounded border [&_svg]:size-3"
+							:class="isSelected(option.value) ? 'bg-background-accent border-border-selected-bold text-foreground-inverse' : 'border-border-default-secondary text-transparent'"
+						>
+							@selectCheckIcon()
+						</span>
+						<span class="flex items-baseline gap-1.5 min-w-0">
+							<span class="text-base text-foreground shrink-0" x-text="option.label"></span>
+							<template x-if="option.description">
+								<span class="flex items-baseline gap-1.5 min-w-0 flex-1 text-base text-foreground-default-secondary">
+									<span class="shrink-0" aria-hidden="true">·</span>
+									<span class="truncate min-w-0 flex-1" x-text="option.description"></span>
+								</span>
+							</template>
+						</span>
+					</li>
+				</template>
+				<li role="presentation" x-show="filtered.length === 0" class="px-2 py-1.5 text-base text-foreground-default-tertiary">
+					No options found
+				</li>
+			</ul>
+		</div>
 		if !prp.Error.Empty() {
 			@InputError(prp.Error)
 		}
 	</div>
 }
 
-func selectHeightClasses(prp props.Select) string {
-	return tailwind.Merge(
-		classes.If(!prp.Multiple, "h-8 pr-9"),
-		classes.If(prp.Multiple, "h-auto pr-2"),
-	)
+// selectCheckIcon renders the tick shown inside a selected option's checkbox
+// indicator. It inherits its colour from the parent via currentColor.
+templ selectCheckIcon() {
+	<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path d="M13 4.5L6.5 11.5L3 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+	</svg>
+}
+
+// selectMultipleData builds the Alpine.js x-data object for the Multiple
+// variant, seeding it with the available options and the initially selected
+// values and providing the selection + keyboard navigation behaviour.
+func selectMultipleData(p props.Select) string {
+	type jsOption struct {
+		Value       string `json:"value"`
+		Label       string `json:"label"`
+		Description string `json:"description"`
+		Disabled    bool   `json:"disabled"`
+	}
+	opts := make([]jsOption, 0, len(p.Options))
+	selected := make([]string, 0)
+	for _, o := range p.Options {
+		opts = append(opts, jsOption{Value: o.Value, Label: o.Label, Description: o.Description, Disabled: o.Disabled})
+		if o.Selected {
+			selected = append(selected, o.Value)
+		}
+	}
+	optsJSON, _ := json.Marshal(opts)
+	selJSON, _ := json.Marshal(selected)
+	return fmt.Sprintf(`{
+	options: %s,
+	selected: %s,
+	query: '',
+	open: false,
+	active: -1,
+	get filtered() {
+		const q = this.query.trim().toLowerCase()
+		if (!q) return this.options
+		return this.options.filter(o => o.label.toLowerCase().includes(q))
+	},
+	get activeId() {
+		if (this.active < 0 || !this.filtered[this.active]) return null
+		return this.$id('multiselect') + '-opt-' + this.active
+	},
+	isSelected(value) { return this.selected.includes(value) },
+	optionDisabled(value) {
+		const o = this.options.find(o => o.value === value)
+		return o ? !!o.disabled : false
+	},
+	labelFor(value) {
+		const o = this.options.find(o => o.value === value)
+		return o ? o.label : value
+	},
+	toggle(option) {
+		if (option.disabled) return
+		const i = this.selected.indexOf(option.value)
+		if (i === -1) { this.selected.push(option.value) } else { this.selected.splice(i, 1) }
+	},
+	remove(value) {
+		if (this.optionDisabled(value)) return
+		const i = this.selected.indexOf(value)
+		if (i !== -1) this.selected.splice(i, 1)
+	},
+	toggleActive() {
+		const o = this.filtered[this.active]
+		if (o) this.toggle(o)
+	},
+	moveActive(dir) {
+		const n = this.filtered.length
+		if (!n) { this.active = -1; return }
+		let i = this.active
+		for (let s = 0; s < n; s++) {
+			i = (i + dir + n) %% n
+			if (!this.filtered[i].disabled) { this.active = i; break }
+		}
+		this.scrollActiveIntoView()
+	},
+	firstActive() { this.active = -1; this.moveActive(1) },
+	lastActive() { this.active = this.filtered.length; this.moveActive(-1) },
+	scrollActiveIntoView() {
+		this.$nextTick(() => {
+			const el = document.getElementById(this.activeId)
+			if (el) el.scrollIntoView({ block: 'nearest' })
+		})
+	},
+	onKeydown(e) {
+		if (e.key === 'ArrowDown') {
+			e.preventDefault()
+			if (!this.open) { this.$refs.panel.showPopover() } else { this.moveActive(1) }
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault()
+			if (!this.open) { this.$refs.panel.showPopover() } else { this.moveActive(-1) }
+		} else if (e.key === 'Home') {
+			if (this.open) { e.preventDefault(); this.firstActive() }
+		} else if (e.key === 'End') {
+			if (this.open) { e.preventDefault(); this.lastActive() }
+		} else if (e.key === 'Enter') {
+			if (this.open) { e.preventDefault(); this.toggleActive() }
+		} else if (e.key === ' ') {
+			if (this.open && e.target.tagName !== 'INPUT') { e.preventDefault(); this.toggleActive() }
+		} else if (e.key === 'Escape') {
+			if (this.open) { e.preventDefault(); this.$refs.panel.hidePopover() }
+		}
+	},
+	onToggle(e) {
+		if (e.newState === 'open') {
+			this.open = true
+			this.$refs.panel.style.minWidth = this.$refs.field.offsetWidth + 'px'
+			this.active = -1
+			this.moveActive(1)
+			this.$nextTick(() => { const t = this.$refs.search || this.$refs.list; if (t) t.focus() })
+		} else {
+			this.open = false
+			this.query = ''
+			this.active = -1
+		}
+	}
+}`, optsJSON, selJSON)
 }

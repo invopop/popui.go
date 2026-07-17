@@ -6,59 +6,92 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Tabs provides the tabs container element
+// Tabs renders a self-contained tabbed view: an Alpine scope holding the active
+// tab, a trigger row built from Tabs, then its children (one popui.Tab content
+// panel per tab). See props.Tabs. All switching logic lives here — clicking a
+// trigger both restyles the row and reveals the matching Tab panel. Omit the
+// children for a stand-alone trigger row.
 templ Tabs(p ...props.Tabs) {
 	{{ prp := props.First(p) }}
+	{{
+		model := prp.Model
+		if model == "" {
+			model = "tab"
+		}
+		active := prp.Active
+		if active == "" && len(prp.Tabs) > 0 {
+			active = prp.Tabs[0].Value
+		}
+	}}
 	<div
 		if prp.ID != "" {
 			id={ prp.ID }
 		}
-		role="tablist"
-		class={ tailwind.Merge(
-			"inline-flex w-full mb-4",
-			tabsClasses(prp),
-			prp.Class,
-		) }
+		x-data={ "{ " + model + ": '" + jsSingleQuoteEscape(active) + "' }" }
+		class={ tailwind.Merge("flex flex-col", prp.Class) }
+		{ prp.Attributes... }
+	>
+		<div
+			role="tablist"
+			class={ tailwind.Merge("inline-flex w-full mb-4", tabsClasses(prp.Variant)) }
+		>
+			for _, t := range prp.Tabs {
+				<button
+					type="button"
+					role="tab"
+					class={ tailwind.Merge(
+						"inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-base cursor-pointer",
+						tabTriggerClasses(prp.Variant),
+					) }
+					@click={ model + " = '" + jsSingleQuoteEscape(t.Value) + "'" }
+					:data-state={ model + " === '" + jsSingleQuoteEscape(t.Value) + "' ? 'active' : 'inactive'" }
+					:aria-selected={ model + " === '" + jsSingleQuoteEscape(t.Value) + "'" }
+				>
+					if t.Icon != nil {
+						@t.Icon
+					}
+					{ t.Label }
+				</button>
+			}
+		</div>
+		{ children... }
+	</div>
+}
+
+// Tab renders one tab's content panel inside a popui.Tabs, shown only while the
+// view's Model equals Value. See props.Tab.
+templ Tab(p ...props.Tab) {
+	{{ prp := props.First(p) }}
+	{{
+		model := prp.Model
+		if model == "" {
+			model = "tab"
+		}
+	}}
+	<div
+		if prp.ID != "" {
+			id={ prp.ID }
+		}
+		role="tabpanel"
+		x-show={ model + " === '" + jsSingleQuoteEscape(prp.Value) + "'" }
+		x-cloak
+		class={ tailwind.Merge("py-2", prp.Class) }
 		{ prp.Attributes... }
 	>
 		{ children... }
 	</div>
 }
 
-// Tab provides a single tab element
-// It is used inside a Tabs container.
-templ Tab(p ...props.Tab) {
-	{{ prp := props.First(p) }}
-	<button
-		if prp.ID != "" {
-			id={ prp.ID }
-		}
-		type="button"
-		role="tab"
-		class={ tailwind.Merge(
-			"inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-base cursor-pointer",
-			tabClasses(prp),
-			prp.Class,
-		) }
-		{ prp.Attributes... }
-		if prp.Active {
-			data-state="active"
-		}
-	>
-		{ children... }
-	</button>
-}
-
-func tabsClasses(prp props.Tabs) string {
+func tabsClasses(variant string) string {
 	return tailwind.Merge(
-		classes.If(prp.Variant != "pill", "gap-6 overflow-visible border-b border-border"),
-		classes.If(prp.Variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5"),
+		classes.If(variant != "pill", "gap-6 overflow-visible border-b border-border"),
+		classes.If(variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5"),
 	)
 }
 
-func tabClasses(prp props.Tab) string {
+func tabTriggerClasses(variant string) string {
 	return tailwind.Merge(
-		classes.If(prp.Variant != "pill", "relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"),
-		classes.If(prp.Variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm"),
+		classes.If(variant != "pill", "relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"),
+		classes.If(variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm"),
 	)
 }
