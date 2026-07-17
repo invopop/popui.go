@@ -70,7 +70,7 @@ templ getStarted() {
 			<h2 class="text-xl font-semibold tracking-[-0.16px] text-foreground">Installation</h2>
 			<p class="text-foreground-default-secondary">Install the PopUI Go package:</p>
 			@popui.ButtonGroup() {
-				@popui.ButtonCopy(props.ButtonCopy{Value: "go get github.com/invopop/popui.go", Size: "lg"})
+				@popui.Button(props.Button{Copy: "go get github.com/invopop/popui.go", Size: "lg"})
 			}
 		</div>
 		<div class="flex flex-col gap-3 w-full">
@@ -79,13 +79,13 @@ templ getStarted() {
 				In order to generate the CSS, the <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">tailwindcss</code> application must be installed in your system. We recommend using brew:
 			</p>
 			@popui.ButtonGroup() {
-				@popui.ButtonCopy(props.ButtonCopy{Value: "brew install tailwindcss", Size: "lg"})
+				@popui.Button(props.Button{Copy: "brew install tailwindcss", Size: "lg"})
 			}
 			<p class="text-foreground-default-secondary">
 				To generate all the resources, run:
 			</p>
 			@popui.ButtonGroup() {
-				@popui.ButtonCopy(props.ButtonCopy{Value: "go generate ./...", Size: "lg"})
+				@popui.Button(props.Button{Copy: "go generate ./...", Size: "lg"})
 			}
 		</div>
 		<div class="flex flex-col gap-3 w-full">
@@ -94,13 +94,13 @@ templ getStarted() {
 				Compile the project into the <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">public</code> directory with a single <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">index.html</code>:
 			</p>
 			@popui.ButtonGroup() {
-				@popui.ButtonCopy(props.ButtonCopy{Value: "go build ./cmd/popui && ./popui build", Size: "lg"})
+				@popui.Button(props.Button{Copy: "go build ./cmd/popui && ./popui build", Size: "lg"})
 			}
 			<p class="text-foreground-default-secondary">
 				Run a development server to quickly test template changes using the <code class="font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded">air</code> utility. This ensures Tailwind classes, generated code, and the binary are correctly prepared:
 			</p>
 			@popui.ButtonGroup() {
-				@popui.ButtonCopy(props.ButtonCopy{Value: "air", Size: "lg"})
+				@popui.Button(props.Button{Copy: "air", Size: "lg"})
 			}
 		</div>
 		<div class="flex flex-col gap-3 w-full">
@@ -172,11 +172,11 @@ templ sidebar() {
 		}
 		}
 		@popui.SidebarContent() {
-			for gi, group := range groups {
+			@popui.SidebarSection() {
+				@sidebarItem("getting-started", "Get Started")
+			}
+			for _, group := range groups {
 				@popui.SidebarSection(props.SidebarSection{Title: group.Title}) {
-					if gi == 0 {
-						@sidebarItem("getting-started", "Get Started")
-					}
 					for _, page := range group.Pages {
 						@sidebarPageItem(group, page)
 					}

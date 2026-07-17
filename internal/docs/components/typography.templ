@@ -16,6 +16,13 @@ templ Typography() {
 		@examples.TypographyHeadingsExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Title Group",
+		Description: "TitleGroup pairs a title with a secondary description — stacked by default, or on one baseline with Horizontal. Use it to head sections and grouped form blocks.",
+		Code:        examples.LoadExample("typography_title_group.templ"),
+	}) {
+		@examples.TypographyTitleGroupExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Paragraphs",
 		Description: "Standard paragraph and description text components.",
 		Code:        examples.LoadExample("typography_paragraphs.templ"),
@@ -51,6 +58,18 @@ templ Typography() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "TitleGroup",
+			Description: "Title with an optional secondary description, stacked or on one baseline.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Title", Type: "string", Default: "", Description: "Bold heading text"},
+				{Name: "Description", Type: "string", Default: "", Description: "Muted secondary text"},
+				{Name: "Horizontal", Type: "bool", Default: "false", Description: "Places the description next to the title on the same baseline, separated by a middot"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

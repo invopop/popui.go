@@ -1,0 +1,18 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ImageFlagsExample() {
+	<div class="flex items-center gap-3">
+		for _, cc := range []string{"es", "us", "gb", "fr", "de", "it", "mx"} {
+			@popui.Image(props.Image{
+				Src:   "https://assets.invopop.com/flags/" + cc + ".svg",
+				Alt:   cc,
+				Class: "w-5 h-3.5 rounded-[1.5px]",
+			})
+		}
+	</div>
+}

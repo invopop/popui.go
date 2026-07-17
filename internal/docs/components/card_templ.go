@@ -185,91 +185,13 @@ func Card() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Dashboard",
-			Description: "CardDashboard displays multiple metrics in a grid layout.",
+			Description: "Display multiple metrics with a plain grid of stat tiles inside CardContent — no dedicated component needed.",
 			Code:        examples.LoadExample("card_dashboard.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.CardFileExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "File Card",
-			Description: "CardFile provides a container for displaying file information.",
-			Code:        examples.LoadExample("card_file.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.CardFieldsetExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Fieldset",
-			Description: "CardFieldset groups form fields inside a tinted card body, with an optional title and secondary description above it.",
-			Code:        examples.LoadExample("card_fieldset.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.CardFieldsetFormExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Fieldset with Form Grid",
-			Description: "Wrap fields in a grid to lay them out in multiple columns inside a CardFieldset.",
-			Code:        examples.LoadExample("card_fieldset_form.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -316,24 +238,6 @@ func Card() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "CardFieldset",
-				Description: "Groups form fields inside a tinted card body with an optional title and description. Expects form fields as children.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the fieldset element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with fieldset styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-					{Name: "Title", Type: "string", Default: "", Description: "Bold heading rendered above the card body"},
-					{Name: "Description", Type: "string", Default: "", Description: "Muted text rendered next to the title, separated by a middot"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "CardHeader",
 				Description: "Header component for cards. Expects Avatar or other content as children.",
 				Items: []modules.APITableItem{
@@ -347,7 +251,7 @@ func Card() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -368,76 +272,9 @@ func Card() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "CardDashboard",
-				Description: "Grid layout for displaying multiple metrics. Expects CardDashboardItem components as children.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the dashboard element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with dashboard styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "CardDashboardItem",
-				Description: "Individual metric item for CardDashboard.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-					{Name: "Label", Type: "string", Default: "", Description: "Label text for the metric"},
-					{Name: "Value", Type: "string", Default: "", Description: "Value text for the metric"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "CardFile",
-				Description: "Container for displaying file information. Expects CardFileInfo and action buttons as children.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file card element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file card styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "CardFileInfo",
-				Description: "Structured layout for file information within CardFile (icon, name, etc.).",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file info element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file info styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-					{Name: "Label", Type: "string", Default: "", Description: "File name or label text to display"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

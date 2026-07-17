@@ -96,6 +96,10 @@ templ Filter(opts ...props.Filter) {
 			x-cloak
 			style="order: 10001"
 		></div>
+		// Consumer action cluster (e.g. table-settings buttons). Rendered
+		// after the separator; children needing a fixed position can set a
+		// flex order above 10001.
+		{ children... }
 		// Hidden submit button — keeps Enter-to-submit behaviour even
 		// when there are no visible <button type="submit"> children.
 		<button
@@ -146,7 +150,7 @@ templ filterAddMenu(inputs []props.FilterInput) {
 			popover
 			:id="$id('filter-menu')"
 			:style="'position-anchor: --filter-menu-' + $id('filter-menu')"
-			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background"
+			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg"
 		>
 			<ul>
 				for _, in := range inputs {
@@ -228,7 +232,7 @@ templ filterChip(in props.FilterInput) {
 // rendered directly beneath it (and to the right of the operator label).
 // Keyboard: Down/Up move the highlight, Enter toggles the highlighted option.
 // Backed by the `filterOptionList` Alpine controller in popui.js; selection is
-// emitted as reactive hidden inputs, the same approach DropdownSelect uses.
+// emitted as reactive hidden inputs.
 templ filterInlineOptions(in props.FilterInput) {
 	<div
 		x-data={ filterOptionListData(in) }
@@ -319,7 +323,7 @@ templ filterInlineOptions(in props.FilterInput) {
 			x-show="open"
 			x-cloak
 			style="top:100%;z-index:50"
-			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0"
+			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0 shadow-lg"
 		>
 			for i, opt := range in.Options {
 				@DrawerContextItem(props.DrawerContextItem{
@@ -376,7 +380,7 @@ templ filterRangeCalendar(in props.FilterInput) {
 			x-show="open"
 			x-cloak
 			style="top:100%;z-index:50"
-			class="context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden"
+			class="context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden shadow-lg"
 		>
 			@Calendar()
 		</div>
@@ -496,4 +500,13 @@ func pluralizeLabel(label string) string {
 		return s[:len(s)-1] + "ies"
 	}
 	return s + "s"
+}
+
+// boolStr renders a Go bool as the JS literal string "true"/"false", for
+// embedding flags inside inline x-data object expressions.
+func boolStr(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
 }

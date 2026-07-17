@@ -28,6 +28,12 @@ templ ButtonVariantsExample() {
 			@icons.Lock()
 			Transparent
 		}
+		<div class="flex items-center rounded-md bg-background-default-negative px-2 py-1.5">
+			@popui.Button(props.Button{Variant: props.ButtonVariantInverse}) {
+				@icons.Reload()
+				Inverse
+			}
+		</div>
 		@popui.Button(props.Button{Size: props.ButtonSizeIcon}) {
 			@icons.Settings()
 		}

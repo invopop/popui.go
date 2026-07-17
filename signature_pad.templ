@@ -55,7 +55,7 @@ templ SignaturePad(opts ...props.SignaturePad) {
 templ signaturePadStyles() {
 	<style>
 		@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500; font-display: block; src: url('/_popui/assets/caveat.woff2') format('woff2'); }
-		.popui-sign-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; border: 0; border-radius: 0.75rem; padding: 0; width: min(92vw, 560px); box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
+		.popui-sign-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; border: 0; border-radius: 0.75rem; padding: 0; width: min(92vw, 560px); box-shadow: 0 10px 40px rgba(0,0,0,0.25); background: var(--color-background); color: var(--color-foreground); }
 		.popui-sign-dialog::backdrop { background: rgba(0,0,0,0.5); }
 		.popui-sign-dialog-body { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.5rem 1.5rem; }
 		.popui-sign-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
@@ -66,7 +66,7 @@ templ signaturePadStyles() {
 		.popui-sign-x:hover { color: var(--color-foreground); }
 		.popui-sign-canvas { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background); touch-action: none; }
 		@keyframes popui-sign-shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1px)} 75%{transform:translateX(1px)} }
-		.popui-sign-canvas-error { animation: popui-sign-shake 0.3s ease; border-color: var(--color-danger, #ef4444) !important; }
+		.popui-sign-canvas-error { animation: popui-sign-shake 0.3s ease; border-color: var(--color-border-critical-bold) !important; }
 		#popui-sign-choose-view, #popui-sign-draw-view { display: flex; flex-direction: column; gap: 1rem; }
 		.popui-sign-typed-preview { width: 100%; height: 260px; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background-default-secondary); display: flex; align-items: center; justify-content: center; padding: 0 1rem; overflow: hidden; white-space: nowrap; font-family: 'Caveat', cursive; font-weight: 500; font-size: 4rem; line-height: 1; color: var(--color-foreground); }
 		@media (max-height: 600px) { .popui-sign-canvas, .popui-sign-typed-preview { height: 120px; } }
@@ -167,6 +167,12 @@ templ signaturePadScript() {
 				const outCtx = out.getContext("2d");
 				if (!outCtx) { alert("Unable to export the signature in this browser."); return; }
 				outCtx.drawImage(canvas, x0, y0, cw, ch, 0, 0, cw, ch);
+				// The on-screen ink follows the theme (white in dark mode), but the
+				// exported PNG lands on light documents, so recolor it to the
+				// light-theme foreground.
+				outCtx.globalCompositeOperation = "source-in";
+				outCtx.fillStyle = "#0b0b10";
+				outCtx.fillRect(0, 0, cw, ch);
 				input.value = out.toDataURL("image/png");
 				doSubmit();
 			}

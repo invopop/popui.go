@@ -26,6 +26,13 @@ templ Avatar() {
 	}) {
 		@examples.AvatarWithImagesExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Colored Initials",
+		Description: "Initials take up to three characters and an optional Color token. Use the document-* tokens with a mono font for file-type badges, e.g. as the leading slot of FileDownloadInfo.",
+		Code:        examples.LoadExample("avatar_colors.templ"),
+	}) {
+		@examples.AvatarColorsExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Avatar",
@@ -34,7 +41,8 @@ templ Avatar() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the avatar element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the div element"},
-				{Name: "Initial", Type: "string", Default: "", Description: "Text to display (typically initials) when no image is provided"},
+				{Name: "Initial", Type: "string", Default: "", Description: "Text to display (typically initials) when no image is provided; up to three characters, longer values are truncated"},
+				{Name: "Color", Type: "string", Default: "", Description: "Foreground color token for the initials: \"accent\", \"success\", \"warning\", \"critical\", \"info\", \"document-xml\", \"document-pdf\" or \"document-png\". Empty uses the secondary foreground"},
 				{Name: "Size", Type: "string", Default: "\"\" (default)", Description: "Size variant: \"lg\" for large (8x8), default is small (5x5)"},
 			},
 		})

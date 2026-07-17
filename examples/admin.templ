@@ -8,7 +8,6 @@ import (
 )
 
 templ Admin() {
-	// @css.Flag() - missing
 	@popui.App(props.App{
 		Title: "Invopop - Admin panel",
 		Description: here.Doc(`
@@ -33,19 +32,17 @@ templ Admin() {
 			}
 		}
 		@popui.Main() {
-			@popui.PageSections() {
-				@popui.PageSection(props.PageSection{
-					Title:       "Live",
-					Description: "A production workspace which produces valid invoices",
-				}) {
-					@liveWorkspaces()
-				}
-				@popui.PageSection(props.PageSection{
-					Title:       "Sandbox",
-					Description: "A testing workspace which simulates invoicing and doesn't incur in costs",
-				}) {
-					@sandboxWorkspaces()
-				}
+			@popui.Section(props.Section{
+				Title:       "Live",
+				Description: "A production workspace which produces valid invoices",
+			}) {
+				@liveWorkspaces()
+			}
+			@popui.Section(props.Section{
+				Title:       "Sandbox",
+				Description: "A testing workspace which simulates invoicing and doesn't incur in costs",
+			}) {
+				@sandboxWorkspaces()
 			}
 		}
 		@adminSidebar()
@@ -138,7 +135,7 @@ templ liveWorkspaces() {
 						}
 						<span class="flex items-center gap-2 font-medium">
 							<span>Cyberdyne Mexico</span>
-							@popui.Flag(props.Flag{Country: "MX", Class: "mt-0.5"})
+							@popui.Image(props.Image{Src: "https://assets.invopop.com/flags/mx.svg", Alt: "MX", Class: "w-3.5 h-2.5 rounded-[1.5px] mt-0.5"})
 						</span>
 					</div>
 				</td>
@@ -160,7 +157,7 @@ templ liveWorkspaces() {
 						}
 						<span class="flex items-center gap-2 font-medium">
 							<span>Cyberdyne France</span>
-							@popui.Flag(props.Flag{Country: "FR", Class: "mt-0.5"})
+							@popui.Image(props.Image{Src: "https://assets.invopop.com/flags/fr.svg", Alt: "FR", Class: "w-3.5 h-2.5 rounded-[1.5px] mt-0.5"})
 						</span>
 					</div>
 				</td>

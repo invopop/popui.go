@@ -108,3 +108,8 @@ type FilterOption struct {
 	Label string
 	Color string
 }
+
+// MaxStackedDots caps how many overlapping colour dots are rendered in a
+// multi-selection summary; selected options beyond the cap add to the
+// count label but draw no dot.
+const MaxStackedDots = 3

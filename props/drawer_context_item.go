@@ -2,7 +2,7 @@ package props
 
 import "github.com/a-h/templ"
 
-// DrawerContextItem renders one row inside a DrawerContext / DropdownSelect
+// DrawerContextItem renders one row inside a drawer-style
 // option list. Mirrors @invopop/popui Svelte DrawerContextItem.svelte:
 // optional colour-tagged prefix (TagStatus dot-only), label, and a
 // right-side affordance — either a reactive checkbox (multi-mode) or a
@@ -45,14 +45,14 @@ type DrawerContextItem struct {
 	// lists (e.g. Filter's inline option list) where a parent element owns
 	// keyboard focus and the highlight is driven by an index, not DOM focus,
 	// so individual rows must not steal focus. Empty → no tabindex (the row is
-	// a normal tab stop, e.g. inside a DropdownSelect popover).
+	// a normal tab stop).
 	Tabindex string
 
 	// HighlightExpr is an optional Alpine expression evaluating to bool. When
 	// non-empty, it drives a keyboard-highlight class on the row (the same
 	// `bg-background-default-secondary` used for hover) so a parent controller
 	// can paint the row under an arrow-key cursor. Empty → no binding, so
-	// existing callers (e.g. DropdownSelect) are unaffected. Example:
+	// existing callers are unaffected. Example:
 	//   "activeIndex === 2"
 	HighlightExpr string
 }

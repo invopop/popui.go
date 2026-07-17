@@ -298,28 +298,6 @@ form {
   box-shadow: inset 0 0 0 1px var(--color-border-inverse-default);
 }
 
-/* Flash message animation */
-@keyframes flashMessage {
-  0% {
-    opacity: 0;
-    transform: translateY(25%);
-  }
-  9.09% {
-    /* 0.5s of 5.5s total */
-    opacity: 1;
-    transform: translateY(0);
-  }
-  90.9% {
-    /* Stay visible till ~5s */
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(25%);
-  }
-}
-
 /* Toast */
 .popui-toast {
   position: fixed;
@@ -678,11 +656,9 @@ form {
   pointer-events: none;
 }
 
-/* Detail view (popui.DetailList / DetailItem / DetailRow) — console-ui-style
+/* Detail rows (popui.DescriptionListItem with Inline/Actions) — console-ui-style
    label-on-left / value-on-right rows for side panels and drawers. Shipped
    here so any consuming app gets the styling without copying a <style> block. */
-.popui-detail-list { padding-bottom: 1rem; }
-.popui-detail-indent { margin-left: 1rem; margin-right: 1rem; }
 .popui-detail-row { display: flex; gap: 1.5rem; align-items: center; }
 /* Stacked variant: label above the value. */
 .popui-detail-row.popui-detail-stacked {
@@ -742,7 +718,7 @@ form {
   overflow-x: auto;
 }
 
-/* Copyable value row: strip popui.ButtonCopy chrome so the value reads as
+/* Copyable value row: strip the copy Button's chrome so the value reads as
    plain text in line with the other rows, and reveal action buttons / copy
    icons only while the row is hovered. */
 .popui-detail-copyable [data-button-copy] {

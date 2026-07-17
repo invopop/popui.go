@@ -5,6 +5,30 @@ import (
 	"github.com/google/uuid"
 )
 
+// FileDownload Templ component props. FileDownload displays details for
+// an existing file with space for actions.
+type FileDownload struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	// Borderless removes the border for embedding the file row directly
+	// inside another container.
+	Borderless bool
+	// Hover highlights the whole row with a background color on hover.
+	Hover bool
+}
+
+// FileDownloadInfo Templ component props
+type FileDownloadInfo struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Label      string
+	// Value renders as smaller, muted text below the Label, e.g. a
+	// timestamp or file size.
+	Value string
+}
+
 // InputFile defines the properties for the InputFile and FileUpload components.
 type InputFile struct {
 	ID            string

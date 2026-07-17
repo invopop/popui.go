@@ -420,46 +420,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   document.addEventListener('alpine:init', () => {
     if (!window.Alpine) return
 
-    // Dropdown select whose selection lives in reactive hidden inputs: single mode submits on pick, multiple mode submits per toggle.
-    Alpine.data('dropdownSelect', (init) => ({
-      values: (init && init.values) || [],
-      multiple: !!(init && init.multiple),
-      multipleLabel: (init && init.multipleLabel) || 'items',
-      name: (init && init.name) || '',
-      initial: '',
-      init() {
-        this.initial = JSON.stringify(this.values)
-        if (init && init.autoOpen) {
-          this.$nextTick(() => {
-            const trigger = this.$refs.trigger
-            if (trigger && typeof trigger.click === 'function') trigger.click()
-          })
-        }
-      },
-      submitForm() {
-        submitClosestForm(this.$root)
-      },
-      // Applies a value and submits after Alpine has rendered the hidden inputs.
-      toggle(v) {
-        this.values = toggleValue(this.values, v, this.multiple)
-        this.initial = JSON.stringify(this.values)
-        if (!this.multiple) {
-          const pop = this.$root.querySelector('[popover]')
-          if (pop && typeof pop.hidePopover === 'function') pop.hidePopover()
-        }
-        this.$nextTick(() => this.submitForm())
-      },
-      // Submits on popover close when the selection changed while it was open.
-      onToggle(e) {
-        if (!this.multiple) return
-        if (e.newState !== 'closed') return
-        const now = JSON.stringify(this.values)
-        if (now === this.initial) return
-        this.initial = now
-        this.submitForm()
-      },
-    }))
-
     // Inline option list for filter chips: owns the selection, the arrow-key highlight, and the open state of its panel.
     Alpine.data('filterOptionList', (init) => ({
       values: (init && init.values) || [],

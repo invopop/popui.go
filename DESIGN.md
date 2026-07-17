@@ -23,7 +23,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Any clickable action | `Button` (variants: default, primary, secondary, danger, transparent) |
 | Icon-only action | `Button` with `Size: "icon"` |
 | Group of buttons | `ButtonGroup` |
-| Copy-to-clipboard | `ButtonCopy` |
+| Copy-to-clipboard | `Button` with `Copy` |
 | Page/app shell | `App` |
 | Top bar with actions | `Header` |
 | Bottom bar with actions | `Footer` |
@@ -31,15 +31,16 @@ Before writing any UI element, check whether PopUI already covers it:
 | Side navigation | `Sidebar` > `SidebarSection` > `SidebarItem` |
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
-| Segmented content card | `SegmentedCard` |
-| Metric display | `CardDashboard` > `CardDashboardItem` |
+| Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
+| Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
 | Progress bar | `CardProgressBar` |
-| File attachment display | `CardFile` > `CardFileInfo` |
+| File attachment display | `FileDownload` > `FileDownloadInfo` |
 | Data table | `Table` |
 | Table pagination | `TablePagination` |
 | Text input | `Input` |
 | Multi-line text | `Textarea` |
 | Dropdown / select | `Select` |
+| Multi-select with tag chips | `Select` with `Multiple: true` |
 | Checkbox | `Checkbox` |
 | Toggle switch | `Checkbox` with `Variant: "switch"` |
 | Radio buttons | `Radio` |
@@ -50,18 +51,19 @@ Before writing any UI element, check whether PopUI already covers it:
 | Grouped checkboxes/radios | `OptionGroup` |
 | Text field label | `Label` |
 | User avatar | `Avatar` |
+| File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
 | Expandable section | `Accordion` > `AccordionTrigger` + `AccordionContent` |
-| Dropdown/context actions | `ContextMenu` > `ContextMenuItem` |
+| Dropdown/context actions | `Menu` > `MenuItem` |
 | Floating content panel | `Popover` |
 | Key-value data display | `DescriptionList` > `DescriptionListItem` |
 | Tab navigation | `Tabs` |
 | Horizontal divider | `Separator` |
 | Workflow/invoice status | `TagStatus` |
-| Toast / success message | `FlashMessage` |
+| Toast / success message | `Toast` |
 | In-app notification | `Notification` |
 | Empty / error state | `PageState` |
-| Country flag | `Flag` |
+| Country flag | `Image` with `https://assets.invopop.com/flags/<cc>.svg` |
 | Range slider | `Slider` |
 | Image | `Image` |
 | Inline icon | Any icon from `github.com/invopop/icons` |
@@ -87,15 +89,15 @@ Some requests sound custom but map directly to PopUI components:
 | "a subtle/ghost action" | `Button` with `Variant: "transparent"` |
 | "a settings gear icon button" | `Button` with `Variant: "transparent"`, `Size: "icon"`, `@icons.Settings()` |
 | "a toggle / on-off switch" | `Checkbox` with `Variant: "switch"` |
-| "a status badge / pill" | `TagStatus` |
+| "a status badge / pill" | `TagStatus` (color dot) or `StatusBadge` (icon outcome: success/failed/warning/running) |
 | "a modal or drawer" (if side panel) | `Aside` |
-| "a dropdown menu / three-dot menu" | `ContextMenu` |
+| "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `DescriptionList` |
-| "a settings section / form card" | `Fieldset` with `Variant: "card"` |
+| "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
 | "an empty state / zero state" | `PageState` |
-| "a success toast" | `FlashMessage` |
+| "a success toast" | `Toast` with `Type: "success"` |
 | "a collapsible / expandable section" | `Accordion` |
-| "a copy button for an ID or hash" | `ButtonCopy` |
+| "a copy button for an ID or hash" | `Button` with `Copy` (PrefixLength/SuffixLength truncate the display) |
 
 ---
 
@@ -343,11 +345,16 @@ Common spacings in use:
 
 ## 5. Shadows
 
-Shadow system is minimal — only buttons use shadows. Cards and containers rely entirely on borders.
+Shadow system is minimal — buttons use their own shadows, and floating
+surfaces use the elevation scale below. Cards and in-flow containers rely
+entirely on borders.
 
 | Token | Use |
 |-------|-----|
 | `shadow` | Default shadow (card-level ambient) |
+| `shadow-sm` | Elevation: cards and rows (0 2px 20px @ 4%) |
+| `shadow-lg` | Elevation: panels and popovers (0 8px 30px @ 12%) |
+| `shadow-xl` | Elevation: dialogs and drawers (layered 28px + 88px) |
 | `shadow-button-default` | Default/secondary button |
 | `shadow-button-primary` | Primary button |
 | `shadow-none` | Explicit no-shadow override |
@@ -358,7 +365,7 @@ Shadow system is minimal — only buttons use shadows. Cards and containers rely
 
 ### Buttons
 
-**Variants:** `default` | `primary` | `secondary` | `danger` | `transparent`
+**Variants:** `default` | `primary` | `secondary` | `danger` | `transparent` | `inverse`
 
 **Sizes:** `sm` | `md` (default) | `lg` | `icon`
 
@@ -369,6 +376,7 @@ Shadow system is minimal — only buttons use shadows. Cards and containers rely
 | `secondary` | Outlined — border visible, lower visual weight than primary |
 | `danger` | Destructive — critical color background |
 | `transparent` | Ghost — no background, no border; for icon buttons and inline actions |
+| `inverse` | Inverse colors for dark surfaces (e.g. the `Toast` action) |
 
 - Buttons are grouped in `ButtonGroup` containers with `gap-2` spacing
 - `ButtonGroup` supports `Align` prop: `left` (default), `center`, `right`
@@ -389,10 +397,13 @@ Cards are the primary content container. They combine a `Card` > `CardHeader` > 
 Card
 ├── CardHeader (avatar + title + subtitle)
 ├── CardContent (flexible content area)
-├── CardProgressBar (metric with progress)
-├── CardDashboard > CardDashboardItem (metrics grid)
-└── CardFile > CardFileInfo (file attachments)
+└── CardProgressBar (metric with progress)
 ```
+
+Metric grids are plain markup inside `CardContent` — a `ul` grid of stat
+tiles (see the Card docs "Dashboard" example).
+
+File attachments are the `File` family: `FileDownload` > `FileDownloadInfo`.
 
 - Cards can render as links via `Href` prop
 - Cards support `Disabled` state
@@ -408,7 +419,7 @@ Card
 Form structure:
 ```
 Form
-└── Fieldset (optional card variant)
+└── Fieldset (optional card variant: tinted body; TitleGroup above for a heading)
     ├── Input (with Label, Placeholder, optional hint)
     ├── Textarea
     ├── Select
@@ -418,8 +429,7 @@ Form
     └── ButtonGroup (submit/cancel)
 ```
 
-- `Fieldset` with `Variant: "card"` renders as a bordered card — use for grouped settings
-- `Fieldset` with custom `Class: "bg-background-default-secondary"` for highlighted/sudo sections
+- `Fieldset` with `Variant: "card"` renders a rounded light gray body — use for grouped settings sections and form blocks; pair with `TitleGroup` for a heading
 - `OptionGroup` wraps multiple checkboxes or radios with a shared label
 - `Label` can be separate from `Input` for custom hint/link patterns
 - `Checkbox` supports `Variant: "switch"` for toggle switches
@@ -473,17 +483,16 @@ Breadcrumbs
 |-----------|-------------|
 | `Avatar` | Circular user avatar; `Size: "lg"` or default (small). Accepts `Initial` text or `Image` child |
 | `Accordion` | Native `details/summary` expandable sections |
-| `ContextMenu` | Trigger button + dropdown menu; supports `RightAlign` |
+| `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign` |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
-| `FlashMessage` | Toast-style success/error feedback |
-| `ButtonCopy` | Copy-to-clipboard with truncation (prefix/suffix lengths) |
+| `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
+| `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |
 | `Popover` | Floating content panel |
 | `Notification` | In-app notification display |
 | `PageState` | Empty/error state with illustration, title, description, CTA |
 | `Slider` | Range input |
 | `Tabs` | Tab navigation component |
-| `Flag` | Country flag via ISO 3166-1 alpha-2 code (requires `flag-icons` CSS) |
 
 ---
 
@@ -821,6 +830,17 @@ bg-background-default-secondary (passed as Class to Fieldset with card variant)
 }) {
     @popui.Input(props.Input{Label: "Company Name", Placeholder: "Acme Corp"})
     @popui.Input(props.Input{Label: "Tax ID", Placeholder: "ESB12345678"})
+}
+```
+
+**Titled settings section (tinted body):**
+```go
+@popui.TitleGroup(props.TitleGroup{Title: "URLs", Description: "Endpoints used by the integration", Horizontal: true})
+@popui.Fieldset(props.Fieldset{
+    Variant: props.FieldsetVariantCard,
+}) {
+    @popui.Input(props.Input{Label: "Config URL", Placeholder: "https://"})
+    @popui.Input(props.Input{Label: "Launch URL", Placeholder: "https://"})
 }
 ```
 

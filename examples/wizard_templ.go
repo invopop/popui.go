@@ -1602,7 +1602,7 @@ func WizardStepFour() templ.Component {
 							}
 							return nil
 						})
-						templ_7745c5c3_Err = popui.CardFileInfo(props.CardFileInfo{
+						templ_7745c5c3_Err = popui.FileDownloadInfo(props.FileDownloadInfo{
 							Label: "dni_back_already_stored.png",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var62), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -1644,7 +1644,7 @@ func WizardStepFour() templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.CardFile(props.CardFile{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var61), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.FileDownload().Render(templ.WithChildren(ctx, templ_7745c5c3_Var61), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -2125,7 +2125,7 @@ func WizardConfirm() templ.Component {
 							}
 							return nil
 						})
-						templ_7745c5c3_Err = popui.CardFileInfo(props.CardFileInfo{
+						templ_7745c5c3_Err = popui.FileDownloadInfo(props.FileDownloadInfo{
 							Label: "acuerdo_veri*factu.pdf",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var82), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -2163,7 +2163,7 @@ func WizardConfirm() templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.CardFile(props.CardFile{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var81), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.FileDownload().Render(templ.WithChildren(ctx, templ_7745c5c3_Var81), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -2261,7 +2261,7 @@ func WizardConfirm() templ.Component {
 							}
 							return nil
 						})
-						templ_7745c5c3_Err = popui.CardFileInfo(props.CardFileInfo{
+						templ_7745c5c3_Err = popui.FileDownloadInfo(props.FileDownloadInfo{
 							Label: "dni_front.png",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var87), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -2299,7 +2299,7 @@ func WizardConfirm() templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.CardFile(props.CardFile{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var86), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.FileDownload().Render(templ.WithChildren(ctx, templ_7745c5c3_Var86), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -2337,7 +2337,7 @@ func WizardConfirm() templ.Component {
 							}
 							return nil
 						})
-						templ_7745c5c3_Err = popui.CardFileInfo(props.CardFileInfo{
+						templ_7745c5c3_Err = popui.FileDownloadInfo(props.FileDownloadInfo{
 							Label: "dni_back.png",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var90), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -2375,7 +2375,7 @@ func WizardConfirm() templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.CardFile(props.CardFile{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var89), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.FileDownload().Render(templ.WithChildren(ctx, templ_7745c5c3_Var89), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

@@ -68,26 +68,19 @@ templ Toast(p ...props.Toast) {
 			}
 		</div>
 		if toast.ActionLabel != "" {
-			if toast.ActionHref != "" {
-				<a
-					href={ toast.ActionHref }
-					class={ toastActionClasses }
-					{ toast.ActionAttributes... }
-				>{ toast.ActionLabel }</a>
-			} else {
-				<button
-					type="button"
-					class={ toastActionClasses }
-					{ toast.ActionAttributes... }
-				>{ toast.ActionLabel }</button>
+			@Button(props.Button{
+				Variant:    props.ButtonVariantInverse,
+				Size:       props.ButtonSizeSmall,
+				Type:       "button",
+				Href:       toast.ActionHref,
+				Class:      "shrink-0",
+				Attributes: toast.ActionAttributes,
+			}) {
+				{ toast.ActionLabel }
 			}
 		}
 	</div>
 }
-
-// toastActionClasses matches the metrics of the small Button size (4px
-// radius, text-sm, same padding) with inverse colors for the dark surface.
-const toastActionClasses = "shrink-0 rounded px-2 py-[3px] text-sm font-medium tracking-tight whitespace-nowrap text-foreground-inverse bg-background-selected-inverse hover:bg-background-selected-inverse-hover active:bg-background-selected-inverse-press"
 
 func toastPositionClasses(position string) string {
 	switch position {

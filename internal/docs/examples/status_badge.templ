@@ -1,0 +1,15 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ StatusBadgeExample() {
+	<div class="flex flex-wrap items-center gap-2">
+		@popui.StatusBadge(props.StatusBadge{Label: "Agreement", Status: "success"})
+		@popui.StatusBadge(props.StatusBadge{Label: "Company", Status: "failed"})
+		@popui.StatusBadge(props.StatusBadge{Label: "Identity", Status: "warning"})
+		@popui.StatusBadge(props.StatusBadge{Label: "Processing", Status: "running"})
+	</div>
+}

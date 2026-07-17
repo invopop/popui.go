@@ -1,0 +1,21 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SelectMultipleWithDescriptionExample() {
+	@popui.Select(props.Select{
+		Multiple:    true,
+		Name:        "currencies",
+		Placeholder: "Choose currencies",
+		Options: []props.SelectOption{
+			{Value: "eur", Label: "EUR", Description: "Euro", Selected: true},
+			{Value: "usd", Label: "USD", Description: "US Dollar"},
+			{Value: "gbp", Label: "GBP", Description: "British Pound"},
+			{Value: "jpy", Label: "JPY", Description: "Japanese Yen"},
+			{Value: "chf", Label: "CHF", Description: "Swiss Franc"},
+		},
+	})
+}

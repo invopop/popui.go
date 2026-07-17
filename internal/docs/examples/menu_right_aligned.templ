@@ -1,0 +1,24 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ MenuRightAlignedExample() {
+	@popui.Menu(props.Menu{
+		ID:          "context-menu-right",
+		ButtonLabel: "···",
+		RightAlign:  true,
+	}) {
+		@popui.MenuItem() {
+			Settings
+		}
+		@popui.MenuItem() {
+			Profile
+		}
+		@popui.MenuItem() {
+			Logout
+		}
+	}
+}
