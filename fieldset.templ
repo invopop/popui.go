@@ -7,8 +7,8 @@ import (
 )
 
 // Fieldset groups a set of form fields together with correct vertical spacing and padding
-// between fields. If the Variant is set to "card" it will also add a border and background
-// to the fieldset to visually separate it from the rest of the form.
+// between fields. If the Variant is set to "card" it also adds a border and a light gray
+// background to visually separate the group from the rest of the form.
 templ Fieldset(p ...props.Fieldset) {
 	{{ fieldset := props.First(p) }}
 	<fieldset
@@ -18,7 +18,7 @@ templ Fieldset(p ...props.Fieldset) {
 		class={
 			tailwind.Merge(
 				"relative w-full flex-1 flex flex-col gap-4",
-				classes.If(fieldset.Variant == props.FieldsetVariantCard, "border border-border-default-secondary rounded-md bg-background p-4"),
+				classes.If(fieldset.Variant == props.FieldsetVariantCard, "border border-border-default-secondary rounded-md bg-background-default-secondary p-4"),
 				fieldset.Class,
 			),
 		}
@@ -37,49 +37,5 @@ templ Fieldset(p ...props.Fieldset) {
 			</div>
 		}
 		{ children... }
-	</fieldset>
-}
-
-// FieldsetCard groups form fields inside a tinted card body, with an optional
-// title and secondary description rendered above it. Use it for settings
-// sections and grouped form blocks. Fields are stacked with consistent spacing;
-// wrap them in a grid for multi-column layouts.
-templ FieldsetCard(p ...props.FieldsetCard) {
-	{{ fieldset := props.First(p) }}
-	<fieldset
-		if fieldset.ID != "" {
-			id={ fieldset.ID }
-		}
-		class={
-			tailwind.Merge(
-				"w-full flex flex-col gap-3",
-				fieldset.Class,
-			),
-		}
-		{ fieldset.Attributes... }
-	>
-		if fieldset.Title != "" || fieldset.Description != "" {
-			// Same rendered-legend interop trap as Fieldset above: the
-			// visible heading is a div; the sr-only legend names the group.
-			if fieldset.Title != "" {
-				<legend class="sr-only">{ fieldset.Title }</legend>
-			}
-			<div class="flex items-baseline gap-1.5 mb-2">
-				if fieldset.Title != "" {
-					<span aria-hidden="true" class="text-lg font-semibold tracking-tight text-foreground">{ fieldset.Title }</span>
-				}
-				if fieldset.Description != "" {
-					<span class="text-base text-foreground-default-secondary">
-						if fieldset.Title != "" {
-							{ "· " }
-						}
-						{ fieldset.Description }
-					</span>
-				}
-			</div>
-		}
-		<div class="w-full flex flex-col gap-4 rounded-xl bg-background-default-secondary p-4">
-			{ children... }
-		</div>
 	</fieldset>
 }

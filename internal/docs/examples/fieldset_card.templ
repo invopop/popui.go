@@ -6,9 +6,9 @@ import (
 )
 
 templ FieldsetCardExample() {
-	@popui.FieldsetCard(props.FieldsetCard{
-		Title:       "Categories",
-		Description: "Select all that apply",
+	@popui.Fieldset(props.Fieldset{
+		Legend:  "Categories",
+		Variant: props.FieldsetVariantCard,
 	}) {
 		@popui.Select(props.Select{
 			Multiple: true,

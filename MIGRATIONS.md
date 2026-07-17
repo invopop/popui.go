@@ -15,7 +15,8 @@ Entries are grouped by the release that removed them, newest first.
 |---|---|
 | `popui.CardFile`, `props.CardFile` | `popui.FileDownload`, `props.FileDownload` |
 | `popui.CardFileInfo`, `props.CardFileInfo` | `popui.FileDownloadInfo`, `props.FileDownloadInfo` |
-| `popui.CardFieldset`, `props.CardFieldset` | `popui.FieldsetCard`, `props.FieldsetCard` |
+| `popui.CardFieldset`, `props.CardFieldset` | `popui.Fieldset` with `Variant: "card"` and `Legend` |
+| `popui.FieldsetCard`, `props.FieldsetCard` | `popui.Fieldset` with `Variant: "card"` and `Legend` |
 | `popui.FlashMessage`, `props.FlashMessage` | `popui.Toast`, `props.Toast` |
 | `popui.ButtonCopy`, `props.ButtonCopy` | `popui.Button` with `props.Button.Copy` (deprecated wrapper still ships) |
 | `popui.ButtonCopyLink`, `props.ButtonCopyLink` | compose two `popui.Button`s (copy + link) |
@@ -51,9 +52,19 @@ variants and a `Value` secondary line on the info slot.
 }
 ```
 
-### CardFieldset → FieldsetCard
+### CardFieldset / FieldsetCard → Fieldset with Variant "card"
 
-Rename only — same props (`Title`, `Description`), now in the Fieldset family.
+Both intermediate components are gone; the card variant of `Fieldset` now
+carries the bordered, light-gray-background treatment. The `Title` +
+`Description` heading pair has no successor — use `Legend` for the group
+title.
+
+```templ
+// before
+@popui.FieldsetCard(props.FieldsetCard{Title: "URLs", Description: "Endpoints"}) { ... }
+// after
+@popui.Fieldset(props.Fieldset{Legend: "URLs", Variant: props.FieldsetVariantCard}) { ... }
+```
 
 ### FlashMessage → Toast
 

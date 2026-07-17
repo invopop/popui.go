@@ -6,7 +6,10 @@ import (
 )
 
 templ FieldsetCardFormExample() {
-	@popui.FieldsetCard(props.FieldsetCard{Title: "URLs"}) {
+	@popui.Fieldset(props.Fieldset{
+		Legend:  "URLs",
+		Variant: props.FieldsetVariantCard,
+	}) {
 		<div class="grid grid-cols-2 gap-4">
 			@popui.Input(props.Input{
 				ID:          "config-url",

@@ -107,39 +107,13 @@ func Fieldset() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Card Variant",
-			Description: "The card variant wraps the fields in a bordered, white card-style container.",
+			Description: "The card variant wraps the fields in a bordered container with a light gray background. Use it for settings sections and grouped form blocks.",
 			Code:        examples.LoadExample("fieldset_card_style.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.FieldsetHighlightedExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Custom Card Variant",
-			Description: "Card variant with custom classes.",
-			Code:        examples.LoadExample("fieldset_highlighted.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -158,14 +132,14 @@ func Fieldset() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "FieldsetCard",
-			Description: "FieldsetCard is a separate component that groups form fields inside a tinted card body, with an optional title and secondary description above it — unlike the bordered card variant, the heading sits outside the body.",
+			Title:       "Card with Select",
+			Description: "Any field works inside the card variant — here a multi-select.",
 			Code:        examples.LoadExample("fieldset_card.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -184,14 +158,14 @@ func Fieldset() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "FieldsetCard with Form Grid",
-			Description: "Wrap fields in a grid to lay them out in multiple columns inside a FieldsetCard.",
+			Title:       "Card with Form Grid",
+			Description: "Wrap fields in a grid to lay them out in multiple columns inside the card variant.",
 			Code:        examples.LoadExample("fieldset_card_form.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -211,25 +185,7 @@ func Fieldset() templ.Component {
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with fieldset styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Legend", Type: "string", Default: "", Description: "Text to display as the fieldset legend"},
-					{Name: "Variant", Type: "string", Default: "", Description: "Visual variant: \"card\" for bordered card style"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "FieldsetCard",
-				Description: "Groups form fields inside a tinted card body with an optional title and description. Expects form fields as children.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the fieldset element"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with fieldset styles"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-					{Name: "Title", Type: "string", Default: "", Description: "Bold heading rendered above the card body"},
-					{Name: "Description", Type: "string", Default: "", Description: "Muted text rendered next to the title, separated by a middot"},
+					{Name: "Variant", Type: "string", Default: "", Description: "Visual variant: \"card\" for a bordered container with a light gray background"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -237,7 +193,7 @@ func Fieldset() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

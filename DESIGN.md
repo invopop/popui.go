@@ -48,7 +48,6 @@ Before writing any UI element, check whether PopUI already covers it:
 | Avatar upload | `FileUpload` |
 | Form container | `Form` |
 | Grouped form fields | `Fieldset` |
-| Titled settings section (tinted body) | `FieldsetCard` |
 | Grouped checkboxes/radios | `OptionGroup` |
 | Text field label | `Label` |
 | User avatar | `Avatar` |
@@ -94,7 +93,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `DescriptionList` |
-| "a settings section / form card" | `Fieldset` with `Variant: "card"` (bordered) or `FieldsetCard` (titled, tinted body) |
+| "a settings section / form card" | `Fieldset` with `Variant: "card"` (bordered, tinted body) |
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
 | "a collapsible / expandable section" | `Accordion` |
@@ -420,7 +419,7 @@ File attachments are the `File` family: `FileDownload` > `FileDownloadInfo`.
 Form structure:
 ```
 Form
-└── Fieldset (optional card variant) or FieldsetCard (titled, tinted body)
+└── Fieldset (optional card variant: bordered, tinted body)
     ├── Input (with Label, Placeholder, optional hint)
     ├── Textarea
     ├── Select
@@ -430,9 +429,7 @@ Form
     └── ButtonGroup (submit/cancel)
 ```
 
-- `Fieldset` with `Variant: "card"` renders as a bordered card — use for grouped settings
-- `FieldsetCard` renders a title + description heading above a tinted card body — use for titled settings sections and grouped form blocks
-- `Fieldset` with custom `Class: "bg-background-default-secondary"` for highlighted/sudo sections
+- `Fieldset` with `Variant: "card"` renders as a bordered container with a light gray background — use for grouped settings sections and form blocks
 - `OptionGroup` wraps multiple checkboxes or radios with a shared label
 - `Label` can be separate from `Input` for custom hint/link patterns
 - `Checkbox` supports `Variant: "switch"` for toggle switches
@@ -727,7 +724,7 @@ templ AppWithTableExample() {
 - Apply `tracking-tightest` at `text-2xl`, `tracking-tighter` at `text-xl` — negative tracking at large sizes is intentional
 - Use `font-mono` (CommitMono) for IDs, hashes, codes, and technical values
 - Use `TagStatus` with `status-{state}` tokens for any workflow/invoice state display
-- Wrap form fields in `Fieldset` with `Variant: "card"` or `FieldsetCard` for grouped settings sections
+- Wrap form fields in `Fieldset` with `Variant: "card"` for grouped settings sections
 - Use `Variant: "transparent"` + `Size: "icon"` for toolbar/contextual icon buttons
 - Place primary actions in the Header slot (top right); place confirmation actions in Footer (right-aligned)
 
@@ -838,9 +835,9 @@ bg-background-default-secondary (passed as Class to Fieldset with card variant)
 
 **Titled settings section (tinted body):**
 ```go
-@popui.FieldsetCard(props.FieldsetCard{
-    Title: "URLs",
-    Description: "Endpoints used by the integration",
+@popui.Fieldset(props.Fieldset{
+    Legend: "URLs",
+    Variant: props.FieldsetVariantCard,
 }) {
     @popui.Input(props.Input{Label: "Config URL", Placeholder: "https://"})
     @popui.Input(props.Input{Label: "Launch URL", Placeholder: "https://"})

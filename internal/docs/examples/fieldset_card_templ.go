@@ -62,9 +62,9 @@ func FieldsetCardExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.FieldsetCard(props.FieldsetCard{
-			Title:       "Categories",
-			Description: "Select all that apply",
+		templ_7745c5c3_Err = popui.Fieldset(props.Fieldset{
+			Legend:  "Categories",
+			Variant: props.FieldsetVariantCard,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
