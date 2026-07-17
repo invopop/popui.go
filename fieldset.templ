@@ -52,7 +52,11 @@ templ FieldsetCard(p ...props.FieldsetCard) {
 		{ fieldset.Attributes... }
 	>
 		if fieldset.Title != "" || fieldset.Description != "" {
-			<legend class="flex items-baseline gap-1.5 p-0 mb-2">
+			// float-left opts the legend out of the native "rendered legend"
+			// placement (carved into the fieldset border). Chromium already
+			// bails on display:flex alone, but WebKit only honors the spec's
+			// escape hatches: float or position:absolute.
+			<legend class="float-left w-full flex items-baseline gap-1.5 p-0 mb-2">
 				if fieldset.Title != "" {
 					<span class="text-lg font-semibold tracking-tight text-foreground">{ fieldset.Title }</span>
 				}
