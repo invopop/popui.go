@@ -17,17 +17,11 @@ type FileDownload struct {
 	// inside another container.
 	Borderless bool
 	// Hover highlights the whole row with a background color on hover.
-	Hover bool
-	// Preview is a JavaScript expression run when the row is clicked,
-	// e.g. a call to the function that opens the file preview. Rendering
-	// the preview itself is left to the app implementing the component.
-	// Clicks on nested links or buttons (e.g. the download action) are
-	// ignored.
+	Hover   bool
 	Preview string
 }
 
-// PreviewAttributes returns the component attributes, adding the onclick
-// handler that runs Preview when set.
+// PreviewAttributes returns the component attributes with an onclick handler that runs the Preview JavaScript expression, ignoring clicks on nested links and buttons.
 func (f FileDownload) PreviewAttributes() templ.Attributes {
 	if f.Preview == "" {
 		return f.Attributes

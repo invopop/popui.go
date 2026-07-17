@@ -25,9 +25,7 @@ func (p Popover) GenerateID() Popover {
 	return p
 }
 
-// ShowPopover returns a JavaScript expression that opens the popover with
-// the given ID. Use it with props that take a JavaScript action, such as
-// FileDownload.Preview.
+// ShowPopover returns a JavaScript expression that opens the popover with the given ID.
 func ShowPopover(id string) string {
 	return "document.getElementById('" + id + "').showPopover()"
 }
