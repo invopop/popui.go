@@ -1,17 +1,425 @@
 package examples
 
 import (
+	"fmt"
+	"strings"
+
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
 
+// Console recreates the Invopop Console's document views using PopUI
+// components. It is a PROTOTYPE: mock data, client-side flow filtering via
+// a small Alpine scope, and no concern for maintainability. Layout gaps
+// that would need new components (or new slots on existing ones) are
+// marked with "GAP:" comments.
+//
+// GAP: the real console shows a full-width environment banner ("You're
+// testing in a sandbox…") above both the sidebar and the content column.
+// App's grid has no slot that spans the full width above the nav, so the
+// banner is omitted here.
 templ Console() {
-	@popui.App(props.App{Title: "Invopop - Console panel"}) {
-		@popui.Main() {
-			@liveWorkspacesApp()
-			@popui.Info() {
-				You should see an error in the console...
+	@ConsoleDoc("Invoices")
+}
+
+// ConsoleDoc renders one document view (Invoices, Orders, Deliveries,
+// Payments) — all share the same layout. The `flow` Alpine state lives on
+// the App container so the sidebar switcher can filter the table rows.
+templ ConsoleDoc(doc string) {
+	@popui.App(props.App{
+		Title:        "Invopop - Console",
+		FillViewport: true,
+		Data:         "{flow: 'all'}",
+	}) {
+		@consoleSidebar(doc)
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{{Label: doc}},
+		}) {
+			@popui.Button(props.Button{Variant: props.ButtonVariantPrimary}) {
+				@icons.Add()
+				<span>{ "New " + strings.ToLower(strings.TrimSuffix(doc, "s")) }</span>
 			}
 		}
+		@popui.Main(props.Main{Class: "flex flex-col min-h-0 gap-0"}) {
+			@consoleDocFilter(doc)
+			@popui.Table(props.Table{
+				// Flush against the filter bar above and the pagination bar
+				// below; thin scrollbar with a transparent track.
+				RootClass:        "flex-1 min-h-0 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--color-border-default-secondary)_transparent]",
+				ScrollHorizontal: true,
+				StickyColumn:     true,
+				StickyHeader:     true,
+			}) {
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>State</th>
+						<th>Flow</th>
+						<th>Type</th>
+						<th>Issue Date</th>
+						<th>Supplier Name</th>
+						<th>Supplier Tax Code</th>
+						<th>Supplier Country</th>
+						<th>Customer Name</th>
+						<th>Customer Tax Code</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody id="doc-rows">
+					for _, row := range consoleDocRows(doc) {
+						@consoleDocRow(row)
+					}
+				</tbody>
+			}
+			@consoleTableFooter(len(consoleDocRows(doc)))
+		}
+	}
+}
+
+// consoleDocEntry is one mock row for a document table.
+type consoleDocEntry struct {
+	Code            string
+	State           string
+	StateColor      string
+	// Flow is the document direction: "In" (inbox) or "Out" (outbox).
+	Flow            string
+	Type            string
+	IssueDate       string
+	SupplierName    string
+	SupplierTax     string
+	SupplierCountry string
+	CustomerName    string
+	CustomerTax     string
+}
+
+type consoleParty struct {
+	name    string
+	tax     string
+	country string
+}
+
+// consoleDocRows generates ~40 deterministic mock rows per document type so
+// the table has enough content to scroll.
+func consoleDocRows(doc string) []consoleDocEntry {
+	prefix := map[string]string{
+		"Invoices":   "INV",
+		"Orders":     "ORD",
+		"Deliveries": "DLV",
+		"Payments":   "PAY",
+	}[doc]
+	parties := []consoleParty{
+		{"Reporting Test Co", "09362521882", "FR"},
+		{"Acme France SARL", "03905569299", "FR"},
+		{"Müller GmbH", "136695976", "DE"},
+		{"Brussels Print SA", "0417497106", "BE"},
+		{"Cyberdyne Iberia SL", "B86104481", "ES"},
+	}
+	states := []struct{ label, color string }{
+		{"Error", "red"},
+		{"Completed", "green"},
+		{"Completed", "green"},
+		{"Processing", "yellow"},
+		{"Completed", "green"},
+	}
+	docType := "Standard"
+	rows := make([]consoleDocEntry, 0, 42)
+	for i := 0; i < 42; i++ {
+		s := states[i%len(states)]
+		sup := parties[i%len(parties)]
+		cust := parties[(i+2)%len(parties)]
+		flow := "Out"
+		if i%3 == 1 {
+			flow = "In"
+		}
+		t := docType
+		if doc == "Invoices" && i%7 == 5 {
+			t = "Credit Note"
+		}
+		row := consoleDocEntry{
+			Code:            fmt.Sprintf("%s-2026-%03d", prefix, 100+i),
+			State:           s.label,
+			StateColor:      s.color,
+			Flow:            flow,
+			Type:            t,
+			IssueDate:       fmt.Sprintf("May %d, 2026", 1+(i*7)%28),
+			SupplierName:    sup.name,
+			SupplierTax:     sup.tax,
+			SupplierCountry: sup.country,
+		}
+		// Completed rows carry the counterparty; pending/failed ones don't yet.
+		if s.label == "Completed" {
+			row.CustomerName = cust.name
+			row.CustomerTax = cust.tax
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+templ consoleDocRow(row consoleDocEntry) {
+	// The whole row navigates to the entry view; clicks on interactive
+	// children (checkbox, code link, context menu) are left to their own
+	// handlers.
+	<tr
+		x-show={ "flow === 'all' || flow === '" + strings.ToLower(row.Flow) + "'" }
+		class="cursor-pointer"
+		onclick="if (!event.target.closest('a, button, input, label, [popover]')) window.location.href = '/examples/console/entry'"
+	>
+		<td>
+			<div class="flex items-center gap-3">
+				@popui.Checkbox(props.Checkbox{Name: "select"})
+				<a href="/examples/console/entry" class="truncate max-w-56 hover:underline">{ row.Code }</a>
+				<span class="text-icon-default-secondary">
+					@icons.Workflow()
+				</span>
+			</div>
+		</td>
+		<td>
+			@popui.TagStatus(props.TagStatus{Status: row.StateColor, Label: row.State, Dot: true})
+		</td>
+		<td>
+			<span class="inline-flex items-center gap-1 whitespace-nowrap [&_svg]:text-icon-default-secondary">
+				if row.Flow == "In" {
+					@icons.Download()
+				} else {
+					@icons.Upload()
+				}
+				{ row.Flow }
+			</span>
+		</td>
+		<td class="whitespace-nowrap">{ row.Type }</td>
+		<td class="whitespace-nowrap">{ row.IssueDate }</td>
+		<td class="whitespace-nowrap">{ row.SupplierName }</td>
+		<td>{ row.SupplierTax }</td>
+		<td>{ row.SupplierCountry }</td>
+		<td class="whitespace-nowrap">{ orDash(row.CustomerName) }</td>
+		<td>{ orDash(row.CustomerTax) }</td>
+		<td>
+			@popui.Menu() {
+				@popui.MenuItem() {
+					View
+				}
+				@popui.MenuItem() {
+					Duplicate
+				}
+				@popui.MenuItem() {
+					Delete
+				}
+			}
+		</td>
+	</tr>
+}
+
+func orDash(s string) string {
+	if s == "" {
+		return "-"
+	}
+	return s
+}
+
+templ consoleDocFilter(doc string) {
+	@popui.Filter(props.Filter{
+		BaseURL: "/examples/console",
+		Target:  "#doc-rows",
+		Inputs: []props.FilterInput{
+			{
+				Name:  "state",
+				Label: "State",
+				Icon:  icons.Status(),
+				Type:  props.FilterTypeMultiple,
+				Options: []props.FilterOption{
+					{Value: "error", Label: "Error", Color: "red"},
+					{Value: "processing", Label: "Processing", Color: "yellow"},
+					{Value: "completed", Label: "Completed", Color: "green"},
+				},
+			},
+			{
+				Name:  "flow",
+				Label: "Flow",
+				Icon:  icons.Exchange(),
+				Type:  props.FilterTypeSelect,
+				Options: []props.FilterOption{
+					{Value: "in", Label: "In"},
+					{Value: "out", Label: "Out"},
+				},
+			},
+			{
+				Name:  "type",
+				Label: "Type",
+				Icon:  icons.Invoice(),
+				Type:  props.FilterTypeSelect,
+				Options: []props.FilterOption{
+					{Value: "standard", Label: "Standard"},
+					{Value: "credit-note", Label: "Credit Note"},
+				},
+			},
+			{
+				Name:  "issue_date",
+				Label: "Issue Date",
+				Icon:  icons.Calendar(),
+				Type:  props.FilterTypeCalendar,
+			},
+			{
+				Name:  "supplier",
+				Label: "Supplier",
+				Icon:  icons.Company(),
+			},
+		},
+	}) {
+		// Trailing action cluster after the Filter's own Clear button.
+		@popui.Button(props.Button{
+			Size: props.ButtonSizeIcon,
+			Attributes: templ.Attributes{
+				"type":       "button",
+				"style":      "order: 10002",
+				"aria-label": "Table settings",
+			},
+		}) {
+			@icons.Sliders()
+		}
+	}
+}
+
+templ consoleTableFooter(total int) {
+	<div class="flex items-center justify-between px-4 py-2 border-t border-border shrink-0">
+		@popui.TablePagination(props.TablePagination{
+			CurrentPage:        1,
+			TotalPages:         1,
+			TotalItems:         total,
+			RowsPerPage:        50,
+			RowsPerPageOptions: []int{25, 50, 100},
+			ShowRowsPerPage:    true,
+			ItemsLabel:         "items",
+			Class:              "border-t-0 p-0",
+		})
+		<div class="flex items-center gap-3">
+			@popui.Button(props.Button{
+				Variant: props.ButtonVariantTransparent,
+				Size:    props.ButtonSizeIcon,
+				Attributes: templ.Attributes{
+					"type":       "button",
+					"aria-label": "Refresh",
+				},
+			}) {
+				@icons.Reload()
+			}
+			// GAP: live-updates indicator (green pulse dot + label) has no
+			// component; candidate for a small "LiveBadge" if it recurs.
+			<span class="inline-flex items-center gap-1.5 text-sm font-medium text-foreground-success">
+				<span class="size-2 rounded-full bg-icon-status-paid"></span>
+				Live
+			</span>
+		</div>
+	</div>
+}
+
+templ consoleSidebar(active string) {
+	@popui.Sidebar(props.Sidebar{Variant: props.SidebarVariantDark}) {
+		@popui.SidebarHeader() {
+			// GAP: workspace switcher (avatar + name + country flag + chevron
+			// opening a workspace menu) is hand-rolled here; the console will
+			// need it as a first-class component.
+			@popui.Avatar(props.Avatar{Initial: "C", Size: props.AvatarSizeLarge})
+			<span class="flex-1 truncate">Cyberdyne …</span>
+			@popui.Image(props.Image{Src: "https://assets.invopop.com/flags/fr.svg", Alt: "FR", Class: "w-4 h-3 rounded-[1.5px]"})
+			<span class="text-icon-inverse-secondary">
+				@icons.ChevronDown()
+			</span>
+		}
+		@popui.SidebarContent() {
+			// GAP: sidebar search trigger with keyboard-shortcut hint (⌘K).
+			// Hand-rolled; candidate for a "SidebarSearch" component.
+			<button
+				type="button"
+				class="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-border-inverse-default text-foreground-inverse-secondary text-base font-medium"
+			>
+				@icons.Search()
+				<span class="flex-1 text-left">Search</span>
+				@icons.Command()
+				<span class="text-sm">K</span>
+			</button>
+			@popui.SidebarSection(props.SidebarSection{Title: "Apps"}) {
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Tables()
+					<span>Tables</span>
+				}
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Puzzle()
+					<span>Chargebee</span>
+				}
+			}
+			// The Documents header carries a tiny all/in/out switcher that
+			// filters every document table by flow direction.
+			// GAP: SidebarSection has no title-actions slot, and PopUI has no
+			// mini segmented switcher — both hand-rolled below.
+			@popui.SidebarSection() {
+				// mb-1.5 matches the gap-2 that titled sections get between
+			// their <p> title and the item list (this header is a list item,
+			// so it only gets the list's gap-0.5 otherwise).
+				<li class="w-full flex items-center justify-between mb-1.5">
+					<p>Documents</p>
+					<div class="inline-flex items-center gap-0.5 text-xs font-medium text-foreground-inverse-secondary">
+						for _, f := range []string{"all", "in", "out"} {
+							<button
+								type="button"
+								@click={ "flow = '" + f + "'" }
+								:class={ "flow === '" + f + "' ? 'bg-background-selected-inverse text-foreground-inverse' : ''" }
+								class="px-1.5 py-0.5 rounded cursor-pointer capitalize hover:text-foreground-inverse"
+							>{ f }</button>
+						}
+					</div>
+				</li>
+				@consoleSidebarDoc(active, "Invoices", "/examples/console", icons.Invoice())
+				@consoleSidebarDoc(active, "Orders", "/examples/console/orders", icons.Order())
+				@consoleSidebarDoc(active, "Deliveries", "/examples/console/deliveries", icons.Van())
+				@consoleSidebarDoc(active, "Payments", "/examples/console/payments", icons.Payment())
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Status()
+					<span>Statuses</span>
+				}
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Team()
+					<span>Parties</span>
+				}
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Box()
+					<span>Items</span>
+				}
+			}
+			@popui.SidebarSection(props.SidebarSection{Title: "Automations"}) {
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Workflow()
+					<span>Workflows</span>
+				}
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.History()
+					<span>Job history</span>
+				}
+			}
+			@popui.SidebarSection(props.SidebarSection{Title: "Configuration", Class: "flex-1"}) {
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.List()
+					<span>Series</span>
+				}
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Key()
+					<span>API Keys</span>
+				}
+			}
+			@popui.SidebarSection() {
+				@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+					@icons.Question()
+					<span>Help</span>
+				}
+			}
+		}
+	}
+}
+
+templ consoleSidebarDoc(active string, label string, href string, icon templ.Component) {
+	@popui.SidebarItem(props.SidebarItem{Href: templ.SafeURL(href), Selected: active == label}) {
+		@icon
+		<span>{ label }</span>
 	}
 }
