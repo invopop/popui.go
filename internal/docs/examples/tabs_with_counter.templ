@@ -1,0 +1,19 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TabsWithCounterExample() {
+	@popui.Tabs(props.Tabs{Tabs: []props.TabItem{
+		{Value: "inbox", Label: "Inbox", Count: 12},
+		{Value: "sent", Label: "Sent", Count: 4},
+		{Value: "archive", Label: "Archive"},
+	}})
+	@popui.Tabs(props.Tabs{Variant: "pill", Tabs: []props.TabItem{
+		{Value: "inbox", Label: "Inbox", Count: 12},
+		{Value: "sent", Label: "Sent", Count: 4},
+		{Value: "archive", Label: "Archive"},
+	}})
+}

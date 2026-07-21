@@ -12,4 +12,9 @@ templ TabsWithIconsExample() {
 		{Value: "settings", Label: "Settings", Icon: icons.Settings()},
 		{Value: "privacy", Label: "Privacy", Icon: icons.Lock()},
 	}})
+	@popui.Tabs(props.Tabs{Variant: "pill", Tabs: []props.TabItem{
+		{Value: "account", Label: "Account", Icon: icons.User()},
+		{Value: "settings", Label: "Settings", Icon: icons.Settings()},
+		{Value: "privacy", Label: "Privacy", Icon: icons.Lock()},
+	}})
 }
