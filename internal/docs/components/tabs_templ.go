@@ -151,6 +151,32 @@ func Tabs() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TabsWithCounterExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "With Counter",
+			Description: "A TabItem Count renders a counter after the label: in parentheses on the default variant, as a badge on the pill variant.",
+			Code:        examples.LoadExample("tabs_with_counter.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Tabs",
 				Description: "Self-contained tabbed view: renders the trigger row from Tabs, owns the Alpine scope + switching logic, and hosts one Tab content panel per tab in its children. Omit the children for a stand-alone trigger row.",
@@ -178,6 +204,7 @@ func Tabs() templ.Component {
 					{Name: "Value", Type: "string", Default: "", Description: "Identifies the tab; assigned to the Alpine Model on click and matched by the content Tab."},
 					{Name: "Label", Type: "string", Default: "", Description: "Visible trigger text."},
 					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Optional leading icon rendered before the label."},
+					{Name: "Count", Type: "int", Default: "0", Description: "Counter rendered after the label when greater than zero: \"(n)\" on the default variant, a small badge on the pill variant."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -203,7 +230,7 @@ func Tabs() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
