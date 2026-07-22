@@ -1,0 +1,47 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TooltipPositionExample() {
+	<div class="flex justify-center gap-4 py-40">
+		@popui.Tooltip(props.Tooltip{
+			Title:       "Top",
+			Description: "Shown above the trigger. This is the default position.",
+			Position:    props.TooltipPositionTop,
+		}) {
+			@popui.Button() {
+				Top
+			}
+		}
+		@popui.Tooltip(props.Tooltip{
+			Title:       "Bottom",
+			Description: "Shown below the trigger.",
+			Position:    props.TooltipPositionBottom,
+		}) {
+			@popui.Button() {
+				Bottom
+			}
+		}
+		@popui.Tooltip(props.Tooltip{
+			Title:       "Left",
+			Description: "Shown to the left of the trigger.",
+			Position:    props.TooltipPositionLeft,
+		}) {
+			@popui.Button() {
+				Left
+			}
+		}
+		@popui.Tooltip(props.Tooltip{
+			Title:       "Right",
+			Description: "Shown to the right of the trigger.",
+			Position:    props.TooltipPositionRight,
+		}) {
+			@popui.Button() {
+				Right
+			}
+		}
+	</div>
+}

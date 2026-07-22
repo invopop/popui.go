@@ -35,6 +35,13 @@ templ Input() {
 		@examples.InputCustomLabelExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Label Tooltip",
+		Description: "Set the Tooltip prop to append a question mark icon to the label that reveals a Tooltip card on hover. Hovering the field itself does not trigger it.",
+		Code:        examples.LoadExample("input_tooltip.templ"),
+	}) {
+		@examples.InputTooltipExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Disabled & Read-only",
 		Description: "Input can be disabled to prevent interaction or set to read-only to prevent editing.",
 		Code:        examples.LoadExample("input_disabled.templ"),
@@ -75,6 +82,7 @@ templ Input() {
 				{Name: "Value", Type: "string", Default: "", Description: "Initial or current value of the input"},
 				{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission"},
 				{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the input"},
+				{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Tooltip card shown on hover of a question mark icon after the label; only used when Label is set"},
 				{Name: "Prefix", Type: "string", Default: "", Description: "Text or symbol displayed before the input field"},
 				{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the input on page load"},
 				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the input"},

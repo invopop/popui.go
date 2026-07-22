@@ -1,0 +1,21 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ InputTooltipExample() {
+	<div class="pt-56 pl-10">
+		@popui.Input(props.Input{
+			ID:          "launch-url",
+			Label:       "Launch URL",
+			Placeholder: "https://",
+			Tooltip: props.Tooltip{
+				Title:       "Launch URL",
+				Description: "This is the address that will be loaded in the Console UI sidebar, allowing users to interact with your app through the built-in launcher.",
+				Image:       "https://picsum.photos/432/190",
+			},
+		})
+	</div>
+}

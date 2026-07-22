@@ -6,10 +6,12 @@ import (
 )
 
 templ LabelWithHintExample() {
-	@popui.Label(props.Label{
-		ID:   "email-with-hint",
-		Hint: "This will be your primary contact email",
-	}) {
-		Email Address
-	}
+	<div class="pt-16 pl-10">
+		@popui.Label(props.Label{
+			ID:   "email-with-hint",
+			Hint: "This will be your primary contact email",
+		}) {
+			Email Address
+		}
+	</div>
 }

@@ -19,6 +19,10 @@ type Input struct {
 	Name        string
 	Label       string
 
+	// Tooltip shows a question mark icon after the label that reveals a
+	// Tooltip card on hover. Only used when Label is set.
+	Tooltip Tooltip
+
 	// Set the height of the input field, see the InputSize constants.
 	Size string
 

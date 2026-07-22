@@ -252,6 +252,12 @@ var groups = []*Group{
 				Template: components.Toast(),
 			},
 			{
+				Title:    "Tooltip",
+				Desc:     "Dark floating card with a title, description and optional illustration, revealed on hover.",
+				Path:     "tooltip",
+				Template: components.Tooltip(),
+			},
+			{
 				Title:    "Typography",
 				Desc:     "Text components for headings, paragraphs, descriptions, and formatted content.",
 				Path:     "typography",

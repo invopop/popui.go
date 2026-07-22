@@ -6,7 +6,8 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Label provides a label element
+// Label provides a label element. Setting Hint or Tooltip appends a question
+// mark icon that reveals a Tooltip card on hover.
 templ Label(opts ...props.Label) {
 	{{ p := props.First(opts) }}
 	<label
@@ -22,10 +23,13 @@ templ Label(opts ...props.Label) {
 		{ p.Attributes... }
 	>
 		{ children... }
-		if p.Hint != "" {
-			<div title={ p.Hint } class="[&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3">
-				@icons.Question()
-			</div>
+		{{ tip := p.LabelTooltip() }}
+		if !tip.Empty() {
+			@Tooltip(tip) {
+				<div class="cursor-help [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3">
+					@icons.Question()
+				</div>
+			}
 		}
 	</label>
 }
