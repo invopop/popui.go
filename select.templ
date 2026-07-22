@@ -33,7 +33,7 @@ templ Select(p ...props.Select) {
 	} else {
 		<div class="flex flex-col space-y-2">
 			if prp.Label != "" {
-				@Label(props.Label{ID: prp.ID}) {
+				@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 					{ prp.Label }
 				}
 			}
@@ -99,7 +99,7 @@ templ selectMultiple(prp props.Select) {
 		x-modelable="selected"
 	>
 		if prp.Label != "" {
-			@Label(props.Label{ID: prp.ID}) {
+			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 				{ prp.Label }
 			}
 		}

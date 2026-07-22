@@ -368,6 +368,7 @@ func Select() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.), applied to the select or the combobox control"},
 					{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission. With Multiple, each selected value is submitted under this name"},
 					{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the field"},
+					{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Tooltip card shown on hover of a question mark icon after the label; only used when Label is set"},
 					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the field"},
 					{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the select on page load (single variant only)"},
 					{Name: "Multiple", Type: "bool", Default: "false", Description: "Switches to the multi-selection tag-chip combobox variant"},

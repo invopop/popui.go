@@ -1,0 +1,45 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Tooltip() {
+	@modules.Example(modules.ExampleProps{
+		Description: "Tooltip wraps a trigger element and reveals a dark floating card on hover or keyboard focus. The card keeps its dark color scheme in both light and dark modes. The illustration is an asset URL; the component applies the rounded corners and border to it.",
+		Code:        examples.LoadExample("tooltip.templ"),
+	}) {
+		@examples.TooltipExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Text Only",
+		Description: "The illustration is optional — omit Image for a compact text tooltip. Title and Description are always required.",
+		Code:        examples.LoadExample("tooltip_text.templ"),
+	}) {
+		@examples.TooltipTextExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Position",
+		Description: "Position places the card above, below, or to either side of the trigger. Defaults to top.",
+		Code:        examples.LoadExample("tooltip_position.templ"),
+	}) {
+		@examples.TooltipPositionExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Tooltip",
+			Description: "Dark floating card with a title, description, and optional illustration, revealed on hover or focus of the wrapped trigger element.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tooltip wrapper"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Title", Type: "string", Default: "", Description: "Card heading, required"},
+				{Name: "Description", Type: "string", Default: "", Description: "Secondary text rendered below the title in a muted color, required"},
+				{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
+				{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, bottom, left or right"},
+			},
+		})
+	}
+}

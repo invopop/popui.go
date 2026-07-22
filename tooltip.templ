@@ -1,0 +1,61 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Tooltip wraps a trigger element (the children) and reveals a dark floating
+// card on hover or keyboard focus. The card holds a title, a description,
+// and an optional illustration, and keeps its dark color scheme in both
+// light and dark modes.
+templ Tooltip(opts ...props.Tooltip) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class="group/tooltip relative inline-block w-fit"
+		{ p.Attributes... }
+	>
+		{ children... }
+		<div
+			role="tooltip"
+			class={
+				tailwind.Merge(
+					"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
+					"invisible opacity-0 pointer-events-none transition-opacity duration-150",
+					"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
+					"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
+					tooltipPositionClasses(p.Position),
+					p.Class,
+				),
+			}
+		>
+			if p.Image != "" {
+				<img src={ p.Image } alt="" class="w-full mb-2 rounded-md border border-border-inverse"/>
+			}
+			<div class="flex flex-col gap-1 px-1 py-1">
+				if p.Title != "" {
+					<p class="text-base font-semibold text-foreground-inverse">{ p.Title }</p>
+				}
+				if p.Description != "" {
+					<p class="text-sm text-foreground-inverse-secondary">{ p.Description }</p>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+func tooltipPositionClasses(position string) string {
+	switch position {
+	case props.TooltipPositionBottom:
+		return "top-full left-1/2 -translate-x-1/2 mt-2"
+	case props.TooltipPositionLeft:
+		return "right-full top-1/2 -translate-y-1/2 mr-2"
+	case props.TooltipPositionRight:
+		return "left-full top-1/2 -translate-y-1/2 ml-2"
+	default:
+		return "bottom-full left-1/2 -translate-x-1/2 mb-2"
+	}
+}

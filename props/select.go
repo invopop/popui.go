@@ -33,6 +33,9 @@ type Select struct {
 	Label      string
 	Disabled   bool
 	Autofocus  bool
+	// Tooltip shows a question mark icon after the label that reveals a
+	// Tooltip card on hover. Only used when Label is set.
+	Tooltip Tooltip
 	// Multiple switches to the tag-chip combobox variant.
 	Multiple bool
 	Required bool
