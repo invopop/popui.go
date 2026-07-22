@@ -1,5 +1,5 @@
 // Global URL for the Console UI SDK.
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
+const CONSOLE_SDK_URL = 'https://sdk.invopop.dev/index.js'; // local testing: served from the console-ui-sdk worktree
 
 (function () {
   'use strict';
@@ -313,12 +313,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     initButtonCopies()
     attachTableResizers()
+    initFrozenColumns()
   })
 
-  // Rewires ButtonCopies and table resizers inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers, and frozen columns inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
+    initFrozenColumns()
   })
 
   // Clears button loading spinners when the page becomes visible again.
@@ -376,26 +378,78 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // Table column resizing
   // ------------------------------------------------------------------
 
-  // Adds a drag handle to each resizable header cell except the last.
+  // Adds a drag handle to each resizable header cell except the last one of
+  // each table, which stays elastic to absorb leftover width.
   function attachTableResizers() {
-    document.querySelectorAll('.popui-table-resizable thead th').forEach(function (th, idx, all) {
-      if (idx === all.length - 1) return
-      if (th.querySelector('.popui-table-resizer')) return
-      const handle = document.createElement('div')
-      handle.className = 'popui-table-resizer'
-      th.appendChild(handle)
+    document.querySelectorAll('.popui-table-resizable').forEach(function (table) {
+      table.querySelectorAll('thead th').forEach(function (th, idx, all) {
+        if (idx === all.length - 1) return
+        if (th.querySelector('.popui-table-resizer')) return
+        const handle = document.createElement('div')
+        handle.className = 'popui-table-resizer'
+        th.appendChild(handle)
+      })
+    })
+  }
+
+  // Publishes cumulative left offsets for multi-column freeze tables
+  // (data-popui-freeze-cols) as --popui-freeze-left-<n> CSS vars, measured
+  // from the frozen header cells. A ResizeObserver re-measures whenever a
+  // frozen column's width changes (column resizing, content changes, window
+  // resizes), so every frozen column keeps pinning exactly where the
+  // previous one ends.
+  function initFrozenColumns() {
+    document.querySelectorAll('table[data-popui-freeze-cols]').forEach(function (table) {
+      const count = parseInt(table.getAttribute('data-popui-freeze-cols'), 10) || 0
+      const cells = Array.prototype.slice.call(
+        table.querySelectorAll('thead tr:first-child > *'),
+        0,
+        count
+      )
+      if (cells.length < 2) return
+      const update = function () {
+        let left = 0
+        cells.forEach(function (cell, i) {
+          if (i > 0) table.style.setProperty('--popui-freeze-left-' + (i + 1), left + 'px')
+          left += cell.getBoundingClientRect().width
+        })
+      }
+      if (table._popuiFreezeObserver) table._popuiFreezeObserver.disconnect()
+      const observer = new ResizeObserver(update)
+      cells.forEach(function (cell) {
+        observer.observe(cell)
+      })
+      table._popuiFreezeObserver = observer
+      update()
     })
   }
 
   // Resizes a column by dragging its handle, setting an inline width on the th.
+  // At drag start every column is frozen at its rendered width so the drag
+  // can't redistribute space between the others; the last column instead keeps
+  // an auto width with its rendered width as a floor, making it the only
+  // elastic one — it absorbs the freed space when the dragged column shrinks,
+  // while growth expands the table into a horizontal scroll.
   document.addEventListener('mousedown', function (e) {
     const handle = e.target.closest('.popui-table-resizer')
     if (!handle) return
     e.preventDefault()
     const th = handle.closest('th')
     if (!th) return
+    const cells = Array.prototype.slice.call(th.parentElement.children)
+    const widths = cells.map(function (cell) {
+      return cell.offsetWidth
+    })
+    cells.forEach(function (cell, i) {
+      if (i === cells.length - 1) {
+        if (!cell.style.minWidth) cell.style.minWidth = widths[i] + 'px'
+      } else if (!cell.style.width) {
+        cell.style.width = widths[i] + 'px'
+        cell.style.minWidth = widths[i] + 'px'
+      }
+    })
     const startX = e.clientX
-    const startWidth = th.offsetWidth
+    const startWidth = widths[cells.indexOf(th)]
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
     function onMove(mv) {

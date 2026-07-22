@@ -279,6 +279,32 @@ func Table() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TableFrozenColumnsExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Frozen Columns",
+			Description: "Freeze the first N columns (StickyColumns, up to 5) so they stay pinned during a horizontal scroll, with the full-height divider on the last frozen column. Offsets are measured at runtime, so it composes with Resizable — drag a frozen column's edge and the next one keeps pinning where it ends.",
+			Code:        examples.LoadExample("table_frozen_columns.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
 				Description: "A table component with automatic styling for borders, spacing, and typography. Full-width layout, row-hover tint, and column-title dividers are always applied — no configuration needed. Compose cells with plain <td> / <th>.",
@@ -289,7 +315,8 @@ func Table() templ.Component {
 					{Name: "Variant", Type: "string", Default: "", Description: "Visual style: 'card' adds outer border and rounded corners"},
 					{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the scroll wrapper around the table. Use to bound height + enable vertical scroll for StickyHeader (e.g. 'flex-1 min-h-0 overflow-y-auto')"},
 					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Wide, horizontally-scrolling table: the body scrolls sideways. Pair with StickyColumn to keep the first column pinned during the scroll"},
-					{Name: "StickyColumn", Type: "bool", Default: "false", Description: "Pin the first column to the left with a full-height divider so the identity column never detaches during a horizontal scroll. Only visible alongside ScrollHorizontal"},
+					{Name: "StickyColumn", Type: "bool", Default: "false", Description: "Pin the first column to the left with a full-height divider so the identity column never detaches during a horizontal scroll. Only visible alongside ScrollHorizontal. Equivalent to StickyColumns: 1"},
+					{Name: "StickyColumns", Type: "int", Default: "0", Description: "Pin the first N columns (up to 5) during a horizontal scroll, moving the full-height divider to the last frozen column. Widths are measured at runtime so it composes with Resizable. Takes precedence over StickyColumn"},
 					{Name: "StickyHeader", Type: "bool", Default: "false", Description: "Pin the <thead> row to the top while the body scrolls. Requires RootClass to make the wrapper a bounded vertical scroll container"},
 					{Name: "Resizable", Type: "bool", Default: "false", Description: "Let the user drag the right edge of each header cell to resize the column. Drag handles + behavior are provided by popui (CSS + popui.js); no consumer script needed"},
 				},
@@ -348,7 +375,7 @@ func Table() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

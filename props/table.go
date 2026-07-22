@@ -23,7 +23,15 @@ type Table struct {
 	// stays put during a horizontal scroll so the identity column never
 	// detaches from the rows. Only has a visible effect alongside
 	// ScrollHorizontal (there's nothing to scroll past otherwise).
+	// Equivalent to StickyColumns: 1.
 	StickyColumn bool
+
+	// StickyColumns pins the first N columns (up to 5) to the left during a
+	// horizontal scroll, moving the full-height divider to the last frozen
+	// column. Frozen widths are measured at runtime and re-measured when they
+	// change, so it composes with Resizable. Takes precedence over
+	// StickyColumn when both are set.
+	StickyColumns int
 
 	// StickyHeader pins the <thead> row to the top while the body scrolls.
 	// The RootClass must make the wrapper a vertical scroll container with a

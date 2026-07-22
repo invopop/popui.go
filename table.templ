@@ -17,12 +17,13 @@ import (
 // Variant "card" adds an outer border and rounded corners.
 templ Table(p ...props.Table) {
 	{{ prp := props.First(p) }}
+	{{ frozen := tableFrozenColumns(prp) }}
 	<div
 		class={
 			tailwind.Merge(
 				classes.If(prp.ScrollHorizontal, "overflow-x-auto"),
 				classes.If(!prp.ScrollHorizontal, "overflow-hidden has-[[role=menu]]:overflow-visible"),
-				classes.If(prp.StickyColumn, "popui-table-freeze-scroll"),
+				classes.If(frozen > 0, "popui-table-freeze-scroll"),
 				classes.If(prp.Variant == "card", "border border-border rounded-lg"),
 				prp.RootClass,
 			),
@@ -31,6 +32,9 @@ templ Table(p ...props.Table) {
 		<table
 			if prp.ID != "" {
 				id={ prp.ID }
+			}
+			if frozen > 1 {
+				data-popui-freeze-cols={ fmt.Sprintf("%d", frozen) }
 			}
 			class={ tailwind.Merge(
 				"table-fixed",
@@ -42,8 +46,10 @@ templ Table(p ...props.Table) {
 				"popui-table-row-hover",
 				classes.If(prp.ScrollHorizontal, "popui-table-scroll-cells"),
 				classes.If(prp.StickyHeader, "popui-table-sticky-header"),
-				// StickyColumn freezes (pins) the first column.
-				classes.If(prp.StickyColumn, "popui-table-freeze-first"),
+				// One frozen column pins with pure CSS (left: 0); two or more
+				// use the freeze-cols machinery with measured left offsets.
+				classes.If(frozen == 1, "popui-table-freeze-first"),
+				classes.If(frozen > 1, "popui-table-freeze-cols"),
 				classes.If(prp.Resizable, "popui-table-resizable"),
 				"border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background",
 				"[&_tr]:data-[state=disabled]:opacity-30",
@@ -59,6 +65,23 @@ templ Table(p ...props.Table) {
 			{ children... }
 		</table>
 	</div>
+}
+
+// tableFrozenColumns resolves the effective number of frozen columns from the
+// StickyColumns count (capped at 5, the highest index the freeze-cols CSS
+// covers) and the legacy StickyColumn flag.
+func tableFrozenColumns(p props.Table) int {
+	n := p.StickyColumns
+	if n == 0 && p.StickyColumn {
+		n = 1
+	}
+	if n < 0 {
+		return 0
+	}
+	if n > 5 {
+		return 5
+	}
+	return n
 }
 
 // TablePagination provides pagination controls for tables with page navigation,

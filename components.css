@@ -524,6 +524,75 @@ form {
   display: none;
 }
 
+/* Multi-column freeze (StickyColumns 2..5). Same visual system as
+   freeze-first, generalized to N columns: every frozen cell is sticky and
+   opaque, but only the LAST frozen column carries the full-height divider.
+   Column widths are content-driven (and user-resizable), so each column's
+   `left` can't be a static value — popui.js measures the frozen header cells
+   and publishes cumulative offsets as --popui-freeze-left-<n> vars on the
+   table (see initFrozenColumns). Rules are generated per count because CSS
+   can't parameterize :nth-child by an attribute value; 5 is the documented
+   cap on props.Table.StickyColumns. */
+.popui-table-freeze-cols {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+[data-popui-freeze-cols='2'] tr > :nth-child(-n + 2),
+[data-popui-freeze-cols='3'] tr > :nth-child(-n + 3),
+[data-popui-freeze-cols='4'] tr > :nth-child(-n + 4),
+[data-popui-freeze-cols='5'] tr > :nth-child(-n + 5) {
+  position: sticky;
+  z-index: 5;
+  background-color: var(--color-background) !important;
+}
+/* Cumulative left offsets. The vars only take effect on cells the rules above
+   made sticky, so declaring them up to the 5th child is harmless for smaller
+   counts. The first column always pins at 0. */
+[data-popui-freeze-cols] tr > :nth-child(1) {
+  left: 0;
+}
+[data-popui-freeze-cols] tr > :nth-child(2) {
+  left: var(--popui-freeze-left-2, 0);
+}
+[data-popui-freeze-cols] tr > :nth-child(3) {
+  left: var(--popui-freeze-left-3, 0);
+}
+[data-popui-freeze-cols] tr > :nth-child(4) {
+  left: var(--popui-freeze-left-4, 0);
+}
+[data-popui-freeze-cols] tr > :nth-child(5) {
+  left: var(--popui-freeze-left-5, 0);
+}
+/* The full-height divider rides on the last frozen column only. */
+[data-popui-freeze-cols='2'] tr > :nth-child(2),
+[data-popui-freeze-cols='3'] tr > :nth-child(3),
+[data-popui-freeze-cols='4'] tr > :nth-child(4),
+[data-popui-freeze-cols='5'] tr > :nth-child(5) {
+  border-right: 1px solid var(--color-neutral-20);
+}
+/* Keep frozen cells opaque on row hover (same trick as freeze-first). */
+[data-popui-freeze-cols='2'] tbody tr:hover > :nth-child(-n + 2),
+[data-popui-freeze-cols='3'] tbody tr:hover > :nth-child(-n + 3),
+[data-popui-freeze-cols='4'] tbody tr:hover > :nth-child(-n + 4),
+[data-popui-freeze-cols='5'] tbody tr:hover > :nth-child(-n + 5) {
+  background-image: linear-gradient(var(--color-background-default-secondary), var(--color-background-default-secondary)) !important;
+}
+/* Frozen header cells must sit above both the sticky header and body cells. */
+[data-popui-freeze-cols='2'] thead tr > :nth-child(-n + 2),
+[data-popui-freeze-cols='3'] thead tr > :nth-child(-n + 3),
+[data-popui-freeze-cols='4'] thead tr > :nth-child(-n + 4),
+[data-popui-freeze-cols='5'] thead tr > :nth-child(-n + 5) {
+  z-index: 15;
+}
+/* The last frozen column's divider already separates it from the first
+   scrolling column — suppress that column's header divider. */
+[data-popui-freeze-cols='2'].popui-table-col-dividers thead th:nth-child(3)::before,
+[data-popui-freeze-cols='3'].popui-table-col-dividers thead th:nth-child(4)::before,
+[data-popui-freeze-cols='4'].popui-table-col-dividers thead th:nth-child(5)::before,
+[data-popui-freeze-cols='5'].popui-table-col-dividers thead th:nth-child(6)::before {
+  display: none;
+}
+
 @keyframes icon-pulse-animation {
   0%, 100% { fill: var(--color-background-default-tertiary); }
   40% { fill: var(--color-accent-50); }
