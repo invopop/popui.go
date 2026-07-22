@@ -46,8 +46,7 @@ templ Table(p ...props.Table) {
 				"popui-table-row-hover",
 				classes.If(prp.ScrollHorizontal, "popui-table-scroll-cells"),
 				classes.If(prp.StickyHeader, "popui-table-sticky-header"),
-				// One frozen column pins with pure CSS (left: 0); two or more
-				// use the freeze-cols machinery with measured left offsets.
+				// A single frozen column pins with plain CSS while more need measured offsets.
 				classes.If(frozen == 1, "popui-table-freeze-first"),
 				classes.If(frozen > 1, "popui-table-freeze-cols"),
 				classes.If(prp.Resizable, "popui-table-resizable"),

@@ -392,12 +392,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     })
   }
 
-  // Publishes cumulative left offsets for multi-column freeze tables
-  // (data-popui-freeze-cols) as --popui-freeze-left-<n> CSS vars, measured
-  // from the frozen header cells. A ResizeObserver re-measures whenever a
-  // frozen column's width changes (column resizing, content changes, window
-  // resizes), so every frozen column keeps pinning exactly where the
-  // previous one ends.
+  // Publishes each frozen column's cumulative left offset as a
+  // --popui-freeze-left-<n> CSS variable on multi-column freeze tables,
+  // re-measuring through a ResizeObserver whenever a frozen column's width
+  // changes.
   function initFrozenColumns() {
     document.querySelectorAll('table[data-popui-freeze-cols]').forEach(function (table) {
       const count = parseInt(table.getAttribute('data-popui-freeze-cols'), 10) || 0
@@ -424,12 +422,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     })
   }
 
-  // Resizes a column by dragging its handle, setting an inline width on the th.
-  // At drag start every column is frozen at its rendered width so the drag
-  // can't redistribute space between the others; the last column instead keeps
-  // an auto width with its rendered width as a floor, making it the only
-  // elastic one — it absorbs the freed space when the dragged column shrinks,
-  // while growth expands the table into a horizontal scroll.
+  // Resizes a column by dragging its handle, freezing every other column at
+  // its rendered width so that only the dragged column and the elastic last
+  // column ever change size.
   document.addEventListener('mousedown', function (e) {
     const handle = e.target.closest('.popui-table-resizer')
     if (!handle) return

@@ -85,8 +85,7 @@ func Table(p ...props.Table) templ.Component {
 			"popui-table-row-hover",
 			classes.If(prp.ScrollHorizontal, "popui-table-scroll-cells"),
 			classes.If(prp.StickyHeader, "popui-table-sticky-header"),
-			// One frozen column pins with pure CSS (left: 0); two or more
-			// use the freeze-cols machinery with measured left offsets.
+			// A single frozen column pins with plain CSS while more need measured offsets.
 			classes.If(frozen == 1, "popui-table-freeze-first"),
 			classes.If(frozen > 1, "popui-table-freeze-cols"),
 			classes.If(prp.Resizable, "popui-table-resizable"),
@@ -250,7 +249,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 101, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 100, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -388,7 +387,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(totalPagesStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 160, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 159, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -492,7 +491,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 206, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 205, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -515,7 +514,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var19 string
 					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 207, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 206, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 					if templ_7745c5c3_Err != nil {
@@ -559,7 +558,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(totalItemsStr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 215, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 214, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -572,7 +571,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(itemsLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 215, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 214, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
