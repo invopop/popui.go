@@ -1,0 +1,29 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ StatusBadge() {
+	@modules.Example(modules.ExampleProps{
+		Code: examples.LoadExample("status_badge.templ"),
+	}) {
+		@examples.StatusBadgeExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "StatusBadge",
+			Description: "Status tag component with a leading status icon and an optional label.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tag element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the tag element"},
+				{Name: "Label", Type: "string", Default: "", Description: "Optional text label displayed next to the icon"},
+				{Name: "Status", Type: "string", Default: "success", Description: "Icon variant: success, failed, warning, running"},
+			},
+		})
+	}
+}

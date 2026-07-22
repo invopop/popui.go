@@ -27,6 +27,20 @@ templ DescriptionList() {
 	}) {
 		@examples.DescriptionListRichTextExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Inline Rows & Actions",
+		Description: "Inline lays the item out label-left / value-right. Actions add hover-revealed buttons (copy, external-link) next to the value, and PrefixLength / SuffixLength truncate long values (the full value is still copied). Leaving Inline unset stacks the label above the value while keeping the hover reveal.",
+		Code:        examples.LoadExample("description_list_actions.templ"),
+	}) {
+		@examples.DescriptionListActionsExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Detail View",
+		Description: "A console-style side-panel detail view: section headings, inline rows with an em-dash for absent values, and a copyable mono id row.",
+		Code:        examples.LoadExample("description_list_detail_view.templ"),
+	}) {
+		@examples.DescriptionListDetailViewExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "DescriptionList",
@@ -46,6 +60,21 @@ templ DescriptionList() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Label", Type: "string", Default: "", Description: "The term or label to display (dt element)"},
 				{Name: "Value", Type: "string", Default: "", Description: "The description or value to display (dd element)"},
+				{Name: "Inline", Type: "bool", Default: "false", Description: "Lay the item out label-left / value-right instead of the default stacked (label above value)."},
+				{Name: "Mono", Type: "bool", Default: "false", Description: "Render the value in the monospace face (ids, hashes)."},
+				{Name: "PrefixLength", Type: "int", Default: "0", Description: "Truncate the DISPLAYED value to prefix…suffix (the full value is still copied). 0 with SuffixLength 0 shows it untruncated."},
+				{Name: "SuffixLength", Type: "int", Default: "0", Description: "Suffix length for prefix…suffix truncation; 0 renders prefix… only."},
+				{Name: "Actions", Type: "[]props.DescriptionListAction", Default: "", Description: "Hover-revealed action buttons rendered next to the value, in order of placement."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "DescriptionListAction",
+			Description: "One hover-revealed action button on a DescriptionListItem's value. Provide an Icon plus a behavior: Copy (clipboard), URL (external link), or a plain button via Attributes.",
+			Items: []modules.APITableItem{
+				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Glyph rendered inside the button (e.g. `icons.Duplicate()`, `icons.ExternalLink()`)."},
+				{Name: "Copy", Type: "string", Default: "", Description: "When set, the button copies this text to the clipboard."},
+				{Name: "URL", Type: "templ.SafeURL", Default: "", Description: "When set, the button is an anchor opening the URL in a new tab (target=_blank, rel=noopener noreferrer)."},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra attributes (aria-label, onclick, …); override the defaults a Copy / URL action sets."},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

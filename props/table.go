@@ -2,14 +2,38 @@ package props
 
 import "github.com/a-h/templ"
 
-// Table Templ component props
+// Table Templ component props.
+//
+// Full-width layout, row-hover tint, and column-title dividers are baked into
+// every Table — they're part of the standard data-table styling and need no
+// configuration.
 type Table struct {
-	ID               string
-	Class            string
-	RootClass        string
-	Attributes       templ.Attributes
-	Variant          string // "card" adds outer border
-	ScrollHorizontal bool   // Enable horizontal scrolling for wide tables
+	ID         string
+	Class      string
+	RootClass  string
+	Attributes templ.Attributes
+	Variant    string // "card" adds outer border
+
+	// ScrollHorizontal turns the table into a wide, horizontally-scrolling
+	// table: the body scrolls sideways. Pair it with StickyColumn to keep the
+	// first column pinned during the scroll.
+	ScrollHorizontal bool
+
+	// StickyColumn pins the first column to the left — a full-height divider
+	// stays put during a horizontal scroll so the identity column never
+	// detaches from the rows. Only has a visible effect alongside
+	// ScrollHorizontal (there's nothing to scroll past otherwise).
+	StickyColumn bool
+
+	// StickyHeader pins the <thead> row to the top while the body scrolls.
+	// The RootClass must make the wrapper a vertical scroll container with a
+	// bounded height (e.g. "flex-1 min-h-0 overflow-y-auto").
+	StickyHeader bool
+
+	// Resizable lets the user drag the right edge of each header cell to
+	// resize that column. The drag handles and behavior are provided by
+	// popui (CSS + popui.js); no consumer script is needed.
+	Resizable bool
 }
 
 // TablePaginationElements defines custom attributes for pagination interactive elements

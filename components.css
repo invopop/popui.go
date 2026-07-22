@@ -54,6 +54,7 @@ body {
   left: anchor(left);
   width: fit-content;
   height: fit-content;
+  position-try-fallbacks: flip-inline;
 }
 [popover].context-menu:not(:popover-open) {
   display: none;
@@ -70,6 +71,28 @@ body {
     top: auto;
     left: auto;
     margin: 0.5rem;
+  }
+}
+
+/* Multiselect dropdown */
+
+[popover].multiselect-panel {
+  position: fixed;
+  inset: unset;
+  overflow: visible;
+  top: anchor(bottom);
+  left: anchor(left);
+  margin-top: 0.25rem;
+}
+[popover].multiselect-panel:not(:popover-open) {
+  display: none;
+}
+@supports not (anchor-name: --test) {
+  [popover].multiselect-panel {
+    position: absolute;
+    top: auto;
+    left: auto;
+    margin: 0.25rem 0 0;
   }
 }
 
@@ -134,6 +157,17 @@ pre {
   background-size: 1.25rem 1.25rem;
 }
 .dark [data-select-arrow] {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%2330333B'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
+}
+
+/* Multiselect arrow — same glyph as the Select arrow, centred in a 20px box */
+.multiselect-arrow {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%23F3F4F6'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23030712' stroke-width='1.1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.25rem 1.25rem;
+}
+.dark .multiselect-arrow {
   background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%2330333B'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
 }
 
@@ -264,26 +298,26 @@ form {
   box-shadow: inset 0 0 0 1px var(--color-border-inverse-default);
 }
 
-/* Flash message animation */
-@keyframes flashMessage {
-  0% {
-    opacity: 0;
-    transform: translateY(25%);
-  }
-  9.09% {
-    /* 0.5s of 5.5s total */
-    opacity: 1;
-    transform: translateY(0);
-  }
-  90.9% {
-    /* Stay visible till ~5s */
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(25%);
-  }
+/* Toast */
+.popui-toast {
+  position: fixed;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s;
+}
+
+.popui-toast--top {
+  transform: translateY(-0.5rem);
+}
+
+.popui-toast--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* Animated sidebar hide icon */
@@ -350,7 +384,366 @@ form {
 
 .icon-pulse_r0 { animation: icon-pulse-animation 1.6s ease-in-out infinite 0s; }
 .icon-pulse_r1 { animation: icon-pulse-animation 1.6s ease-in-out infinite 0.16s; }
+
+/* Table — sticky header, frozen first column, and column dividers. The sticky
+   header is toggled by popui.Table's StickyHeader prop; the frozen first column
+   by StickyColumn; column dividers, row hover, and full width are always
+   applied. These can't be expressed as Tailwind utilities: sticky cells need an
+   opaque base to sit over the alpha hover/border tokens, and the header
+   dividers are pseudo-elements that scale with the label height. */
+
+/* FullWidth — stretch the table to fill its container while still growing
+   past it when the columns need more (horizontal scroll). min-width pins it
+   to the container; width: max-content lets it expand beyond; table-layout:
+   auto so the extra width is distributed across the columns. Expressed as a
+   class rather than min-w-full/w-max/table-auto utilities because the popui
+   tailwind build doesn't emit min-w-full or table-auto. */
+.popui-table-full-width {
+  min-width: 100%;
+  width: max-content;
+  table-layout: auto;
+}
+
+/* Scroll-table cells — when ScrollHorizontal is set the cells shouldn't wrap,
+   and columns get a sensible minimum width so short-content columns aren't
+   squeezed to a few characters (they still grow to fit longer content, and
+   stretch to fill under FullWidth). Removes the need for consumers to hand-set
+   per-column widths or whitespace utilities. */
+.popui-table-scroll-cells th,
+.popui-table-scroll-cells td {
+  white-space: nowrap;
+  min-width: 6rem;
+}
+
+/* RowHover — tint a body row on hover. The frozen first column keeps its own
+   opaque hover treatment (see .popui-table-freeze-first below), so this only
+   needs to cover the scrolling cells. */
+.popui-table-row-hover tbody tr:hover td {
+  background-color: var(--color-background-default-secondary);
+}
+
+/* Resizable — drag handle on the right edge of each header cell (attached by
+   popui.js). The handle is absolutely positioned, so the th needs a
+   positioning context; a sticky header already provides one, so only add
+   position: relative when the header isn't sticky (avoids overriding sticky). */
+.popui-table-resizable:not(.popui-table-sticky-header) thead th {
+  position: relative;
+}
+.popui-table-resizable thead th .popui-table-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 11;
+}
+
+/* Frozen-column scroll wrapper — suppress the horizontal overscroll
+   "rubber-band" bounce. The elastic overscroll is a visual transform applied
+   to the scroll contents, and the position: sticky first column rides along
+   with it, so during the bounce it drifts instead of holding at the left edge.
+   overscroll-behavior-x: none disables the horizontal elastic bounce (and
+   scroll chaining) so the frozen column stays pinned. Only the x axis is
+   suppressed — vertical overscroll keeps its default behavior. */
+.popui-table-freeze-scroll {
+  overscroll-behavior-x: none;
+}
+
+/* Switch the sticky/frozen variant to separate borders. popui.Table defaults
+   to border-collapse: collapse, where collapsed borders are painted on the
+   table grid rather than the cells — so a sticky cell's own border-right would
+   NOT travel with it during horizontal scroll, and box-shadow on table cells
+   isn't reliably painted under collapse either. With border-separate the
+   borders belong to the cells, so they render AND stay pinned to the sticky
+   column/header. border-spacing: 0 keeps the layout identical to collapse
+   (popui only uses bottom borders, which sit flush with no gaps). */
+.popui-table-sticky-header,
+.popui-table-freeze-first {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Sticky header row — pinned to the top of the scrolling wrapper. The opaque
+   background keeps body rows from bleeding through as they scroll under it. */
+.popui-table-sticky-header thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-background);
+}
+
+/* Frozen first column (header + every body row). popui's hover/border tokens
+   are alpha (a tint over an opaque base), so a sticky cell painted with them
+   would show the scrolling content underneath — keep an opaque base via
+   background-color. The full-height right divider is a real border-right (it
+   travels with the sticky cell thanks to border-separate above) using an
+   opaque neutral so it stays visible over whatever scrolls behind it; it also
+   serves as the separator between columns 1 and 2. */
+.popui-table-freeze-first tr > :first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background-color: var(--color-background) !important;
+  border-right: 1px solid var(--color-neutral-20);
+}
+/* Keep the frozen cell opaque on row hover: layer the alpha hover tint as a
+   background-image over the opaque base instead of swapping background-color. */
+.popui-table-freeze-first tbody tr:hover > :first-child {
+  background-image: linear-gradient(var(--color-background-default-secondary), var(--color-background-default-secondary)) !important;
+}
+/* The top-left corner must sit above both the sticky header and frozen column. */
+.popui-table-freeze-first thead th:first-child {
+  z-index: 15;
+}
+
+/* Label-height vertical dividers between header columns, drawn as a
+   pseudo-element so they track the label height, not the cell padding. The
+   pseudo-element anchors to a positioned th. When StickyHeader is also on the
+   th is already position: sticky (a containing block), so this rule must NOT
+   apply — otherwise position: relative would override position: sticky (equal
+   specificity, later rule) and the header would stop sticking. */
+.popui-table-col-dividers:not(.popui-table-sticky-header) thead th {
+  position: relative;
+}
+.popui-table-col-dividers thead th:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1em;
+  width: 1px;
+  background-color: var(--color-border);
+}
+/* When the first column is frozen, its full-height right border already
+   separates columns 1 and 2 — suppress the 2nd header divider to avoid a
+   double line. */
+.popui-table-freeze-first.popui-table-col-dividers thead th:nth-child(2)::before {
+  display: none;
+}
+
 @keyframes icon-pulse-animation {
   0%, 100% { fill: var(--color-background-default-tertiary); }
   40% { fill: var(--color-accent-50); }
+}
+
+/* FilterRow chip controls (text input / select): strip the
+   @tailwindcss/forms default border and blue focus ring so the chip's own
+   border is the only chrome. Unlayered, so it beats the plugin's @layer base
+   focus styles. */
+.filter-chip-input { border: 0; box-shadow: none; }
+.filter-chip-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* Range calendar — a dual-month date-range picker with a preset rail and a
+   Cancel / Confirm footer, replicating the console-ui DatePicker. The range
+   band is painted on the CELL (so the row gaps break it up), the day button
+   carries the start/end accent, and outside-month days render invisible and
+   inert so a selection can never bleed into the neighbouring month. */
+.popui-cal { --popui-cal-cell: 2rem; }
+.popui-cal-preset {
+  white-space: nowrap;
+  text-align: left;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  color: var(--color-foreground-default-secondary);
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.popui-cal-preset:hover { background-color: var(--color-background-default-secondary); }
+.popui-cal-preset[data-active] {
+  color: var(--color-foreground-selected);
+  background-color: var(--color-background-selected);
+  font-weight: 500;
+}
+/* The grid is a real <table> (matching bits-ui's markup) laid out with flex:
+   the table is a column flex whose children are thead/tbody (gap separates
+   head from body), and each row is a flex line. thead/tbody are blockified
+   explicitly so the flex layout is identical across browsers. */
+.popui-cal-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.popui-cal-grid > thead,
+.popui-cal-grid > tbody {
+  display: block;
+}
+.popui-cal-row { display: flex; }
+.popui-cal-week { margin-top: 0.5rem; }
+.popui-cal-head {
+  width: var(--popui-cal-cell);
+  height: var(--popui-cal-cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-foreground-default-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+.popui-cal-cell {
+  position: relative;
+  width: var(--popui-cal-cell);
+  height: var(--popui-cal-cell);
+  padding: 0;
+  text-align: center;
+}
+/* Range band on the cell — day buttons with a range state tint their cell,
+   rounded off at the range ends and the row edges. Outside-month days never
+   carry a data-state, so the band stops at the month boundary. */
+.popui-cal-cell:has(> .popui-cal-day[data-state]) {
+  background-color: var(--color-background-default-secondary);
+}
+.popui-cal-cell:has(> .popui-cal-day[data-state="start"]),
+.popui-cal-cell:first-child:has(> .popui-cal-day[data-state]) {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+.popui-cal-cell:has(> .popui-cal-day[data-state="end"]),
+.popui-cal-cell:last-child:has(> .popui-cal-day[data-state]) {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+.popui-cal-day {
+  width: var(--popui-cal-cell);
+  height: var(--popui-cal-cell);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  border: 0;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: var(--color-foreground);
+  cursor: pointer;
+}
+.popui-cal-day:hover { background-color: var(--color-background-default-tertiary-hover); }
+.popui-cal-day[data-today]:not([data-state]) {
+  border-radius: 0;
+  box-shadow: inset 0 -1px 0 0 var(--color-background-accent);
+}
+/* Middle days paint the same alpha tint as the cell band beneath them —
+   console-ui stacks both layers (~3% alpha twice), which is what gives the
+   band its darker tone. Painting only one layer reads noticeably lighter. */
+.popui-cal-day[data-state="middle"] {
+  border-radius: 0;
+  background-color: var(--color-background-default-secondary);
+}
+.popui-cal-day[data-state="start"],
+.popui-cal-day[data-state="end"] {
+  background-color: var(--color-background-accent);
+  color: var(--color-foreground-inverse);
+  font-weight: 600;
+  box-shadow: 0 0 0 2px rgba(22, 153, 88, 0.12);
+}
+.popui-cal-day[data-outside] {
+  color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
+/* Detail rows (popui.DescriptionListItem with Inline/Actions) — console-ui-style
+   label-on-left / value-on-right rows for side panels and drawers. Shipped
+   here so any consuming app gets the styling without copying a <style> block. */
+.popui-detail-row { display: flex; gap: 1.5rem; align-items: center; }
+/* Stacked variant: label above the value. */
+.popui-detail-row.popui-detail-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+/* Stacked: the label sits flush left; the value keeps the value-wrap's base
+   0.5rem left padding so the hover tint has breathing room around the text. */
+.popui-detail-stacked > .popui-detail-label { min-width: 0; padding-left: 0; }
+/* Stacked rows are shorter than the value-wrap's 2rem min-height, so center
+   the value + hover action buttons vertically. A non-stacked row's taller
+   content already fills the min-height, so it reads centered with flex-start;
+   this gives stacked rows the same balanced look. The extra `.popui-detail-row`
+   class keeps this ahead of the base value-wrap rule's `align-items: flex-start`
+   regardless of source order. */
+/* Stacked value cell: keep the 0.5rem left padding (the hover tint's
+   breathing room) but pull the box left by the same amount, so the value
+   text's left edge lines up exactly with the flush-left label while the
+   tint bleeds into the gutter — the standard hover-pill alignment trick. */
+.popui-detail-row.popui-detail-stacked > .popui-detail-value-wrap {
+  align-items: center;
+  margin-left: -0.5rem;
+}
+
+/* 16px icon button (ButtonSizeIconExtraSmall): icons ship at a fixed 16px
+   (inline width/height on the wrapper), which would fill the bordered 16px box
+   edge-to-edge. Scale the glyph to 12px so it reads as a centered icon with the
+   same breathing room as the larger icon buttons. !important is needed to beat
+   the icon's inline sizing. */
+.popui-icon-xs > div,
+.popui-icon-xs > div > svg { width: 0.75rem !important; height: 0.75rem !important; }
+.popui-detail-row > .popui-detail-label {
+  min-width: 148px;
+  color: var(--color-foreground-default-secondary);
+  font-size: 0.875rem;
+}
+.popui-detail-row > .popui-detail-value-wrap {
+  flex: 1 1 0%;
+  display: flex;
+  gap: 0.375rem;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 2rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+.popui-detail-row > .popui-detail-value-wrap:hover {
+  background-color: var(--color-background-default-secondary);
+}
+.popui-detail-value {
+  flex: 1 1 0%;
+  min-width: 0;
+  color: var(--color-foreground);
+  font-weight: 500;
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+/* Copyable value row: strip the copy Button's chrome so the value reads as
+   plain text in line with the other rows, and reveal action buttons / copy
+   icons only while the row is hovered. */
+.popui-detail-copyable [data-button-copy] {
+  justify-content: flex-start;
+  padding-left: 0;
+}
+.popui-detail-copyable [data-button-copy]:hover {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.popui-detail-copyable [data-button-copy]:active {
+  transform: none;
+  box-shadow: none;
+}
+.popui-detail-copyable [data-copy-text] { font-family: var(--font-sans); }
+.popui-detail-copyable { cursor: pointer; }
+.popui-detail-copyable .popui-detail-action,
+.popui-detail-copyable [data-copy-icon-duplicate],
+.popui-detail-copyable [data-copy-icon-success] {
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.popui-detail-copyable:hover .popui-detail-action,
+.popui-detail-copyable:hover [data-copy-icon-duplicate],
+.popui-detail-copyable:hover [data-copy-icon-success] {
+  opacity: 1;
 }

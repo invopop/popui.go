@@ -123,6 +123,32 @@ func Avatar() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.AvatarColorsExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Colored Initials",
+			Description: "Initials take up to three characters and an optional Color token. Use the document-* tokens with a mono font for file-type badges, e.g. as the leading slot of FileDownloadInfo.",
+			Code:        examples.LoadExample("avatar_colors.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Avatar",
 				Description: "Displays a user avatar with an image or initials in a circular container.",
@@ -130,7 +156,8 @@ func Avatar() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the avatar element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the div element"},
-					{Name: "Initial", Type: "string", Default: "", Description: "Text to display (typically initials) when no image is provided"},
+					{Name: "Initial", Type: "string", Default: "", Description: "Text to display (typically initials) when no image is provided; up to three characters, longer values are truncated"},
+					{Name: "Color", Type: "string", Default: "", Description: "Foreground color token for the initials: \"accent\", \"success\", \"warning\", \"critical\", \"info\", \"document-xml\", \"document-pdf\" or \"document-png\". Empty uses the secondary foreground"},
 					{Name: "Size", Type: "string", Default: "\"\" (default)", Description: "Size variant: \"lg\" for large (8x8), default is small (5x5)"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
@@ -139,7 +166,7 @@ func Avatar() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,0 +1,25 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ FieldsetCardExample() {
+	@popui.Fieldset(props.Fieldset{
+		Legend:  "Categories",
+		Variant: props.FieldsetVariantCard,
+	}) {
+		@popui.Select(props.Select{
+			Multiple: true,
+			Name:        "categories",
+			Placeholder: "Select categories",
+			Options: []props.SelectOption{
+				{Value: "document", Label: "Document", Selected: true},
+				{Value: "accounting", Label: "Accounting"},
+				{Value: "payments", Label: "Payments"},
+				{Value: "tax", Label: "Tax"},
+			},
+		}.GenerateID())
+	}
+}

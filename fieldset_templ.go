@@ -15,8 +15,9 @@ import (
 )
 
 // Fieldset groups a set of form fields together with correct vertical spacing and padding
-// between fields. If the Variant is set to "card" it will also add a border and background
-// to the fieldset to visually separate it from the rest of the form.
+// between fields. If the Variant is set to "card" it also adds a rounded light gray
+// background to visually separate the group from the rest of the form. Pair with a
+// TitleGroup above it for a titled settings section.
 func Fieldset(p ...props.Fieldset) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -41,7 +42,7 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 		fieldset := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"relative w-full flex-1 flex flex-col gap-4",
-			classes.If(fieldset.Variant == props.FieldsetVariantCard, "border border-border-default-secondary rounded-md bg-background p-4"),
+			classes.If(fieldset.Variant == props.FieldsetVariantCard, "rounded-md bg-background-default-secondary p-4"),
 			fieldset.Class,
 		),
 		}
@@ -61,7 +62,7 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fieldset.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 16, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 17, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -98,20 +99,33 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if fieldset.Legend != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<legend class=\"float-left text-lg font-medium text-foreground\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "      <legend class=\"sr-only\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fieldset.Legend)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 29, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 35, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</legend>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</legend><div aria-hidden=\"true\" class=\"mb-2 text-lg font-medium text-foreground\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fieldset.Legend)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fieldset.templ`, Line: 37, Col: 21}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -120,7 +134,7 @@ func Fieldset(p ...props.Fieldset) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</fieldset>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</fieldset>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

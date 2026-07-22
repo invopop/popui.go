@@ -27,6 +27,13 @@ templ Image() {
 	}) {
 		@examples.ImageWithAvatarExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Country Flags",
+		Description: "Country flags come from the Invopop assets CDN: https://assets.invopop.com/flags/<cc>.svg, where <cc> is the lowercase ISO 3166-1 alpha-2 country code.",
+		Code:        examples.LoadExample("image_flags.templ"),
+	}) {
+		@examples.ImageFlagsExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Image",

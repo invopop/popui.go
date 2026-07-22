@@ -1,0 +1,79 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SidePanelExample() {
+	@popui.Button(props.Button{
+		Attributes: templ.Attributes{
+			"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-open', {detail: 'side-panel-example'}))",
+		},
+	}) {
+		Open side panel
+	}
+	@popui.SidePanel(props.SidePanel{ID: "side-panel-example", Width: 480}) {
+		@popui.SidePanelHeader(props.SidePanelHeader{
+			SidePanelID: "side-panel-example",
+			Title:       "SIREN 552100554",
+		})
+		@popui.Label(props.Label{Class: "px-4 py-3 text-base text-foreground"}) {
+			Details
+		}
+		@popui.DescriptionList(props.DescriptionList{Class: "w-auto space-y-1 mx-4 pb-4 border-b border-border"}) {
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Given name", Value: "Camille"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Surname", Value: "Durand"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Role", Value: "Director"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Reporting", Value: "Enabled"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "VAT regime", Value: "Réel normal mensuel"})
+			@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Decided", Value: "2026-03-14"})
+			@popui.DescriptionListItem(props.DescriptionListItem{
+				Inline:       true,
+				Label:        "Silo Entry ID",
+				Value:        "ee42413c-79fc-42d0-a7f7-65f76990ab20",
+				PrefixLength: 23,
+				Actions: []props.DescriptionListAction{
+					{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+				},
+			})
+		}
+		@popui.Tabs(props.Tabs{
+			Variant: "pill",
+			Class:   "px-4 pt-4 text-base",
+			Tabs: []props.TabItem{
+				{Value: "directory", Label: "Directory"},
+				{Value: "reporting", Label: "Reporting"},
+			},
+		}) {
+			@popui.Tab(props.Tab{Value: "directory"}) {
+				@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-2"}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Name", Value: "Durand SARL", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "Durand SARL", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Endpoint", Value: "0009:552100554", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "0009:552100554", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+				}
+			}
+			@popui.Tab(props.Tab{Value: "reporting"}) {
+				@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-2"}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "SIREN", Value: "552100554", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "552100554", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Cadence", Value: "Monthly", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "Monthly", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Next period", Value: "2026-07-31", Actions: []props.DescriptionListAction{
+						{Icon: icons.Duplicate(), Copy: "2026-07-31", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					}})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Last period", Value: "2026-06-30", Actions: []props.DescriptionListAction{
+						{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+					}})
+				}
+			}
+		}
+	}
+}

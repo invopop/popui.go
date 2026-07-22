@@ -62,6 +62,20 @@ templ File() {
 	}) {
 		@examples.FileWithButtonsExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "File Download",
+		Description: "FileDownload displays a stored file with its info and actions. Expects FileDownloadInfo and action buttons as children.",
+		Code:        examples.LoadExample("file_download.templ"),
+	}) {
+		@examples.FileDownloadExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Borderless File Download",
+		Description: "FileDownload can render without a border and highlight the row via the Hover prop. FileDownloadInfo accepts a Value shown as muted text below the label.",
+		Code:        examples.LoadExample("file_download_borderless.templ"),
+	}) {
+		@examples.FileDownloadBorderlessExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "InputFile",
@@ -96,6 +110,29 @@ templ File() {
 				{Name: "AvatarAlt", Type: "string", Default: "", Description: "Alt text for avatar image"},
 				{Name: "Text", Type: "string", Default: "", Description: "Text label before upload button"},
 				{Name: "PreviewSquare", Type: "bool", Default: "false", Description: "Use square preview instead of circle"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "FileDownload",
+			Description: "Displays a stored file with its info and actions. Expects FileDownloadInfo and action buttons as children.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Borderless", Type: "bool", Default: "false", Description: "Removes the border for embedding the file row inside another container"},
+				{Name: "Hover", Type: "bool", Default: "false", Description: "Highlights the whole row with a background color on hover"},
+				{Name: "Preview", Type: "string", Default: "", Description: "JavaScript expression run when the row is clicked, e.g. props.ShowPopover(id)"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "FileDownloadInfo",
+			Description: "Structured layout for file information within FileDownload (icon, name, etc.).",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the file info element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with file info styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+				{Name: "Label", Type: "string", Default: "", Description: "File name or label text to display"},
+				{Name: "Value", Type: "string", Default: "", Description: "Smaller, muted text rendered below the label (e.g. timestamp or file size)"},
 			},
 		})
 	}

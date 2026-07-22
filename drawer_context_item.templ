@@ -1,0 +1,57 @@
+package popui
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// DrawerContextItem mirrors @invopop/popui Svelte DrawerContextItem.svelte.
+// Use it for option rows inside a Filter option list, Menu, or
+// any other drawer-style list. See props.DrawerContextItem for the field
+// reference.
+//
+// Multi mode renders a native <input type="checkbox"> with the popui.css
+// `form-checkbox` utility, bound reactively to IsSelectedExpr — same primitive
+// console-ui's InputCheckbox uses. `pointer-events-none` on the input keeps
+// the wrapping <button> as the sole click target so the toggle path is
+// unambiguous (clicking the checkbox area still toggles via the button).
+templ DrawerContextItem(opts ...props.DrawerContextItem) {
+	{{ p := props.First(opts) }}
+	<li class={ tailwind.Merge("rounded-md bg-background hover:bg-background-default-secondary", p.Class) } { p.Attributes... }>
+		<button
+			type="button"
+			class="cursor-pointer w-full group focus:outline-none"
+			if p.Tabindex != "" {
+				tabindex={ p.Tabindex }
+			}
+			@click={ p.OnClickExpr }
+		>
+			<div
+				class="flex items-center gap-3 px-2 py-1.5 rounded-md group-hover:bg-background-default-secondary"
+				if p.HighlightExpr != "" {
+					:class={ "{ 'bg-background-default-secondary': " + p.HighlightExpr + " }" }
+				}
+			>
+				if p.Color != "" {
+					@TagStatus(props.TagStatus{Status: p.Color, Dot: true})
+				}
+				<span class="flex-1 min-w-0 text-left text-base font-medium text-foreground truncate">{ p.Label }</span>
+				<span class="w-8 shrink-0"></span>
+				if p.Multiple {
+					<input
+						type="checkbox"
+						class="form-checkbox size-4 text-background-accent rounded border border-border-default-secondary bg-background focus:ring-0 focus:ring-offset-0 pointer-events-none"
+						tabindex="-1"
+						aria-hidden="true"
+						:checked={ p.IsSelectedExpr }
+					/>
+				} else {
+					<span x-show={ p.IsSelectedExpr } class="text-icon-selected">
+						@icons.Tick()
+					</span>
+				}
+			</div>
+		</button>
+	</li>
+}

@@ -1,0 +1,36 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CalendarExample() {
+	<div
+		x-data="{ show: false }"
+		@click.outside="show = false"
+		@popui-cal-confirm="show = false"
+		@popui-cal-cancel="show = false"
+		class="w-fit"
+	>
+		@popui.Button(props.Button{
+			Attributes: templ.Attributes{
+				"@click": "show = !show",
+			},
+		}) {
+			Open calendar
+		}
+		<div x-show="show" x-cloak class="mt-2">
+			@popui.Calendar(props.Calendar{
+				Name: "period",
+				Presets: []props.CalendarPreset{
+					{Key: props.CalendarPresetThisMonth},
+					{Key: props.CalendarPresetLastMonth},
+					{Key: props.CalendarPresetThisQuarter},
+					{Key: props.CalendarPresetLastQuarter},
+					{Key: props.CalendarPresetCustom, Label: "Custom range"},
+				},
+			})
+		</div>
+	</div>
+}

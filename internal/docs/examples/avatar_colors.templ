@@ -1,0 +1,43 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ AvatarColorsExample() {
+	<div class="flex items-center gap-2">
+		@popui.Avatar(props.Avatar{
+			Initial: "XML",
+			Color:   "document-xml",
+			Size:    props.AvatarSizeLarge,
+			Class:   "rounded-md font-mono",
+		})
+		@popui.Avatar(props.Avatar{
+			Initial: "PDF",
+			Color:   "document-pdf",
+			Size:    props.AvatarSizeLarge,
+			Class:   "rounded-md font-mono",
+		})
+		@popui.Avatar(props.Avatar{
+			Initial: "PNG",
+			Color:   "document-png",
+			Size:    props.AvatarSizeLarge,
+			Class:   "rounded-md font-mono",
+		})
+		@popui.Avatar(props.Avatar{
+			Initial: "CSV",
+			Size:    props.AvatarSizeLarge,
+			Class:   "rounded-md font-mono",
+		})
+		@popui.Avatar(props.Avatar{
+			Initial: "OK",
+			Color:   "success",
+			Size:    props.AvatarSizeLarge,
+		})
+		@popui.Avatar(props.Avatar{
+			Initial: "JD",
+			Color:   "accent",
+		})
+	</div>
+}

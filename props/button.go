@@ -7,6 +7,13 @@ const (
 	ButtonSizeSmall string = "sm"
 	ButtonSizeLarge string = "lg"
 	ButtonSizeIcon  string = "icon"
+	// ButtonSizeIconSmall is a 24px-square icon button — a compact step
+	// down from ButtonSizeIcon (28px). Used for inline row actions.
+	ButtonSizeIconSmall string = "icon-sm"
+	// ButtonSizeIconExtraSmall is a 16px-square icon button — the most
+	// compact icon button, matching the icon glyph itself with no padding.
+	// Used for dense, stacked rows where 24px would crowd the value.
+	ButtonSizeIconExtraSmall string = "icon-xs"
 )
 
 // Button Variants
@@ -15,6 +22,9 @@ const (
 	ButtonVariantSecondary   string = "secondary"
 	ButtonVariantDanger      string = "danger"
 	ButtonVariantTransparent string = "transparent"
+	// ButtonVariantInverse is a borderless button with inverse colors for
+	// dark surfaces, such as the Toast action.
+	ButtonVariantInverse string = "inverse"
 )
 
 // ButtonGroup Alignments
@@ -64,6 +74,19 @@ type Button struct {
 	Disabled bool
 	// Autofocus when true sets the autofocus attribute on the button.
 	Autofocus bool
+
+	/* Copy-to-clipboard fields */
+
+	// Copy, when set, turns the button into a copy-to-clipboard control:
+	// the (truncated) value renders in mono next to a duplicate icon that
+	// flips to a tick on success, and clicking copies the full value.
+	// Children render after the copy content. Ignored on anchor buttons.
+	Copy string
+	// CopyPrefixLength / CopySuffixLength truncate the DISPLAYED value to
+	// "prefix…suffix"; the full Copy value is what lands on the clipboard.
+	// Both 0 show the value untruncated.
+	CopyPrefixLength int
+	CopySuffixLength int
 
 	/* Anchor button fields */
 

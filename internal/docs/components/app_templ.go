@@ -113,6 +113,7 @@ func App() templ.Component {
 					{Name: "Description", Type: "string", Default: "", Description: "Meta description for SEO"},
 					{Name: "AccentColor", Type: "string", Default: "", Description: "Accent color for the application"},
 					{Name: "Head", Type: "templ.Component", Default: "nil", Description: "Additional content to include in the <head> section"},
+					{Name: "FillViewport", Type: "bool", Default: "false", Description: "Pin the document to the viewport height and stop the body from scrolling, so the App's h-full grid resolves and scrolling happens inside the content rather than the page. Required for a Table with StickyHeader to pin. Safe in an embedded iframe; leave false for normal scrolling documents"},
 					{Name: "Data", Type: "string", Default: "", Description: "Alpine.js x-data attribute value for the application body's contents"},
 					{Name: "HTMX", Type: "bool", Default: "false", Description: "When true, includes the HTMX javascript library for enhanced interactivity"},
 					{Name: "Importmap", Type: "[]props.Import", Default: "nil", Description: "Module specifier mappings for an ES import map. Rendered as a <script type=\"importmap\"> tag before module scripts. Order is preserved."},

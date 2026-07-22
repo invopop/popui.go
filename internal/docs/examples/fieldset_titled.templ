@@ -1,0 +1,29 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ FieldsetTitledExample() {
+	<div class="w-full flex flex-col gap-3">
+		@popui.TitleGroup(props.TitleGroup{
+			Title:       "Categories",
+			Description: "Select all that apply",
+			Horizontal:  true,
+		})
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			@popui.Select(props.Select{
+				Multiple:    true,
+				Name:        "categories",
+				Placeholder: "Select categories",
+				Options: []props.SelectOption{
+					{Value: "document", Label: "Document", Selected: true},
+					{Value: "accounting", Label: "Accounting"},
+					{Value: "payments", Label: "Payments"},
+					{Value: "tax", Label: "Tax"},
+				},
+			}.GenerateID())
+		}
+	</div>
+}

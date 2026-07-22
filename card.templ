@@ -8,17 +8,13 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-const (
-	// https://github.com/HatScripts/circle-flags
-	flagProviderURL = "https://hatscripts.github.io/circle-flags/flags/"
-)
-
 // Card provides a UI element for wrapping general information.
 // Supports URL prop to render as an anchor element.
 templ Card(p ...props.Card) {
 	{{ card := props.First(p) }}
 	if card.Href != "" {
 		<a
+			data-card
 			if card.ID != "" {
 				id={ card.ID }
 			}
@@ -37,6 +33,7 @@ templ Card(p ...props.Card) {
 		</a>
 	} else {
 		<div
+			data-card
 			if card.ID != "" {
 				id={ card.ID }
 			}
@@ -142,86 +139,6 @@ templ CardProgressBar(p ...props.CardProgressBar) {
 		<div class="w-full h-1 shrink-0 rounded-[1px] bg-border-default-secondary">
 			<div class={ percentageStyle(bar.PercentValue(), bar.PercentColor()) }></div>
 		</div>
-	</div>
-}
-
-// CardDashboard provides a grid of small info cards for showing dashboard-like information
-templ CardDashboard(p ...props.CardDashboard) {
-	{{ dash := props.First(p) }}
-	<ul
-		if dash.ID != "" {
-			id={ dash.ID }
-		}
-		class={
-			tailwind.Merge(
-				"grid grid-cols-3 gap-x-3",
-				dash.Class,
-			),
-		}
-		{ dash.Attributes... }
-	>
-		{ children... }
-	</ul>
-}
-
-// CardDashboardItem represents a single metric item in the dashboard grid
-templ CardDashboardItem(p ...props.CardDashboardItem) {
-	{{ item := props.First(p) }}
-	<li
-		if item.ID != "" {
-			id={ item.ID }
-		}
-		class={
-			tailwind.Merge(
-				"flex flex-col items-center py-3 px-2 rounded-md border border-border bg-background-default-secondary",
-				item.Class,
-			),
-		}
-		{ item.Attributes... }
-	>
-		<p class="text-foreground-default-secondary text-sm">{ item.Label }</p>
-		<p class="text-foreground text-xl font-medium">{ item.Value }</p>
-	</li>
-}
-
-// CardFile provides a card for displaying file details
-templ CardFile(p ...props.CardFile) {
-	{{ file := props.First(p) }}
-	<div
-		if file.ID != "" {
-			id={ file.ID }
-		}
-		class={
-			tailwind.Merge(
-				"flex items-center justify-between gap-3 w-full h-16 px-4 py-1.5 rounded-lg border border-border bg-background text-base text-foreground font-medium",
-				file.Class,
-			),
-		}
-		{ file.Attributes... }
-	>
-		{ children... }
-	</div>
-}
-
-// CardFileInfo provides structured layout for file information within CardFile
-templ CardFileInfo(p ...props.CardFileInfo) {
-	{{ info := props.First(p) }}
-	<div
-		if info.ID != "" {
-			id={ info.ID }
-		}
-		class={
-			tailwind.Merge(
-				"flex gap-2 items-center",
-				info.Class,
-			),
-		}
-		{ info.Attributes... }
-	>
-		{ children... }
-		if info.Label != "" {
-			<p>{ info.Label }</p>
-		}
 	</div>
 }
 

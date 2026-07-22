@@ -1,6 +1,7 @@
 package popui
 
 import (
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -28,32 +29,120 @@ templ DescriptionList(opts ...props.DescriptionList) {
 // Renders a term (dt) and description (dd) with proper styling.
 // Use Label/Value props for simple text, DT/DD components for complex content,
 // or pick and mix as needed.
+//
+// Setting Inline or Actions switches to the detail-row rendering (the
+// popui-detail-* styles): a fixed-width label column, a hover-tinted value
+// cell filling the rest of the row, and hover-revealed action buttons pinned
+// to the row's right edge. Inline puts the label left of the value; otherwise
+// the label stacks above it.
 templ DescriptionListItem(opts ...props.DescriptionListItem) {
 	{{ p := props.First(opts) }}
+	if p.Inline || len(p.Actions) > 0 {
+		@descriptionListDetailItem(p)
+	} else {
+		<div
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				tailwind.Merge(
+					"space-y-1.5",
+					p.Class,
+				),
+			}
+			{ p.Attributes... }
+		>
+			if p.Label != "" {
+				@DT() {
+					{ p.Label }
+				}
+			}
+			{ children... }
+			if p.Value != "" {
+				@DD() {
+					{ p.Value }
+				}
+			}
+		</div>
+	}
+}
+
+// descriptionListDetailItem renders the detail-row form of a
+// DescriptionListItem on the popui-detail-* styles — the same structure the
+// side-panel detail rows use: fixed-width label (dt), flex-1 value cell (dd)
+// with a hover tint, the value growing to pin hover-revealed action buttons to
+// the row's right edge. Non-Inline stacks the label above the value.
+templ descriptionListDetailItem(p props.DescriptionListItem) {
 	<div
 		if p.ID != "" {
 			id={ p.ID }
 		}
 		class={
 			tailwind.Merge(
-				"space-y-1.5",
+				"popui-detail-row",
+				classes.If(!p.Inline, "popui-detail-stacked"),
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		if p.Label != "" {
-			@DT() {
-				{ p.Label }
+		<dt class="popui-detail-label">{ p.Label }</dt>
+		<dd class={ tailwind.Merge("popui-detail-value-wrap", classes.If(len(p.Actions) > 0, "popui-detail-copyable")) }>
+			<span class={ tailwind.Merge("popui-detail-value", classes.If(p.Mono, "font-mono")) }>
+				{ detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength) }
+			</span>
+			for _, a := range p.Actions {
+				@descriptionListActionButton(a, props.ButtonSizeIconSmall)
 			}
-		}
-		{ children... }
-		if p.Value != "" {
-			@DD() {
-				{ p.Value }
-			}
-		}
+		</dd>
 	</div>
+}
+
+// descriptionListActionButton renders one DescriptionListItem action: a copy
+// button (Copy set), an external-link anchor (URL set), or a plain button.
+templ descriptionListActionButton(a props.DescriptionListAction, size string) {
+	if a.Copy != "" {
+		@Button(props.Button{
+			Class: "popui-detail-action",
+			Size:  size,
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"type":            "button",
+					"aria-label":      "Copy",
+					"data-popui-copy": a.Copy,
+					"onclick":         "navigator.clipboard.writeText(this.getAttribute('data-popui-copy'))",
+				},
+				a.Attributes,
+			),
+		}) {
+			if a.Icon != nil {
+				@a.Icon
+			}
+		}
+	} else if a.URL != "" {
+		@Button(props.Button{
+			Class:      "popui-detail-action",
+			Size:       size,
+			Href:       a.URL,
+			Target:     "_blank",
+			Rel:        "noopener noreferrer",
+			Attributes: a.Attributes,
+		}) {
+			if a.Icon != nil {
+				@a.Icon
+			}
+		}
+	} else {
+		@Button(props.Button{
+			Class:      "popui-detail-action",
+			Size:       size,
+			Attributes: a.Attributes,
+		}) {
+			if a.Icon != nil {
+				@a.Icon
+			}
+		}
+	}
 }
 
 // DT provides a definition term element with proper styling.
@@ -92,4 +181,30 @@ templ DD(opts ...props.DD) {
 	>
 		{ children... }
 	</dd>
+}
+
+// detailCopyDisplay returns the value truncated to "prefix…suffix" (or
+// "prefix…" when suffix is 0), or the value unchanged when neither is set.
+// Empty falls back to the em-dash placeholder.
+func detailCopyDisplay(value string, prefix, suffix int) string {
+	if value == "" {
+		return "—"
+	}
+	if prefix <= 0 && suffix <= 0 {
+		return value
+	}
+	if prefix < 0 {
+		prefix = 0
+	}
+	if suffix < 0 {
+		suffix = 0
+	}
+	runes := []rune(value)
+	if prefix+suffix >= len(runes) {
+		return value
+	}
+	if suffix == 0 {
+		return string(runes[:prefix]) + "…"
+	}
+	return string(runes[:prefix]) + "…" + string(runes[len(runes)-suffix:])
 }

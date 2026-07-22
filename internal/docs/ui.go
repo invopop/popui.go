@@ -2,6 +2,9 @@
 package docs
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/a-h/templ"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/popui.go/internal/docs/components"
@@ -25,8 +28,8 @@ type Group struct {
 // DocsIndex is the index of all documentation pages.
 var groups = []*Group{
 	{
-		Title: "Guides",
-		Path:  "guides",
+		Title: "Foundations",
+		Path:  "foundations",
 		Pages: []*Page{
 			{
 				Title:    "Icons",
@@ -43,8 +46,8 @@ var groups = []*Group{
 		},
 	},
 	{
-		Title: "Layout",
-		Path:  "layout",
+		Title: "Components",
+		Path:  "components",
 		Pages: []*Page{
 			{
 				Title: "App",
@@ -63,16 +66,16 @@ var groups = []*Group{
 				Template: components.Card(),
 			},
 			{
-				Title:    "Segmented Card",
-				Desc:     "Segmented card style with a tinted outer container wrapping a bordered inner content area.",
-				Path:     "segmented-card",
-				Template: components.SegmentedCard(),
-			},
-			{
-				Title:    "Page State",
+				Title:    "PageState",
 				Desc:     "Layout for displaying page states with illustrations and call-to-action.",
 				Path:     "page-state",
 				Template: components.PageState(),
+			},
+			{
+				Title:    "CardDeck",
+				Desc:     "Tinted container that stacks regular Cards into one visual unit.",
+				Path:     "card-deck",
+				Template: components.CardDeck(),
 			},
 			{
 				Title:    "Separator",
@@ -80,12 +83,6 @@ var groups = []*Group{
 				Path:     "separator",
 				Template: components.Separator(),
 			},
-		},
-	},
-	{
-		Title: "Components",
-		Path:  "components",
-		Pages: []*Page{
 			{
 				Title:    "Accordion",
 				Desc:     "Vertically stacked interactive sections to organize content.",
@@ -111,10 +108,10 @@ var groups = []*Group{
 				Template: components.Button(),
 			},
 			{
-				Title:    "Button Copy",
-				Desc:     "Copy-to-clipboard button with text truncation and visual feedback.",
-				Path:     "button-copy",
-				Template: components.ButtonCopy(),
+				Title:    "Calendar",
+				Desc:     "Dual-month, range-selection calendar with a preset rail and month navigation. Backed by the rangeCalendar Alpine controller.",
+				Path:     "calendar",
+				Template: components.Calendar(),
 			},
 			{
 				Title:    "Checkbox",
@@ -123,13 +120,13 @@ var groups = []*Group{
 				Template: components.Checkbox(),
 			},
 			{
-				Title:    "Context Menu",
-				Desc:     "A context menu that displays when a button is clicked.",
-				Path:     "context-menu",
-				Template: components.ContextMenu(),
+				Title:    "Menu",
+				Desc:     "A dropdown menu of actions that opens from a trigger button.",
+				Path:     "menu",
+				Template: components.Menu(),
 			},
 			{
-				Title:    "Description List",
+				Title:    "DescriptionList",
 				Desc:     "Semantic HTML definition list for displaying term-description pairs.",
 				Path:     "description-list",
 				Template: components.DescriptionList(),
@@ -142,21 +139,15 @@ var groups = []*Group{
 			},
 			{
 				Title:    "File",
-				Desc:     "File input components for selecting and uploading files. Use InputFile for basic file selection or FileUpload for avatar/image uploads with preview.",
+				Desc:     "File components for selecting, uploading and displaying files. Use InputFile for basic file selection, FileUpload for avatar/image uploads with preview, and FileDownload for displaying stored files.",
 				Path:     "file",
 				Template: components.File(),
 			},
 			{
-				Title:    "Flag",
-				Desc:     "Display country flags using ISO 3166-1 alpha-2 country codes.",
-				Path:     "flag",
-				Template: components.Flag(),
-			},
-			{
-				Title:    "Flash Message",
-				Desc:     "Toast-style success message for quick feedback.",
-				Path:     "flash-message",
-				Template: components.FlashMessage(),
+				Title:    "Filter",
+				Desc:     "Search-bar style filter for data views: a \"+ Filter\" menu plus one editable chip per active filter, with multi-field filtering, colored option lists, and keyboard navigation.",
+				Path:     "filter",
+				Template: components.Filter(),
 			},
 			{
 				Title:    "Form",
@@ -207,6 +198,18 @@ var groups = []*Group{
 				Template: components.Select(),
 			},
 			{
+				Title:    "SidePanel",
+				Desc:     "Floating side panel that overlays one edge of the viewport.",
+				Path:     "side-panel",
+				Template: components.SidePanel(),
+			},
+			{
+				Title:    "SignaturePad",
+				Desc:     "A signature capture dialog with typed-name preview and freehand drawing tabs.",
+				Path:     "signature-pad",
+				Template: components.SignaturePad(),
+			},
+			{
 				Title:    "Slider",
 				Desc:     "A range slider input for selecting numeric values.",
 				Path:     "slider",
@@ -225,16 +228,28 @@ var groups = []*Group{
 				Template: components.Tabs(),
 			},
 			{
-				Title:    "Tag Status",
+				Title:    "TagStatus",
 				Desc:     "Status indicators with optional dots and different color variants.",
 				Path:     "tag-status",
 				Template: components.TagStatus(),
+			},
+			{
+				Title:    "StatusBadge",
+				Desc:     "Icon-led outcome pill with an optional label: success, failed, warning or running.",
+				Path:     "status-badge",
+				Template: components.StatusBadge(),
 			},
 			{
 				Title:    "Textarea",
 				Desc:     "Multi-line text input field for capturing longer user input with support for labels and validation.",
 				Path:     "textarea",
 				Template: components.Textarea(),
+			},
+			{
+				Title:    "Toast",
+				Desc:     "Dark floating notification with a type icon, message, optional description, and optional action button.",
+				Path:     "toast",
+				Template: components.Toast(),
 			},
 			{
 				Title:    "Typography",
@@ -244,4 +259,16 @@ var groups = []*Group{
 			},
 		},
 	},
+}
+
+// Pages within each group are presented alphabetically regardless of the
+// order they are added in above; the groups themselves keep their authored
+// order. The Get Started guide is pinned above the groups by the sidebar
+// template.
+func init() {
+	for _, g := range groups {
+		sort.Slice(g.Pages, func(i, j int) bool {
+			return strings.ToLower(g.Pages[i].Title) < strings.ToLower(g.Pages[j].Title)
+		})
+	}
 }

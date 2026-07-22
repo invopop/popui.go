@@ -1,0 +1,30 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ FileDownloadExample() {
+	@popui.FileDownload() {
+		@popui.FileDownloadInfo(props.FileDownloadInfo{
+			Label: "dni_back_already_stored.png",
+		}) {
+			@popui.Avatar(props.Avatar{
+				Initial: "PNG",
+				Color:   "document-png",
+				Size:    props.AvatarSizeLarge,
+				Class:   "rounded-md font-mono",
+			})
+		}
+		@popui.Button(props.Button{
+			Variant:  "transparent",
+			Href:     "#",
+			Download: true,
+		}) {
+			@icons.Download()
+			Download
+		}
+	}
+}
