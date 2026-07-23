@@ -33,22 +33,17 @@ templ Table(p ...props.Table) {
 			if prp.ID != "" {
 				id={ prp.ID }
 			}
-			if frozen > 1 {
+			if frozen > 0 {
 				data-popui-freeze-cols={ fmt.Sprintf("%d", frozen) }
 			}
 			class={ tailwind.Merge(
-				"table-fixed",
-				classes.If(!prp.ScrollHorizontal, "w-full"),
-				classes.If(prp.ScrollHorizontal, "w-max"),
 				// Full-width, column dividers, and row hover are always on.
 				"popui-table-full-width",
 				"popui-table-col-dividers",
 				"popui-table-row-hover",
 				classes.If(prp.ScrollHorizontal, "popui-table-scroll-cells"),
 				classes.If(prp.StickyHeader, "popui-table-sticky-header"),
-				// A single frozen column pins with plain CSS while more need measured offsets.
-				classes.If(frozen == 1, "popui-table-freeze-first"),
-				classes.If(frozen > 1, "popui-table-freeze-cols"),
+				classes.If(frozen > 0, "popui-table-freeze-cols"),
 				classes.If(prp.Resizable, "popui-table-resizable"),
 				"border-collapse border-0 font-sans text-base flex-1 rounded-lg bg-background",
 				"[&_tr]:data-[state=disabled]:opacity-30",
@@ -66,9 +61,7 @@ templ Table(p ...props.Table) {
 	</div>
 }
 
-// tableFrozenColumns resolves the effective number of frozen columns from the
-// StickyColumns count (capped at 5, the highest index the freeze-cols CSS
-// covers) and the legacy StickyColumn flag.
+// tableFrozenColumns resolves the effective frozen-column count from StickyColumns (capped at 5) and the legacy StickyColumn flag.
 func tableFrozenColumns(p props.Table) int {
 	n := p.StickyColumns
 	if n == 0 && p.StickyColumn {

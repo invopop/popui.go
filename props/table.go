@@ -19,13 +19,10 @@ type Table struct {
 	// first column pinned during the scroll.
 	ScrollHorizontal bool
 
-	// StickyColumn pins the first column to the left during a horizontal
-	// scroll, and is equivalent to StickyColumns: 1.
+	// StickyColumn pins the first column during a horizontal scroll (same as StickyColumns: 1).
 	StickyColumn bool
 
-	// StickyColumns pins the first N columns (up to 5) to the left during a
-	// horizontal scroll, moving the full-height divider to the last frozen
-	// column and taking precedence over StickyColumn.
+	// StickyColumns pins the first N columns (up to 5) during a horizontal scroll, taking precedence over StickyColumn.
 	StickyColumns int
 
 	// StickyHeader pins the <thead> row to the top while the body scrolls.

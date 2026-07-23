@@ -1,5 +1,5 @@
 // Global URL for the Console UI SDK.
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
+const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.11/index.js';
 
 (function () {
   'use strict';
@@ -378,8 +378,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // Table column resizing
   // ------------------------------------------------------------------
 
-  // Adds a drag handle to each resizable header cell except the last one of
-  // each table, which stays elastic to absorb leftover width.
+  // Adds a drag handle to each resizable header cell except the elastic last one.
   function attachTableResizers() {
     document.querySelectorAll('.popui-table-resizable').forEach(function (table) {
       table.querySelectorAll('thead th').forEach(function (th, idx, all) {
@@ -392,10 +391,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     })
   }
 
-  // Publishes each frozen column's cumulative left offset as a
-  // --popui-freeze-left-<n> CSS variable on multi-column freeze tables,
-  // re-measuring through a ResizeObserver whenever a frozen column's width
-  // changes.
+  // Publishes each frozen column's cumulative left offset as a --popui-freeze-left-<n> CSS variable, re-measured on resize.
   function initFrozenColumns() {
     document.querySelectorAll('table[data-popui-freeze-cols]').forEach(function (table) {
       const count = parseInt(table.getAttribute('data-popui-freeze-cols'), 10) || 0
@@ -422,9 +418,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     })
   }
 
-  // Resizes a column by dragging its handle, freezing every other column at
-  // its rendered width so that only the dragged column and the elastic last
-  // column ever change size.
+  // Resizes a column by dragging its handle, freezing the other columns so only it and the elastic last column change size.
   document.addEventListener('mousedown', function (e) {
     const handle = e.target.closest('.popui-table-resizer')
     if (!handle) return
