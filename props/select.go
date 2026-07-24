@@ -26,8 +26,14 @@ type SelectOption struct {
 // and each value is submitted under Name (e.g. name=a&name=b) via a visually
 // hidden native <select multiple>.
 type Select struct {
-	ID         string
-	Class      string
+	ID    string
+	Class string
+	// Attributes are applied to the value-carrying element so a consumer can
+	// attach framework bindings without popui knowing the framework: the
+	// native <select> in the single variant, and the component root in the
+	// Multiple variant (the element exposed via x-modelable, so an Alpine
+	// x-model there two-way binds the selection — e.g.
+	// Attributes: templ.Attributes{"x-model": "line.tags"}).
 	Attributes templ.Attributes
 	Name       string
 	Label      string
