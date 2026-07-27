@@ -81,7 +81,7 @@ func Tooltip() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Text Only",
-			Description: "The illustration is optional — omit Image for a compact text tooltip. Title and Description are always required.",
+			Description: "The illustration is optional — omit Image for a compact text tooltip. Every content field is optional, but provide at least one of Title, Description or Image, or the card won't render.",
 			Code:        examples.LoadExample("tooltip_text.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -132,8 +132,8 @@ func Tooltip() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tooltip wrapper"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-					{Name: "Title", Type: "string", Default: "", Description: "Card heading, required"},
-					{Name: "Description", Type: "string", Default: "", Description: "Secondary text rendered below the title in a muted color, required"},
+					{Name: "Title", Type: "string", Default: "", Description: "Card heading; set at least one of Title, Description or Image"},
+					{Name: "Description", Type: "string", Default: "", Description: "Secondary text rendered below the title in a muted color; set at least one of Title, Description or Image"},
 					{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
 					{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, bottom, left or right"},
 				},

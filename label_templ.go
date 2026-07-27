@@ -113,7 +113,7 @@ func Label(opts ...props.Label) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"cursor-help [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div tabindex=\"0\" role=\"img\" aria-label=\"More information\" class=\"cursor-help rounded-sm focus-visible:outline-none focus-visible:ring-2 [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

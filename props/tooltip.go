@@ -21,9 +21,12 @@ type Tooltip struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	// Title is the card heading. Required.
+	// Title is the card heading. Optional, but at least one of Title,
+	// Description or Image must be set for the card to render.
 	Title string
-	// Description renders below the title in a muted color. Required.
+	// Description renders below the title in a muted color. Optional, but at
+	// least one of Title, Description or Image must be set for the card to
+	// render.
 	Description string
 	// Image is the URL of an optional illustration shown above the title.
 	// The component applies the rounded corners and border to it.

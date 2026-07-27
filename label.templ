@@ -26,7 +26,12 @@ templ Label(opts ...props.Label) {
 		{{ tip := p.LabelTooltip() }}
 		if !tip.Empty() {
 			@Tooltip(tip) {
-				<div class="cursor-help [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3">
+				<div
+					tabindex="0"
+					role="img"
+					aria-label="More information"
+					class="cursor-help rounded-sm focus-visible:outline-none focus-visible:ring-2 [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3"
+				>
 					@icons.Question()
 				</div>
 			}

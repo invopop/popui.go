@@ -19,31 +19,33 @@ templ Tooltip(opts ...props.Tooltip) {
 		{ p.Attributes... }
 	>
 		{ children... }
-		<div
-			role="tooltip"
-			class={
-				tailwind.Merge(
-					"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
-					"invisible opacity-0 pointer-events-none transition-opacity duration-150",
-					"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
-					"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
-					tooltipPositionClasses(p.Position),
-					p.Class,
-				),
-			}
-		>
-			if p.Image != "" {
-				<img src={ p.Image } alt="" class="w-full mb-2 rounded-md border border-border-inverse"/>
-			}
-			<div class="flex flex-col gap-1 px-1 py-1">
-				if p.Title != "" {
-					<p class="text-base font-semibold text-foreground-inverse">{ p.Title }</p>
+		if !p.Empty() {
+			<div
+				role="tooltip"
+				class={
+					tailwind.Merge(
+						"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
+						"invisible opacity-0 pointer-events-none transition-opacity duration-150",
+						"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
+						"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
+						tooltipPositionClasses(p.Position),
+						p.Class,
+					),
 				}
-				if p.Description != "" {
-					<p class="text-sm text-foreground-inverse-secondary">{ p.Description }</p>
+			>
+				if p.Image != "" {
+					<img src={ p.Image } alt="" class="w-full mb-2 rounded-md border border-border-inverse"/>
 				}
+				<div class="flex flex-col gap-1 px-1 py-1">
+					if p.Title != "" {
+						<p class="text-base font-semibold text-foreground-inverse">{ p.Title }</p>
+					}
+					if p.Description != "" {
+						<p class="text-sm text-foreground-inverse-secondary">{ p.Description }</p>
+					}
+				</div>
 			</div>
-		</div>
+		}
 	</div>
 }
 
