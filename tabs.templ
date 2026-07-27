@@ -1,6 +1,8 @@
 package popui
 
 import (
+	"strconv"
+
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
@@ -51,6 +53,13 @@ templ Tabs(p ...props.Tabs) {
 						@t.Icon
 					}
 					{ t.Label }
+					if t.Count > 0 {
+						if prp.Variant == "pill" {
+							<span class="inline-flex items-center justify-center rounded bg-background-default-tertiary px-1 text-sm tabular-nums">{ strconv.Itoa(t.Count) }</span>
+						} else {
+							<span class="tabular-nums">({ strconv.Itoa(t.Count) })</span>
+						}
+					}
 				</button>
 			}
 		</div>
