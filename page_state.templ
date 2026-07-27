@@ -13,7 +13,7 @@ templ PageState(opts ...props.PageState) {
 		}
 		class={
 			tailwind.Merge(
-				"flex flex-col items-center justify-center text-foreground-accent gap-4",
+				"flex flex-col items-center justify-center py-4 gap-1",
 				p.Class,
 			),
 		}
@@ -22,8 +22,8 @@ templ PageState(opts ...props.PageState) {
 		if p.Illustration != nil {
 			@p.Illustration
 		}
-		<div class="flex flex-col items-center justify-center space-y-0.5 mb-4">
-			@Subtitle() {
+		<div class="flex flex-col items-center justify-center text-center gap-0.5">
+			@P(props.P{Class: "font-medium"}) {
 				{ p.Title }
 			}
 			@Description() {
