@@ -34,6 +34,13 @@ templ Tooltip() {
 	}) {
 		@examples.TooltipPositionExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Alignment",
+		Description: "There is no collision detection, so a wide card centered on a trigger near the edge of its container will overflow. The top-start, top-end, bottom-start and bottom-end variants align the card with the trigger's leading or trailing edge instead of centering it, which keeps it inside.",
+		Code:        examples.LoadExample("tooltip_align.templ"),
+	}) {
+		@examples.TooltipAlignExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Tooltip",
@@ -45,7 +52,7 @@ templ Tooltip() {
 				{Name: "Title", Type: "string", Default: "", Description: "Card heading; set at least one of Title, Description or Image"},
 				{Name: "Description", Type: "string", Default: "", Description: "Secondary text below the title, parsed as Markdown (emphasis, code, links, lists; single newline is a line break); set at least one of Title, Description or Image"},
 				{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
-				{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, bottom, left or right"},
+				{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, top-start, top-end, bottom, bottom-start, bottom-end, left or right. The -start and -end variants align the card with the trigger's edge rather than centering it, so a wide card does not overflow its container"},
 			},
 		})
 	}

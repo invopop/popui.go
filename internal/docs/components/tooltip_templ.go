@@ -151,6 +151,32 @@ func Tooltip() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TooltipAlignExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Alignment",
+			Description: "There is no collision detection, so a wide card centered on a trigger near the edge of its container will overflow. The top-start, top-end, bottom-start and bottom-end variants align the card with the trigger's leading or trailing edge instead of centering it, which keeps it inside.",
+			Code:        examples.LoadExample("tooltip_align.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Tooltip",
 				Description: "Dark floating card with a title, description, and optional illustration, revealed on hover or focus of the wrapped trigger element.",
@@ -161,7 +187,7 @@ func Tooltip() templ.Component {
 					{Name: "Title", Type: "string", Default: "", Description: "Card heading; set at least one of Title, Description or Image"},
 					{Name: "Description", Type: "string", Default: "", Description: "Secondary text below the title, parsed as Markdown (emphasis, code, links, lists; single newline is a line break); set at least one of Title, Description or Image"},
 					{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
-					{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, bottom, left or right"},
+					{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, top-start, top-end, bottom, bottom-start, bottom-end, left or right. The -start and -end variants align the card with the trigger's edge rather than centering it, so a wide card does not overflow its container"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -169,7 +195,7 @@ func Tooltip() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

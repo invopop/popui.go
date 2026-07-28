@@ -181,10 +181,23 @@ func Tooltip(opts ...props.Tooltip) templ.Component {
 	})
 }
 
+// tooltipPositionClasses places the card relative to the trigger. The block-axis
+// positions come in three flavours: centered on the trigger, or aligned to its
+// leading or trailing edge, which is how a wide card avoids overflowing the
+// container when the trigger sits near its edge. Alignment uses logical inset
+// utilities, so it follows the writing direction.
 func tooltipPositionClasses(position string) string {
 	switch position {
 	case props.TooltipPositionBottom:
 		return "top-full left-1/2 -translate-x-1/2 mt-2"
+	case props.TooltipPositionBottomStart:
+		return "top-full start-0 mt-2"
+	case props.TooltipPositionBottomEnd:
+		return "top-full end-0 mt-2"
+	case props.TooltipPositionTopStart:
+		return "bottom-full start-0 mb-2"
+	case props.TooltipPositionTopEnd:
+		return "bottom-full end-0 mb-2"
 	case props.TooltipPositionLeft:
 		return "right-full top-1/2 -translate-y-1/2 mr-2"
 	case props.TooltipPositionRight:

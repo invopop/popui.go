@@ -6,10 +6,10 @@ import (
 )
 
 templ TooltipMarkdownExample() {
-	<div class="flex justify-center pt-64 pb-8">
+	<div class="flex justify-center pt-8 pb-72">
 		@popui.Tooltip(props.Tooltip{
 			Title:    "Pricing strategies",
-			Position: props.TooltipPositionBottom,
+			Position: props.TooltipPositionBottomStart,
 			Class:    "w-80",
 			Description: "**Fixed** uses only the first price row.\n\n" +
 				"**Tiers** and **steps** both read every bracket but bill differently:\n" +

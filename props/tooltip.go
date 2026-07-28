@@ -3,10 +3,25 @@ package props
 import "github.com/a-h/templ"
 
 const (
-	// TooltipPositionTop shows the card above the trigger. This is the default.
+	// TooltipPositionTop shows the card above the trigger, centered on it. This
+	// is the default.
 	TooltipPositionTop string = "top"
-	// TooltipPositionBottom shows the card below the trigger.
+	// TooltipPositionTopStart shows the card above the trigger, with their
+	// leading edges aligned. Use it when a centered card would overflow to the
+	// left, e.g. next to a label at the start of a row.
+	TooltipPositionTopStart string = "top-start"
+	// TooltipPositionTopEnd shows the card above the trigger, with their
+	// trailing edges aligned. Use it when a centered card would overflow to the
+	// right.
+	TooltipPositionTopEnd string = "top-end"
+	// TooltipPositionBottom shows the card below the trigger, centered on it.
 	TooltipPositionBottom string = "bottom"
+	// TooltipPositionBottomStart shows the card below the trigger, with their
+	// leading edges aligned.
+	TooltipPositionBottomStart string = "bottom-start"
+	// TooltipPositionBottomEnd shows the card below the trigger, with their
+	// trailing edges aligned.
+	TooltipPositionBottomEnd string = "bottom-end"
 	// TooltipPositionLeft shows the card to the left of the trigger.
 	TooltipPositionLeft string = "left"
 	// TooltipPositionRight shows the card to the right of the trigger.
@@ -35,6 +50,11 @@ type Tooltip struct {
 	Image string
 	// Position places the card relative to the trigger: one of the
 	// TooltipPosition constants. Defaults to top.
+	//
+	// The card has no collision detection, so a wide one centered on a trigger
+	// near the edge of its container can overflow. The -start and -end variants
+	// align the card with the trigger's leading or trailing edge instead of
+	// centering it, which keeps it inside the container.
 	Position string
 }
 
