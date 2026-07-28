@@ -15,7 +15,7 @@ templ Label() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "With Hint",
-		Description: "Add a hint with the Hint prop. A question mark icon appears after the label and reveals a Tooltip card with the hint text on hover.",
+		Description: "Add a hint with the Hint prop. A question mark icon appears after the label and reveals a Tooltip card with the hint text on hover, parsed as Markdown. Because a label sits at the leading edge of its field, the card aligns to the start rather than centering on the icon, so it opens inwards instead of hanging off the edge.",
 		Code:        examples.LoadExample("label_with_hint.templ"),
 	}) {
 		@examples.LabelWithHintExample()
@@ -64,8 +64,8 @@ templ Label() {
 				{Name: "ID", Type: "string", Default: "", Description: "ID of the input element this label is for (sets the 'for' attribute)"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with label styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-				{Name: "Hint", Type: "string", Default: "", Description: "Text shown in a Tooltip card on hover via a question mark icon"},
-				{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Full Tooltip card (title, description, optional image) shown on hover via a question mark icon; takes precedence over Hint"},
+				{Name: "Hint", Type: "string", Default: "", Description: "Markdown text shown in a Tooltip card on hover via a question mark icon; the card aligns to the start of the label unless the Tooltip prop sets a Position"},
+				{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Full Tooltip card (title, description, optional image) shown on hover via a question mark icon; takes precedence over Hint. Defaults to top-start placement, since a centered card would hang off the leading edge of the field"},
 			},
 		})
 	}

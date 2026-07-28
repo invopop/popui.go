@@ -19,12 +19,17 @@ type Label struct {
 
 // LabelTooltip resolves the Tooltip card shown next to the label: the
 // Tooltip prop when set, otherwise a description-only card from Hint.
+//
+// A label sits at the leading edge of its field, so a card centered on the icon
+// hangs off that edge — the reason it defaults to TooltipPositionTopStart, which
+// opens the card inwards. An explicit Position still wins.
 func (l Label) LabelTooltip() Tooltip {
-	if !l.Tooltip.Empty() {
-		return l.Tooltip
+	t := l.Tooltip
+	if t.Empty() && l.Hint != "" {
+		t = Tooltip{Description: l.Hint}
 	}
-	if l.Hint != "" {
-		return Tooltip{Description: l.Hint}
+	if !t.Empty() && t.Position == "" {
+		t.Position = TooltipPositionTopStart
 	}
-	return Tooltip{}
+	return t
 }

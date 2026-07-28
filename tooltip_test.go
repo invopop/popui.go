@@ -46,3 +46,42 @@ func TestTooltipPositionClasses(t *testing.T) {
 		})
 	}
 }
+
+// TestLabelTooltipDefaultsToStart covers the placement a label's help icon gets
+// by default. The icon sits at the leading edge of a field, so a centered card
+// would hang off that edge — every docs example needed a padding workaround
+// before this default existed.
+func TestLabelTooltipDefaultsToStart(t *testing.T) {
+	t.Run("hint", func(t *testing.T) {
+		got := props.Label{Hint: "explain"}.LabelTooltip()
+		if got.Description != "explain" {
+			t.Errorf("hint should become the description, got %q", got.Description)
+		}
+		if got.Position != props.TooltipPositionTopStart {
+			t.Errorf("position = %q, want %q", got.Position, props.TooltipPositionTopStart)
+		}
+	})
+
+	t.Run("tooltip without a position", func(t *testing.T) {
+		got := props.Label{Tooltip: props.Tooltip{Title: "t"}}.LabelTooltip()
+		if got.Position != props.TooltipPositionTopStart {
+			t.Errorf("position = %q, want %q", got.Position, props.TooltipPositionTopStart)
+		}
+	})
+
+	t.Run("an explicit position wins", func(t *testing.T) {
+		got := props.Label{Tooltip: props.Tooltip{
+			Title:    "t",
+			Position: props.TooltipPositionBottomEnd,
+		}}.LabelTooltip()
+		if got.Position != props.TooltipPositionBottomEnd {
+			t.Errorf("position = %q, want it left alone", got.Position)
+		}
+	})
+
+	t.Run("no hint means no card", func(t *testing.T) {
+		if got := (props.Label{}).LabelTooltip(); !got.Empty() {
+			t.Errorf("expected an empty tooltip, got %+v", got)
+		}
+	})
+}
