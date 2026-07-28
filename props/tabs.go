@@ -4,11 +4,14 @@ import "github.com/a-h/templ"
 
 // TabItem is one entry in a popui.Tabs trigger row: a Value that identifies the
 // tab (assigned to the Alpine Model on click and matched by the content Tab), a
-// visible Label, and an optional leading Icon.
+// visible Label, an optional leading Icon, and an optional Count.
 type TabItem struct {
 	Value string
 	Label string
 	Icon  templ.Component
+	// Count renders a counter after the label when greater than zero: "(n)" on
+	// the default variant, a small badge on the pill variant.
+	Count int
 }
 
 // Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks
