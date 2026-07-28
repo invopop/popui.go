@@ -10,12 +10,18 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
 // Label provides a label element. Setting Hint or Tooltip appends a question
 // mark icon that reveals a Tooltip card on hover.
+//
+// The label itself is the tooltip's trigger and anchor, not just the icon:
+// hovering anywhere on the label reveals the card, and the card aligns to the
+// label's leading edge rather than to the middle of a 16px icon sitting at the
+// end of the text.
 func Label(opts ...props.Label) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -38,8 +44,12 @@ func Label(opts ...props.Label) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
+		tip := p.LabelTooltip()
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"font-sans text-sm font-medium text-foreground-default-secondary flex items-center gap-0.5",
+			// The label hosts the card, so it carries the group and the
+			// positioning context the card is placed against.
+			classes.If(!tip.Empty(), "group/tooltip relative"),
 			p.Class,
 		),
 		}
@@ -59,7 +69,7 @@ func Label(opts ...props.Label) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `label.templ`, Line: 15, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `label.templ`, Line: 22, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -99,35 +109,20 @@ func Label(opts ...props.Label) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		tip := p.LabelTooltip()
 		if !tip.Empty() {
-			templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div tabindex=\"0\" role=\"img\" aria-label=\"More information\" class=\"cursor-help rounded-sm focus-visible:outline-none focus-visible:ring-2 [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = icons.Question().Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Tooltip(tip).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "  <div tabindex=\"0\" role=\"img\" aria-label=\"More information\" class=\"cursor-help rounded-sm focus-visible:outline-none focus-visible:ring-2 [&>div[style*='width']]:!w-3 [&>div[style*='height']]:!h-3\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = icons.Question().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = tooltipCard(tip).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

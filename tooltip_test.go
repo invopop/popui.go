@@ -7,6 +7,9 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
+// hintText is the sample hint shared by the tooltip and label tests.
+const hintText = "explain"
+
 // TestTooltipPositionClasses covers the placement variants, in particular that
 // the -start and -end ones align the card with an edge of the trigger instead of
 // centering it: centering is what makes a wide card overflow when the trigger
@@ -53,8 +56,8 @@ func TestTooltipPositionClasses(t *testing.T) {
 // before this default existed.
 func TestLabelTooltipDefaultsToStart(t *testing.T) {
 	t.Run("hint", func(t *testing.T) {
-		got := props.Label{Hint: "explain"}.LabelTooltip()
-		if got.Description != "explain" {
+		got := props.Label{Hint: hintText}.LabelTooltip()
+		if got.Description != hintText {
 			t.Errorf("hint should become the description, got %q", got.Description)
 		}
 		if got.Position != props.TooltipPositionTopStart {

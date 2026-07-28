@@ -15,7 +15,7 @@ templ Label() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "With Hint",
-		Description: "Add a hint with the Hint prop. A question mark icon appears after the label and reveals a Tooltip card with the hint text on hover, parsed as Markdown. Because a label sits at the leading edge of its field, the card aligns to the start rather than centering on the icon, so it opens inwards instead of hanging off the edge.",
+		Description: "Add a hint with the Hint prop. A question mark icon appears after the label and reveals a Tooltip card with the hint text on hover, parsed as Markdown. The whole label is the trigger, not just the icon, and the card is anchored to the label: it aligns to the label's leading edge and opens inwards, rather than centering on a 16px icon at the end of the text.",
 		Code:        examples.LoadExample("label_with_hint.templ"),
 	}) {
 		@examples.LabelWithHintExample()
