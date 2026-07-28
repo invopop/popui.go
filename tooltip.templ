@@ -9,6 +9,9 @@ import (
 // card on hover or keyboard focus. The card holds a title, a description,
 // and an optional illustration, and keeps its dark color scheme in both
 // light and dark modes.
+//
+// The description is rendered as Markdown, so emphasis, code, links and lists
+// are available and a single newline is a line break. Raw HTML in it is escaped.
 templ Tooltip(opts ...props.Tooltip) {
 	{{ p := props.First(opts) }}
 	<div
@@ -41,7 +44,14 @@ templ Tooltip(opts ...props.Tooltip) {
 						<p class="text-base font-semibold text-foreground-inverse">{ p.Title }</p>
 					}
 					if p.Description != "" {
-						<p class="text-sm text-foreground-inverse-secondary">{ p.Description }</p>
+						// A div, not a p: the description is Markdown, so it may
+						// produce paragraphs and lists, which cannot nest inside a p.
+						// Tailwind resets list styling, hence the element rules here.
+						<div
+							class="text-sm text-foreground-inverse-secondary [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs"
+						>
+							@markdown(p.Description)
+						</div>
 					}
 				</div>
 			</div>

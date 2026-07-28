@@ -1,0 +1,24 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ TooltipMarkdownExample() {
+	<div class="flex justify-center pt-64 pb-8">
+		@popui.Tooltip(props.Tooltip{
+			Title:    "Pricing strategies",
+			Position: props.TooltipPositionBottom,
+			Class:    "w-80",
+			Description: "**Fixed** uses only the first price row.\n\n" +
+				"**Tiers** and **steps** both read every bracket but bill differently:\n" +
+				"- tiers: each bracket charges the units inside it, then they are summed\n" +
+				"- steps: the bracket the usage lands in prices the whole line",
+		}) {
+			@popui.Button() {
+				Hover me
+			}
+		}
+	</div>
+}

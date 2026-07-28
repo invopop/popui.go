@@ -21,6 +21,13 @@ templ Tooltip() {
 		@examples.TooltipTextExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Markdown",
+		Description: "The description is parsed as Markdown, so emphasis, code, links and lists are available, and a single newline is a line break — multi-line copy reads as written. Raw HTML is escaped rather than passed through. Widen the card with Class when the content needs it.",
+		Code:        examples.LoadExample("tooltip_markdown.templ"),
+	}) {
+		@examples.TooltipMarkdownExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Position",
 		Description: "Position places the card above, below, or to either side of the trigger. Defaults to top.",
 		Code:        examples.LoadExample("tooltip_position.templ"),
@@ -36,7 +43,7 @@ templ Tooltip() {
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Title", Type: "string", Default: "", Description: "Card heading; set at least one of Title, Description or Image"},
-				{Name: "Description", Type: "string", Default: "", Description: "Secondary text rendered below the title in a muted color; set at least one of Title, Description or Image"},
+				{Name: "Description", Type: "string", Default: "", Description: "Secondary text below the title, parsed as Markdown (emphasis, code, links, lists; single newline is a line break); set at least one of Title, Description or Image"},
 				{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
 				{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, bottom, left or right"},
 			},

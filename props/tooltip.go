@@ -24,9 +24,11 @@ type Tooltip struct {
 	// Title is the card heading. Optional, but at least one of Title,
 	// Description or Image must be set for the card to render.
 	Title string
-	// Description renders below the title in a muted color. Optional, but at
-	// least one of Title, Description or Image must be set for the card to
-	// render.
+	// Description renders below the title in a muted color, parsed as Markdown:
+	// emphasis, code, links and bullet or numbered lists all work, and a single
+	// newline is a line break, so multi-line text reads as written. Raw HTML is
+	// escaped rather than passed through. Optional, but at least one of Title,
+	// Description or Image must be set for the card to render.
 	Description string
 	// Image is the URL of an optional illustration shown above the title.
 	// The component applies the rounded corners and border to it.

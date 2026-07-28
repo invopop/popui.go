@@ -8,7 +8,8 @@ type Label struct {
 	Class      string
 	Attributes templ.Attributes
 	// Hint shows a question mark icon after the label that reveals a small
-	// Tooltip card with this text on hover.
+	// Tooltip card with this text on hover. Parsed as Markdown, like any
+	// Tooltip description.
 	Hint string
 	// Tooltip shows a question mark icon after the label that reveals a full
 	// Tooltip card (title, description, optional illustration) on hover.
