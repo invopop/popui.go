@@ -11,12 +11,11 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	_ "embed"
 	"github.com/invopop/popui.go/internal/docs/examples"
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func Label() templ.Component {
+func Tooltip() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +48,15 @@ func Label() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.LabelExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.TooltipExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("label.templ"),
+			Description: "Tooltip wraps a trigger element and reveals a dark floating card on hover or keyboard focus. The card keeps its dark color scheme in both light and dark modes. The illustration is an asset URL; the component applies the rounded corners and border to it.",
+			Code:        examples.LoadExample("tooltip.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,16 +73,16 @@ func Label() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.LabelWithHintExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.TooltipTextExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "With Hint",
-			Description: "Add a hint with the Hint prop. A question mark icon appears after the label and reveals a Tooltip card with the hint text on hover, parsed as Markdown. The whole label is the trigger, not just the icon, and the card is anchored to the label: it aligns to the label's leading edge and opens inwards, rather than centering on a 16px icon at the end of the text.",
-			Code:        examples.LoadExample("label_with_hint.templ"),
+			Title:       "Text Only",
+			Description: "The illustration is optional — omit Image for a compact text tooltip. Every content field is optional, but provide at least one of Title, Description or Image, or the card won't render.",
+			Code:        examples.LoadExample("tooltip_text.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -99,16 +99,16 @@ func Label() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.LabelTooltipExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.TooltipMarkdownExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "With Tooltip",
-			Description: "For richer hints, set the Tooltip prop to show a full Tooltip card with a title, description and optional illustration. Takes precedence over Hint.",
-			Code:        examples.LoadExample("label_tooltip.templ"),
+			Title:       "Markdown",
+			Description: "The description is parsed as Markdown, so emphasis, code, links and lists are available, and a single newline is a line break — multi-line copy reads as written. Raw HTML is escaped rather than passed through. Widen the card with Class when the content needs it.",
+			Code:        examples.LoadExample("tooltip_markdown.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -125,16 +125,16 @@ func Label() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.LabelCustomStyleExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.TooltipPositionExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Custom Styling",
-			Description: "Use the Class prop to customize the label appearance with Tailwind classes.",
-			Code:        examples.LoadExample("label_custom_style.templ"),
+			Title:       "Position",
+			Description: "Position places the card above, below, or to either side of the trigger. Defaults to top.",
+			Code:        examples.LoadExample("tooltip_position.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -151,13 +151,17 @@ func Label() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p class=\"text-base text-foreground-default-secondary mb-4\">The Label component is used in:</p><ul class=\"list-disc list-inside space-y-2 text-base\"><li><a href=\"#components-checkbox\" class=\"text-foreground-accent hover:underline\">Checkbox</a></li><li><a href=\"#components-input\" class=\"text-foreground-accent hover:underline\">Input</a></li><li><a href=\"#components-select\" class=\"text-foreground-accent hover:underline\">Select</a></li><li><a href=\"#components-slider\" class=\"text-foreground-accent hover:underline\">Slider</a></li><li><a href=\"#components-textarea\" class=\"text-foreground-accent hover:underline\">Textarea</a></li></ul>")
+			templ_7745c5c3_Err = examples.TooltipAlignExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("Usage", "usage").Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Alignment",
+			Description: "There is no collision detection, so a wide card centered on a trigger near the edge of its container will overflow. The top-start, top-end, bottom-start and bottom-end variants align the card with the trigger's leading or trailing edge instead of centering it, which keeps it inside.",
+			Code:        examples.LoadExample("tooltip_align.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -174,14 +178,16 @@ func Label() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "Label",
-				Description: "Form label element with optional hint tooltip.",
+				Title:       "Tooltip",
+				Description: "Dark floating card with a title, description, and optional illustration, revealed on hover or focus of the wrapped trigger element.",
 				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "ID of the input element this label is for (sets the 'for' attribute)"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with label styles"},
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tooltip wrapper"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with card styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-					{Name: "Hint", Type: "string", Default: "", Description: "Markdown text shown in a Tooltip card on hover via a question mark icon; the card aligns to the start of the label unless the Tooltip prop sets a Position"},
-					{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Full Tooltip card (title, description, optional image) shown on hover via a question mark icon; takes precedence over Hint. Defaults to top-start placement, since a centered card would hang off the leading edge of the field"},
+					{Name: "Title", Type: "string", Default: "", Description: "Card heading; set at least one of Title, Description or Image"},
+					{Name: "Description", Type: "string", Default: "", Description: "Secondary text below the title, parsed as Markdown (emphasis, code, links, lists; single newline is a line break); set at least one of Title, Description or Image"},
+					{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
+					{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, top-start, top-end, bottom, bottom-start, bottom-end, left or right. The -start and -end variants align the card with the trigger's edge rather than centering it, so a wide card does not overflow its container"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

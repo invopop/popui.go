@@ -16,10 +16,14 @@ type Textarea struct {
 	Value       string
 	Label       string
 	Disabled    bool
-	Readonly    bool
-	Required    bool
-	Autofocus   bool
-	Rows        int
+
+	// Tooltip shows a question mark icon after the label that reveals a
+	// Tooltip card on hover. Only used when Label is set.
+	Tooltip   Tooltip
+	Readonly  bool
+	Required  bool
+	Autofocus bool
+	Rows      int
 
 	// Monospace indicates whether to use a monospace font for the textarea
 	// by adding the appropriate classes.
