@@ -14,7 +14,7 @@ templ Textarea(p ...props.Textarea) {
 	{{ prp := props.First(p) }}
 	<div class="flex flex-col gap-2 w-full">
 		if prp.Label != "" {
-			@Label(props.Label{ID: prp.ID}) {
+			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 				{ prp.Label }
 			}
 		}
@@ -65,7 +65,7 @@ templ Contenteditable(p ...props.Textarea) {
 	{{ prp := props.First(p) }}
 	<div class="flex flex-col gap-2 w-full">
 		if prp.Label != "" {
-			@Label(props.Label{ID: prp.ID}) {
+			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 				{ prp.Label }
 			}
 		}

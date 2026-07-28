@@ -1,0 +1,96 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Tooltip wraps a trigger element (the children) and reveals a dark floating
+// card on hover or keyboard focus of anywhere in the wrapper. The card holds a title, a description,
+// and an optional illustration, and keeps its dark color scheme in both
+// light and dark modes.
+//
+// The description is rendered as Markdown, so emphasis, code, links and lists
+// are available and a single newline is a line break. Raw HTML in it is escaped.
+templ Tooltip(opts ...props.Tooltip) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class="group/tooltip relative inline-block w-fit"
+		{ p.Attributes... }
+	>
+		{ children... }
+		@tooltipCard(p)
+	</div>
+}
+
+// tooltipPositionClasses places the card relative to the trigger. The block-axis
+// positions come in three flavours: centered on the trigger, or aligned to its
+// leading or trailing edge, which is how a wide card avoids overflowing the
+// container when the trigger sits near its edge. Alignment uses logical inset
+// utilities, so it follows the writing direction.
+func tooltipPositionClasses(position string) string {
+	switch position {
+	case props.TooltipPositionBottom:
+		return "top-full left-1/2 -translate-x-1/2 mt-2"
+	case props.TooltipPositionBottomStart:
+		return "top-full start-0 mt-2"
+	case props.TooltipPositionBottomEnd:
+		return "top-full end-0 mt-2"
+	case props.TooltipPositionTopStart:
+		return "bottom-full start-0 mb-2"
+	case props.TooltipPositionTopEnd:
+		return "bottom-full end-0 mb-2"
+	case props.TooltipPositionLeft:
+		return "right-full top-1/2 -translate-y-1/2 mr-2"
+	case props.TooltipPositionRight:
+		return "left-full top-1/2 -translate-y-1/2 ml-2"
+	default:
+		return "bottom-full left-1/2 -translate-x-1/2 mb-2"
+	}
+}
+
+// tooltipCard renders the floating card itself. It is separate from Tooltip so a
+// component that already has a suitable element to hang the card off — Label, for
+// instance, which wants the whole label to be the hover target and the anchor for
+// alignment — can host it directly instead of nesting another wrapper inside.
+// The host must carry "group/tooltip relative"; the card renders nothing when
+// there is no content.
+templ tooltipCard(p props.Tooltip) {
+	if !p.Empty() {
+		<div
+			role="tooltip"
+			class={
+				tailwind.Merge(
+					"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
+					"invisible opacity-0 pointer-events-none transition-opacity duration-150",
+					"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
+					"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
+					tooltipPositionClasses(p.Position),
+					p.Class,
+				),
+			}
+		>
+			if p.Image != "" {
+				<img src={ p.Image } alt="" class="w-full mb-2 rounded-md border border-border-inverse"/>
+			}
+			<div class="flex flex-col gap-1 px-1 py-1">
+				if p.Title != "" {
+					<p class="text-base font-semibold text-foreground-inverse">{ p.Title }</p>
+				}
+				if p.Description != "" {
+					// A div, not a p: the description is Markdown, so it may
+					// produce paragraphs and lists, which cannot nest inside a p.
+					// Tailwind resets list styling, hence the element rules here.
+					<div
+						class="text-sm text-foreground-inverse-secondary [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs"
+					>
+						@markdown(p.Description)
+					</div>
+				}
+			</div>
+		</div>
+	}
+}

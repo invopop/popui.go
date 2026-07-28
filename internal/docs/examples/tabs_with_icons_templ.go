@@ -43,6 +43,14 @@ func TabsWithIconsExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = popui.Tabs(props.Tabs{Variant: "pill", Tabs: []props.TabItem{
+			{Value: "account", Label: "Account", Icon: icons.User()},
+			{Value: "settings", Label: "Settings", Icon: icons.Settings()},
+			{Value: "privacy", Label: "Privacy", Icon: icons.Lock()},
+		}}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }

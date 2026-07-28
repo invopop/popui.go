@@ -11,6 +11,7 @@ require (
 	github.com/invopop/icons v0.19.0
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/spf13/cobra v1.9.1
+	github.com/yuin/goldmark v1.8.5
 	golang.org/x/text v0.34.0
 )
 

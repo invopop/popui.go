@@ -33,7 +33,7 @@ templ Select(p ...props.Select) {
 	} else {
 		<div class="flex flex-col space-y-2">
 			if prp.Label != "" {
-				@Label(props.Label{ID: prp.ID}) {
+				@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 					{ prp.Label }
 				}
 			}
@@ -92,14 +92,19 @@ templ selectMultiple(prp props.Select) {
 	// the component: without a positioned ancestor its containing block is
 	// the body, where it stretches the page's scroll area and lets the
 	// viewport scroll past the app.
+	// Consumer Attributes go on the root — the element carrying x-modelable, so
+	// a framework binding placed here (e.g. Alpine x-model) two-way binds the
+	// selection. This keeps popui framework-agnostic and mirrors the single
+	// variant, where Attributes land on the value-carrying <select>.
 	<div
 		class="relative flex flex-col space-y-2 w-full"
 		x-data={ selectMultipleData(prp) }
 		x-id="['multiselect']"
 		x-modelable="selected"
+		{ prp.Attributes... }
 	>
 		if prp.Label != "" {
-			@Label(props.Label{ID: prp.ID}) {
+			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 				{ prp.Label }
 			}
 		}
@@ -189,7 +194,6 @@ templ selectMultiple(prp props.Select) {
 					disabled
 				}
 				class="flex flex-1 items-center gap-1 min-w-12 bg-transparent outline-none text-left text-base text-foreground disabled:cursor-not-allowed"
-				{ prp.Attributes... }
 			>
 				<span x-show="selected.length === 0" class="truncate text-foreground-default-tertiary">
 					if prp.Placeholder != "" {
