@@ -19,11 +19,11 @@ type Table struct {
 	// first column pinned during the scroll.
 	ScrollHorizontal bool
 
-	// StickyColumn pins the first column during a horizontal scroll (same as StickyColumns: 1).
+	// StickyColumn pins the first column to the left — a full-height divider
+	// stays put during a horizontal scroll so the identity column never
+	// detaches from the rows. Only has a visible effect alongside
+	// ScrollHorizontal (there's nothing to scroll past otherwise).
 	StickyColumn bool
-
-	// StickyColumns pins the first N columns (up to 5) during a horizontal scroll, taking precedence over StickyColumn.
-	StickyColumns int
 
 	// StickyHeader pins the <thead> row to the top while the body scrolls.
 	// The RootClass must make the wrapper a vertical scroll container with a

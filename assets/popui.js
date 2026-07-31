@@ -1,5 +1,5 @@
 // Global URL for the Console UI SDK.
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
+const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.11/index.js';
 
 (function () {
   'use strict';
@@ -313,14 +313,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     initButtonCopies()
     attachTableResizers()
-    initFrozenColumns()
   })
 
-  // Rewires ButtonCopies, table resizers, and frozen columns inserted by HTMX content swaps.
+  // Rewires ButtonCopies and table resizers inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
-    initFrozenColumns()
   })
 
   // Clears button loading spinners when the page becomes visible again.
@@ -388,33 +386,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         handle.className = 'popui-table-resizer'
         th.appendChild(handle)
       })
-    })
-  }
-
-  // Publishes each frozen column's cumulative left offset as a --popui-freeze-left-<n> CSS variable, re-measured on resize.
-  function initFrozenColumns() {
-    document.querySelectorAll('table[data-popui-freeze-cols]').forEach(function (table) {
-      const count = parseInt(table.getAttribute('data-popui-freeze-cols'), 10) || 0
-      const cells = Array.prototype.slice.call(
-        table.querySelectorAll('thead tr:first-child > *'),
-        0,
-        count
-      )
-      if (cells.length < 2) return
-      const update = function () {
-        let left = 0
-        cells.forEach(function (cell, i) {
-          if (i > 0) table.style.setProperty('--popui-freeze-left-' + (i + 1), left + 'px')
-          left += cell.getBoundingClientRect().width
-        })
-      }
-      if (table._popuiFreezeObserver) table._popuiFreezeObserver.disconnect()
-      const observer = new ResizeObserver(update)
-      cells.forEach(function (cell) {
-        observer.observe(cell)
-      })
-      table._popuiFreezeObserver = observer
-      update()
     })
   }
 

@@ -415,7 +415,9 @@ form {
   min-width: 6rem;
 }
 
-/* RowHover — tint a body row on hover; frozen cells keep their own opaque hover treatment (see the freeze rules below). */
+/* RowHover — tint a body row on hover. The frozen first column keeps its own
+   opaque hover treatment (see .popui-table-freeze-first below), so this only
+   needs to cover the scrolling cells. */
 .popui-table-row-hover tbody tr:hover td {
   background-color: var(--color-background-default-secondary);
 }
@@ -458,7 +460,7 @@ form {
    column/header. border-spacing: 0 keeps the layout identical to collapse
    (popui only uses bottom borders, which sit flush with no gaps). */
 .popui-table-sticky-header,
-.popui-table-freeze-cols {
+.popui-table-freeze-first {
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -470,6 +472,30 @@ form {
   top: 0;
   z-index: 10;
   background-color: var(--color-background);
+}
+
+/* Frozen first column (header + every body row). popui's hover/border tokens
+   are alpha (a tint over an opaque base), so a sticky cell painted with them
+   would show the scrolling content underneath — keep an opaque base via
+   background-color. The full-height right divider is a real border-right (it
+   travels with the sticky cell thanks to border-separate above) using an
+   opaque neutral so it stays visible over whatever scrolls behind it; it also
+   serves as the separator between columns 1 and 2. */
+.popui-table-freeze-first tr > :first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background-color: var(--color-background) !important;
+  border-right: 1px solid var(--color-neutral-20);
+}
+/* Keep the frozen cell opaque on row hover: layer the alpha hover tint as a
+   background-image over the opaque base instead of swapping background-color. */
+.popui-table-freeze-first tbody tr:hover > :first-child {
+  background-image: linear-gradient(var(--color-background-default-secondary), var(--color-background-default-secondary)) !important;
+}
+/* The top-left corner must sit above both the sticky header and frozen column. */
+.popui-table-freeze-first thead th:first-child {
+  z-index: 15;
 }
 
 /* Label-height vertical dividers between header columns, drawn as a
@@ -491,62 +517,10 @@ form {
   width: 1px;
   background-color: var(--color-border);
 }
-/* Column freeze (StickyColumn / StickyColumns 1..5): frozen cells pin at the cumulative offsets popui.js publishes as --popui-freeze-left-<n>. */
-[data-popui-freeze-cols='1'] tr > :nth-child(-n + 1),
-[data-popui-freeze-cols='2'] tr > :nth-child(-n + 2),
-[data-popui-freeze-cols='3'] tr > :nth-child(-n + 3),
-[data-popui-freeze-cols='4'] tr > :nth-child(-n + 4),
-[data-popui-freeze-cols='5'] tr > :nth-child(-n + 5) {
-  position: sticky;
-  z-index: 5;
-  background-color: var(--color-background) !important;
-}
-/* Offsets are declared up to the 5th child for every count; they only affect cells made sticky above. */
-[data-popui-freeze-cols] tr > :nth-child(1) {
-  left: 0;
-}
-[data-popui-freeze-cols] tr > :nth-child(2) {
-  left: var(--popui-freeze-left-2, 0);
-}
-[data-popui-freeze-cols] tr > :nth-child(3) {
-  left: var(--popui-freeze-left-3, 0);
-}
-[data-popui-freeze-cols] tr > :nth-child(4) {
-  left: var(--popui-freeze-left-4, 0);
-}
-[data-popui-freeze-cols] tr > :nth-child(5) {
-  left: var(--popui-freeze-left-5, 0);
-}
-/* The full-height divider rides on the last frozen column only. */
-[data-popui-freeze-cols='1'] tr > :nth-child(1),
-[data-popui-freeze-cols='2'] tr > :nth-child(2),
-[data-popui-freeze-cols='3'] tr > :nth-child(3),
-[data-popui-freeze-cols='4'] tr > :nth-child(4),
-[data-popui-freeze-cols='5'] tr > :nth-child(5) {
-  border-right: 1px solid var(--color-neutral-20);
-}
-/* Frozen cells stay opaque on row hover by layering the alpha tint as a background-image over the opaque base. */
-[data-popui-freeze-cols='1'] tbody tr:hover > :nth-child(-n + 1),
-[data-popui-freeze-cols='2'] tbody tr:hover > :nth-child(-n + 2),
-[data-popui-freeze-cols='3'] tbody tr:hover > :nth-child(-n + 3),
-[data-popui-freeze-cols='4'] tbody tr:hover > :nth-child(-n + 4),
-[data-popui-freeze-cols='5'] tbody tr:hover > :nth-child(-n + 5) {
-  background-image: linear-gradient(var(--color-background-default-secondary), var(--color-background-default-secondary)) !important;
-}
-/* Frozen header cells must sit above both the sticky header and body cells. */
-[data-popui-freeze-cols='1'] thead tr > :nth-child(-n + 1),
-[data-popui-freeze-cols='2'] thead tr > :nth-child(-n + 2),
-[data-popui-freeze-cols='3'] thead tr > :nth-child(-n + 3),
-[data-popui-freeze-cols='4'] thead tr > :nth-child(-n + 4),
-[data-popui-freeze-cols='5'] thead tr > :nth-child(-n + 5) {
-  z-index: 15;
-}
-/* The last frozen column's border replaces the first scrolling column's header divider. */
-[data-popui-freeze-cols='1'].popui-table-col-dividers thead th:nth-child(2)::before,
-[data-popui-freeze-cols='2'].popui-table-col-dividers thead th:nth-child(3)::before,
-[data-popui-freeze-cols='3'].popui-table-col-dividers thead th:nth-child(4)::before,
-[data-popui-freeze-cols='4'].popui-table-col-dividers thead th:nth-child(5)::before,
-[data-popui-freeze-cols='5'].popui-table-col-dividers thead th:nth-child(6)::before {
+/* When the first column is frozen, its full-height right border already
+   separates columns 1 and 2 — suppress the 2nd header divider to avoid a
+   double line. */
+.popui-table-freeze-first.popui-table-col-dividers thead th:nth-child(2)::before {
   display: none;
 }
 
