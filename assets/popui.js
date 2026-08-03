@@ -1,5 +1,5 @@
 // Global URL for the Console UI SDK.
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
+const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.11/index.js';
 
 (function () {
   'use strict';
@@ -376,26 +376,40 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // Table column resizing
   // ------------------------------------------------------------------
 
-  // Adds a drag handle to each resizable header cell except the last.
+  // Adds a drag handle to each resizable header cell except the elastic last one.
   function attachTableResizers() {
-    document.querySelectorAll('.popui-table-resizable thead th').forEach(function (th, idx, all) {
-      if (idx === all.length - 1) return
-      if (th.querySelector('.popui-table-resizer')) return
-      const handle = document.createElement('div')
-      handle.className = 'popui-table-resizer'
-      th.appendChild(handle)
+    document.querySelectorAll('.popui-table-resizable').forEach(function (table) {
+      table.querySelectorAll('thead th').forEach(function (th, idx, all) {
+        if (idx === all.length - 1) return
+        if (th.querySelector('.popui-table-resizer')) return
+        const handle = document.createElement('div')
+        handle.className = 'popui-table-resizer'
+        th.appendChild(handle)
+      })
     })
   }
 
-  // Resizes a column by dragging its handle, setting an inline width on the th.
+  // Resizes a column by dragging its handle, freezing the other columns so only it and the elastic last column change size.
   document.addEventListener('mousedown', function (e) {
     const handle = e.target.closest('.popui-table-resizer')
     if (!handle) return
     e.preventDefault()
     const th = handle.closest('th')
     if (!th) return
+    const cells = Array.prototype.slice.call(th.parentElement.children)
+    const widths = cells.map(function (cell) {
+      return cell.offsetWidth
+    })
+    cells.forEach(function (cell, i) {
+      if (i === cells.length - 1) {
+        if (!cell.style.minWidth) cell.style.minWidth = widths[i] + 'px'
+      } else if (!cell.style.width) {
+        cell.style.width = widths[i] + 'px'
+        cell.style.minWidth = widths[i] + 'px'
+      }
+    })
     const startX = e.clientX
-    const startWidth = th.offsetWidth
+    const startWidth = widths[cells.indexOf(th)]
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
     function onMove(mv) {
