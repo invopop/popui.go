@@ -54,6 +54,11 @@ templ Table(p ...props.Table) {
 				// off). anywhere, not break-word, because only it feeds into
 				// the min-content width the auto table layout sizes columns by.
 				"[&_td]:[overflow-wrap:anywhere] [&_th]:[overflow-wrap:anywhere]",
+				// TagStatus/StatusBadge labels are nowrap (they truncate), so
+				// inside a width-by-content cell a long label would inflate
+				// the column's min-content; bound them here instead of on the
+				// pill itself so pills elsewhere truncate at their container.
+				"[&_td_[data-label]]:max-w-64 [&_td_[data-status-badge-label]]:max-w-64",
 				prp.Class,
 			) }
 			{ prp.Attributes... }

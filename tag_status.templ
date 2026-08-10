@@ -32,10 +32,10 @@ templ TagStatus(p ...props.TagStatus) {
 			<span data-dot class="w-2 h-2 rounded-xs shrink-0"></span>
 		}
 		if prp.Label != "" {
-			// The max-w bound matters inside width-by-content contexts like
-			// table cells, where truncate's nowrap would otherwise let a long
-			// label stretch the column; elsewhere the container cap wins first.
-			<span data-label class="truncate max-w-64">{ prp.Label }</span>
+			// Width-by-content contexts (table cells) bound the label
+			// themselves — see Table — so the pill can truncate exactly at
+			// its container edge everywhere else.
+			<span data-label class="truncate">{ prp.Label }</span>
 		}
 	</span>
 }
