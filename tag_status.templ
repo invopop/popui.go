@@ -20,7 +20,9 @@ templ TagStatus(p ...props.TagStatus) {
 			id={ prp.ID }
 		}
 		class={ tailwind.Merge(
-			"rounded text-sm inline-flex items-center font-medium gap-1 box-border",
+			// max-w-full + a truncating label keep the fixed-height pill on
+			// one line with an ellipsis instead of spilling wrapped text.
+			"rounded text-sm inline-flex items-center font-medium gap-1 box-border max-w-full",
 			tagStatusClasses(prp),
 			prp.Class,
 		) }
@@ -30,7 +32,10 @@ templ TagStatus(p ...props.TagStatus) {
 			<span data-dot class="w-2 h-2 rounded-xs shrink-0"></span>
 		}
 		if prp.Label != "" {
-			<span data-label>{ prp.Label }</span>
+			// Width-by-content contexts (table cells) bound the label
+			// themselves — see Table — so the pill can truncate exactly at
+			// its container edge everywhere else.
+			<span data-label class="truncate">{ prp.Label }</span>
 		}
 	</span>
 }

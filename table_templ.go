@@ -90,6 +90,17 @@ func Table(p ...props.Table) templ.Component {
 			"[&_th]:border-b [&_th]:border-border [&_th]:bg-background [&_th]:box-border [&_th]:p-2 [&_th]:font-sans [&_th]:text-base [&_th]:font-normal [&_th]:h-10 [&_th]:text-left [&_th]:text-foreground-default-secondary [&_th:first-child]:pl-4 [&_th.first]:pl-4 [&_th:last-child]:pr-4 [&_th.last]:pr-4",
 			"[&_td]:border-b [&_td]:border-border [&_td]:bg-background [&_td]:box-border [&_td]:p-2 [&_td]:font-sans [&_td]:text-base [&_td]:font-normal [&_td]:h-10 [&_td]:text-foreground [&_td:first-child]:pl-4 [&_td.first]:pl-4 [&_td:first-child]:font-medium [&_td:last-child]:pr-4 [&_td.last]:pr-4",
 			"[&_td:has([role=menu])]:py-1.5 [&_th:has([role=menu])]:py-1.5",
+			// overflow-wrap:anywhere lets unbroken tokens (IDs, URLs) wrap
+			// inside their column so they don't stretch the table wider
+			// than its container (which clips when ScrollHorizontal is
+			// off). anywhere, not break-word, because only it feeds into
+			// the min-content width the auto table layout sizes columns by.
+			"[&_td]:[overflow-wrap:anywhere] [&_th]:[overflow-wrap:anywhere]",
+			// TagStatus/StatusBadge labels are nowrap (they truncate), so
+			// inside a width-by-content cell a long label would inflate
+			// the column's min-content; bound them here instead of on the
+			// pill itself so pills elsewhere truncate at their container.
+			"[&_td_[data-label]]:max-w-64 [&_td_[data-status-badge-label]]:max-w-64",
 			prp.Class,
 		)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
@@ -207,7 +218,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 74, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 85, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -345,7 +356,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(totalPagesStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 133, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 144, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -449,7 +460,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 179, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 190, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -472,7 +483,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(optionStr)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 180, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 191, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -516,7 +527,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(totalItemsStr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 188, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 199, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -529,7 +540,7 @@ func TablePagination(p ...props.TablePagination) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(itemsLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 188, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `table.templ`, Line: 199, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {

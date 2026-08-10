@@ -60,7 +60,9 @@ templ Menu(opts ...props.Menu) {
 			class={
 				tailwind.Merge(
 					"context-menu",
-					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg",
+					// max-w caps the panel when an item label is very long; the
+					// items themselves truncate (see MenuItem).
+					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
 					classes.If(p.RightAlign, "context-menu-right-align"),
 					p.Class,
 				),
@@ -88,7 +90,9 @@ templ MenuItem(opts ...props.MenuItem) {
 		}
 		{ p.Attributes... }
 	>
-		<div class="w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap">
+		// Label text wrapped in a <span> truncates with an ellipsis when the
+		// menu hits its max width; icon wrappers (divs) keep their size.
+		<div class="w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap min-w-0 [&>span]:truncate [&>div]:shrink-0">
 			{ children... }
 		</div>
 	</li>

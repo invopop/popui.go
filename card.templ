@@ -60,7 +60,8 @@ templ CardContent(p ...props.CardContent) {
 		}
 		class={
 			tailwind.Merge(
-				"text-foreground text-base",
+				// break-words keeps unbroken tokens (IDs, URLs) inside the card.
+				"text-foreground text-base break-words",
 				content.Class,
 			),
 		}
@@ -113,8 +114,8 @@ templ CardProgressBar(p ...props.CardProgressBar) {
 		}
 		{ bar.Attributes... }
 	>
-		<div class="w-full flex justify-between items-center">
-			<p>
+		<div class="w-full flex justify-between items-center gap-2">
+			<p class="min-w-0 truncate">
 				<span class="text-foreground text-base">
 					<span>{ bar.Title }</span>
 					if bar.Subtitle != "" {
@@ -126,7 +127,7 @@ templ CardProgressBar(p ...props.CardProgressBar) {
 				}
 			</p>
 			if !bar.HideCounter {
-				<div class="flex text-foreground-default-tertiary text-sm font-medium gap-1">
+				<div class="flex text-foreground-default-tertiary text-sm font-medium gap-1 shrink-0">
 					@icons.Invopop()
 					<div>
 						<span class="text-foreground-default-secondary">{ bar.FormatAmount(bar.Current) }</span>

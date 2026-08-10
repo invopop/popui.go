@@ -1,0 +1,355 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+// Long-text stress fixtures. Three flavours: a long sentence (wrappable), a
+// long unbroken token (no break opportunities), and a long human name.
+const (
+	stressSentence = "Quarterly consolidated invoice for professional services rendered across all European subsidiaries during the 2025 fiscal year including all supplementary charges and adjustments"
+	stressToken    = "inv_a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6"
+	stressName     = "Extraordinarily Long Company Legal Name International Holdings and Consolidated Subsidiaries Sociedad Limitada Unipersonal"
+)
+
+// Stress renders every text-bearing PopUI component fed with pathologically
+// long content, both at natural width and inside narrow containers, so
+// overflow handling can be verified visually. Temporary test page.
+templ Stress() {
+	@popui.App(props.App{Title: "Long text stress test"}) {
+		@popui.Sidebar() {
+			@popui.SidebarHeader() {
+				@popui.Avatar(props.Avatar{Initial: "EX", Size: "lg"})
+				<span>{ stressName }</span>
+			}
+			@popui.SidebarContent() {
+				@popui.SidebarSection(props.SidebarSection{Title: "A section title that is far longer than any sidebar can hold"}) {
+					@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+						@icons.Invoice()
+						<span>{ stressSentence }</span>
+					}
+					@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+						@icons.Workflow()
+						<span>{ stressToken }</span>
+					}
+					@popui.SidebarItem(props.SidebarItem{Href: "#", Selected: true}) {
+						@icons.Settings()
+						Normal item
+					}
+				}
+			}
+		}
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{Label: "Workspaces", Href: "#"},
+				{Label: stressName, Href: "#"},
+				{Label: stressSentence},
+			},
+		}) {
+			@popui.Button(props.Button{Variant: "primary"}) {
+				@icons.Add()
+				<span>New Item</span>
+			}
+		}
+		@popui.Main() {
+			@popui.Article(props.Article{FullWidth: true, Title: "Long text stress test"}) {
+				// ---- Breadcrumbs (standalone, constrained) ----
+				@popui.Section(props.Section{Title: "Breadcrumbs — constrained 320px", ID: "breadcrumbs"}) {
+					@stressBox() {
+						@popui.Breadcrumbs() {
+							@popui.Breadcrumb(props.Breadcrumb{Label: "Home", Href: "#"})
+							@popui.Breadcrumb(props.Breadcrumb{Label: stressName})
+						}
+					}
+				}
+				// ---- Buttons ----
+				@popui.Section(props.Section{Title: "Button — constrained 320px", ID: "button"}) {
+					@stressBox() {
+						@popui.ButtonGroup() {
+							@popui.Button(props.Button{Variant: "primary"}) {
+								@icons.Add()
+								<span>{ stressSentence }</span>
+							}
+							@popui.Button(props.Button{Variant: "secondary"}) {
+								{ stressToken }
+							}
+						}
+					}
+				}
+				// ---- Card header ----
+				@popui.Section(props.Section{Title: "CardHeader — constrained 320px", ID: "card"}) {
+					@stressBox() {
+						@popui.Card() {
+							@popui.CardHeader(props.CardHeader{Title: stressName, Subtitle: stressToken}) {
+								@popui.Avatar(props.Avatar{Initial: "EX", Size: "lg"})
+							}
+							@popui.CardContent() {
+								{ stressSentence }
+							}
+							@popui.CardContent() {
+								{ stressToken }
+							}
+						}
+					}
+				}
+				// ---- Card progress bar ----
+				@popui.Section(props.Section{Title: "CardProgressBar — constrained 320px", ID: "progress"}) {
+					@stressBox() {
+						@popui.CardProgressBar(props.CardProgressBar{
+							Title:    stressName,
+							Subtitle: "of your plan",
+							Current:  750,
+							Total:    1000,
+						})
+					}
+				}
+				// ---- Tag status / status badge ----
+				@popui.Section(props.Section{Title: "TagStatus + StatusBadge — constrained 320px", ID: "tags"}) {
+					@stressBox() {
+						<div class="flex flex-col gap-2">
+							@popui.TagStatus(props.TagStatus{Status: "green", Label: stressSentence, Dot: true})
+							@popui.TagStatus(props.TagStatus{Status: "purple", Label: stressToken})
+							@popui.StatusBadge(props.StatusBadge{Status: "success", Label: stressSentence})
+							@popui.StatusBadge(props.StatusBadge{Status: "warning", Label: stressToken})
+						</div>
+					}
+					<div class="flex items-center gap-2">
+						@popui.TagStatus(props.TagStatus{Status: "blue", Label: stressSentence, Dot: true})
+					</div>
+				}
+				// ---- Menu ----
+				@popui.Section(props.Section{Title: "Menu — long items (click to open)", ID: "menu"}) {
+					@popui.Menu(props.Menu{ID: "stress-menu"}) {
+						@popui.MenuItem() {
+							@icons.Edit()
+							<span>{ stressSentence }</span>
+						}
+						@popui.MenuItem() {
+							@icons.Duplicate()
+							<span>{ stressToken }</span>
+						}
+						@popui.MenuItem() {
+							@icons.Delete()
+							<span>Short item</span>
+						}
+					}
+				}
+				// ---- Select: single + multiple ----
+				@popui.Section(props.Section{Title: "Select — single + multiple with long options, constrained 320px", ID: "select"}) {
+					@stressBox() {
+						<div class="flex flex-col gap-4 w-full">
+							@popui.Select(props.Select{
+								ID:    "stress-select-single",
+								Label: "Single select",
+								Options: []props.SelectOption{
+									{Value: "1", Label: stressName, Selected: true},
+									{Value: "2", Label: stressSentence},
+									{Value: "3", Label: "Short option"},
+								},
+							})
+							@popui.Select(props.Select{
+								ID:       "stress-select-multi",
+								Label:    "Multi select",
+								Multiple: true,
+								Options: []props.SelectOption{
+									{Value: "1", Label: stressName, Selected: true},
+									{Value: "2", Label: stressToken, Selected: true, Description: stressSentence},
+									{Value: "3", Label: "Short option"},
+								},
+							})
+						</div>
+					}
+				}
+				// ---- Notification ----
+				@popui.Section(props.Section{Title: "Notification — constrained 320px", ID: "notification"}) {
+					@stressBox() {
+						<div class="flex flex-col w-full">
+							@popui.Notification(props.Notification{Type: "info", Text: stressSentence, Description: stressSentence})
+							@popui.Notification(props.Notification{Type: "error", Text: stressToken, Description: stressToken})
+						</div>
+					}
+				}
+				// ---- Toast (forced visible for inspection) ----
+				@popui.Section(props.Section{Title: "Toast — forced visible bottom-right / bottom-left", ID: "toast"}) {
+					@popui.Toast(props.Toast{
+						ID:          "stress-toast-1",
+						Type:        props.ToastTypeSuccess,
+						Message:     stressSentence,
+						Description: stressToken,
+						ActionLabel: "Undo",
+						Class:       "popui-toast--visible",
+					})
+					@popui.Toast(props.Toast{
+						ID:       "stress-toast-2",
+						Type:     props.ToastTypeError,
+						Position: props.ToastPositionBottomLeft,
+						Message:  stressToken,
+						Class:    "popui-toast--visible",
+					})
+				}
+				// ---- Tabs ----
+				@popui.Section(props.Section{Title: "Tabs — default + pill, constrained 320px", ID: "tabs"}) {
+					@stressBox() {
+						<div class="flex flex-col gap-6 w-full">
+							@popui.Tabs(props.Tabs{
+								Model: "tabA",
+								Tabs: []props.TabItem{
+									{Value: "one", Label: stressName, Count: 12},
+									{Value: "two", Label: "Short"},
+								},
+							})
+							@popui.Tabs(props.Tabs{
+								Model:   "tabB",
+								Variant: "pill",
+								Tabs: []props.TabItem{
+									{Value: "one", Label: stressName},
+									{Value: "two", Label: "Short"},
+								},
+							})
+						</div>
+					}
+				}
+				// ---- Tooltip (forced visible) ----
+				@popui.Section(props.Section{Title: "Tooltip — forced visible, long title/description", ID: "tooltip"}) {
+					<div class="pt-40">
+						@popui.Tooltip(props.Tooltip{
+							Title:       stressName,
+							Description: stressToken + " and then a sentence follows: " + stressSentence,
+							Class:       "visible opacity-100",
+						}) {
+							@popui.Button(props.Button{Variant: "secondary"}) {
+								Hover target
+							}
+						}
+					</div>
+				}
+				// ---- Accordion ----
+				@popui.Section(props.Section{Title: "Accordion — constrained 320px", ID: "accordion"}) {
+					@stressBox() {
+						@popui.Accordion(props.Accordion{Open: true}) {
+							@popui.AccordionTrigger() {
+								{ stressName }
+							}
+							@popui.AccordionContent() {
+								<p>{ stressSentence }</p>
+								<p>{ stressToken }</p>
+							}
+						}
+					}
+				}
+				// ---- Description list ----
+				@popui.Section(props.Section{Title: "DescriptionList — plain + inline detail rows", ID: "dl"}) {
+					@popui.DescriptionList() {
+						@popui.DescriptionListItem(props.DescriptionListItem{Label: stressName, Value: stressToken})
+						@popui.DescriptionListItem(props.DescriptionListItem{
+							Label:  "Inline row",
+							Value:  stressToken,
+							Inline: true,
+							Actions: []props.DescriptionListAction{
+								{Copy: stressToken, Icon: icons.Duplicate()},
+							},
+						})
+						@popui.DescriptionListItem(props.DescriptionListItem{
+							Label:  stressName,
+							Value:  stressSentence,
+							Inline: true,
+						})
+					}
+				}
+				// ---- Files ----
+				@popui.Section(props.Section{Title: "FileDownload + FileUpload — constrained 320px", ID: "file"}) {
+					@stressBox() {
+						<div class="flex flex-col gap-4 w-full">
+							@popui.FileDownload() {
+								@popui.FileDownloadInfo(props.FileDownloadInfo{Label: stressToken + ".pdf", Value: stressSentence}) {
+									@popui.Avatar(props.Avatar{Initial: "PDF", Size: "lg", Color: "document-pdf"})
+								}
+								@popui.Button(props.Button{Size: "icon", Variant: "transparent"}) {
+									@icons.Download()
+								}
+							}
+							@popui.FileUpload(props.InputFile{ID: "stress-upload", Text: stressName})
+						</div>
+					}
+				}
+				// ---- Form controls ----
+				@popui.Section(props.Section{Title: "Checkbox / Radio / Input / Label — constrained 320px", ID: "form"}) {
+					@stressBox() {
+						<div class="flex flex-col gap-4 w-full">
+							@popui.Checkbox(props.Checkbox{ID: "stress-check", Label: stressName, Description: stressSentence})
+							@popui.Checkbox(props.Checkbox{ID: "stress-switch", Variant: "switch", Label: stressName, Description: stressToken})
+							@popui.Radio(props.Radio{ID: "stress-radio", Name: "stress-radio", Label: stressName, Description: stressSentence})
+							@popui.Radio(props.Radio{ID: "stress-radio-card", Name: "stress-radio", Variant: "card", Label: stressName, Description: stressToken})
+							@popui.Input(props.Input{
+								ID:          "stress-input",
+								Label:       stressName,
+								Value:       stressToken,
+								Tooltip:     props.Tooltip{Title: "Hint", Description: stressSentence},
+								Error:       props.Error{Text: stressSentence},
+							})
+						</div>
+					}
+				}
+				// ---- Page state ----
+				@popui.Section(props.Section{Title: "PageState — constrained 320px", ID: "pagestate"}) {
+					@stressBox() {
+						@popui.PageState(props.PageState{
+							Title:       stressName,
+							Description: stressToken,
+						}) {
+							@popui.Button(props.Button{Variant: "primary"}) {
+								Create
+							}
+						}
+					}
+				}
+				// ---- Avatar ----
+				@popui.Section(props.Section{Title: "Avatar — oversized initials", ID: "avatar"}) {
+					<div class="flex items-center gap-2">
+						@popui.Avatar(props.Avatar{Initial: "ABCDEFG"})
+						@popui.Avatar(props.Avatar{Initial: "ABCDEFG", Size: "lg"})
+					</div>
+				}
+			}
+			// ---- Table ----
+			@popui.Table() {
+				<thead>
+					<tr>
+						<th>{ stressName }</th>
+						<th>Amount</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{ stressSentence }</td>
+						<td>$1,234.56</td>
+						<td>
+							@popui.TagStatus(props.TagStatus{Status: "green", Label: "Paid", Dot: true})
+						</td>
+					</tr>
+					<tr>
+						<td>{ stressToken }</td>
+						<td>$99.00</td>
+						<td>
+							@popui.TagStatus(props.TagStatus{Status: "orange", Label: stressSentence, Dot: true})
+						</td>
+					</tr>
+				</tbody>
+			}
+		}
+		@popui.Footer() {
+			<span class="text-sm text-foreground-default-secondary">Stress test page</span>
+		}
+	}
+}
+
+// stressBox is a 320px-wide dashed container that makes overflow beyond the
+// component's allotted width visible.
+templ stressBox() {
+	<div class="w-80 max-w-80 border border-dashed border-border-critical-bold rounded-lg p-2 overflow-visible">
+		{ children... }
+	</div>
+}

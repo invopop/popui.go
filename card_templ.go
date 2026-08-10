@@ -217,7 +217,8 @@ func CardContent(p ...props.CardContent) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		content := props.First(p)
 		var templ_7745c5c3_Var10 = []any{tailwind.Merge(
-			"text-foreground text-base",
+			// break-words keeps unbroken tokens (IDs, URLs) inside the card.
+			"text-foreground text-base break-words",
 			content.Class,
 		),
 		}
@@ -330,7 +331,7 @@ func CardHeader(p ...props.CardHeader) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(header.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 79, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 80, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -378,7 +379,7 @@ func CardHeader(p ...props.CardHeader) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(header.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 92, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 93, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -396,7 +397,7 @@ func CardHeader(p ...props.CardHeader) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(header.Subtitle)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 94, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 95, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -464,7 +465,7 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(bar.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 106, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 107, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -496,14 +497,14 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "><div class=\"w-full flex justify-between items-center\"><p><span class=\"text-foreground text-base\"><span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "><div class=\"w-full flex justify-between items-center gap-2\"><p class=\"min-w-0 truncate\"><span class=\"text-foreground text-base\"><span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(bar.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 119, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 120, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -531,7 +532,7 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(bar.Subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 125, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 126, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -547,7 +548,7 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !bar.HideCounter {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"flex text-foreground-default-tertiary text-sm font-medium gap-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"flex text-foreground-default-tertiary text-sm font-medium gap-1 shrink-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -562,7 +563,7 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(bar.FormatAmount(bar.Current))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 132, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 133, Col: 85}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -575,7 +576,7 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(bar.FormatAmount(bar.Total))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 134, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card.templ`, Line: 135, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {

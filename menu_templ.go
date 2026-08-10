@@ -151,7 +151,9 @@ func Menu(opts ...props.Menu) templ.Component {
 		}
 		var templ_7745c5c3_Var7 = []any{tailwind.Merge(
 			"context-menu",
-			"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg",
+			// max-w caps the panel when an item label is very long; the
+			// items themselves truncate (see MenuItem).
+			"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
 			classes.If(p.RightAlign, "context-menu-right-align"),
 			p.Class,
 		),
@@ -233,7 +235,7 @@ func MenuItem(opts ...props.MenuItem) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 81, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 83, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -265,7 +267,7 @@ func MenuItem(opts ...props.MenuItem) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "><div class=\"w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "><div class=\"w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap min-w-0 [&>span]:truncate [&>div]:shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

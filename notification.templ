@@ -37,7 +37,9 @@ templ Notification(opts ...props.Notification) {
 				}
 			</div>
 		}
-		<div>
+		// min-w-0 + break-words wrap long messages — including unbroken
+		// tokens — inside the rounded box.
+		<div class="min-w-0 break-words">
 			if p.Text != "" || p.Description != "" {
 				<p class="font-medium">{ p.Text }</p>
 				<p class="text-foreground-default-secondary text-sm">{ p.Description }</p>

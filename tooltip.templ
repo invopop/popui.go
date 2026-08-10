@@ -78,14 +78,14 @@ templ tooltipCard(p props.Tooltip) {
 			}
 			<div class="flex flex-col gap-1 px-1 py-1">
 				if p.Title != "" {
-					<p class="text-base font-semibold text-foreground-inverse">{ p.Title }</p>
+					<p class="text-base font-semibold text-foreground-inverse break-words">{ p.Title }</p>
 				}
 				if p.Description != "" {
 					// A div, not a p: the description is Markdown, so it may
 					// produce paragraphs and lists, which cannot nest inside a p.
 					// Tailwind resets list styling, hence the element rules here.
 					<div
-						class="text-sm text-foreground-inverse-secondary [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs"
+						class="text-sm text-foreground-inverse-secondary break-words [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs [&_code]:break-all"
 					>
 						@markdown(p.Description)
 					</div>

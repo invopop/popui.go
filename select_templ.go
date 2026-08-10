@@ -97,7 +97,9 @@ func Select(p ...props.Select) templ.Component {
 			}
 			var templ_7745c5c3_Var4 = []any{tailwind.Merge(
 				classes.FormField(),
-				"pl-2 h-8 pr-9",
+				// truncate gives the selected option an ellipsis instead of
+				// a hard clip when it exceeds the field width.
+				"pl-2 h-8 pr-9 truncate",
 				classes.FormFieldState(!prp.Error.Empty()),
 				prp.Class,
 			)}
@@ -161,7 +163,7 @@ func Select(p ...props.Select) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 59, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 61, Col: 20}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -189,7 +191,7 @@ func Select(p ...props.Select) templ.Component {
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(option.Value)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 66, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 68, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -218,7 +220,7 @@ func Select(p ...props.Select) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 74, Col: 21}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 76, Col: 21}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -284,7 +286,7 @@ func selectMultiple(prp props.Select) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(selectMultipleData(prp))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 101, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 103, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -318,7 +320,7 @@ func selectMultiple(prp props.Select) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 108, Col: 15}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 110, Col: 15}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -343,7 +345,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 118, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 120, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -378,7 +380,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(option.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 129, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 131, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -401,7 +403,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 134, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 136, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -446,7 +448,9 @@ func selectMultiple(prp props.Select) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 = []any{tailwind.Merge(
-			"inline-flex items-center gap-1 rounded h-6 bg-background-default-secondary pl-2 text-sm font-medium text-foreground",
+			// max-w-full + truncating label keep a long chip
+			// inside the field instead of overflowing it.
+			"inline-flex items-center gap-1 rounded h-6 bg-background-default-secondary pl-2 text-sm font-medium text-foreground max-w-full",
 			classes.If(prp.Disabled, "pr-2"),
 		),
 		}
@@ -477,12 +481,12 @@ func selectMultiple(prp props.Select) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "><span x-text=\"labelFor(value)\"></span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "><span class=\"truncate\" x-text=\"labelFor(value)\"></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if !prp.Disabled {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<template x-if=\"!optionDisabled(value)\"><button type=\"button\" class=\"flex items-center text-foreground-default-secondary hover:text-foreground\" :aria-label=\"'Remove ' + labelFor(value)\" @click=\"remove(value)\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<template x-if=\"!optionDisabled(value)\"><button type=\"button\" class=\"flex items-center text-foreground-default-secondary hover:text-foreground shrink-0\" :aria-label=\"'Remove ' + labelFor(value)\" @click=\"remove(value)\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -507,7 +511,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 181, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 185, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -542,7 +546,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 200, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 204, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -554,7 +558,7 @@ func selectMultiple(prp props.Select) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span> <span class=\"multiselect-arrow ml-auto shrink-0 size-5 transition-transform\" :class=\"{ 'rotate-180': open }\"></span></button></div><div popover x-ref=\"panel\" :id=\"$id('multiselect')\" :style=\"'position-anchor: --' + $id('multiselect')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span> <span class=\"multiselect-arrow ml-auto shrink-0 size-5 transition-transform\" :class=\"{ 'rotate-180': open }\"></span></button></div><div popover x-ref=\"panel\" :id=\"$id('multiselect')\" :style=\"'position-anchor: --' + $id('multiselect')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"multiselect-panel min-w-48 max-w-[min(24rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -593,7 +597,7 @@ func selectMultiple(prp props.Select) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</span> <span class=\"flex items-baseline gap-1.5 min-w-0\"><span class=\"text-base text-foreground shrink-0\" x-text=\"option.label\"></span><template x-if=\"option.description\"><span class=\"flex items-baseline gap-1.5 min-w-0 flex-1 text-base text-foreground-default-secondary\"><span class=\"shrink-0\" aria-hidden=\"true\">·</span> <span class=\"truncate min-w-0 flex-1\" x-text=\"option.description\"></span></span></template></span></li></template><li role=\"presentation\" x-show=\"filtered.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No options found</li></ul></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</span> <span class=\"flex items-baseline gap-1.5 min-w-0\"><span class=\"text-base text-foreground shrink-0 max-w-full truncate\" x-text=\"option.label\"></span><template x-if=\"option.description\"><span class=\"flex items-baseline gap-1.5 min-w-0 flex-1 text-base text-foreground-default-secondary\"><span class=\"shrink-0\" aria-hidden=\"true\">·</span> <span class=\"truncate min-w-0 flex-1\" x-text=\"option.description\"></span></span></template></span></li></template><li role=\"presentation\" x-show=\"filtered.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No options found</li></ul></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

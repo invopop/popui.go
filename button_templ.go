@@ -547,7 +547,7 @@ func Button(p ...props.Button) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\"> <span data-copy-text class=\"font-mono\"></span> <span data-copy-icon-duplicate>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\"> <span data-copy-text class=\"font-mono\"></span> <span data-copy-icon-duplicate class=\"shrink-0\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -582,7 +582,10 @@ func Button(p ...props.Button) templ.Component {
 }
 
 func buttonBaseClasses() string {
-	return "cursor-pointer inline-flex items-center justify-center whitespace-nowrap font-medium font-sans relative tracking-tight px-2 py-[3px] rounded-md disabled:opacity-30 disabled:pointer-events-none border border-border-default-secondary text-base gap-1 shadow-button-default hover:border-border-default-secondary-hover active:border-border-default-secondary-hover active:shadow-button-pressed active:translate-y-[1px] box-border"
+	// max-w-full + overflow-hidden keep a long-labelled button inside its
+	// container; a label wrapped in a <span> truncates with an ellipsis while
+	// icon wrappers (divs) keep their size.
+	return "cursor-pointer inline-flex items-center justify-center whitespace-nowrap font-medium font-sans relative tracking-tight px-2 py-[3px] rounded-md disabled:opacity-30 disabled:pointer-events-none border border-border-default-secondary text-base gap-1 shadow-button-default hover:border-border-default-secondary-hover active:border-border-default-secondary-hover active:shadow-button-pressed active:translate-y-[1px] box-border max-w-full overflow-hidden [&>span]:truncate [&>div]:shrink-0"
 }
 
 func buttonClasses(variant string, size string) string {

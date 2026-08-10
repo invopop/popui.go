@@ -146,7 +146,7 @@ templ FileUpload(p ...props.InputFile) {
 				@icons.Picture()
 			</div>
 		}
-		<span class="flex-1 text-base text-foreground font-medium">{ file.Text }</span>
+		<span class="flex-1 min-w-0 truncate text-base text-foreground font-medium">{ file.Text }</span>
 		@Button(props.Button{
 			Variant: "primary",
 			Type:    "button",

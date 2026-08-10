@@ -18,7 +18,9 @@ templ Sidebar(opts ...props.Sidebar) {
 		id="popui-sidebar"
 		class={
 			tailwind.Merge(
-				"h-full w-0 md:w-[240px] invisible md:visible bg-background flex flex-col items-center gap-0 transition-[width] ease-in-out duration-300 border-r border-border [&_ul_li_a]:whitespace-nowrap [&_ul_li_a]:overflow-hidden [&_ul_li_a_div]:shrink-0",
+				// Item labels wrapped in a <span> gain an ellipsis when they
+				// exceed the sidebar width; raw text nodes are still clipped.
+				"h-full w-0 md:w-[240px] invisible md:visible bg-background flex flex-col items-center gap-0 transition-[width] ease-in-out duration-300 border-r border-border [&_ul_li_a]:whitespace-nowrap [&_ul_li_a]:overflow-hidden [&_ul_li_a_div]:shrink-0 [&_ul_li_a_span]:truncate",
 				classes.If(p.Variant == props.SidebarVariantDark, "sidebar-dark"),
 				p.Class,
 			),
@@ -31,7 +33,9 @@ templ Sidebar(opts ...props.Sidebar) {
 
 // SidebarHeader provides a header for the sidebar
 templ SidebarHeader() {
-	<div class="SidebarHeader w-full flex pl-5 pr-3 py-3 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 [&>div]:!w-7 [&>div]:!h-7">
+	// A workspace name wrapped in a <span> truncates with an ellipsis; raw
+	// text nodes are clipped by the overflow-hidden instead.
+	<div class="SidebarHeader w-full flex pl-5 pr-3 py-3 items-center gap-2 border-b border-border text-foreground font-sans text-base font-semibold whitespace-nowrap h-12 overflow-hidden [&>div]:!w-7 [&>div]:!h-7 [&>div]:shrink-0 [&>span]:truncate">
 		{ children... }
 	</div>
 }

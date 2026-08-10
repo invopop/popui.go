@@ -30,7 +30,9 @@ templ Toast(p ...props.Toast) {
 		}
 		class={
 			tailwind.Merge(
-				"popui-toast z-50 flex items-center gap-2 w-fit min-w-80 py-3 px-4 rounded-lg bg-background-default-negative",
+				// The max-w cap keeps a long message from stretching the toast
+				// across the viewport; message/description truncate inside it.
+				"popui-toast z-50 flex items-center gap-2 w-fit min-w-80 max-w-[min(36rem,calc(100vw-2rem))] py-3 px-4 rounded-lg bg-background-default-negative",
 				toastPositionClasses(toast.Position),
 				toast.Class,
 			),

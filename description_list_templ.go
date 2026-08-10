@@ -682,7 +682,8 @@ func DD(opts ...props.DD) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var32 = []any{tailwind.Merge(
-			"text-base text-foreground font-medium",
+			// break-words keeps unbroken values (IDs, URLs) inside the list.
+			"text-base text-foreground font-medium break-words",
 			p.Class,
 		),
 		}

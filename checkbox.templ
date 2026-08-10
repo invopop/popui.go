@@ -33,13 +33,15 @@ templ Checkbox(p ...props.Checkbox) {
 				@checkboxInput(checkbox)
 				<span class="absolute cursor-pointer inset-0 bg-border-default-secondary-hover rounded-md transition-all duration-[0.4s] before:content-[''] before:absolute before:h-4 before:w-4 before:left-0.5 before:bottom-0.5 before:bg-background before:rounded before:transition-all before:duration-[0.4s]"></span>
 			</div>
+			// min-w-0 + break-words let the text column shrink and wrap
+			// instead of bleeding out of the row-reverse layout.
 			if checkbox.Description != "" {
-				<div class="flex flex-col">
+				<div class="flex flex-col min-w-0 break-words">
 					{ checkbox.Label }
 					<span class="text-sm text-foreground-default-secondary">{ checkbox.Description }</span>
 				</div>
 			} else if checkbox.Label != "" {
-				{ checkbox.Label }
+				<span class="min-w-0 break-words">{ checkbox.Label }</span>
 			} else {
 				{ children... }
 			}
@@ -57,7 +59,7 @@ templ Checkbox(p ...props.Checkbox) {
 			@checkboxInput(checkbox)
 			<label
 				for={ checkbox.ID }
-				class="font-sans text-base text-foreground"
+				class="font-sans text-base text-foreground min-w-0 break-words"
 			>
 				if checkbox.Description != "" {
 					<div class="flex flex-col">

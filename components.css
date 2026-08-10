@@ -392,16 +392,22 @@ form {
    opaque base to sit over the alpha hover/border tokens, and the header
    dividers are pseudo-elements that scale with the label height. */
 
-/* FullWidth — stretch the table to fill its container while still growing
-   past it when the columns need more (horizontal scroll). min-width pins it
-   to the container; width: max-content lets it expand beyond; table-layout:
-   auto so the extra width is distributed across the columns. Expressed as a
-   class rather than min-w-full/w-max/table-auto utilities because the popui
-   tailwind build doesn't emit min-w-full or table-auto. */
+/* FullWidth — the table fills its container (width: 100%) so long cell
+   content wraps instead of stretching the table past the overflow-hidden
+   wrapper; the ScrollHorizontal variant below opts back into max-content
+   growth. Expressed as a class rather than min-w-full/table-auto utilities
+   because the popui tailwind build doesn't emit them. */
 .popui-table-full-width {
   min-width: 100%;
-  width: max-content;
+  width: 100%;
   table-layout: auto;
+}
+/* Under ScrollHorizontal the table grows to its content and the wrapper
+   scrolls; without it the table fills the container and cell text wraps
+   (the wrapper is overflow-hidden there, so a wider table would just be
+   clipped). */
+.popui-table-full-width.popui-table-scroll-cells {
+  width: max-content;
 }
 
 /* Scroll-table cells — when ScrollHorizontal is set the cells shouldn't wrap,
@@ -692,9 +698,17 @@ form {
 .popui-icon-xs > div,
 .popui-icon-xs > div > svg { width: 0.75rem !important; height: 0.75rem !important; }
 .popui-detail-row > .popui-detail-label {
+  /* Fixed flex basis: a long label wraps inside its 148px column instead of
+     growing and squeezing the value cell out of the row. */
+  flex: 0 0 148px;
   min-width: 148px;
+  overflow-wrap: break-word;
   color: var(--color-foreground-default-secondary);
   font-size: 0.875rem;
+}
+/* Stacked rows are a column layout, so the label spans the full width. */
+.popui-detail-row.popui-detail-stacked > .popui-detail-label {
+  flex: 0 0 auto;
 }
 .popui-detail-row > .popui-detail-value-wrap {
   flex: 1 1 0%;
