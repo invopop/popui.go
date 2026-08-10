@@ -46,13 +46,16 @@ templ APITable(p APITableProps) {
 			<tbody>
 				for _, item := range p.Items {
 					<tr>
-						<td>
+						// Name and Type hold identifiers — keep them on one
+						// line instead of letting the cells' overflow-wrap
+						// break them mid-word.
+						<td class="whitespace-nowrap">
 							<code class="text-sm bg-background-default-secondary px-2 py-1 rounded">{ item.Name }</code>
 							if item.Required {
 								<span class="ml-2 text-sm text-foreground-critical">*</span>
 							}
 						</td>
-						<td>
+						<td class="whitespace-nowrap">
 							<code class="text-sm text-foreground-default-secondary">{ item.Type }</code>
 						</td>
 						<td>
