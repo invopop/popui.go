@@ -39,7 +39,9 @@ func StatusBadge(p ...props.StatusBadge) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		prp := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"inline-flex items-center gap-1 rounded-full bg-background-default-secondary h-5 px-1",
+			// max-w-full + a truncating label keep the fixed-height pill on
+			// one line with an ellipsis instead of spilling wrapped text.
+			"inline-flex items-center gap-1 rounded-full bg-background-default-secondary h-5 px-1 max-w-full",
 			prp.Class,
 		)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -121,14 +123,14 @@ func StatusBadge(p ...props.StatusBadge) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if prp.Label != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span data-status-badge-label class=\"font-sans text-sm font-medium text-foreground\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "  <span data-status-badge-label class=\"font-sans text-sm font-medium text-foreground truncate max-w-64\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `status_badge.templ`, Line: 36, Col: 98}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `status_badge.templ`, Line: 40, Col: 116}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

@@ -201,14 +201,14 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if p.Title != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"text-base font-semibold text-foreground-inverse\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"text-base font-semibold text-foreground-inverse break-words\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 81, Col: 73}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 81, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -220,7 +220,7 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				}
 			}
 			if p.Description != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "   <div class=\"text-sm text-foreground-inverse-secondary [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "   <div class=\"text-sm text-foreground-inverse-secondary break-words [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs [&_code]:break-all\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -247,7 +247,9 @@ templ Header(opts ...props.Header) {
 		}
 		{ p.Attributes... }
 	>
-		<div class="flex items-center gap-3">
+		// min-w-0 lets the breadcrumbs/title truncate instead of pushing the
+		// action slot (shrink-0) out of the header when a label is long.
+		<div class="flex items-center gap-3 min-w-0">
 			@headerMenuButton()
 			if p.Title != nil {
 				@p.Title
@@ -262,7 +264,7 @@ templ Header(opts ...props.Header) {
 				}
 			}
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-2 shrink-0">
 			{ children... }
 		</div>
 	</header>

@@ -22,7 +22,11 @@ templ PageState(opts ...props.PageState) {
 		if p.Illustration != nil {
 			@p.Illustration
 		}
-		<div class="flex flex-col items-center justify-center text-center gap-0.5">
+		// max-w-full + overflow-wrap:anywhere keep the centered text inside
+		// the container even when it holds an unbroken token (anywhere, not
+		// break-word, because only it affects the intrinsic min-content size
+		// that centered flex items are sized by).
+		<div class="flex flex-col items-center justify-center text-center gap-0.5 max-w-full [overflow-wrap:anywhere]">
 			@P(props.P{Class: "font-medium"}) {
 				{ p.Title }
 			}

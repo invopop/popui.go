@@ -15,7 +15,9 @@ templ Breadcrumbs(opts ...props.Breadcrumbs) {
 		}
 		class={
 			tailwind.Merge(
-				"flex items-center gap-3 [&>li:last-child>span:last-child]:hidden",
+				// min-w-0 lets the list shrink inside a flex row (e.g. the app
+				// Header) so long crumbs truncate rather than overflow.
+				"flex items-center gap-3 min-w-0 [&>li:last-child>span:last-child]:hidden",
 				p.Class,
 			),
 		}
@@ -36,7 +38,7 @@ templ Breadcrumb(opts ...props.Breadcrumb) {
 		}
 		class={
 			tailwind.Merge(
-				"flex items-center gap-3",
+				"flex items-center gap-3 min-w-0",
 				p.Class,
 			),
 		}
@@ -44,7 +46,7 @@ templ Breadcrumb(opts ...props.Breadcrumb) {
 		if p.Href != "" {
 			<a
 				href={ p.Href }
-				class="font-sans text-lg leading-6 tracking-[-0.16px] whitespace-nowrap text-foreground-default-secondary font-normal hover:text-foreground"
+				class="font-sans text-lg leading-6 tracking-[-0.16px] truncate max-w-64 text-foreground-default-secondary font-normal hover:text-foreground"
 				{ p.Attributes... }
 			>
 				if p.Label != "" {
@@ -55,7 +57,7 @@ templ Breadcrumb(opts ...props.Breadcrumb) {
 			</a>
 		} else {
 			<span
-				class="font-sans text-lg leading-6 tracking-[-0.16px] whitespace-nowrap text-foreground font-medium"
+				class="font-sans text-lg leading-6 tracking-[-0.16px] truncate max-w-64 text-foreground font-medium"
 				{ p.Attributes... }
 			>
 				if p.Label != "" {
@@ -65,7 +67,7 @@ templ Breadcrumb(opts ...props.Breadcrumb) {
 				}
 			</span>
 		}
-		<span class="text-icon-default-secondary">
+		<span class="text-icon-default-secondary shrink-0">
 			@icons.Slash()
 		</span>
 	</li>

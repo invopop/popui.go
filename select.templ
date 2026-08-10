@@ -41,7 +41,9 @@ templ Select(p ...props.Select) {
 				id={ prp.ID }
 				class={ tailwind.Merge(
 					classes.FormField(),
-					"pl-2 h-8 pr-9",
+					// truncate gives the selected option an ellipsis instead of
+					// a hard clip when it exceeds the field width.
+					"pl-2 h-8 pr-9 truncate",
 					classes.FormFieldState(!prp.Error.Empty()),
 					prp.Class,
 				) }
@@ -152,7 +154,9 @@ templ selectMultiple(prp props.Select) {
 				<span
 					class={
 						tailwind.Merge(
-							"inline-flex items-center gap-1 rounded h-6 bg-background-default-secondary pl-2 text-sm font-medium text-foreground",
+							// max-w-full + truncating label keep a long chip
+							// inside the field instead of overflowing it.
+							"inline-flex items-center gap-1 rounded h-6 bg-background-default-secondary pl-2 text-sm font-medium text-foreground max-w-full",
 							classes.If(prp.Disabled, "pr-2"),
 						),
 					}
@@ -160,12 +164,12 @@ templ selectMultiple(prp props.Select) {
 						:class="optionDisabled(value) ? 'pr-2' : 'pr-1'"
 					}
 				>
-					<span x-text="labelFor(value)"></span>
+					<span class="truncate" x-text="labelFor(value)"></span>
 					if !prp.Disabled {
 						<template x-if="!optionDisabled(value)">
 							<button
 								type="button"
-								class="flex items-center text-foreground-default-secondary hover:text-foreground"
+								class="flex items-center text-foreground-default-secondary hover:text-foreground shrink-0"
 								:aria-label="'Remove ' + labelFor(value)"
 								@click="remove(value)"
 							>
@@ -205,6 +209,9 @@ templ selectMultiple(prp props.Select) {
 				<span class="multiselect-arrow ml-auto shrink-0 size-5 transition-transform" :class="{ 'rotate-180': open }"></span>
 			</button>
 		</div>
+		// The panel's max-w cap stops very long option labels from producing a
+		// viewport-wide panel; rows truncate to fit. onToggle still raises
+		// min-width to match the field, which wins when the field is wider.
 		<div
 			popover
 			x-ref="panel"
@@ -212,7 +219,7 @@ templ selectMultiple(prp props.Select) {
 			:style="'position-anchor: --' + $id('multiselect')"
 			@toggle="onToggle($event)"
 			@keydown="onKeydown($event)"
-			class="multiselect-panel min-w-48 border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
+			class="multiselect-panel min-w-48 max-w-[min(24rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
 		>
 			if prp.Searchable {
 				<div class="p-1">
@@ -259,7 +266,10 @@ templ selectMultiple(prp props.Select) {
 							@selectCheckIcon()
 						</span>
 						<span class="flex items-baseline gap-1.5 min-w-0">
-							<span class="text-base text-foreground shrink-0" x-text="option.label"></span>
+							// shrink-0 + max-w-full: the description truncates
+							// first; the label only truncates when it alone
+							// exceeds the row.
+							<span class="text-base text-foreground shrink-0 max-w-full truncate" x-text="option.label"></span>
 							<template x-if="option.description">
 								<span class="flex items-baseline gap-1.5 min-w-0 flex-1 text-base text-foreground-default-secondary">
 									<span class="shrink-0" aria-hidden="true">·</span>
