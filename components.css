@@ -392,12 +392,11 @@ form {
    opaque base to sit over the alpha hover/border tokens, and the header
    dividers are pseudo-elements that scale with the label height. */
 
-/* FullWidth — stretch the table to fill its container while still growing
-   past it when the columns need more (horizontal scroll). min-width pins it
-   to the container; width: max-content lets it expand beyond; table-layout:
-   auto so the extra width is distributed across the columns. Expressed as a
-   class rather than min-w-full/w-max/table-auto utilities because the popui
-   tailwind build doesn't emit min-w-full or table-auto. */
+/* FullWidth — the table fills its container (width: 100%) so long cell
+   content wraps instead of stretching the table past the overflow-hidden
+   wrapper; the ScrollHorizontal variant below opts back into max-content
+   growth. Expressed as a class rather than min-w-full/table-auto utilities
+   because the popui tailwind build doesn't emit them. */
 .popui-table-full-width {
   min-width: 100%;
   width: 100%;
