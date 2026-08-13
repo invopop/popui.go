@@ -47,6 +47,10 @@ type SidebarGroup struct {
 	// hx-get, an @click. When present the row renders as a link with a
 	// trailing chevron; otherwise it is a plain heading.
 	HeaderAttributes templ.Attributes
+	// HeaderMenu turns the header row into a Menu trigger opening this
+	// component (MenuItems) — a switcher between sibling groups, say. Takes
+	// precedence over HeaderAttributes.
+	HeaderMenu templ.Component
 }
 
 // SidebarUser is the person signed in, pinned to the sidebar's footer:

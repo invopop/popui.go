@@ -194,7 +194,8 @@ templ App() {
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with group styles"},
 				{Name: "Label", Type: "string", Default: "", Description: "Header row text"},
 				{Name: "Header", Type: "templ.Component", Default: "nil", Description: "Custom header content replacing Label (an Avatar and a name, say)"},
-				{Name: "HeaderAttributes", Type: "templ.Attributes", Default: "", Description: "Makes the header row interactive (href, hx-get, @click) and adds a trailing chevron"},
+				{Name: "HeaderAttributes", Type: "templ.Attributes", Default: "", Description: "Makes the header row a link (href, hx-get, @click) with the select handle"},
+				{Name: "HeaderMenu", Type: "templ.Component", Default: "nil", Description: "Makes the header row a Menu trigger opening these MenuItems — a switcher between sibling groups. Takes precedence over HeaderAttributes"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the group element"},
 			},
 		})
