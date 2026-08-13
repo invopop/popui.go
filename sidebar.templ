@@ -1,9 +1,11 @@
 package popui
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
+	"strings"
 )
 
 // Sidebar provides a wrapper for sidebars on admin panels.
@@ -102,4 +104,106 @@ templ SidebarFooter() {
 	<div class="SidebarFooter grow-0 border-t border-border-default-secondary py-2 px-4 w-full">
 		{ children... }
 	</div>
+}
+
+// SidebarGroup nests SidebarItems under a header row — an organization and
+// its areas, a project and its pages. The children indent behind a tree
+// line. Place it inside a SidebarSection, whose descendant styles it shares.
+//
+// The header is the group's Label (or the Header component when set). With
+// HeaderAttributes it becomes an interactive row — an href, an hx-get, an
+// @click — and gains a trailing chevron to say so.
+templ SidebarGroup(opts ...props.SidebarGroup) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("w-full", p.Class) }
+		{ p.Attributes... }
+	>
+		if len(p.HeaderAttributes) > 0 {
+			<a class="cursor-pointer" { p.HeaderAttributes... }>
+				@sidebarGroupHeader(p)
+				<div class="ml-auto flex h-5 w-5 items-center justify-center rounded-md border border-border bg-background">
+					@icons.ChevronDown()
+				</div>
+			</a>
+		} else {
+			// Mirrors the section's link styling minus the hover state, so
+			// static and interactive headers line up.
+			<div class="w-full flex py-1.5 px-2 items-center gap-1.5 text-foreground font-sans text-base font-medium">
+				@sidebarGroupHeader(p)
+			</div>
+		}
+		// The wrapper's padding sets the indent; the ul keeps the section's
+		// full-width styling inside it and draws the tree line.
+		<div class="w-full pl-3.5 pt-0.5">
+			<ul class="border-l border-border pl-1">
+				{ children... }
+			</ul>
+		</div>
+	</li>
+}
+
+templ sidebarGroupHeader(p props.SidebarGroup) {
+	if p.Header != nil {
+		@p.Header
+	} else {
+		<span>{ p.Label }</span>
+	}
+}
+
+// SidebarUser pins the signed-in person to the bottom of the sidebar:
+// avatar, name and email. Clicking the row opens a menu of account actions
+// above it — pass MenuItems as children. Place it inside a SidebarFooter.
+templ SidebarUser(opts ...props.SidebarUser) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("w-full", p.Class) }
+		{ p.Attributes... }
+	>
+		@Menu(props.Menu{
+			DropUp:       true,
+			RootClass:    "block w-full",
+			TriggerClass: "w-full",
+			Trigger:      sidebarUserRow(p),
+		}) {
+			{ children... }
+		}
+	</div>
+}
+
+templ sidebarUserRow(p props.SidebarUser) {
+	<div class="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-background-default-secondary">
+		@Avatar(props.Avatar{Size: props.AvatarSizeLarge, Initial: sidebarUserInitial(p)}) {
+			if p.AvatarURL != "" {
+				@Image(props.Image{Src: p.AvatarURL, Alt: p.Name})
+			}
+		}
+		<div class="flex min-w-0 flex-1 flex-col">
+			<span class="truncate font-sans text-base font-medium text-foreground">{ p.Name }</span>
+			<span class="truncate font-sans text-sm text-foreground-default-secondary">{ p.Email }</span>
+		</div>
+	</div>
+}
+
+// sidebarUserInitial is the avatar fallback: empty while a picture is set
+// (so the Avatar renders its Image child), otherwise the first letter of
+// the name, or of the email when there is no name.
+func sidebarUserInitial(p props.SidebarUser) string {
+	if p.AvatarURL != "" {
+		return ""
+	}
+	src := strings.TrimSpace(p.Name)
+	if src == "" {
+		src = strings.TrimSpace(p.Email)
+	}
+	if src == "" {
+		return "?"
+	}
+	return strings.ToUpper(string([]rune(src)[0]))
 }

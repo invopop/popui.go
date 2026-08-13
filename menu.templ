@@ -22,6 +22,7 @@ templ Menu(opts ...props.Menu) {
 			tailwind.Merge(
 				"relative inline-block",
 				classes.If(p.RightAlign, "flex justify-end"),
+				p.RootClass,
 			),
 		}
 		if p.ID != "" {
@@ -34,7 +35,7 @@ templ Menu(opts ...props.Menu) {
 				type="button"
 				aria-haspopup="menu"
 				x-bind:popovertarget="$id('context-menu')"
-				class="cursor-pointer"
+				class={ tailwind.Merge("cursor-pointer", p.TriggerClass) }
 			>
 				@p.Trigger
 			</button>
@@ -62,7 +63,9 @@ templ Menu(opts ...props.Menu) {
 					"context-menu",
 					// max-w caps the panel when an item label is very long; the
 					// items themselves truncate (see MenuItem).
-					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+					"border border-border rounded-xl p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+					classes.If(!p.DropUp, "mt-1"),
+					classes.If(p.DropUp, "mb-1 context-menu-up"),
 					classes.If(p.RightAlign, "context-menu-right-align"),
 					p.Class,
 				),
@@ -75,7 +78,8 @@ templ Menu(opts ...props.Menu) {
 	</div>
 }
 
-// MenuItem provides one action row within a Menu.
+// MenuItem provides one action row within a Menu. The danger variant colors
+// the row red for destructive actions.
 templ MenuItem(opts ...props.MenuItem) {
 	{{ p := props.First(opts) }}
 	<li
@@ -84,7 +88,9 @@ templ MenuItem(opts ...props.MenuItem) {
 		}
 		class={
 			tailwind.Merge(
-				"font-sans font-medium text-base text-foreground w-full rounded-md hover:bg-background-default-secondary",
+				"font-sans font-medium text-base w-full rounded-md",
+				classes.If(p.Variant != props.MenuItemVariantDanger, "text-foreground hover:bg-background-default-secondary"),
+				classes.If(p.Variant == props.MenuItemVariantDanger, "text-foreground-critical hover:bg-background-critical"),
 				p.Class,
 			),
 		}

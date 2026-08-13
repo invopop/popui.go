@@ -135,7 +135,10 @@ func Menu() templ.Component {
 					{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
 					{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
 					{Name: "Trigger", Type: "templ.Component", Default: "", Description: "Replaces the default button with any component as the menu opener. ButtonLabel and ButtonVariant are ignored when set"},
+					{Name: "TriggerClass", Type: "string", Default: "", Description: "Classes for the unstyled button wrapping a custom Trigger — e.g. 'w-full' to stretch a row-shaped trigger"},
+					{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the element holding the trigger and panel; set 'block w-full' to fill the container"},
 					{Name: "RightAlign", Type: "bool", Default: "false", Description: "Align the menu to the right side of the button"},
+					{Name: "DropUp", Type: "bool", Default: "false", Description: "Open the panel above the trigger, for triggers near the bottom of the viewport"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -151,6 +154,7 @@ func Menu() templ.Component {
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+					{Name: "Variant", Type: "string", Default: "", Description: "Item style; 'danger' colors the row red for destructive actions"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)

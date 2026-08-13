@@ -63,6 +63,11 @@ body {
   left: unset;
   right: anchor(right);
 }
+[popover].context-menu.context-menu-up {
+  top: unset;
+  bottom: anchor(top);
+  position-try-fallbacks: flip-block;
+}
 
 /* Fallback for browsers without anchor positioning support */
 @supports not (anchor-name: --test) {
