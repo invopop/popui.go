@@ -807,8 +807,10 @@ func SidebarUser(opts ...props.SidebarUser) templ.Component {
 			RootClass:    "block w-full",
 			TriggerClass: "w-full",
 			// The panel spans exactly the trigger row, so its edges keep the
-			// same inset from the sidebar's sides as the row below it.
-			Class:   "w-[anchor-size(width)] max-w-none",
+			// same inset from the sidebar's sides as the row below it. The
+			// important flag outranks .context-menu's own width: fit-content,
+			// whose attribute+class selector beats a plain utility.
+			Class:   "w-[anchor-size(width)]! max-w-none",
 			Trigger: sidebarUserRow(p),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -878,7 +880,7 @@ func sidebarUserRow(p props.SidebarUser) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `sidebar.templ`, Line: 212, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `sidebar.templ`, Line: 214, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {
@@ -891,7 +893,7 @@ func sidebarUserRow(p props.SidebarUser) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(p.Email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `sidebar.templ`, Line: 213, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `sidebar.templ`, Line: 215, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {

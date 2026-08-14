@@ -192,8 +192,10 @@ templ SidebarUser(opts ...props.SidebarUser) {
 			RootClass:    "block w-full",
 			TriggerClass: "w-full",
 			// The panel spans exactly the trigger row, so its edges keep the
-			// same inset from the sidebar's sides as the row below it.
-			Class:   "w-[anchor-size(width)] max-w-none",
+			// same inset from the sidebar's sides as the row below it. The
+			// important flag outranks .context-menu's own width: fit-content,
+			// whose attribute+class selector beats a plain utility.
+			Class:   "w-[anchor-size(width)]! max-w-none",
 			Trigger: sidebarUserRow(p),
 		}) {
 			{ children... }
