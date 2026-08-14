@@ -191,7 +191,10 @@ templ SidebarUser(opts ...props.SidebarUser) {
 			DropUp:       true,
 			RootClass:    "block w-full",
 			TriggerClass: "w-full",
-			Trigger:      sidebarUserRow(p),
+			// The panel spans exactly the trigger row, so its edges keep the
+			// same inset from the sidebar's sides as the row below it.
+			Class:   "w-[anchor-size(width)] max-w-none",
+			Trigger: sidebarUserRow(p),
 		}) {
 			{ children... }
 		}
