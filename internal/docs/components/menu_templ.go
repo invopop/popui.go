@@ -155,7 +155,24 @@ func Menu() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 					{Name: "Variant", Type: "string", Default: "", Description: "Item style; 'danger' colors the row red for destructive actions"},
+					{Name: "Selected", Type: "bool", Default: "false", Description: "Marks the current choice of a picker menu with a trailing tick"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "MenuLabel",
+				Description: "Non-interactive group heading within a menu, for splitting long menus into labelled sections.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the label element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

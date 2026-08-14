@@ -1,6 +1,9 @@
 package examples
 
-import "github.com/invopop/popui.go"
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
 
 templ MenuExample() {
 	@popui.Menu() {
@@ -12,6 +15,17 @@ templ MenuExample() {
 		}
 		@popui.MenuItem() {
 			Delete
+		}
+		@popui.MenuLabel() {
+			Switch to
+		}
+		@popui.MenuItem(props.MenuItem{Selected: true}) {
+			@popui.Avatar(props.Avatar{Initial: "P"})
+			<span>Production</span>
+		}
+		@popui.MenuItem() {
+			@popui.Avatar(props.Avatar{Initial: "S"})
+			<span>Staging</span>
 		}
 	}
 }

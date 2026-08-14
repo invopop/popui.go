@@ -57,6 +57,16 @@ type MenuItem struct {
 	Attributes templ.Attributes
 	// Variant styles the item; see the MenuItemVariant constants.
 	Variant string
+	// Selected marks the item as the current choice with a trailing tick,
+	// for menus that act as pickers.
+	Selected bool
+}
+
+// MenuLabel is a non-interactive group heading within a Menu.
+type MenuLabel struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
 }
 
 // GenerateID generates a unique ID for the Menu if none is provided.
