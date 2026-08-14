@@ -151,7 +151,10 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
 				"invisible opacity-0 pointer-events-none transition-opacity duration-150",
 				"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
-				"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
+				// :focus-visible rather than focus-within: a mouse click
+				// focuses the trigger too, which used to pin the card open
+				// after the pointer had left. Only keyboard focus should.
+				"group-has-[:focus-visible]/tooltip:visible group-has-[:focus-visible]/tooltip:opacity-100",
 				tooltipPositionClasses(p.Position),
 				p.Class,
 			),
@@ -185,7 +188,7 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Image)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 77, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 80, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -208,7 +211,7 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 81, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 84, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {

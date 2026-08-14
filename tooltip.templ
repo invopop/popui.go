@@ -67,7 +67,10 @@ templ tooltipCard(p props.Tooltip) {
 					"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
 					"invisible opacity-0 pointer-events-none transition-opacity duration-150",
 					"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
-					"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
+					// :focus-visible rather than focus-within: a mouse click
+					// focuses the trigger too, which used to pin the card open
+					// after the pointer had left. Only keyboard focus should.
+					"group-has-[:focus-visible]/tooltip:visible group-has-[:focus-visible]/tooltip:opacity-100",
 					tooltipPositionClasses(p.Position),
 					p.Class,
 				),
