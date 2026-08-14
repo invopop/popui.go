@@ -42,15 +42,17 @@ func Flag(opts ...props.Flag) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
-		templ_7745c5c3_Err = Image(props.Image{
-			ID:         p.ID,
-			Src:        "https://assets.invopop.com/flags/" + strings.ToLower(p.Country) + ".svg",
-			Alt:        p.Country,
-			Class:      tailwind.Merge("w-3.5 h-2.5 rounded-[1.5px]", p.Class),
-			Attributes: p.Attributes,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if p.Country != "" {
+			templ_7745c5c3_Err = Image(props.Image{
+				ID:         p.ID,
+				Src:        "https://assets.invopop.com/flags/" + strings.ToLower(p.Country) + ".svg",
+				Alt:        p.Country,
+				Class:      tailwind.Merge("w-3.5 h-2.5 rounded-[1.5px]", p.Class),
+				Attributes: p.Attributes,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return nil
 	})
