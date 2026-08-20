@@ -212,6 +212,7 @@ func Card() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "URL to navigate to when card is clicked (renders as anchor)"},
 					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the card and applies disabled styling"},
+					{Name: "Order", Type: "int", Default: "0", Description: "1-based position inside a reorderable CardDeck, rendered as data-order. The deck sorts by it on load and renumbers every card to 1..n after each move"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

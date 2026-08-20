@@ -78,3 +78,10 @@ func (cm Menu) GenerateID() Menu {
 	cm.ID = fmt.Sprintf("context-menu-%06d", rand.Intn(100000))
 	return cm
 }
+
+// MenuSeparator menu separator component props
+type MenuSeparator struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}

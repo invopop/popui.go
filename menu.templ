@@ -111,6 +111,28 @@ templ MenuItem(opts ...props.MenuItem) {
 	</li>
 }
 
+// MenuSeparator provides a thin horizontal line delimiting groups of
+// MenuItem rows within a Menu.
+templ MenuSeparator(opts ...props.MenuSeparator) {
+	{{ p := props.First(opts) }}
+	// Negative inline margin lets the line span the full panel width, past
+	// the menu panel's p-1 padding.
+	<li
+		role="separator"
+		aria-hidden="true"
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"-mx-1 my-1 h-px bg-border",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	></li>
+}
+
 // MenuLabel is a non-interactive group heading within a Menu, for splitting
 // a long menu into labelled sections.
 templ MenuLabel(opts ...props.MenuLabel) {

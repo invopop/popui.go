@@ -125,6 +125,32 @@ func CardDeck() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.CardDeckReorderExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Reorder",
+			Description: "Reorderable deck. The head's CardDeckReorderButton flips the deck into reorder mode: each card grows a drag handle, takes a grab cursor, and drags along the vertical axis only, and every button in the deck bar the toggle is disabled until Done is pressed. Cards are drag-only — nothing is selectable — and Escape leaves the mode. Each Card's Order sets the starting sequence — these are declared visa, mastercard, amex with Order 2, 3, 1 — and every move renumbers them to 1..n, updates the hidden order input, and dispatches popui-card-deck-reorder.",
+			Code:        examples.LoadExample("card_deck_reorder.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "CardDeck",
 				Description: "Tinted container that stacks regular Card children into one visual unit, optionally led by a CardDeckHead. Child cards automatically get a smaller radius so their corners run concentric with the deck.",
@@ -132,6 +158,8 @@ func CardDeck() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the deck element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with deck styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+					{Name: "Reorderable", Type: "bool", Default: "false", Description: "Turn the deck into a drag-to-reorder list, toggled by a CardDeckReorderButton in the head. Give each child Card a data-card-id so the order can be read back (without one a card falls back to its element id, then to its 1-based position at load), and an Order to set the starting sequence"},
+					{Name: "Name", Type: "string", Default: "", Description: "On a reorderable deck, renders a hidden input holding the card ids in their current order, comma separated, for a form or HTMX submit"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -153,9 +181,27 @@ func CardDeck() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "CardDeckReorderButton",
+				Description: "Toggles the reorder mode of the CardDeck it sits in, flipping between Reorder and a green Done. Belongs in the trailing slot of a CardDeckHead, inside a deck built with Reorderable set.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the button element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with button styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+					{Name: "Label", Type: "string", Default: "Reorder", Description: "Resting label, shown while reorder mode is off"},
+					{Name: "DoneLabel", Type: "string", Default: "Done", Description: "Label shown on the green button while reorder mode is on"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
