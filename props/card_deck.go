@@ -18,7 +18,8 @@ type CardDeck struct {
 	//
 	// Give every child Card a stable `data-card-id` attribute so the new
 	// order can be read back — decks without one fall back to the card's
-	// element id, then to its original position.
+	// element id, then to its 1-based position when the deck loaded, which
+	// stays with the card as it moves so the permutation is still readable.
 	//
 	// The cards' Order fields are the deck's source of truth: it sorts by
 	// them on load and renumbers every card to 1..n after each move, so

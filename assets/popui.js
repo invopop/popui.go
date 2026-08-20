@@ -496,10 +496,22 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     })
   }
 
-  // A card's reported id: the explicit data-card-id, else its element id, else
-  // its position, so the reported order is never sparse.
-  function cardDeckCardId(card, i) {
-    return card.getAttribute('data-card-id') || card.id || String(i)
+  // Fallback identities for cards carrying neither a data-card-id nor an
+  // element id, keyed by the element so they outlive any reordering.
+  const cardDeckFallbackIds = new WeakMap()
+
+  // The cards' reported ids, in the order given. A card without an explicit
+  // identity gets its 1-based position the first time it is seen, and keeps it
+  // from then on: re-deriving the id from the live index would relabel every
+  // card on every move, so the reported order would come back identical no
+  // matter how the deck was rearranged and the permutation would be lost.
+  function cardDeckOrderIds(cards) {
+    return cards.map((card, i) => {
+      const explicit = card.getAttribute('data-card-id') || card.id
+      if (explicit) return explicit
+      if (!cardDeckFallbackIds.has(card)) cardDeckFallbackIds.set(card, String(i + 1))
+      return cardDeckFallbackIds.get(card)
+    })
   }
 
   // Drags a card vertically within its deck. The dragged card follows the
@@ -1047,7 +1059,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       order: [],
 
       init() {
-        this.order = cardDeckApplyOrder(this.$root, true).map(cardDeckCardId)
+        this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, true))
       },
       toggleReorder() {
         this.reordering = !this.reordering
@@ -1069,7 +1081,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // Renumbers the cards and announces the result. The hidden input, when
       // the deck has a Name, is bound to the same array.
       commit() {
-        this.order = cardDeckApplyOrder(this.$root, false).map(cardDeckCardId)
+        this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, false))
         this.$root.dispatchEvent(new CustomEvent('popui-card-deck-reorder', {
           bubbles: true,
           detail: { order: this.order },
