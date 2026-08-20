@@ -15,10 +15,12 @@ templ NotificationActionsExample() {
 }
 
 templ notificationActions() {
-	@popui.Button(props.Button{Variant: props.ButtonVariantTransparent, Size: props.ButtonSizeSmall}) {
+	@popui.Button(props.Button{Variant: props.ButtonVariantTransparent}) {
 		Dismiss
 	}
-	@popui.Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall}) {
+	// The default bordered variant reads against the neutral notification;
+	// the secondary variant shares its bg-background-default-tertiary tint.
+	@popui.Button() {
 		Add tax ID
 	}
 }
