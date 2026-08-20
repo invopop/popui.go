@@ -63,6 +63,11 @@ body {
   left: unset;
   right: anchor(right);
 }
+[popover].context-menu.context-menu-up {
+  top: unset;
+  bottom: anchor(top);
+  position-try-fallbacks: flip-block;
+}
 
 /* Fallback for browsers without anchor positioning support */
 @supports not (anchor-name: --test) {
@@ -528,6 +533,27 @@ form {
    double line. */
 .popui-table-freeze-first.popui-table-col-dividers thead th:nth-child(2)::before {
   display: none;
+}
+
+/* Card tables round their own corner cells: the wrapper's border-radius only
+   clips the cell backgrounds while its overflow is hidden, and a table
+   hosting a menu or tooltip switches the wrapper to overflow-visible. 1px
+   less than the wrapper radius, nesting inside its border. Scoped to the
+   first/last row of the table (thead-or-first-tbody, last tbody), so a
+   mid-table row never clips its own background. */
+.popui-table-card thead tr:first-child > :first-child,
+.popui-table-card tbody:first-child tr:first-child > :first-child {
+  border-top-left-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+.popui-table-card thead tr:first-child > :last-child,
+.popui-table-card tbody:first-child tr:first-child > :last-child {
+  border-top-right-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+.popui-table-card tbody:last-child tr:last-child > :first-child {
+  border-bottom-left-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+.popui-table-card tbody:last-child tr:last-child > :last-child {
+  border-bottom-right-radius: calc(var(--radius-lg, 0.5rem) - 1px);
 }
 
 @keyframes icon-pulse-animation {

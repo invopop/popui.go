@@ -9,9 +9,22 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
+
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
+
+// tooltipDelayAttrs carries the hover delay onto the card as a custom
+// property, which the group-hover delay utility reads. Only set when a delay
+// is asked for, so the default stays byte-free.
+func tooltipDelayAttrs(p props.Tooltip) templ.Attributes {
+	if p.Delay <= 0 {
+		return nil
+	}
+	return templ.Attributes{"style": fmt.Sprintf("--tooltip-delay: %dms", p.Delay)}
+}
 
 // Tooltip wraps a trigger element (the children) and reveals a dark floating
 // card on hover or keyboard focus of anywhere in the wrapper. The card holds a title, a description,
@@ -54,7 +67,7 @@ func Tooltip(opts ...props.Tooltip) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 19, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 32, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -148,10 +161,20 @@ func tooltipCard(p props.Tooltip) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		if !p.Empty() {
 			var templ_7745c5c3_Var4 = []any{tailwind.Merge(
-				"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
+				// w-max, capped: the card hugs a short label instead of
+				// stretching to a fixed width, and wraps once it would
+				// pass the cap.
+				"absolute z-50 w-max max-w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
 				"invisible opacity-0 pointer-events-none transition-opacity duration-150",
 				"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
-				"group-focus-within/tooltip:visible group-focus-within/tooltip:opacity-100",
+				// The delay gates only the hover reveal: the opacity sits at
+				// 0 until it elapses, and leaving the trigger drops the
+				// delayed class so hiding stays immediate.
+				classes.If(p.Delay > 0, "group-hover/tooltip:delay-(--tooltip-delay)"),
+				// :focus-visible rather than focus-within: a mouse click
+				// focuses the trigger too, which used to pin the card open
+				// after the pointer had left. Only keyboard focus should.
+				"group-has-[:focus-visible]/tooltip:visible group-has-[:focus-visible]/tooltip:opacity-100",
 				tooltipPositionClasses(p.Position),
 				p.Class,
 			),
@@ -173,54 +196,62 @@ func tooltipCard(p props.Tooltip) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, tooltipDelayAttrs(p))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, ">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if p.Image != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<img src=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<img src=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Image)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 77, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 101, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" alt=\"\" class=\"w-full mb-2 rounded-md border border-border-inverse\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" alt=\"\" class=\"w-full mb-2 rounded-md border border-border-inverse\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"flex flex-col gap-1 px-1 py-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex flex-col gap-1 px-1 py-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if p.Title != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"text-base font-semibold text-foreground-inverse break-words\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p class=\"text-base font-semibold text-foreground-inverse break-words\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 81, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 105, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if p.Description != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "   <div class=\"text-sm text-foreground-inverse-secondary break-words [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs [&_code]:break-all\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "   <div class=\"text-sm text-foreground-inverse-secondary break-words [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs [&_code]:break-all\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -228,12 +259,12 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
