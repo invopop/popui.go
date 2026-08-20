@@ -77,7 +77,10 @@ templ tooltipCard(p props.Tooltip) {
 			role="tooltip"
 			class={
 				tailwind.Merge(
-					"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
+					// w-max, capped: the card hugs a short label instead of
+					// stretching to a fixed width, and wraps once it would
+					// pass the cap.
+					"absolute z-50 w-max max-w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
 					"invisible opacity-0 pointer-events-none transition-opacity duration-150",
 					"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
 					// The delay gates only the hover reveal: the opacity sits at

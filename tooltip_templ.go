@@ -161,7 +161,10 @@ func tooltipCard(p props.Tooltip) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		if !p.Empty() {
 			var templ_7745c5c3_Var4 = []any{tailwind.Merge(
-				"absolute z-50 w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
+				// w-max, capped: the card hugs a short label instead of
+				// stretching to a fixed width, and wraps once it would
+				// pass the cap.
+				"absolute z-50 w-max max-w-56 p-1 rounded-xl border border-border-inverse bg-background-default-negative shadow-lg",
 				"invisible opacity-0 pointer-events-none transition-opacity duration-150",
 				"group-hover/tooltip:visible group-hover/tooltip:opacity-100",
 				// The delay gates only the hover reveal: the opacity sits at
@@ -213,7 +216,7 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Image)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 98, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 101, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -236,7 +239,7 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 102, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 105, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
