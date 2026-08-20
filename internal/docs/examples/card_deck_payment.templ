@@ -23,10 +23,10 @@ templ CardDeckPaymentExample() {
 					Class: "h-4 w-6 rounded-none object-contain",
 				})
 				<span class="font-medium text-foreground">· 3709</span>
+				@popui.TagStatus(props.TagStatus{Label: "Default", Status: "grey"})
 			</div>
 			<div class="flex items-center gap-3">
-				<span class="text-base text-foreground-default-secondary">Exp 03/29</span>
-				@popui.TagStatus(props.TagStatus{Label: "Default", Status: "grey"})
+				<span class="text-base text-foreground-default-secondary lining-nums tabular-nums">Exp 03/29</span>
 				@popui.Menu(props.Menu{RightAlign: true}) {
 					@popui.MenuItem() {
 						@icons.Edit()
@@ -49,7 +49,7 @@ templ CardDeckPaymentExample() {
 				<span class="font-medium text-foreground">· 8374</span>
 			</div>
 			<div class="flex items-center gap-3">
-				<span class="text-base text-foreground-default-secondary">Exp 11/32</span>
+				<span class="text-base text-foreground-default-secondary lining-nums tabular-nums">Exp 11/32</span>
 				@popui.Menu(props.Menu{RightAlign: true}) {
 					@popui.MenuItem() {
 						@icons.Edit()
