@@ -816,19 +816,22 @@ form {
   transform: translateY(-50%) translateX(0);
 }
 
-/* The shake announces the mode and then gets out of the way: three 320ms
-   cycles, just under the second the class is held for. It lives on its own
-   class rather than on -reordering so that dropping a card doesn't restart it. */
+/* The shake announces the mode and then gets out of the way: two 250ms cycles,
+   just under the 560ms the class is held for. Two is the fewest that still
+   reads as a wobble rather than a nudge. It lives on its own class rather than
+   on -reordering so that dropping a card doesn't restart it. */
 .popui-card-deck-jiggling > [data-card] {
-  animation: popui-card-deck-jiggle 320ms ease-in-out 3;
+  animation: popui-card-deck-jiggle 250ms ease-in-out 2;
 }
 
-/* Staggered starts, so the stack wobbles instead of marching in lockstep. */
+/* Staggered starts, so the stack wobbles instead of marching in lockstep. Kept
+   well inside one cycle: a negative delay eats into the run, and at this length
+   a wider spread would have the cards visibly stopping at different times. */
 .popui-card-deck-jiggling > [data-card]:nth-child(3n + 2) {
-  animation-delay: -110ms;
+  animation-delay: -60ms;
 }
 .popui-card-deck-jiggling > [data-card]:nth-child(3n + 3) {
-  animation-delay: -220ms;
+  animation-delay: -120ms;
 }
 
 /* A card is a grab handle while reordering: its own links, controls and
@@ -872,9 +875,11 @@ form {
   box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
 }
 
+/* Half a pixel each way — on a retina screen that is a single device pixel, so
+   the stack reads as unsettled rather than as moving. */
 @keyframes popui-card-deck-jiggle {
-  0%, 100% { transform: translateY(-0.75px); }
-  50% { transform: translateY(0.75px); }
+  0%, 100% { transform: translateY(-0.5px); }
+  50% { transform: translateY(0.5px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

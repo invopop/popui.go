@@ -1063,15 +1063,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       toggleReorder() {
         this.reordering = !this.reordering
-        // The shake is a one-shot: held for a second on entry, never restarted
-        // by a drop. The CSS animation is a shade shorter, so it finishes
-        // rather than being cut off when the class goes.
+        // The shake is a one-shot: held for 560ms on entry, never restarted by
+        // a drop. The CSS animation runs 500ms, a shade shorter, so it
+        // finishes rather than being cut off when the class goes.
         clearTimeout(this._jiggleTimer)
         this.$root.classList.toggle('popui-card-deck-jiggling', this.reordering)
         if (this.reordering) {
           this._jiggleTimer = setTimeout(() => {
             this.$root.classList.remove('popui-card-deck-jiggling')
-          }, 1000)
+          }, 560)
         }
         cardDeckSetControlsDisabled(this.$root, this.reordering)
       },

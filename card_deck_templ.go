@@ -21,8 +21,8 @@ import (
 //
 // With props.CardDeck.Reorderable the deck also becomes a drag-to-reorder
 // list, driven by a CardDeckReorderButton in the head. Entering reorder mode
-// fades a drag handle in at each card's left edge, shakes the cards for a
-// second, and disables every button in the deck bar the toggle; clicks are captured on the deck so a card's own handlers and an
+// fades a drag handle in at each card's left edge, shakes the cards briefly,
+// and disables every button in the deck bar the toggle; clicks are captured on the deck so a card's own handlers and an
 // anchor Card's navigation are both stopped while reordering. Cards are moved
 // by dragging only — none of them is selectable or focusable, and Escape is
 // the one key bound, to leave the mode. The optional Name renders a hidden

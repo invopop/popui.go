@@ -11,7 +11,7 @@ type CardDeck struct {
 
 	// Reorderable turns the deck into a drag-to-reorder list. Place a
 	// CardDeckReorderButton in the head to toggle reorder mode: the child
-	// cards shake for a second, take a grab cursor, become draggable along
+	// cards shake briefly, take a grab cursor, become draggable along
 	// the vertical axis only, and have their own links and menus made inert.
 	// Every button in the deck except the toggle is disabled until reorder
 	// mode is switched off again.
