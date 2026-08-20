@@ -326,7 +326,7 @@ func CardDeckReorderButton(opts ...props.CardDeckReorderButton) templ.Component 
 			ID:    p.ID,
 			Type:  "button",
 			Size:  props.ButtonSizeSmall,
-			Class: tailwind.Merge("bg-background", p.Class),
+			Class: p.Class,
 			Attributes: mergeAttributes(templ.Attributes{
 				"data-card-deck-reorder": "",
 				"@click":                 "toggleReorder",

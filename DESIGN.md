@@ -372,7 +372,7 @@ entirely on borders.
 
 | Variant | Visual |
 |---------|--------|
-| `default` | Neutral — muted background, standard border |
+| `default` | Neutral — white background, standard border |
 | `primary` | Strong — uses accent/bold background, high contrast |
 | `secondary` | Outlined — border visible, lower visual weight than primary |
 | `danger` | Destructive — critical color background |
