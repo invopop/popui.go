@@ -308,7 +308,7 @@ func MenuSeparator(opts ...props.MenuSeparator) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var14 = []any{tailwind.Merge(
-			"-mx-1 my-1 h-px bg-border-default-secondary",
+			"-mx-1 my-1 h-px bg-border",
 			p.Class,
 		),
 		}
