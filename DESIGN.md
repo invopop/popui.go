@@ -32,6 +32,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
+| Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
 | Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `FileDownload` > `FileDownloadInfo` |

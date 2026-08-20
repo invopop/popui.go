@@ -761,3 +761,84 @@ form {
 .popui-detail-copyable:hover [data-copy-icon-success] {
   opacity: 1;
 }
+/* Card deck reorder mode — toggled by the CardDeckReorderButton on a
+   Reorderable CardDeck. None of this can be expressed as Tailwind utilities:
+   the jiggle needs keyframes, and the drag script owns the cards' transform,
+   so the animation has to be dropped for the duration of a drag or it would
+   override the inline offsets. */
+
+.popui-card-deck-reordering > [data-card] {
+  cursor: grab;
+  /* Vertical drags belong to the deck, not to the scroller. */
+  touch-action: none;
+  transition: transform 150ms ease;
+}
+
+/* The shake announces the mode and then gets out of the way: three 320ms
+   cycles, just under the second the class is held for. It lives on its own
+   class rather than on -reordering so that dropping a card doesn't restart it. */
+.popui-card-deck-jiggling > [data-card] {
+  animation: popui-card-deck-jiggle 320ms ease-in-out 3;
+}
+
+/* Staggered starts, so the stack wobbles instead of marching in lockstep. */
+.popui-card-deck-jiggling > [data-card]:nth-child(3n + 2) {
+  animation-delay: -110ms;
+}
+.popui-card-deck-jiggling > [data-card]:nth-child(3n + 3) {
+  animation-delay: -220ms;
+}
+
+/* A card is a grab handle while reordering: its own links, controls and
+   three-dot menus stop responding, and an anchor Card drops its hover
+   border (its navigation is cancelled in JS, since the card itself must
+   keep receiving pointer events). */
+.popui-card-deck-reordering > [data-card] a,
+.popui-card-deck-reordering > [data-card] button,
+.popui-card-deck-reordering > [data-card] input,
+.popui-card-deck-reordering > [data-card] select,
+.popui-card-deck-reordering > [data-card] textarea,
+.popui-card-deck-reordering > [data-card] [popovertarget] {
+  pointer-events: none;
+}
+.popui-card-deck-reordering > a[data-card]:hover {
+  border-color: var(--color-border);
+}
+
+
+/* During a drag the whole deck holds still: the script is driving every
+   card's transform, and a running animation would win over the inline style. */
+.popui-card-deck-dragging > [data-card] {
+  animation: none;
+}
+
+/* The commit frame. The script reorders the cards and drops their offsets
+   together here, two changes that cancel out — so they must not animate, or
+   each displaced card slides a slot it has already travelled. Declared after
+   the -reordering transition so it wins on source order. */
+.popui-card-deck-settling > [data-card] {
+  transition: none;
+}
+
+/* The card under the pointer tracks it 1:1 — no transition — and lifts above
+   the cards it passes. */
+.popui-card-deck-dragging > [data-card].popui-card-deck-card-dragging {
+  cursor: grabbing;
+  transition: none;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+}
+
+@keyframes popui-card-deck-jiggle {
+  0%, 100% { transform: translateY(-0.75px); }
+  50% { transform: translateY(0.75px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popui-card-deck-reordering > [data-card],
+  .popui-card-deck-jiggling > [data-card] {
+    animation: none;
+    transition: none;
+  }
+}

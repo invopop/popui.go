@@ -1,0 +1,71 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CardDeckReorderExample() {
+	// The cards are declared visa, mastercard, amex but carry Order 2, 3, 1, so
+	// the deck sorts them to amex, visa, mastercard on load. Each committed move
+	// renumbers every card's Order and dispatches popui-card-deck-reorder for
+	// the page to persist.
+	@popui.CardDeck(props.CardDeck{Reorderable: true, Name: "payment_order"}) {
+		@popui.CardDeckHead() {
+			<span>Payment</span>
+			@popui.CardDeckReorderButton()
+		}
+		@popui.Card(props.Card{
+			Order:      2,
+			Href:       "#visa",
+			Class:      "flex-row items-center gap-1.5 p-3",
+			Attributes: templ.Attributes{"data-card-id": "visa"},
+		}) {
+			@cardDeckReorderRow("https://assets.invopop.com/payment-methods/visa.svg", "Visa", "· 3709", "Exp 03/29", true)
+		}
+		@popui.Card(props.Card{
+			Order:      3,
+			Href:       "#mastercard",
+			Class:      "flex-row items-center gap-1.5 p-3",
+			Attributes: templ.Attributes{"data-card-id": "mastercard"},
+		}) {
+			@cardDeckReorderRow("https://assets.invopop.com/payment-methods/mastercard.svg", "Mastercard", "· 8374", "Exp 11/32", false)
+		}
+		@popui.Card(props.Card{
+			Order:      1,
+			Href:       "#amex",
+			Class:      "flex-row items-center gap-1.5 p-3",
+			Attributes: templ.Attributes{"data-card-id": "amex"},
+		}) {
+			@cardDeckReorderRow("https://assets.invopop.com/payment-methods/amex.svg", "Amex", "· 1041", "Exp 07/28", false)
+		}
+	}
+}
+
+templ cardDeckReorderRow(logo, brand, digits, expiry string, isDefault bool) {
+	<div class="flex grow items-center gap-2">
+		@popui.Image(props.Image{
+			Src:   logo,
+			Alt:   brand,
+			Class: "h-4 w-6 rounded-none object-contain",
+		})
+		<span class="font-medium text-foreground">{ digits }</span>
+	</div>
+	<div class="flex items-center gap-3">
+		<span class="text-base text-foreground-default-secondary">{ expiry }</span>
+		if isDefault {
+			@popui.TagStatus(props.TagStatus{Label: "Default", Status: "grey"})
+		}
+		@popui.Menu(props.Menu{RightAlign: true}) {
+			@popui.MenuItem() {
+				@icons.Edit()
+				<span>Edit</span>
+			}
+			@popui.MenuItem() {
+				@icons.Delete()
+				<span>Remove</span>
+			}
+		}
+	</div>
+}
