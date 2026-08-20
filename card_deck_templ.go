@@ -289,7 +289,7 @@ func CardDeckReorderButton(opts ...props.CardDeckReorderButton) templ.Component 
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.ReorderLabel())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 97, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 100, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -310,7 +310,7 @@ func CardDeckReorderButton(opts ...props.CardDeckReorderButton) templ.Component 
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.ReorderDoneLabel())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 100, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 103, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -326,14 +326,17 @@ func CardDeckReorderButton(opts ...props.CardDeckReorderButton) templ.Component 
 			ID:    p.ID,
 			Type:  "button",
 			Size:  props.ButtonSizeSmall,
-			Class: p.Class,
+			Class: tailwind.Merge("bg-background", p.Class),
 			Attributes: mergeAttributes(templ.Attributes{
 				"data-card-deck-reorder": "",
 				"@click":                 "toggleReorder",
 				":aria-pressed":          "reordering ? 'true' : 'false'",
-				// Bang-prefixed, as the resting button's own border, hover
-				// states and icon colour would otherwise win by stylesheet order.
-				":class": "reordering ? '!bg-background-success-bold !text-foreground-inverse !border-transparent hover:!bg-background-success-bold [&_svg]:!text-foreground-inverse' : ''",
+				// Bang-prefixed, as the resting button's own background, border,
+				// hover states and icon colour would otherwise win by stylesheet
+				// order. The tick takes icon-inverse, the translucent white the
+				// Button primitive gives icons on a bold ground, not the opaque
+				// foreground the label uses.
+				":class": "reordering ? '!bg-background-success-bold !text-foreground-inverse !border-transparent hover:!bg-background-success-bold [&_svg]:!text-icon-inverse' : ''",
 			}, p.Attributes),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

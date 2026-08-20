@@ -770,9 +770,9 @@ form {
 /* Every card in a reorderable deck carries a collapsed drag handle, so that
    entering the mode has something to animate from — a pseudo-element created
    by the class change would pop in with no transition. It's drawn as a mask
-   rather than a background image so it takes a semantic colour and follows the
-   dark theme, and it never takes pointer events: the whole card is the grab
-   target, the handle only says so. */
+   rather than a background image so it takes the icon-default colour token and
+   follows the dark theme, and it never takes pointer events: the whole card is
+   the grab target, the handle only says so. */
 .popui-card-deck-sortable > [data-card] {
   position: relative;
   transition: padding-left 150ms ease;
@@ -788,7 +788,7 @@ form {
   transform: translateY(-50%) translateX(-4px);
   transition: opacity 150ms ease, transform 150ms ease;
   pointer-events: none;
-  background-color: var(--color-icon-default-secondary);
+  background-color: var(--color-icon);
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Z'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Z'/%3E%3C/svg%3E");
   -webkit-mask-repeat: no-repeat;

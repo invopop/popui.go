@@ -84,14 +84,17 @@ templ CardDeckReorderButton(opts ...props.CardDeckReorderButton) {
 		ID:    p.ID,
 		Type:  "button",
 		Size:  props.ButtonSizeSmall,
-		Class: p.Class,
+		Class: tailwind.Merge("bg-background", p.Class),
 		Attributes: mergeAttributes(templ.Attributes{
 			"data-card-deck-reorder": "",
 			"@click":                 "toggleReorder",
 			":aria-pressed": "reordering ? 'true' : 'false'",
-			// Bang-prefixed, as the resting button's own border, hover
-			// states and icon colour would otherwise win by stylesheet order.
-			":class": "reordering ? '!bg-background-success-bold !text-foreground-inverse !border-transparent hover:!bg-background-success-bold [&_svg]:!text-foreground-inverse' : ''",
+			// Bang-prefixed, as the resting button's own background, border,
+			// hover states and icon colour would otherwise win by stylesheet
+			// order. The tick takes icon-inverse, the translucent white the
+			// Button primitive gives icons on a bold ground, not the opaque
+			// foreground the label uses.
+			":class": "reordering ? '!bg-background-success-bold !text-foreground-inverse !border-transparent hover:!bg-background-success-bold [&_svg]:!text-icon-inverse' : ''",
 		}, p.Attributes),
 	}) {
 		<span x-show="!reordering">{ p.ReorderLabel() }</span>
