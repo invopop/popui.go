@@ -150,7 +150,10 @@ func buttonClasses(variant string, size string) string {
 		size == props.ButtonSizeIconSmall ||
 		size == props.ButtonSizeIconExtraSmall
 	return tailwind.Merge(
-		// Variant classes
+		// Variant classes. The default variant declares its own background so
+		// it reads as a raised white control on a tinted surface — a deck head,
+		// a fieldset card — instead of letting that tint show through.
+		classes.If(variant == "", "bg-background"),
 		classes.If(variant == props.ButtonVariantTransparent, "border-0 shadow-none hover:bg-background-default-tertiary-hover hover:shadow-button-default"),
 		classes.If(variant == props.ButtonVariantDanger, "border-border-default-secondary bg-background-default-tertiary text-foreground-critical hover:border-transparent hover:bg-background-critical-bold hover:text-foreground-inverse [&_svg]:text-critical"),
 		classes.If(variant == props.ButtonVariantPrimary, "bg-background-accent text-foreground-inverse shadow-button-primary hover:bg-background-accent-hover active:bg-background-accent-hover"),

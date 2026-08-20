@@ -13,6 +13,15 @@ type Card struct {
 	Attributes templ.Attributes
 	Href       templ.SafeURL
 	Disabled   bool
+
+	// Order positions the card inside a reorderable CardDeck, 1-based, and
+	// renders as `data-order`. The deck sorts its cards by it on load and
+	// renumbers every card to 1..n after each move, so the attribute, the
+	// DOM sequence and the visible sequence are always the same list — read
+	// it back to persist an order. Cards without one sink to the end of the
+	// deck, keeping the sequence they were rendered in. Ignored outside a
+	// reorderable deck, where the rendered sequence is already the order.
+	Order int
 }
 
 // CardContent Templ component props
