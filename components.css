@@ -767,11 +767,53 @@ form {
    so the animation has to be dropped for the duration of a drag or it would
    override the inline offsets. */
 
+/* Every card in a reorderable deck carries a collapsed drag handle, so that
+   entering the mode has something to animate from — a pseudo-element created
+   by the class change would pop in with no transition. It's drawn as a mask
+   rather than a background image so it takes a semantic colour and follows the
+   dark theme, and it never takes pointer events: the whole card is the grab
+   target, the handle only says so. */
+.popui-card-deck-sortable > [data-card] {
+  position: relative;
+  transition: padding-left 150ms ease;
+}
+.popui-card-deck-sortable > [data-card]::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transform: translateY(-50%) translateX(-4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  pointer-events: none;
+  background-color: var(--color-icon-default-secondary);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
 .popui-card-deck-reordering > [data-card] {
   cursor: grab;
   /* Vertical drags belong to the deck, not to the scroller. */
   touch-action: none;
-  transition: transform 150ms ease;
+  transition: transform 150ms ease, padding-left 150ms ease;
+  /* Room for the handle. A flat value rather than an addition, since the
+     card's own padding is a Tailwind utility this can't read; it reads as a
+     small indent for the usual p-2/p-3/p-4 cards. */
+  padding-left: 32px;
+}
+
+/* The handle slides out of the left edge as the content makes way for it. */
+.popui-card-deck-reordering > [data-card]::before {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
 }
 
 /* The shake announces the mode and then gets out of the way: three 320ms
@@ -836,6 +878,8 @@ form {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .popui-card-deck-sortable > [data-card],
+  .popui-card-deck-sortable > [data-card]::before,
   .popui-card-deck-reordering > [data-card],
   .popui-card-deck-jiggling > [data-card] {
     animation: none;

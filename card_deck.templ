@@ -2,6 +2,7 @@ package popui
 
 import (
 	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -12,8 +13,8 @@ import (
 //
 // With props.CardDeck.Reorderable the deck also becomes a drag-to-reorder
 // list, driven by a CardDeckReorderButton in the head. Entering reorder mode
-// shakes the cards for a second and disables every button in the deck bar the
-// toggle; clicks are captured on the deck so a card's own handlers and an
+// fades a drag handle in at each card's left edge, shakes the cards for a
+// second, and disables every button in the deck bar the toggle; clicks are captured on the deck so a card's own handlers and an
 // anchor Card's navigation are both stopped while reordering. Cards are moved
 // by dragging only — none of them is selectable or focusable, and Escape is
 // the one key bound, to leave the mode. The optional Name renders a hidden
@@ -37,6 +38,10 @@ templ CardDeck(opts ...props.CardDeck) {
 				// Child cards get a smaller radius so their corners run
 				// concentric with the deck's rounded-2xl outline.
 				"flex flex-col gap-0.5 p-0.5 rounded-2xl bg-background-default-secondary w-full [&>[data-card]]:rounded-xl",
+				// Static, unlike the -reordering class: it gives each card its
+				// collapsed drag handle, which needs to exist up front to have
+				// something to animate in from.
+				classes.If(p.Reorderable, "popui-card-deck-sortable"),
 				p.Class,
 			),
 		}

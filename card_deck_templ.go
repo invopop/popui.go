@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -20,8 +21,8 @@ import (
 //
 // With props.CardDeck.Reorderable the deck also becomes a drag-to-reorder
 // list, driven by a CardDeckReorderButton in the head. Entering reorder mode
-// shakes the cards for a second and disables every button in the deck bar the
-// toggle; clicks are captured on the deck so a card's own handlers and an
+// fades a drag handle in at each card's left edge, shakes the cards for a
+// second, and disables every button in the deck bar the toggle; clicks are captured on the deck so a card's own handlers and an
 // anchor Card's navigation are both stopped while reordering. Cards are moved
 // by dragging only — none of them is selectable or focusable, and Escape is
 // the one key bound, to leave the mode. The optional Name renders a hidden
@@ -53,6 +54,10 @@ func CardDeck(opts ...props.CardDeck) templ.Component {
 			// Child cards get a smaller radius so their corners run
 			// concentric with the deck's rounded-2xl outline.
 			"flex flex-col gap-0.5 p-0.5 rounded-2xl bg-background-default-secondary w-full [&>[data-card]]:rounded-xl",
+			// Static, unlike the -reordering class: it gives each card its
+			// collapsed drag handle, which needs to exist up front to have
+			// something to animate in from.
+			classes.If(p.Reorderable, "popui-card-deck-sortable"),
 			p.Class,
 		),
 		}
@@ -72,7 +77,7 @@ func CardDeck(opts ...props.CardDeck) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 26, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 27, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -126,7 +131,7 @@ func CardDeck(opts ...props.CardDeck) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 47, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 52, Col: 37}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -189,7 +194,7 @@ func CardDeckHead(opts ...props.CardDeckHead) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 58, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 63, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -284,7 +289,7 @@ func CardDeckReorderButton(opts ...props.CardDeckReorderButton) templ.Component 
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.ReorderLabel())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 92, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 97, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -305,7 +310,7 @@ func CardDeckReorderButton(opts ...props.CardDeckReorderButton) templ.Component 
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.ReorderDoneLabel())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 95, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `card_deck.templ`, Line: 100, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {

@@ -44,6 +44,8 @@ templ CardDeckReorderExample() {
 }
 
 templ cardDeckReorderRow(logo, brand, digits, expiry string, isDefault bool) {
+	// The Default tag sits with the digits rather than beside the expiry, so
+	// every card's expiry lands in the same column.
 	<div class="flex grow items-center gap-2">
 		@popui.Image(props.Image{
 			Src:   logo,
@@ -51,12 +53,12 @@ templ cardDeckReorderRow(logo, brand, digits, expiry string, isDefault bool) {
 			Class: "h-4 w-6 rounded-none object-contain",
 		})
 		<span class="font-medium text-foreground">{ digits }</span>
-	</div>
-	<div class="flex items-center gap-3">
-		<span class="text-base text-foreground-default-secondary">{ expiry }</span>
 		if isDefault {
 			@popui.TagStatus(props.TagStatus{Label: "Default", Status: "grey"})
 		}
+	</div>
+	<div class="flex items-center gap-3">
+		<span class="text-base text-foreground-default-secondary lining-nums tabular-nums">{ expiry }</span>
 		@popui.Menu(props.Menu{RightAlign: true}) {
 			@popui.MenuItem() {
 				@icons.Edit()
