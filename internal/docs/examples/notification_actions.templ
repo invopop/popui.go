@@ -1,0 +1,24 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ NotificationActionsExample() {
+	@popui.Notification(props.Notification{
+		Type:        "neutral",
+		Text:        "Verify your billing details",
+		Description: "We need a valid tax ID before you can send invoices.",
+		Actions:     notificationActions(),
+	})
+}
+
+templ notificationActions() {
+	@popui.Button(props.Button{Variant: props.ButtonVariantTransparent, Size: props.ButtonSizeSmall}) {
+		Dismiss
+	}
+	@popui.Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall}) {
+		Add tax ID
+	}
+}

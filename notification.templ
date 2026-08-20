@@ -8,7 +8,7 @@ import (
 )
 
 // Notification provides a wrapper for a text to be shown as feedback.
-// Valid types are: info, warning, error, success
+// Valid types are: info, warning, error, success, neutral
 templ Notification(opts ...props.Notification) {
 	{{ p := props.First(opts) }}
 	<div
@@ -38,11 +38,21 @@ templ Notification(opts ...props.Notification) {
 			</div>
 		}
 		// min-w-0 + break-words wrap long messages — including unbroken
-		// tokens — inside the rounded box.
-		<div class="min-w-0 break-words">
+		// tokens — inside the rounded box. flex-1 lets the actions sit
+		// against the right edge of the notification.
+		<div class="flex-1 min-w-0 break-words">
 			if p.Text != "" || p.Description != "" {
 				<p class="font-medium">{ p.Text }</p>
-				<p class="text-foreground-default-secondary text-sm">{ p.Description }</p>
+				// The description and the actions share a row below the
+				// text, which spans the full width on its own.
+				<div class="flex items-center justify-between gap-3">
+					<p class="min-w-0 text-foreground-default-secondary text-sm">{ p.Description }</p>
+					if p.Actions != nil {
+						<div class="flex shrink-0 items-center gap-2">
+							@p.Actions
+						</div>
+					}
+				</div>
 			} else {
 				{ children... }
 			}
@@ -56,5 +66,6 @@ func notificationClasses(notifType string) string {
 		classes.If(notifType == "warning", "bg-background-warning text-foreground-warning"),
 		classes.If(notifType == "error", "bg-background-critical text-foreground-critical"),
 		classes.If(notifType == "success", "bg-background-success text-foreground-success"),
+		classes.If(notifType == "neutral", "bg-background-default-tertiary text-foreground"),
 	)
 }

@@ -32,6 +32,19 @@ templ Notification() {
 	}) {
 		@examples.NotificationSuccessExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title: "Neutral",
+		Code:  examples.LoadExample("notification_neutral.templ"),
+	}) {
+		@examples.NotificationNeutralExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Actions",
+		Description: "The text spans the full width of the notification, with the description and any buttons sharing the row below it.",
+		Code:        examples.LoadExample("notification_actions.templ"),
+	}) {
+		@examples.NotificationActionsExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Notification",
@@ -40,9 +53,10 @@ templ Notification() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the notification element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with notification styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-				{Name: "Type", Type: "string", Default: "", Description: "Notification type: info, warning, error, or success"},
-				{Name: "Text", Type: "string", Default: "", Description: "Main notification text (bold)"},
-				{Name: "Description", Type: "string", Default: "", Description: "Additional descriptive text"},
+				{Name: "Type", Type: "string", Default: "", Description: "Notification type: info, warning, error, success, or neutral"},
+				{Name: "Text", Type: "string", Default: "", Description: "Main notification text (bold), spanning the full width"},
+				{Name: "Description", Type: "string", Default: "", Description: "Additional descriptive text, shown to the left of any actions"},
+				{Name: "Actions", Type: "templ.Component", Default: "", Description: "Buttons rendered on the right of the description row"},
 			},
 		})
 	}
