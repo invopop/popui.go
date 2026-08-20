@@ -27,6 +27,13 @@ templ Menu() {
 	}) {
 		@examples.MenuCustomTriggerExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Separator",
+		Description: "Use MenuSeparator to draw a thin line between groups of items — for example, separating destructive actions from the rest.",
+		Code:        examples.LoadExample("menu_with_separator.templ"),
+	}) {
+		@examples.MenuWithSeparatorExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Menu",
@@ -46,6 +53,15 @@ templ Menu() {
 			Description: "Individual menu item within the menu.",
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "MenuSeparator",
+			Description: "Thin horizontal line delimiting groups of menu items.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the separator element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
 			},
