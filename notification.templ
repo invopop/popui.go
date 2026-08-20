@@ -41,10 +41,14 @@ templ Notification(opts ...props.Notification) {
 		// tokens — inside the rounded box. flex-1 lets the actions sit
 		// against the right edge of the notification.
 		<div class="flex-1 min-w-0 break-words">
-			if p.Text != "" || p.Description != "" {
-				<p class="font-medium">{ p.Text }</p>
+			if p.Text != "" || p.Description != "" || p.Actions != nil {
+				if p.Text != "" {
+					<p class="font-medium">{ p.Text }</p>
+				}
 				// The description and the actions share a row below the
-				// text, which spans the full width on its own.
+				// text, which spans the full width on its own. The
+				// description paragraph stays even when empty so that
+				// justify-between still pushes the actions to the right.
 				<div class="flex items-center justify-between gap-3">
 					<p class="min-w-0 text-foreground-default-secondary text-sm">{ p.Description }</p>
 					if p.Actions != nil {
