@@ -133,7 +133,7 @@ func CardDeck() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Reorder",
-			Description: "Reorderable deck. The head's CardDeckReorderButton flips the deck into reorder mode: the cards shake briefly, take a grab cursor, drag along the vertical axis only, and every button in the deck bar the toggle is disabled until Done is pressed. Cards are drag-only — nothing is selectable — and Escape leaves the mode. Each Card's Order sets the starting sequence — these are declared visa, mastercard, amex with Order 2, 3, 1 — and every move renumbers them to 1..n, updates the hidden order input, and dispatches popui-card-deck-reorder.",
+			Description: "Reorderable deck. The head's CardDeckReorderButton flips the deck into reorder mode: each card grows a drag handle, takes a grab cursor, and drags along the vertical axis only, and every button in the deck bar the toggle is disabled until Done is pressed. Cards are drag-only — nothing is selectable — and Escape leaves the mode. Each Card's Order sets the starting sequence — these are declared visa, mastercard, amex with Order 2, 3, 1 — and every move renumbers them to 1..n, updates the hidden order input, and dispatches popui-card-deck-reorder.",
 			Code:        examples.LoadExample("card_deck_reorder.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

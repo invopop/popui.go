@@ -1050,10 +1050,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
     }))
 
-    // Card deck reorder mode: jiggles the child cards, drags them to a new
-    // vertical position, and reports the resulting order. While it is on, the
-    // cards' own links and controls are inert (CSS) and their clicks are
-    // swallowed (onClick), so a card can be grabbed without following it.
+    // Card deck reorder mode: drags the child cards to a new vertical position
+    // and reports the resulting order. While it is on, each card shows a drag
+    // handle, the cards' own links and controls are inert (CSS) and their
+    // clicks are swallowed (onClick), so a card can be grabbed without
+    // following it.
     Alpine.data('cardDeckReorder', () => ({
       reordering: false,
       order: [],
@@ -1063,20 +1064,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       toggleReorder() {
         this.reordering = !this.reordering
-        // The shake is a one-shot: held for 560ms on entry, never restarted by
-        // a drop. The CSS animation runs 500ms, a shade shorter, so it
-        // finishes rather than being cut off when the class goes.
-        clearTimeout(this._jiggleTimer)
-        this.$root.classList.toggle('popui-card-deck-jiggling', this.reordering)
-        if (this.reordering) {
-          this._jiggleTimer = setTimeout(() => {
-            this.$root.classList.remove('popui-card-deck-jiggling')
-          }, 560)
-        }
         cardDeckSetControlsDisabled(this.$root, this.reordering)
-      },
-      destroy() {
-        clearTimeout(this._jiggleTimer)
       },
       // Renumbers the cards and announces the result. The hidden input, when
       // the deck has a Name, is bound to the same array.
