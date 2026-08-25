@@ -23,8 +23,12 @@ import (
 //  * number
 //
 // If the Label property is provided, a simple label will be rendered above the input.
+//
+// Search, date, and time inputs render a clear button on the right while they
+// hold a value (wired up by popui.js), replacing the native browser controls.
 templ Input(p ...props.Input) {
 	{{ prp := props.First(p) }}
+	{{ clearable := inputClearable(prp) }}
 	<div class="flex flex-col space-y-2 w-full">
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
@@ -50,8 +54,12 @@ templ Input(p ...props.Input) {
 						classes.FormField(),
 						classes.FormFieldState(!prp.Error.Empty()),
 						inputSizeClasses(prp),
+						classes.If(clearable, "pr-8"),
 						prp.Class,
 					),
+				}
+				if clearable {
+					data-clearable
 				}
 				if prp.Placeholder != "" {
 					placeholder={ prp.Placeholder }
@@ -76,6 +84,15 @@ templ Input(p ...props.Input) {
 				}
 				{ prp.Attributes... }
 			/>
+			if clearable {
+				<button
+					type="button"
+					data-input-clear
+					aria-label="Clear input"
+					hidden
+					class="absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0"
+				></button>
+			}
 		</div>
 		if !prp.Error.Empty() {
 			@InputError(prp.Error)
@@ -109,6 +126,16 @@ templ InputError(e props.Error) {
 			{ e.Text }
 		}
 	</p>
+}
+
+// inputClearable reports whether the input renders a clear button: search,
+// date, and time inputs get one, unless the field cannot be edited.
+func inputClearable(p props.Input) bool {
+	switch p.Type {
+	case "search", "date", "time":
+		return !p.Disabled && !p.Readonly
+	}
+	return false
 }
 
 func inputType(typ string) string {
