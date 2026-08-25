@@ -33,8 +33,9 @@ templ Notification() {
 		@examples.NotificationSuccessExample()
 	}
 	@modules.Example(modules.ExampleProps{
-		Title: "Neutral",
-		Code:  examples.LoadExample("notification_neutral.templ"),
+		Title:       "Neutral",
+		Description: "The neutral type is a plain bordered card with a muted icon. Without Text the description becomes the main message, sharing a single centered row with any actions.",
+		Code:        examples.LoadExample("notification_neutral.templ"),
 	}) {
 		@examples.NotificationNeutralExample()
 	}
@@ -55,7 +56,7 @@ templ Notification() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Type", Type: "string", Default: "", Description: "Notification type: info, warning, error, success, or neutral"},
 				{Name: "Text", Type: "string", Default: "", Description: "Main notification text (bold), spanning the full width"},
-				{Name: "Description", Type: "string", Default: "", Description: "Additional descriptive text, shown to the left of any actions"},
+				{Name: "Description", Type: "string", Default: "", Description: "Additional descriptive text, shown to the left of any actions. When Text is empty it renders as the main message instead of a muted subline"},
 				{Name: "Actions", Type: "templ.Component", Default: "", Description: "Buttons rendered on the right of the description row"},
 			},
 		})

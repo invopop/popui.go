@@ -8,7 +8,18 @@ import (
 templ NotificationNeutralExample() {
 	@popui.Notification(props.Notification{
 		Type:        "neutral",
+		Description: "If you want to make any change in your subscriptions, please contact sales",
+		Actions:     notificationNeutralActions(),
+	})
+	@popui.Notification(props.Notification{
+		Type:        "neutral",
 		Text:        "Draft not submitted",
 		Description: "This invoice is still a draft and has not been sent yet.",
 	})
+}
+
+templ notificationNeutralActions() {
+	@popui.Button() {
+		Contact sales
+	}
 }
