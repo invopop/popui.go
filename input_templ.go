@@ -288,7 +288,7 @@ func Input(p ...props.Input) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if clearable {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<button type=\"button\" data-input-clear aria-label=\"Clear input\" hidden class=\"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0\"></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<button type=\"button\" data-input-clear aria-label=\"Clear input\" hidden class=\"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer\"></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
