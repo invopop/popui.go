@@ -74,6 +74,12 @@ type Calendar struct {
 
 	// Presets selects which range shortcuts the preset rail shows, and in what
 	// order. Empty uses DefaultCalendarPresets(). Each Key must be a
-	// CalendarPreset* constant (the date math lives in popui.js).
+	// CalendarPreset* constant (the date math lives in popui.js). Ignored when
+	// Single is set — single-date pickers have no preset rail.
 	Presets []CalendarPreset
+
+	// Single switches the calendar to single-date selection: one month grid,
+	// no preset rail, and clicking a day selects just that day. Seed the
+	// initial selection with From (To is ignored).
+	Single bool
 }
