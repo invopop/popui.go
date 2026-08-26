@@ -880,8 +880,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }))
 
     // Dual-month date-range picker with a preset rail and a Cancel / Confirm footer; only Confirm applies the pending selection.
+    // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.
     Alpine.data('rangeCalendar', (init) => ({
       name: (init && init.name) || '',
+      single: !!(init && init.single),
       open: false,
       preset: 'custom',
       // Pending selection edited by the grids.
@@ -947,11 +949,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return new Date(y, m, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })
       },
       get monthsView() {
-        const r = new Date(this.viewY, this.viewM + 1, 1)
-        return [
-          { label: this.monthLabel(this.viewY, this.viewM), weeks: this.monthGrid(this.viewY, this.viewM) },
-          { label: this.monthLabel(r.getFullYear(), r.getMonth()), weeks: this.monthGrid(r.getFullYear(), r.getMonth()) },
-        ]
+        const months = [{ label: this.monthLabel(this.viewY, this.viewM), weeks: this.monthGrid(this.viewY, this.viewM) }]
+        if (!this.single) {
+          const r = new Date(this.viewY, this.viewM + 1, 1)
+          months.push({ label: this.monthLabel(r.getFullYear(), r.getMonth()), weeks: this.monthGrid(r.getFullYear(), r.getMonth()) })
+        }
+        return months
       },
       prev() {
         const d = new Date(this.viewY, this.viewM - 1, 1)
@@ -962,18 +965,24 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         this.viewY = d.getFullYear(); this.viewM = d.getMonth()
       },
       // Returns a day's range state, with outside-month days always unstyled.
+      // A one-day range (from === to) reports 'single' so it rounds on both sides.
       dayState(iso, outside) {
         if (outside) return null
         if (!this.from) return null
         if (!this.to) return iso === this.from ? 'start' : null
-        if (iso === this.from) return 'start'
+        if (iso === this.from) return this.to === this.from ? 'single' : 'start'
         if (iso === this.to) return 'end'
         if (iso > this.from && iso < this.to) return 'middle'
         return null
       },
-      // Starts a new range, moves the start when clicking before it, or completes the range.
+      // Starts a new range, moves the start when clicking before it, or completes
+      // the range. In single mode a click just selects that day (from = to).
       selectDay(iso, outside) {
         if (outside) return
+        if (this.single) {
+          this.from = iso; this.to = iso
+          return
+        }
         if (!this.from || (this.from && this.to)) {
           this.from = iso; this.to = null
           this.preset = 'custom'
@@ -1010,12 +1019,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       get summary() {
         if (this.committedFrom && this.committedTo) {
+          if (this.single) return this.fmt(this.committedFrom)
           return this.fmt(this.committedFrom) + ' → ' + this.fmt(this.committedTo)
         }
         return ''
       },
       get rangeValue() {
         if (this.committedFrom && this.committedTo) {
+          if (this.single) return this.committedFrom
           return this.committedFrom + '..' + this.committedTo
         }
         return ''

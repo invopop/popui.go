@@ -660,11 +660,13 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 .popui-cal-cell:has(> .popui-cal-day[data-state="start"]),
+.popui-cal-cell:has(> .popui-cal-day[data-state="single"]),
 .popui-cal-cell:first-child:has(> .popui-cal-day[data-state]) {
   border-top-left-radius: 0.375rem;
   border-bottom-left-radius: 0.375rem;
 }
 .popui-cal-cell:has(> .popui-cal-day[data-state="end"]),
+.popui-cal-cell:has(> .popui-cal-day[data-state="single"]),
 .popui-cal-cell:last-child:has(> .popui-cal-day[data-state]) {
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
@@ -697,7 +699,8 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 .popui-cal-day[data-state="start"],
-.popui-cal-day[data-state="end"] {
+.popui-cal-day[data-state="end"],
+.popui-cal-day[data-state="single"] {
   background-color: var(--color-background-accent);
   color: var(--color-foreground-inverse);
   font-weight: 600;
