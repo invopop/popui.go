@@ -142,6 +142,7 @@ func Input(p ...props.Input) templ.Component {
 			classes.FormFieldState(!prp.Error.Empty()),
 			inputSizeClasses(prp),
 			classes.If(clearable, "pr-8"),
+			classes.If(prp.Type == "file", inputFileClasses()),
 			prp.Class,
 		),
 		}
@@ -206,7 +207,7 @@ func Input(p ...props.Input) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 65, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 66, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -249,7 +250,7 @@ func Input(p ...props.Input) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 80, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 81, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -268,7 +269,7 @@ func Input(p ...props.Input) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 83, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 84, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -384,7 +385,7 @@ func InputError(e props.Error) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(e.Error.Error())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 124, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 125, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -394,7 +395,7 @@ func InputError(e props.Error) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(e.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 126, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 127, Col: 11}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -407,6 +408,13 @@ func InputError(e props.Error) templ.Component {
 		}
 		return nil
 	})
+}
+
+// inputFileClasses styles a file input's native choose-file control like the
+// secondary Button variant, with tightened field padding so the control sits
+// inset like a button rather than floating in the field's text padding.
+func inputFileClasses() string {
+	return "py-1 pl-1 file:cursor-pointer file:mr-2 file:rounded-md file:border-0 file:bg-background-default-tertiary hover:file:bg-background-default-tertiary-hover file:px-2 file:py-[3px] file:font-medium file:font-sans file:text-base file:tracking-tight file:text-foreground"
 }
 
 // inputClearable reports whether the input renders a clear button: search,
