@@ -12,7 +12,9 @@ import (
 // console-ui DatePicker: a preset rail (this/last week, month, quarter +
 // custom) on the left, two side-by-side month grids with overlay month
 // navigation, and a Cancel / Confirm footer. Selection only applies on
-// Confirm; Cancel clears it. See props.Calendar.
+// Confirm; Cancel clears it. Setting props.Calendar.Single switches it to a
+// single-date picker: one month grid, no preset rail, and clicking a day
+// selects just that day. See props.Calendar.
 //
 // The component is markup-only — all state (presets, visible months,
 // selected range, navigation, confirmation) comes from the `rangeCalendar`
@@ -50,17 +52,19 @@ templ Calendar(opts ...props.Calendar) {
 		{ p.Attributes... }
 	>
 		<div class="flex border-b border-border min-h-[300px]">
-			<div class="popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border">
-				<template x-for="p in presets" :key="p.key">
-					<button
-						type="button"
-						class="popui-cal-preset"
-						:data-active="preset === p.key ? '' : null"
-						@click="setPreset(p.key)"
-						x-text="p.label"
-					></button>
-				</template>
-			</div>
+			if !p.Single {
+				<div class="popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border">
+					<template x-for="p in presets" :key="p.key">
+						<button
+							type="button"
+							class="popui-cal-preset"
+							:data-active="preset === p.key ? '' : null"
+							@click="setPreset(p.key)"
+							x-text="p.label"
+						></button>
+					</template>
+				</div>
+			}
 			<div class="px-3 pb-2 pt-1">
 				<div class="relative flex gap-4">
 					<nav class="absolute inset-x-0 top-2 flex items-center justify-between">
@@ -134,18 +138,26 @@ templ Calendar(opts ...props.Calendar) {
 
 // calendarScope builds the `x-data="rangeCalendar({...})"` snippet for a
 // self-contained Calendar, mirroring the seeding the popui.Filter calendar
-// chip uses. From / To become JS null when empty.
+// chip uses. From / To become JS null when empty. Single mode seeds both ends
+// of the range from From, since a single-date selection is stored as
+// from === to.
 func calendarScope(p props.Calendar) string {
 	fromJS := "null"
 	if p.From != "" {
 		fromJS = "'" + jsSingleQuoteEscape(p.From) + "'"
 	}
 	toJS := "null"
-	if p.To != "" {
+	if p.Single {
+		toJS = fromJS
+	} else if p.To != "" {
 		toJS = "'" + jsSingleQuoteEscape(p.To) + "'"
 	}
+	singleJS := "false"
+	if p.Single {
+		singleJS = "true"
+	}
 	return "rangeCalendar({name: '" + jsSingleQuoteEscape(p.Name) + "', from: " + fromJS + ", to: " + toJS +
-		", presets: " + calendarPresetsJS(p.Presets) + "})"
+		", single: " + singleJS + ", presets: " + calendarPresetsJS(p.Presets) + "})"
 }
 
 // calendarPresetsJS renders preset rows as a JS array literal for the
