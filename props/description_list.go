@@ -44,7 +44,8 @@ type DescriptionListItem struct {
 	PrefixLength int
 	SuffixLength int
 	// Actions are hover-revealed buttons rendered next to the value (copy,
-	// external-link, …), in order of placement.
+	// external-link, …), in order of placement. The first action is also the
+	// row's default: clicking anywhere on the item triggers it.
 	Actions []DescriptionListAction
 }
 

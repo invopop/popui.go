@@ -34,7 +34,8 @@ templ DescriptionList(opts ...props.DescriptionList) {
 // popui-detail-* styles): a fixed-width label column, a hover-tinted value
 // cell filling the rest of the row, and hover-revealed action buttons pinned
 // to the row's right edge. Inline puts the label left of the value; otherwise
-// the label stacks above it.
+// the label stacks above it. When Actions is non-empty, clicking anywhere on
+// the row triggers the first action (copy, open link, …), not just its button.
 templ DescriptionListItem(opts ...props.DescriptionListItem) {
 	{{ p := props.First(opts) }}
 	if p.Inline || len(p.Actions) > 0 {
@@ -67,11 +68,17 @@ templ DescriptionListItem(opts ...props.DescriptionListItem) {
 	}
 }
 
+// detailRowDefaultActionScript forwards a click anywhere on a detail row to
+// its first action button, skipping clicks that landed on an action button
+// itself (the button already handles them) or that finished a text selection.
+const detailRowDefaultActionScript = "if (!event.target.closest('.popui-detail-action') && !window.getSelection().toString()) { this.querySelector('.popui-detail-action')?.click(); }"
+
 // descriptionListDetailItem renders the detail-row form of a
 // DescriptionListItem on the popui-detail-* styles — the same structure the
 // side-panel detail rows use: fixed-width label (dt), flex-1 value cell (dd)
 // with a hover tint, the value growing to pin hover-revealed action buttons to
-// the row's right edge. Non-Inline stacks the label above the value.
+// the row's right edge. Non-Inline stacks the label above the value. Rows with
+// actions delegate clicks anywhere on the row to the first action's button.
 templ descriptionListDetailItem(p props.DescriptionListItem) {
 	<div
 		if p.ID != "" {
@@ -81,10 +88,15 @@ templ descriptionListDetailItem(p props.DescriptionListItem) {
 			tailwind.Merge(
 				"popui-detail-row",
 				classes.If(!p.Inline, "popui-detail-stacked"),
+				classes.If(len(p.Actions) > 0, "cursor-pointer"),
 				p.Class,
 			),
 		}
-		{ p.Attributes... }
+		if len(p.Actions) > 0 {
+			{ mergeAttributes(templ.Attributes{"onclick": detailRowDefaultActionScript}, p.Attributes)... }
+		} else {
+			{ p.Attributes... }
+		}
 	>
 		<dt class="popui-detail-label">{ p.Label }</dt>
 		<dd class={ tailwind.Merge("popui-detail-value-wrap", classes.If(len(p.Actions) > 0, "popui-detail-copyable")) }>
