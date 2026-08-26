@@ -414,7 +414,7 @@ func InputError(e props.Error) templ.Component {
 // secondary Button variant, with tightened field padding so the control sits
 // inset like a button rather than floating in the field's text padding.
 func inputFileClasses() string {
-	return "py-1 pl-1 file:cursor-pointer file:mr-2 file:rounded-md file:border-0 file:bg-background-default-tertiary hover:file:bg-background-default-tertiary-hover file:px-2 file:py-[3px] file:font-medium file:font-sans file:text-base file:tracking-tight file:text-foreground"
+	return "py-1 pl-1 file:cursor-pointer file:mr-3 file:rounded-md file:border-0 file:bg-background-default-tertiary hover:file:bg-background-default-tertiary-hover file:px-2 file:py-[3px] file:font-medium file:font-sans file:text-base file:tracking-tight file:text-foreground"
 }
 
 // inputClearable reports whether the input renders a clear button: search,
