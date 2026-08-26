@@ -54,6 +54,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e.GET("/examples/app", renderComponent(examples.App()))
 	e.GET("/examples/console", renderComponent(examples.Console()))
 	e.GET("/examples/prose", renderComponent(examples.Prose()))
+	e.GET("/examples/stress", renderComponent(examples.Stress()))
 
 	// Wizard example
 	e.GET("/examples/wizard", renderComponent(examples.Wizard()))

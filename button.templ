@@ -35,6 +35,10 @@ templ ButtonGroup(opts ...props.ButtonGroup) {
 // If the Anchor property is set, it renders an <a> tag, otherwise a <button> tag.
 // Supports sizes: "sm", "md" (default), "lg", and "icon"
 // Supports variants: "primary", "secondary", "danger" and "transparent"
+//
+// Note: the type attribute is set via two independent conditions rather than
+// `if/else if`. templ v0.3.1001 mis-generates `else if` in attribute position,
+// emitting a literal `else` into the markup.
 templ Button(p ...props.Button) {
 	{{ btn := props.First(p) }}
 	if btn.IsAnchor() {
@@ -82,7 +86,8 @@ templ Button(p ...props.Button) {
 			}
 			if btn.Type != "" {
 				type={ btn.Type }
-			} else if btn.Copy != "" {
+			}
+			if btn.Type == "" && btn.Copy != "" {
 				type="button"
 			}
 			if btn.Name != "" {
@@ -124,7 +129,7 @@ templ Button(p ...props.Button) {
 					value={ btn.Copy }
 				/>
 				<span data-copy-text class="font-mono"></span>
-				<span data-copy-icon-duplicate>
+				<span data-copy-icon-duplicate class="shrink-0">
 					@icons.Duplicate()
 				</span>
 				<span class="hidden" data-copy-icon-success>
@@ -137,7 +142,10 @@ templ Button(p ...props.Button) {
 }
 
 func buttonBaseClasses() string {
-	return "cursor-pointer inline-flex items-center justify-center whitespace-nowrap font-medium font-sans relative tracking-tight px-2 py-[3px] rounded-md disabled:opacity-30 disabled:pointer-events-none border border-border-default-secondary text-base gap-1 shadow-button-default hover:border-border-default-secondary-hover active:border-border-default-secondary-hover active:shadow-button-pressed active:translate-y-[1px] box-border"
+	// max-w-full + overflow-hidden keep a long-labelled button inside its
+	// container; a label wrapped in a <span> truncates with an ellipsis while
+	// icon wrappers (divs) keep their size.
+	return "cursor-pointer inline-flex items-center justify-center whitespace-nowrap font-medium font-sans relative tracking-tight px-2 py-[3px] rounded-md disabled:opacity-30 disabled:pointer-events-none border border-border-default-secondary text-base gap-1 shadow-button-default hover:border-border-default-secondary-hover active:border-border-default-secondary-hover active:shadow-button-pressed active:translate-y-[1px] box-border max-w-full overflow-hidden [&>span]:truncate [&>div]:shrink-0"
 }
 
 func buttonClasses(variant string, size string) string {
@@ -147,7 +155,10 @@ func buttonClasses(variant string, size string) string {
 		size == props.ButtonSizeIconSmall ||
 		size == props.ButtonSizeIconExtraSmall
 	return tailwind.Merge(
-		// Variant classes
+		// Variant classes. The default variant declares its own background so
+		// it reads as a raised white control on a tinted surface — a deck head,
+		// a fieldset card — instead of letting that tint show through.
+		classes.If(variant == "", "bg-background"),
 		classes.If(variant == props.ButtonVariantTransparent, "border-0 shadow-none hover:bg-background-default-tertiary-hover hover:shadow-button-default"),
 		classes.If(variant == props.ButtonVariantDanger, "border-border-default-secondary bg-background-default-tertiary text-foreground-critical hover:border-transparent hover:bg-background-critical-bold hover:text-foreground-inverse [&_svg]:text-critical"),
 		classes.If(variant == props.ButtonVariantPrimary, "bg-background-accent text-foreground-inverse shadow-button-primary hover:bg-background-accent-hover active:bg-background-accent-hover"),

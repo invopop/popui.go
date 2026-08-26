@@ -34,6 +34,13 @@ templ App() {
 		Stacked:       true,
 	})
 	@modules.Example(modules.ExampleProps{
+		Title:         "Sidebar with groups and a user footer",
+		Description:   "SidebarGroup nests items behind a tree line under a header row, and SidebarUser pins the signed-in person to the footer with a menu of account actions.",
+		Code:          examples.LoadExample("app_sidebar_user.templ"),
+		IframeContent: examples.AppSidebarUserExample(),
+		Stacked:       true,
+	})
+	@modules.Example(modules.ExampleProps{
 		Title:         "App with table and pagination",
 		Description:   "App layout that includes a full width table and pagination in the main content area.",
 		Code:          examples.LoadExample("app_with_table.templ"),
@@ -178,6 +185,31 @@ templ App() {
 		@modules.APITable(modules.APITableProps{
 			Title:       "SidebarFooter",
 			Description: "Footer area at the bottom of the sidebar with a top border separator. Useful for user profile links or secondary actions.",
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarGroup",
+			Description: "Nests SidebarItems under a named header row, indented behind a tree line. Place inside a SidebarSection.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the group element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with group styles"},
+				{Name: "Label", Type: "string", Default: "", Description: "Header row text"},
+				{Name: "Header", Type: "templ.Component", Default: "nil", Description: "Custom header content replacing Label (an Avatar and a name, say)"},
+				{Name: "HeaderAttributes", Type: "templ.Attributes", Default: "", Description: "Makes the header row a link (href, hx-get, @click) with the select handle"},
+				{Name: "HeaderMenu", Type: "templ.Component", Default: "nil", Description: "Makes the header row a Menu trigger opening these MenuItems — a switcher between sibling groups. Takes precedence over HeaderAttributes"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the group element"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SidebarUser",
+			Description: "The signed-in person, pinned to the sidebar footer: avatar, name and email. Clicking the row opens a menu of account actions above it — pass MenuItems as children.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the wrapper styles"},
+				{Name: "Name", Type: "string", Default: "", Description: "Display name; its first letter is the avatar fallback"},
+				{Name: "Email", Type: "string", Default: "", Description: "Rendered muted under the name"},
+				{Name: "AvatarURL", Type: "string", Default: "", Description: "Picture for the avatar; empty falls back to the name's initial"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+			},
 		})
 	}
 }

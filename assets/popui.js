@@ -1,5 +1,5 @@
 // Global URL for the Console UI SDK.
-const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.10/index.js';
+const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.0.11/index.js';
 
 (function () {
   'use strict';
@@ -376,26 +376,40 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // Table column resizing
   // ------------------------------------------------------------------
 
-  // Adds a drag handle to each resizable header cell except the last.
+  // Adds a drag handle to each resizable header cell except the elastic last one.
   function attachTableResizers() {
-    document.querySelectorAll('.popui-table-resizable thead th').forEach(function (th, idx, all) {
-      if (idx === all.length - 1) return
-      if (th.querySelector('.popui-table-resizer')) return
-      const handle = document.createElement('div')
-      handle.className = 'popui-table-resizer'
-      th.appendChild(handle)
+    document.querySelectorAll('.popui-table-resizable').forEach(function (table) {
+      table.querySelectorAll('thead th').forEach(function (th, idx, all) {
+        if (idx === all.length - 1) return
+        if (th.querySelector('.popui-table-resizer')) return
+        const handle = document.createElement('div')
+        handle.className = 'popui-table-resizer'
+        th.appendChild(handle)
+      })
     })
   }
 
-  // Resizes a column by dragging its handle, setting an inline width on the th.
+  // Resizes a column by dragging its handle, freezing the other columns so only it and the elastic last column change size.
   document.addEventListener('mousedown', function (e) {
     const handle = e.target.closest('.popui-table-resizer')
     if (!handle) return
     e.preventDefault()
     const th = handle.closest('th')
     if (!th) return
+    const cells = Array.prototype.slice.call(th.parentElement.children)
+    const widths = cells.map(function (cell) {
+      return cell.offsetWidth
+    })
+    cells.forEach(function (cell, i) {
+      if (i === cells.length - 1) {
+        if (!cell.style.minWidth) cell.style.minWidth = widths[i] + 'px'
+      } else if (!cell.style.width) {
+        cell.style.width = widths[i] + 'px'
+        cell.style.minWidth = widths[i] + 'px'
+      }
+    })
     const startX = e.clientX
-    const startWidth = th.offsetWidth
+    const startWidth = widths[cells.indexOf(th)]
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
     function onMove(mv) {
@@ -412,6 +426,201 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     document.addEventListener('mousemove', onMove)
     document.addEventListener('mouseup', onUp)
   })
+
+  // ------------------------------------------------------------------
+  // Card deck reordering
+  // ------------------------------------------------------------------
+
+  // The deck's own child cards, in DOM order. Only direct children count, so
+  // a Card nested inside another Card never becomes a sortable item.
+  function cardDeckCards(root) {
+    return Array.prototype.filter.call(root.children, (el) => el.matches && el.matches('[data-card]'))
+  }
+
+  // Walks up from an event target to the card that is a direct child of the deck.
+  function cardDeckOwnCard(root, target) {
+    let card = target && target.closest ? target.closest('[data-card]') : null
+    while (card && card.parentElement && card.parentElement !== root) {
+      card = card.parentElement.closest('[data-card]')
+    }
+    return card && card.parentElement === root ? card : null
+  }
+
+  // A card's declared position, or Infinity so cards without one sink to the
+  // end of the deck rather than jumping to the front.
+  function cardDeckOrderOf(card) {
+    const v = parseFloat(card.getAttribute('data-order'))
+    return isNaN(v) ? Infinity : v
+  }
+
+  // Holds the deck's one invariant: data-order, DOM sequence and visible
+  // sequence are the same list, numbered 1..n. Sorting is only needed on load,
+  // when the server's data-order may disagree with the rendered sequence; a
+  // committed move has already put the DOM right and just needs renumbering.
+  function cardDeckApplyOrder(root, sort) {
+    let cards = cardDeckCards(root)
+    if (sort && cards.length) {
+      // The original index breaks ties, so equal (and absent) orders keep the
+      // sequence they were rendered in.
+      const sorted = cards
+        .map((card, i) => ({ card, i }))
+        .sort((a, b) => (cardDeckOrderOf(a.card) - cardDeckOrderOf(b.card)) || a.i - b.i)
+        .map((entry) => entry.card)
+      if (sorted.some((card, i) => card !== cards[i])) {
+        // Re-inserted before whatever followed the last card, so the head and
+        // the hidden order input keep their place.
+        const anchor = cards[cards.length - 1].nextSibling
+        sorted.forEach((card) => root.insertBefore(card, anchor))
+        cards = sorted
+      }
+    }
+    cards.forEach((card, i) => card.setAttribute('data-order', String(i + 1)))
+    return cards
+  }
+
+  // Turns the deck's buttons off while reordering — a card's menu or action
+  // shouldn't be reachable, and it should look unreachable — sparing the
+  // reorder toggle itself. Only buttons this disabled are re-enabled, so a
+  // button the consumer had already disabled stays that way.
+  function cardDeckSetControlsDisabled(root, disabled) {
+    root.querySelectorAll('button').forEach((btn) => {
+      if (btn.hasAttribute('data-card-deck-reorder')) return
+      if (disabled) {
+        if (btn.disabled) return
+        btn.disabled = true
+        btn.setAttribute('data-card-deck-reorder-disabled', '')
+      } else if (btn.hasAttribute('data-card-deck-reorder-disabled')) {
+        btn.disabled = false
+        btn.removeAttribute('data-card-deck-reorder-disabled')
+      }
+    })
+  }
+
+  // Fallback identities for cards carrying neither a data-card-id nor an
+  // element id, keyed by the element so they outlive any reordering.
+  const cardDeckFallbackIds = new WeakMap()
+
+  // The cards' reported ids, in the order given. A card without an explicit
+  // identity gets its 1-based position the first time it is seen, and keeps it
+  // from then on: re-deriving the id from the live index would relabel every
+  // card on every move, so the reported order would come back identical no
+  // matter how the deck was rearranged and the permutation would be lost.
+  function cardDeckOrderIds(cards) {
+    return cards.map((card, i) => {
+      const explicit = card.getAttribute('data-card-id') || card.id
+      if (explicit) return explicit
+      if (!cardDeckFallbackIds.has(card)) cardDeckFallbackIds.set(card, String(i + 1))
+      return cardDeckFallbackIds.get(card)
+    })
+  }
+
+  // Drags a card vertically within its deck. The dragged card follows the
+  // pointer while the cards it passes slide into the slot it left, and on
+  // release it animates into its new slot before the DOM is reordered — the
+  // card is already sitting where it will land, so the commit is invisible.
+  // Calls commit() only when the order actually changed.
+  function cardDeckStartDrag(root, card, event, commit) {
+    const cards = cardDeckCards(root)
+    const from = cards.indexOf(card)
+    if (from < 0) return
+    // Positions are measured once: every later position is derived from them,
+    // so a card sliding out of the way can't feed back into the maths.
+    const boxes = cards.map((c) => ({ top: c.offsetTop, height: c.offsetHeight }))
+    const centers = boxes.map((b) => b.top + b.height / 2)
+    const gap = parseFloat(getComputedStyle(root).rowGap) || 0
+    // Removing the dragged card from the flow closes a gap this tall.
+    const slot = boxes[from].height + gap
+    const startY = event.clientY
+    let to = from
+
+    root.classList.add('popui-card-deck-dragging')
+    card.classList.add('popui-card-deck-card-dragging')
+    document.body.style.cursor = 'grabbing'
+    document.body.style.userSelect = 'none'
+    // Capture keeps the moves coming even when the pointer outruns the card.
+    // Browsers reject ids they no longer track, which is harmless here.
+    try { card.setPointerCapture(event.pointerId) } catch (err) { /* no capture */ }
+
+    // Shifts every other card by one slot when it sits between the card's old
+    // and new index — the exact offset it gets once the drag is committed.
+    function layout() {
+      cards.forEach((c, i) => {
+        if (i === from) return
+        let dy = 0
+        if (to > from && i > from && i <= to) dy = -slot
+        else if (to < from && i >= to && i < from) dy = slot
+        c.style.transform = dy ? 'translateY(' + dy + 'px)' : ''
+      })
+    }
+
+    function onMove(e) {
+      const dy = e.clientY - startY
+      // A swap happens as the dragged card's leading edge crosses the centre
+      // of its neighbour, which is where the exchange reads as complete.
+      const top = boxes[from].top + dy
+      const bottom = top + boxes[from].height
+      let next = from
+      while (next > 0 && top < centers[next - 1]) next--
+      while (next < cards.length - 1 && bottom > centers[next + 1]) next++
+      if (next !== to) {
+        to = next
+        layout()
+      }
+      card.style.transform = 'translateY(' + dy + 'px)'
+    }
+
+    function onUp() {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      // Where the card comes to rest: the slot it now owns, measured against
+      // the layout captured at drag start.
+      let rest = 0
+      if (to > from) rest = boxes[to].top + boxes[to].height - boxes[from].height - boxes[from].top
+      else if (to < from) rest = boxes[to].top - boxes[from].top
+      const current = card.style.transform
+      const target = rest ? 'translateY(' + rest + 'px)' : ''
+      // Dropping the dragging class restores the transform transition, so the
+      // card glides the last few pixels into place.
+      card.classList.remove('popui-card-deck-card-dragging')
+      card.style.transform = target
+
+      let settled = false
+      function settle() {
+        if (settled) return
+        settled = true
+        // Committing is a swap of two equal quantities: every card's layout
+        // position shifts by exactly the offset it was holding, so the reorder
+        // and the transform reset cancel out to no visible movement — as long
+        // as they land in one frame with transitions off. Animating between
+        // them instead makes each displaced card overshoot by a slot and slide
+        // back, even though it was already sitting in the right place.
+        root.classList.add('popui-card-deck-settling')
+        if (to !== from) {
+          if (to > from) cards[to].after(card)
+          else cards[to].before(card)
+        }
+        cards.forEach((c) => { c.style.transform = '' })
+        // Flushes layout so the untransitioned state is what the frame paints.
+        void root.offsetHeight
+        root.classList.remove('popui-card-deck-settling')
+        root.classList.remove('popui-card-deck-dragging')
+        if (to !== from) commit()
+      }
+      if (current === target) settle()
+      else {
+        card.addEventListener('transitionend', settle, { once: true })
+        setTimeout(settle, 300)
+      }
+    }
+
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onUp)
+  }
+
 
   // ------------------------------------------------------------------
   // Alpine controllers
@@ -635,8 +844,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }))
 
     // Dual-month date-range picker with a preset rail and a Cancel / Confirm footer; only Confirm applies the pending selection.
+    // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.
     Alpine.data('rangeCalendar', (init) => ({
       name: (init && init.name) || '',
+      single: !!(init && init.single),
       open: false,
       preset: 'custom',
       // Pending selection edited by the grids.
@@ -702,11 +913,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return new Date(y, m, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })
       },
       get monthsView() {
-        const r = new Date(this.viewY, this.viewM + 1, 1)
-        return [
-          { label: this.monthLabel(this.viewY, this.viewM), weeks: this.monthGrid(this.viewY, this.viewM) },
-          { label: this.monthLabel(r.getFullYear(), r.getMonth()), weeks: this.monthGrid(r.getFullYear(), r.getMonth()) },
-        ]
+        const months = [{ label: this.monthLabel(this.viewY, this.viewM), weeks: this.monthGrid(this.viewY, this.viewM) }]
+        if (!this.single) {
+          const r = new Date(this.viewY, this.viewM + 1, 1)
+          months.push({ label: this.monthLabel(r.getFullYear(), r.getMonth()), weeks: this.monthGrid(r.getFullYear(), r.getMonth()) })
+        }
+        return months
       },
       prev() {
         const d = new Date(this.viewY, this.viewM - 1, 1)
@@ -717,18 +929,24 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         this.viewY = d.getFullYear(); this.viewM = d.getMonth()
       },
       // Returns a day's range state, with outside-month days always unstyled.
+      // A one-day range (from === to) reports 'single' so it rounds on both sides.
       dayState(iso, outside) {
         if (outside) return null
         if (!this.from) return null
         if (!this.to) return iso === this.from ? 'start' : null
-        if (iso === this.from) return 'start'
+        if (iso === this.from) return this.to === this.from ? 'single' : 'start'
         if (iso === this.to) return 'end'
         if (iso > this.from && iso < this.to) return 'middle'
         return null
       },
-      // Starts a new range, moves the start when clicking before it, or completes the range.
+      // Starts a new range, moves the start when clicking before it, or completes
+      // the range. In single mode a click just selects that day (from = to).
       selectDay(iso, outside) {
         if (outside) return
+        if (this.single) {
+          this.from = iso; this.to = iso
+          return
+        }
         if (!this.from || (this.from && this.to)) {
           this.from = iso; this.to = null
           this.preset = 'custom'
@@ -765,12 +983,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       get summary() {
         if (this.committedFrom && this.committedTo) {
+          if (this.single) return this.fmt(this.committedFrom)
           return this.fmt(this.committedFrom) + ' → ' + this.fmt(this.committedTo)
         }
         return ''
       },
       get rangeValue() {
         if (this.committedFrom && this.committedTo) {
+          if (this.single) return this.committedFrom
           return this.committedFrom + '..' + this.committedTo
         }
         return ''
@@ -838,6 +1058,55 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         window.removeEventListener('popui-sidepanel-open', this._onOpen)
         window.removeEventListener('popui-sidepanel-close', this._onClose)
         document.removeEventListener('keydown', this._onKeydown)
+      },
+    }))
+
+    // Card deck reorder mode: drags the child cards to a new vertical position
+    // and reports the resulting order. While it is on, each card shows a drag
+    // handle, the cards' own links and controls are inert (CSS) and their
+    // clicks are swallowed (onClick), so a card can be grabbed without
+    // following it.
+    Alpine.data('cardDeckReorder', () => ({
+      reordering: false,
+      order: [],
+
+      init() {
+        this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, true))
+      },
+      toggleReorder() {
+        this.reordering = !this.reordering
+        cardDeckSetControlsDisabled(this.$root, this.reordering)
+      },
+      // Renumbers the cards and announces the result. The hidden input, when
+      // the deck has a Name, is bound to the same array.
+      commit() {
+        this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, false))
+        this.$root.dispatchEvent(new CustomEvent('popui-card-deck-reorder', {
+          bubbles: true,
+          detail: { order: this.order },
+        }))
+      },
+      onPointerDown(e) {
+        if (!this.reordering || e.button > 0) return
+        const card = cardDeckOwnCard(this.$root, e.target)
+        if (!card) return
+        // Suppresses the text selection and native image drag that would
+        // otherwise start under the pointer. It also keeps focus off the card,
+        // which is deliberate: cards are dragged, never selected.
+        e.preventDefault()
+        cardDeckStartDrag(this.$root, card, e, () => this.commit())
+      },
+      // Escape is a way out of the mode, not a way to reorder — the cards
+      // themselves are drag-only.
+      onKeydown(e) {
+        if (this.reordering && e.key === 'Escape') this.toggleReorder()
+      },
+      // Cards are grab handles while reordering, never links or buttons.
+      onClick(e) {
+        if (!this.reordering) return
+        if (!cardDeckOwnCard(this.$root, e.target)) return
+        e.preventDefault()
+        e.stopPropagation()
       },
     }))
   })

@@ -63,6 +63,11 @@ body {
   left: unset;
   right: anchor(right);
 }
+[popover].context-menu.context-menu-up {
+  top: unset;
+  bottom: anchor(top);
+  position-try-fallbacks: flip-block;
+}
 
 /* Fallback for browsers without anchor positioning support */
 @supports not (anchor-name: --test) {
@@ -392,16 +397,22 @@ form {
    opaque base to sit over the alpha hover/border tokens, and the header
    dividers are pseudo-elements that scale with the label height. */
 
-/* FullWidth — stretch the table to fill its container while still growing
-   past it when the columns need more (horizontal scroll). min-width pins it
-   to the container; width: max-content lets it expand beyond; table-layout:
-   auto so the extra width is distributed across the columns. Expressed as a
-   class rather than min-w-full/w-max/table-auto utilities because the popui
-   tailwind build doesn't emit min-w-full or table-auto. */
+/* FullWidth — the table fills its container (width: 100%) so long cell
+   content wraps instead of stretching the table past the overflow-hidden
+   wrapper; the ScrollHorizontal variant below opts back into max-content
+   growth. Expressed as a class rather than min-w-full/table-auto utilities
+   because the popui tailwind build doesn't emit them. */
 .popui-table-full-width {
   min-width: 100%;
-  width: max-content;
+  width: 100%;
   table-layout: auto;
+}
+/* Under ScrollHorizontal the table grows to its content and the wrapper
+   scrolls; without it the table fills the container and cell text wraps
+   (the wrapper is overflow-hidden there, so a wider table would just be
+   clipped). */
+.popui-table-full-width.popui-table-scroll-cells {
+  width: max-content;
 }
 
 /* Scroll-table cells — when ScrollHorizontal is set the cells shouldn't wrap,
@@ -524,6 +535,27 @@ form {
   display: none;
 }
 
+/* Card tables round their own corner cells: the wrapper's border-radius only
+   clips the cell backgrounds while its overflow is hidden, and a table
+   hosting a menu or tooltip switches the wrapper to overflow-visible. 1px
+   less than the wrapper radius, nesting inside its border. Scoped to the
+   first/last row of the table (thead-or-first-tbody, last tbody), so a
+   mid-table row never clips its own background. */
+.popui-table-card thead tr:first-child > :first-child,
+.popui-table-card tbody:first-child tr:first-child > :first-child {
+  border-top-left-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+.popui-table-card thead tr:first-child > :last-child,
+.popui-table-card tbody:first-child tr:first-child > :last-child {
+  border-top-right-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+.popui-table-card tbody:last-child tr:last-child > :first-child {
+  border-bottom-left-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+.popui-table-card tbody:last-child tr:last-child > :last-child {
+  border-bottom-right-radius: calc(var(--radius-lg, 0.5rem) - 1px);
+}
+
 @keyframes icon-pulse-animation {
   0%, 100% { fill: var(--color-background-default-tertiary); }
   40% { fill: var(--color-accent-50); }
@@ -606,11 +638,13 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 .popui-cal-cell:has(> .popui-cal-day[data-state="start"]),
+.popui-cal-cell:has(> .popui-cal-day[data-state="single"]),
 .popui-cal-cell:first-child:has(> .popui-cal-day[data-state]) {
   border-top-left-radius: 0.375rem;
   border-bottom-left-radius: 0.375rem;
 }
 .popui-cal-cell:has(> .popui-cal-day[data-state="end"]),
+.popui-cal-cell:has(> .popui-cal-day[data-state="single"]),
 .popui-cal-cell:last-child:has(> .popui-cal-day[data-state]) {
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
@@ -643,7 +677,8 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 .popui-cal-day[data-state="start"],
-.popui-cal-day[data-state="end"] {
+.popui-cal-day[data-state="end"],
+.popui-cal-day[data-state="single"] {
   background-color: var(--color-background-accent);
   color: var(--color-foreground-inverse);
   font-weight: 600;
@@ -692,9 +727,17 @@ form {
 .popui-icon-xs > div,
 .popui-icon-xs > div > svg { width: 0.75rem !important; height: 0.75rem !important; }
 .popui-detail-row > .popui-detail-label {
+  /* Fixed flex basis: a long label wraps inside its 148px column instead of
+     growing and squeezing the value cell out of the row. */
+  flex: 0 0 148px;
   min-width: 148px;
+  overflow-wrap: break-word;
   color: var(--color-foreground-default-secondary);
   font-size: 0.875rem;
+}
+/* Stacked rows are a column layout, so the label spans the full width. */
+.popui-detail-row.popui-detail-stacked > .popui-detail-label {
+  flex: 0 0 auto;
 }
 .popui-detail-row > .popui-detail-value-wrap {
   flex: 1 1 0%;
@@ -746,4 +789,99 @@ form {
 .popui-detail-copyable:hover [data-copy-icon-duplicate],
 .popui-detail-copyable:hover [data-copy-icon-success] {
   opacity: 1;
+}
+/* Card deck reorder mode — toggled by the CardDeckReorderButton on a
+   Reorderable CardDeck. None of this can be expressed as Tailwind utilities:
+   the drag handle is a masked pseudo-element, and the drag script owns the
+   cards' transform, so the states around it have to be hand-written. */
+
+/* Every card in a reorderable deck carries a collapsed drag handle, so that
+   entering the mode has something to animate from — a pseudo-element created
+   by the class change would pop in with no transition. It's drawn as a mask
+   rather than a background image so it takes the icon-default colour token and
+   follows the dark theme, and it never takes pointer events: the whole card is
+   the grab target, the handle only says so. */
+.popui-card-deck-sortable > [data-card] {
+  position: relative;
+  transition: padding-left 150ms ease;
+}
+.popui-card-deck-sortable > [data-card]::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transform: translateY(-50%) translateX(-4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  pointer-events: none;
+  background-color: var(--color-icon);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Zm0-3.5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.popui-card-deck-reordering > [data-card] {
+  cursor: grab;
+  /* Vertical drags belong to the deck, not to the scroller. */
+  touch-action: none;
+  transition: transform 150ms ease, padding-left 150ms ease;
+  /* Room for the handle. A flat value rather than an addition, since the
+     card's own padding is a Tailwind utility this can't read; it reads as a
+     small indent for the usual p-2/p-3/p-4 cards. */
+  padding-left: 32px;
+}
+
+/* The handle slides out of the left edge as the content makes way for it. */
+.popui-card-deck-reordering > [data-card]::before {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* A card is a grab handle while reordering: its own links, controls and
+   three-dot menus stop responding, and an anchor Card drops its hover
+   border (its navigation is cancelled in JS, since the card itself must
+   keep receiving pointer events). */
+.popui-card-deck-reordering > [data-card] a,
+.popui-card-deck-reordering > [data-card] button,
+.popui-card-deck-reordering > [data-card] input,
+.popui-card-deck-reordering > [data-card] select,
+.popui-card-deck-reordering > [data-card] textarea,
+.popui-card-deck-reordering > [data-card] [popovertarget] {
+  pointer-events: none;
+}
+.popui-card-deck-reordering > a[data-card]:hover {
+  border-color: var(--color-border);
+}
+
+/* The commit frame. The script reorders the cards and drops their offsets
+   together here, two changes that cancel out — so they must not animate, or
+   each displaced card slides a slot it has already travelled. Declared after
+   the -reordering transition so it wins on source order. */
+.popui-card-deck-settling > [data-card] {
+  transition: none;
+}
+
+/* The card under the pointer tracks it 1:1 — no transition — and lifts above
+   the cards it passes. */
+.popui-card-deck-dragging > [data-card].popui-card-deck-card-dragging {
+  cursor: grabbing;
+  transition: none;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popui-card-deck-sortable > [data-card],
+  .popui-card-deck-sortable > [data-card]::before,
+  .popui-card-deck-reordering > [data-card] {
+    transition: none;
+  }
 }

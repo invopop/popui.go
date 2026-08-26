@@ -20,7 +20,9 @@ import (
 // console-ui DatePicker: a preset rail (this/last week, month, quarter +
 // custom) on the left, two side-by-side month grids with overlay month
 // navigation, and a Cancel / Confirm footer. Selection only applies on
-// Confirm; Cancel clears it. See props.Calendar.
+// Confirm; Cancel clears it. Setting props.Calendar.Single switches it to a
+// single-date picker: one month grid, no preset rail, and clicking a day
+// selects just that day. See props.Calendar.
 //
 // The component is markup-only — all state (presets, visible months,
 // selected range, navigation, confirmation) comes from the `rangeCalendar`
@@ -82,7 +84,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 44, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 46, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -101,7 +103,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(calendarScope(p))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 47, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 49, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -133,7 +135,17 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "><div class=\"flex border-b border-border min-h-[300px]\"><div class=\"popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div><div class=\"px-3 pb-2 pt-1\"><div class=\"relative flex gap-4\"><nav class=\"absolute inset-x-0 top-2 flex items-center justify-between\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "><div class=\"flex border-b border-border min-h-[300px]\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !p.Single {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"px-3 pb-2 pt-1\"><div class=\"relative flex gap-4\"><nav class=\"absolute inset-x-0 top-2 flex items-center justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -187,7 +199,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</nav><template x-for=\"(mon, mi) in monthsView\" :key=\"mi\"><div class=\"flex flex-col\"><header class=\"h-11 flex items-center justify-center gap-1.5 pt-2 pb-3 text-base font-medium text-foreground\" x-text=\"mon.label\"></header><table class=\"popui-cal-grid\"><thead><tr class=\"popui-cal-row select-none\"><template x-for=\"dow in dows\" :key=\"dow\"><th class=\"popui-cal-head\" x-text=\"dow\"></th></template></tr></thead> <tbody><template x-for=\"(week, wi) in mon.weeks\" :key=\"wi\"><tr class=\"popui-cal-row popui-cal-week\"><template x-for=\"(cell, ci) in week\" :key=\"ci\"><td class=\"popui-cal-cell\"><button type=\"button\" class=\"popui-cal-day\" @click=\"selectDay(cell.iso, cell.outside)\" :data-state=\"dayState(cell.iso, cell.outside)\" :data-outside=\"cell.outside ? '' : null\" :data-today=\"cell.today ? '' : null\" x-text=\"cell.day\"></button></td></template></tr></template></tbody></table></div></template></div></div></div><div class=\"p-3 flex items-center justify-end gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</nav><template x-for=\"(mon, mi) in monthsView\" :key=\"mi\"><div class=\"flex flex-col\"><header class=\"h-11 flex items-center justify-center gap-1.5 pt-2 pb-3 text-base font-medium text-foreground\" x-text=\"mon.label\"></header><table class=\"popui-cal-grid\"><thead><tr class=\"popui-cal-row select-none\"><template x-for=\"dow in dows\" :key=\"dow\"><th class=\"popui-cal-head\" x-text=\"dow\"></th></template></tr></thead> <tbody><template x-for=\"(week, wi) in mon.weeks\" :key=\"wi\"><tr class=\"popui-cal-row popui-cal-week\"><template x-for=\"(cell, ci) in week\" :key=\"ci\"><td class=\"popui-cal-cell\"><button type=\"button\" class=\"popui-cal-day\" @click=\"selectDay(cell.iso, cell.outside)\" :data-state=\"dayState(cell.iso, cell.outside)\" :data-outside=\"cell.outside ? '' : null\" :data-today=\"cell.today ? '' : null\" x-text=\"cell.day\"></button></td></template></tr></template></tbody></table></div></template></div></div></div><div class=\"p-3 flex items-center justify-end gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -203,7 +215,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Cancel")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "Cancel")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -229,7 +241,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Confirm")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "Confirm")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -243,7 +255,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -253,18 +265,26 @@ func Calendar(opts ...props.Calendar) templ.Component {
 
 // calendarScope builds the `x-data="rangeCalendar({...})"` snippet for a
 // self-contained Calendar, mirroring the seeding the popui.Filter calendar
-// chip uses. From / To become JS null when empty.
+// chip uses. From / To become JS null when empty. Single mode seeds both ends
+// of the range from From, since a single-date selection is stored as
+// from === to.
 func calendarScope(p props.Calendar) string {
 	fromJS := "null"
 	if p.From != "" {
 		fromJS = "'" + jsSingleQuoteEscape(p.From) + "'"
 	}
 	toJS := "null"
-	if p.To != "" {
+	if p.Single {
+		toJS = fromJS
+	} else if p.To != "" {
 		toJS = "'" + jsSingleQuoteEscape(p.To) + "'"
 	}
+	singleJS := "false"
+	if p.Single {
+		singleJS = "true"
+	}
 	return "rangeCalendar({name: '" + jsSingleQuoteEscape(p.Name) + "', from: " + fromJS + ", to: " + toJS +
-		", presets: " + calendarPresetsJS(p.Presets) + "})"
+		", single: " + singleJS + ", presets: " + calendarPresetsJS(p.Presets) + "})"
 }
 
 // calendarPresetsJS renders preset rows as a JS array literal for the

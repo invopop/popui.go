@@ -14,11 +14,15 @@ import (
 // Deprecated: use Image with the CDN URL directly.
 templ Flag(opts ...props.Flag) {
 	{{ p := props.First(opts) }}
-	@Image(props.Image{
-		ID:         p.ID,
-		Src:        "https://assets.invopop.com/flags/" + strings.ToLower(p.Country) + ".svg",
-		Alt:        p.Country,
-		Class:      tailwind.Merge("w-3.5 h-2.5 rounded-[1.5px]", p.Class),
-		Attributes: p.Attributes,
-	})
+	// No country, no flag: rendering with an empty code produces a broken
+	// image pointing at flags/.svg.
+	if p.Country != "" {
+		@Image(props.Image{
+			ID:         p.ID,
+			Src:        "https://assets.invopop.com/flags/" + strings.ToLower(p.Country) + ".svg",
+			Alt:        p.Country,
+			Class:      tailwind.Merge("w-3.5 h-2.5 rounded-[1.5px]", p.Class),
+			Attributes: p.Attributes,
+		})
+	}
 }

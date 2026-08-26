@@ -14,6 +14,14 @@ templ Calendar() {
 	}) {
 		@examples.CalendarExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Single date",
+		Description: "Set Single to switch the calendar to single-date selection: one month grid, no preset rail, and clicking a day selects just that day.",
+		Code:        examples.LoadExample("calendar_single.templ"),
+		Stacked:     true,
+	}) {
+		@examples.CalendarSingleExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Calendar",
@@ -25,7 +33,8 @@ templ Calendar() {
 				{Name: "Name", Type: "string", Default: "", Description: "Makes the calendar own its state. It declares its own `rangeCalendar` Alpine scope under this field name and wraps the grid in a bordered container. Leave it empty to render markup only inside a scope provided by an ancestor, which is how the Filter date range chip embeds it."},
 				{Name: "From", Type: "string", Default: "", Description: "Seeds the start of the initially selected range as an ISO date. It only applies when Name is set."},
 				{Name: "To", Type: "string", Default: "", Description: "Seeds the end of the initially selected range as an ISO date. It only applies when Name is set."},
-				{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Configures the shortcuts shown in the preset rail. It defaults to the standard presets."},
+				{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Configures the shortcuts shown in the preset rail. It defaults to the standard presets. Ignored when Single is set."},
+				{Name: "Single", Type: "bool", Default: "false", Description: "Switches the calendar to single-date selection: one month grid, no preset rail, and clicking a day selects just that day. Seed the initial selection with From."},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

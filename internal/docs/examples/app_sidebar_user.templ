@@ -1,0 +1,68 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ AppSidebarUserExample() {
+	@popui.App(props.App{Title: "Sidebar With Groups and User"}) {
+		@popui.Sidebar() {
+			@popui.SidebarHeader() {
+				@popui.InvopopLogoSquare()
+				<span class="flex-1">Admin</span>
+			}
+			@popui.SidebarContent() {
+				@popui.SidebarSection(props.SidebarSection{Title: "Organization"}) {
+					@popui.SidebarGroup(props.SidebarGroup{
+						Label:            "Invopop S.L.",
+						HeaderAttributes: templ.Attributes{"href": "#"},
+					}) {
+						@popui.SidebarItem(props.SidebarItem{Href: "#", Selected: true}) {
+							@icons.Company()
+							<span>Details</span>
+						}
+						@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+							@icons.Billing()
+							<span>Billing</span>
+						}
+						@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+							@icons.Team()
+							<span>Members</span>
+						}
+						@popui.SidebarItem(props.SidebarItem{Href: "#"}) {
+							@icons.Header()
+							<span>Workspaces</span>
+						}
+					}
+				}
+			}
+			@popui.SidebarFooter() {
+				@popui.SidebarUser(props.SidebarUser{
+					Name:  "Jane Craft",
+					Email: "jane.craft@example.com",
+				}) {
+					@popui.MenuItem() {
+						@icons.User()
+						<span>Profile</span>
+					}
+					@popui.MenuItem() {
+						@icons.Lock()
+						<span>Security</span>
+					}
+					@popui.MenuItem(props.MenuItem{Variant: props.MenuItemVariantDanger}) {
+						@icons.Logout()
+						<span>Sign out</span>
+					}
+				}
+			}
+		}
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{{Label: "Example"}},
+		})
+		@popui.Main(props.Main{Center: true}) {
+			@popui.Article(props.Article{Title: "Sidebar groups and user", Description: "A grouped navigation tree, with the signed-in user pinned to the sidebar's footer."})
+		}
+	}
+}

@@ -150,7 +150,7 @@ templ filterAddMenu(inputs []props.FilterInput) {
 			popover
 			:id="$id('filter-menu')"
 			:style="'position-anchor: --filter-menu-' + $id('filter-menu')"
-			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg"
+			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg"
 		>
 			<ul>
 				for _, in := range inputs {
@@ -160,11 +160,11 @@ templ filterAddMenu(inputs []props.FilterInput) {
 					>
 						<button
 							type="button"
-							class="w-full px-2 py-1.5 flex items-center gap-2 cursor-pointer whitespace-nowrap text-left"
+							class="w-full min-w-0 px-2 py-1.5 flex items-center gap-2 [&>div]:shrink-0 cursor-pointer whitespace-nowrap text-left"
 							@click={ "add('" + jsSingleQuoteEscape(in.Name) + "'); $el.closest('[popover]').hidePopover()" }
 						>
 							@in.Icon
-							{ in.Label }
+							<span class="truncate">{ in.Label }</span>
 						</button>
 					</li>
 				}
@@ -185,9 +185,11 @@ templ filterChip(in props.FilterInput) {
 		data-filter-name={ in.Name }
 		class="flex items-stretch h-7 rounded-md border border-border-default-secondary"
 	>
-		<div class="inline-flex items-center gap-1 py-1 px-2 cursor-default pointer-events-none [&_svg]:text-icon font-medium text-base border-r border-border-default-secondary">
+		// max-w keeps a long field label from stretching the chip; the label
+		// truncates with an ellipsis.
+		<div class="inline-flex items-center gap-1 py-1 px-2 max-w-48 [&>div]:shrink-0 cursor-default pointer-events-none [&_svg]:text-icon font-medium text-base border-r border-border-default-secondary">
 			@in.Icon
-			{ in.Label }
+			<span class="truncate">{ in.Label }</span>
 		</div>
 		<div class="inline-flex items-center py-1 px-2 cursor-default pointer-events-none text-foreground-default-secondary font-normal text-base border-r border-border-default-secondary">
 			if in.Type == props.FilterTypeCalendar {
@@ -256,17 +258,20 @@ templ filterInlineOptions(in props.FilterInput) {
 			@click="togglePanel()"
 			class="inline-grid items-center px-1.5 py-0.5 rounded-md text-foreground cursor-pointer hover:bg-background-default-secondary"
 		>
-			<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
+			// Every sizer/visible span in this grid stack is capped at
+			// max-w-56 so one long option label can't stretch the chip; the
+			// visible copies truncate with an ellipsis.
+			<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap max-w-56 text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
 			for _, opt := range in.Options {
-				<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap inline-flex items-center gap-1.5">
+				<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap max-w-56 inline-flex items-center gap-1.5">
 					if opt.Color != "" {
 						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
 					}
-					<span class="font-medium text-base text-foreground">{ opt.Label }</span>
+					<span class="font-medium text-base text-foreground truncate">{ opt.Label }</span>
 				</span>
 			}
 			if in.Type == props.FilterTypeMultiple && len(in.Options) > 1 {
-				<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap inline-flex items-center gap-1.5">
+				<span aria-hidden="true" class="col-start-1 row-start-1 invisible whitespace-nowrap max-w-56 inline-flex items-center gap-1.5">
 					<span class="inline-flex items-center -space-x-0.5">
 						for i, opt := range in.Options {
 							if i < props.MaxStackedDots && opt.Color != "" {
@@ -279,13 +284,13 @@ templ filterInlineOptions(in props.FilterInput) {
 					<span class="font-medium text-base text-foreground">{ strconv.Itoa(len(in.Options)) + " " + filterPluralLabel(in) }</span>
 				</span>
 			}
-			<span x-show="values.length === 0" class="col-start-1 row-start-1 text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
+			<span x-show="values.length === 0" class="col-start-1 row-start-1 max-w-56 truncate text-foreground-default-tertiary font-normal text-base">{ "Select " + strings.ToLower(in.Label) + "…" }</span>
 			for _, opt := range in.Options {
-				<span x-show={ "values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'" } class="col-start-1 row-start-1 inline-flex items-center gap-1.5">
+				<span x-show={ "values.length === 1 && values[0] === '" + jsSingleQuoteEscape(opt.Value) + "'" } class="col-start-1 row-start-1 max-w-56 inline-flex items-center gap-1.5">
 					if opt.Color != "" {
 						@TagStatus(props.TagStatus{Status: opt.Color, Dot: true})
 					}
-					<span class="font-medium text-base text-foreground">{ opt.Label }</span>
+					<span class="font-medium text-base text-foreground truncate">{ opt.Label }</span>
 				</span>
 			}
 			<span x-show="values.length > 1" class="col-start-1 row-start-1 inline-flex items-center gap-1.5">
@@ -323,7 +328,7 @@ templ filterInlineOptions(in props.FilterInput) {
 			x-show="open"
 			x-cloak
 			style="top:100%;z-index:50"
-			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] bg-background absolute left-0 shadow-lg"
+			class="context-menu border border-border rounded-xl mt-1 p-1 w-fit min-w-[256px] max-w-80 bg-background absolute left-0 shadow-lg"
 		>
 			for i, opt := range in.Options {
 				@DrawerContextItem(props.DrawerContextItem{

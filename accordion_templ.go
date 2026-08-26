@@ -135,7 +135,7 @@ func AccordionTrigger(p ...props.AccordionTrigger) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		var prp = props.First(p)
 		var templ_7745c5c3_Var6 = []any{tailwind.Merge(
-			"cursor-pointer list-none relative pl-6 text-foreground text-base font-medium block",
+			"cursor-pointer list-none relative pl-6 text-foreground text-base font-medium block break-words",
 			"before:content-[''] before:absolute before:left-0 before:top-[50%] before:w-4 before:h-4",
 			"before:bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYuMDAwMDUgMTJMMTAgNy45OTk5NEw2IDQiIHN0cm9rZT0iIzZCNzI4MCIvPjwvc3ZnPg==')]",
 			"before:bg-contain before:bg-no-repeat before:-translate-y-1/2 before:rotate-0 before:transition-transform before:duration-300 before:ease-in-out",
@@ -284,7 +284,7 @@ func AccordionContent(p ...props.AccordionContent) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "><div class=\"flex flex-col gap-4 p-2 min-h-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "><div class=\"flex flex-col gap-4 p-2 min-h-0 break-words\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -73,6 +73,33 @@ func Calendar() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.CalendarSingleExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Single date",
+			Description: "Set Single to switch the calendar to single-date selection: one month grid, no preset rail, and clicking a day selects just that day.",
+			Code:        examples.LoadExample("calendar_single.templ"),
+			Stacked:     true,
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Calendar",
 				Description: "Calendar renders a dual month range picker with a preset rail and month navigation. All interactive state lives in the `rangeCalendar` Alpine controller that ships with popui.",
@@ -83,7 +110,8 @@ func Calendar() templ.Component {
 					{Name: "Name", Type: "string", Default: "", Description: "Makes the calendar own its state. It declares its own `rangeCalendar` Alpine scope under this field name and wraps the grid in a bordered container. Leave it empty to render markup only inside a scope provided by an ancestor, which is how the Filter date range chip embeds it."},
 					{Name: "From", Type: "string", Default: "", Description: "Seeds the start of the initially selected range as an ISO date. It only applies when Name is set."},
 					{Name: "To", Type: "string", Default: "", Description: "Seeds the end of the initially selected range as an ISO date. It only applies when Name is set."},
-					{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Configures the shortcuts shown in the preset rail. It defaults to the standard presets."},
+					{Name: "Presets", Type: "[]props.CalendarPreset", Default: "default", Description: "Configures the shortcuts shown in the preset rail. It defaults to the standard presets. Ignored when Single is set."},
+					{Name: "Single", Type: "bool", Default: "false", Description: "Switches the calendar to single-date selection: one month grid, no preset rail, and clicking a day selects just that day. Seed the initial selection with From."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -106,7 +134,7 @@ func Calendar() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

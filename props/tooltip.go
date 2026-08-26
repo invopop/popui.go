@@ -48,6 +48,12 @@ type Tooltip struct {
 	// Image is the URL of an optional illustration shown above the title.
 	// The component applies the rounded corners and border to it.
 	Image string
+	// Delay is how long the pointer must rest on the trigger, in
+	// milliseconds, before the card appears. Zero (the default) shows it
+	// immediately; set a few hundred for dense surfaces where a card on
+	// every casual hover would be noise. Hiding is never delayed, and
+	// keyboard focus reveals the card immediately regardless.
+	Delay int
 	// Position places the card relative to the trigger: one of the
 	// TooltipPosition constants. Defaults to top.
 	//

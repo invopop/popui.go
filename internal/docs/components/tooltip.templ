@@ -52,6 +52,7 @@ templ Tooltip() {
 				{Name: "Title", Type: "string", Default: "", Description: "Card heading; set at least one of Title, Description or Image"},
 				{Name: "Description", Type: "string", Default: "", Description: "Secondary text below the title, parsed as Markdown (emphasis, code, links, lists; single newline is a line break); set at least one of Title, Description or Image"},
 				{Name: "Image", Type: "string", Default: "", Description: "URL of an optional illustration shown above the title; corners and border come from the component"},
+				{Name: "Delay", Type: "int", Default: "0", Description: "How long the pointer must rest on the trigger, in milliseconds, before the card appears. Hiding is never delayed, and keyboard focus reveals immediately"},
 				{Name: "Position", Type: "string", Default: "top", Description: "Card placement relative to the trigger: top, top-start, top-end, bottom, bottom-start, bottom-end, left or right. The -start and -end variants align the card with the trigger's edge rather than centering it, so a wide card does not overflow its container"},
 			},
 		})

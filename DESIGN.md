@@ -32,6 +32,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
+| Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
 | Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `FileDownload` > `FileDownloadInfo` |
@@ -54,7 +55,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
 | Expandable section | `Accordion` > `AccordionTrigger` + `AccordionContent` |
-| Dropdown/context actions | `Menu` > `MenuItem` |
+| Dropdown/context actions | `Menu` > `MenuItem` (+ `MenuSeparator` between groups) |
 | Floating content panel | `Popover` |
 | Key-value data display | `DescriptionList` > `DescriptionListItem` |
 | Tab navigation | `Tabs` |
@@ -371,7 +372,7 @@ entirely on borders.
 
 | Variant | Visual |
 |---------|--------|
-| `default` | Neutral — muted background, standard border |
+| `default` | Neutral — white background, standard border |
 | `primary` | Strong — uses accent/bold background, high contrast |
 | `secondary` | Outlined — border visible, lower visual weight than primary |
 | `danger` | Destructive — critical color background |
@@ -483,7 +484,7 @@ Breadcrumbs
 |-----------|-------------|
 | `Avatar` | Circular user avatar; `Size: "lg"` or default (small). Accepts `Initial` text or `Image` child |
 | `Accordion` | Native `details/summary` expandable sections |
-| `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign` |
+| `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign`. Use `MenuSeparator` to divide item groups |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |

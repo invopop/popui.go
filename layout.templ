@@ -7,8 +7,12 @@ import (
 	"path"
 )
 
-// HTML provides the root `<html>` element for an HTML document.
+// HTML provides the root `<html>` element for an HTML document. The doctype
+// matters: without it browsers render the whole app in quirks mode, where
+// the body becomes the scrolling element, percentage heights resolve
+// old-school, and position:sticky quietly fails to stick.
 templ HTML() {
+	<!DOCTYPE html>
 	<html>
 		{ children... }
 	</html>

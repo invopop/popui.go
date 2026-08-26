@@ -173,7 +173,8 @@ templ DD(opts ...props.DD) {
 		}
 		class={
 			tailwind.Merge(
-				"text-base text-foreground font-medium",
+				// break-words keeps unbroken values (IDs, URLs) inside the list.
+				"text-base text-foreground font-medium break-words",
 				p.Class,
 			),
 		}

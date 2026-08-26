@@ -49,7 +49,9 @@ func Toast(p ...props.Toast) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		toast := props.First(p)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"popui-toast z-50 flex items-center gap-2 w-fit min-w-80 py-3 px-4 rounded-lg bg-background-default-negative",
+			// The max-w cap keeps a long message from stretching the toast
+			// across the viewport; message/description truncate inside it.
+			"popui-toast z-50 flex items-center gap-2 w-fit min-w-80 max-w-[min(36rem,calc(100vw-2rem))] py-3 px-4 rounded-lg bg-background-default-negative",
 			toastPositionClasses(toast.Position),
 			toast.Class,
 		),
@@ -190,7 +192,7 @@ func Toast(p ...props.Toast) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(toast.Message)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `toast.templ`, Line: 61, Col: 86}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `toast.templ`, Line: 63, Col: 86}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -213,7 +215,7 @@ func Toast(p ...props.Toast) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(toast.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `toast.templ`, Line: 64, Col: 88}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `toast.templ`, Line: 66, Col: 88}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -250,7 +252,7 @@ func Toast(p ...props.Toast) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(toast.ActionLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `toast.templ`, Line: 79, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `toast.templ`, Line: 81, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {

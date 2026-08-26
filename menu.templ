@@ -22,6 +22,7 @@ templ Menu(opts ...props.Menu) {
 			tailwind.Merge(
 				"relative inline-block",
 				classes.If(p.RightAlign, "flex justify-end"),
+				p.RootClass,
 			),
 		}
 		if p.ID != "" {
@@ -34,7 +35,7 @@ templ Menu(opts ...props.Menu) {
 				type="button"
 				aria-haspopup="menu"
 				x-bind:popovertarget="$id('context-menu')"
-				class="cursor-pointer"
+				class={ tailwind.Merge("cursor-pointer", p.TriggerClass) }
 			>
 				@p.Trigger
 			</button>
@@ -60,7 +61,11 @@ templ Menu(opts ...props.Menu) {
 			class={
 				tailwind.Merge(
 					"context-menu",
-					"border border-border rounded-xl mt-1 p-1 w-fit min-w-48 bg-background shadow-lg",
+					// max-w caps the panel when an item label is very long; the
+					// items themselves truncate (see MenuItem).
+					"border border-border rounded-xl p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+					classes.If(!p.DropUp, "mt-1"),
+					classes.If(p.DropUp, "mb-1 context-menu-up"),
 					classes.If(p.RightAlign, "context-menu-right-align"),
 					p.Class,
 				),
@@ -73,7 +78,10 @@ templ Menu(opts ...props.Menu) {
 	</div>
 }
 
-// MenuItem provides one action row within a Menu.
+// MenuItem provides one action row within a Menu. The danger variant colors
+// the row red for destructive actions; Selected marks the current choice of
+// a picker menu with a trailing tick. Children may be richer than an icon
+// and a label — an Avatar with a name works.
 templ MenuItem(opts ...props.MenuItem) {
 	{{ p := props.First(opts) }}
 	<li
@@ -82,14 +90,65 @@ templ MenuItem(opts ...props.MenuItem) {
 		}
 		class={
 			tailwind.Merge(
-				"font-sans font-medium text-base text-foreground w-full rounded-md hover:bg-background-default-secondary",
+				"font-sans font-medium text-base w-full rounded-md",
+				classes.If(p.Variant != props.MenuItemVariantDanger, "text-foreground hover:bg-background-default-secondary"),
+				classes.If(p.Variant == props.MenuItemVariantDanger, "text-foreground-critical hover:bg-background-critical"),
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		<div class="w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap">
+		// Label text wrapped in a <span> truncates with an ellipsis when the
+		// menu hits its max width; icon wrappers (divs) keep their size.
+		<div class="w-full px-2 py-1.5 flex items-center space-x-2 cursor-pointer whitespace-nowrap min-w-0 [&>span]:truncate [&>div]:shrink-0">
 			{ children... }
+			if p.Selected {
+				<span class="ml-auto! flex size-4 shrink-0 items-center justify-center">
+					@selectCheckIcon()
+				</span>
+			}
 		</div>
+	</li>
+}
+
+// MenuSeparator provides a thin horizontal line delimiting groups of
+// MenuItem rows within a Menu.
+templ MenuSeparator(opts ...props.MenuSeparator) {
+	{{ p := props.First(opts) }}
+	// Negative inline margin lets the line span the full panel width, past
+	// the menu panel's p-1 padding.
+	<li
+		role="separator"
+		aria-hidden="true"
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"-mx-1 my-1 h-px bg-border",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	></li>
+}
+
+// MenuLabel is a non-interactive group heading within a Menu, for splitting
+// a long menu into labelled sections.
+templ MenuLabel(opts ...props.MenuLabel) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"select-none px-2 pb-1 pt-2 font-sans text-sm font-medium text-foreground-default-secondary first:pt-1",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
 	</li>
 }
