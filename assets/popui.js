@@ -1032,8 +1032,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }))
 
     // Side panel opened and closed by popui-sidepanel-open/close window events whose detail matches the panel id.
-    Alpine.data('sidePanel', (id) => ({
+    // The width is user-adjustable by dragging the panel's inner-edge handle.
+    Alpine.data('sidePanel', (id, width = 400, anchor = 'right') => ({
       open: false,
+      width,
+      resizing: false,
       init() {
         const matches = (e) => e && e.detail === id
         this._onOpen = (e) => { if (matches(e)) this.open = true }
@@ -1058,6 +1061,32 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         window.removeEventListener('popui-sidepanel-open', this._onOpen)
         window.removeEventListener('popui-sidepanel-close', this._onClose)
         document.removeEventListener('keydown', this._onKeydown)
+      },
+      // Drag-resizes the panel from its inner-edge handle, clamped so the
+      // panel stays usable and never covers the whole viewport.
+      startResize(e) {
+        if (e.button > 0) return
+        e.preventDefault()
+        this.resizing = true
+        const startX = e.clientX
+        const startWidth = this.width
+        const dir = anchor === 'left' ? 1 : -1
+        const min = 320
+        const max = Math.max(min, window.innerWidth - 320)
+        const onMove = (mv) => {
+          this.width = Math.min(max, Math.max(min, startWidth + dir * (mv.clientX - startX)))
+        }
+        const onUp = () => {
+          window.removeEventListener('pointermove', onMove)
+          window.removeEventListener('pointerup', onUp)
+          document.body.style.cursor = ''
+          document.body.style.userSelect = ''
+          this.resizing = false
+        }
+        document.body.style.cursor = 'col-resize'
+        document.body.style.userSelect = 'none'
+        window.addEventListener('pointermove', onMove)
+        window.addEventListener('pointerup', onUp)
       },
     }))
 
