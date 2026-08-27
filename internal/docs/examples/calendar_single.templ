@@ -1,0 +1,30 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CalendarSingleExample() {
+	<div
+		x-data="{ show: false }"
+		@click.outside="show = false"
+		@popui-cal-confirm="show = false"
+		@popui-cal-cancel="show = false"
+		class="w-fit"
+	>
+		@popui.Button(props.Button{
+			Attributes: templ.Attributes{
+				"@click": "show = !show",
+			},
+		}) {
+			Pick a date
+		}
+		<div x-show="show" x-cloak class="mt-2">
+			@popui.Calendar(props.Calendar{
+				Name:   "due_date",
+				Single: true,
+			})
+		</div>
+	</div>
+}

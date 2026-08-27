@@ -35,6 +35,10 @@ templ ButtonGroup(opts ...props.ButtonGroup) {
 // If the Anchor property is set, it renders an <a> tag, otherwise a <button> tag.
 // Supports sizes: "sm", "md" (default), "lg", and "icon"
 // Supports variants: "primary", "secondary", "danger" and "transparent"
+//
+// Note: the type attribute is set via two independent conditions rather than
+// `if/else if`. templ v0.3.1001 mis-generates `else if` in attribute position,
+// emitting a literal `else` into the markup.
 templ Button(p ...props.Button) {
 	{{ btn := props.First(p) }}
 	if btn.IsAnchor() {
@@ -82,7 +86,8 @@ templ Button(p ...props.Button) {
 			}
 			if btn.Type != "" {
 				type={ btn.Type }
-			} else if btn.Copy != "" {
+			}
+			if btn.Type == "" && btn.Copy != "" {
 				type="button"
 			}
 			if btn.Name != "" {
