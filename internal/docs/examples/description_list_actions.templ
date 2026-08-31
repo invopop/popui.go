@@ -17,7 +17,7 @@ templ DescriptionListActionsExample() {
 			SuffixLength: 4,
 			Actions: []props.DescriptionListAction{
 				{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy"}},
-				{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+				{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Default: true, Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
 			},
 		})
 		@popui.DescriptionListItem(props.DescriptionListItem{

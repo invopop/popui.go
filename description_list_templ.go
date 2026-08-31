@@ -116,7 +116,8 @@ func DescriptionList(opts ...props.DescriptionList) templ.Component {
 // cell filling the rest of the row, and hover-revealed action buttons pinned
 // to the row's right edge. Inline puts the label left of the value; otherwise
 // the label stacks above it. When Actions is non-empty, clicking anywhere on
-// the row triggers the first action (copy, open link, …), not just its button.
+// the row triggers the default action (the first one flagged Default, or the
+// first action otherwise), not just its button.
 func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -166,7 +167,7 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 46, Col: 13}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 47, Col: 13}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -218,7 +219,7 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 58, Col: 14}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 59, Col: 14}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -251,7 +252,7 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.Value)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 64, Col: 14}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 65, Col: 14}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -274,16 +275,27 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 }
 
 // detailRowDefaultActionScript forwards a click anywhere on a detail row to
-// its first action button, skipping clicks that landed on an action button
+// its default action button, skipping clicks that landed on an action button
 // itself (the button already handles them) or that finished a text selection.
-const detailRowDefaultActionScript = "if (!event.target.closest('.popui-detail-action') && !window.getSelection().toString()) { this.querySelector('.popui-detail-action')?.click(); }"
+const detailRowDefaultActionScript = "if (!event.target.closest('.popui-detail-action') && !window.getSelection().toString()) { this.querySelector('.popui-detail-action-default')?.click(); }"
+
+// defaultActionIndex returns the index of the row's default action: the first
+// action flagged Default, or the first action when none is flagged.
+func defaultActionIndex(actions []props.DescriptionListAction) int {
+	for i, a := range actions {
+		if a.Default {
+			return i
+		}
+	}
+	return 0
+}
 
 // descriptionListDetailItem renders the detail-row form of a
 // DescriptionListItem on the popui-detail-* styles — the same structure the
 // side-panel detail rows use: fixed-width label (dt), flex-1 value cell (dd)
 // with a hover tint, the value growing to pin hover-revealed action buttons to
 // the row's right edge. Non-Inline stacks the label above the value. Rows with
-// actions delegate clicks anywhere on the row to the first action's button.
+// actions delegate clicks anywhere on the row to the default action's button.
 func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -328,7 +340,7 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 85, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 97, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -374,7 +386,7 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 101, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 113, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -431,18 +443,19 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 104, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 116, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, a := range p.Actions {
-			templ_7745c5c3_Err = descriptionListActionButton(a, props.ButtonSizeIconSmall).Render(ctx, templ_7745c5c3_Buffer)
+		defaultIdx := defaultActionIndex(p.Actions)
+		for i, a := range p.Actions {
+			templ_7745c5c3_Err = descriptionListActionButton(a, props.ButtonSizeIconSmall, i == defaultIdx).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -456,8 +469,10 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 }
 
 // descriptionListActionButton renders one DescriptionListItem action: a copy
-// button (Copy set), an external-link anchor (URL set), or a plain button.
-func descriptionListActionButton(a props.DescriptionListAction, size string) templ.Component {
+// button (Copy set), an external-link anchor (URL set), or a plain button. The
+// row's default action gets the popui-detail-action-default hook class that
+// row clicks are delegated to.
+func descriptionListActionButton(a props.DescriptionListAction, size string, isDefault bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -478,6 +493,7 @@ func descriptionListActionButton(a props.DescriptionListAction, size string) tem
 			templ_7745c5c3_Var23 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		class := tailwind.Merge("popui-detail-action", classes.If(isDefault, "popui-detail-action-default"))
 		if a.Copy != "" {
 			templ_7745c5c3_Var24 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -500,7 +516,7 @@ func descriptionListActionButton(a props.DescriptionListAction, size string) tem
 				return nil
 			})
 			templ_7745c5c3_Err = Button(props.Button{
-				Class: "popui-detail-action",
+				Class: class,
 				Size:  size,
 				Attributes: mergeAttributes(
 					templ.Attributes{
@@ -537,7 +553,7 @@ func descriptionListActionButton(a props.DescriptionListAction, size string) tem
 				return nil
 			})
 			templ_7745c5c3_Err = Button(props.Button{
-				Class:      "popui-detail-action",
+				Class:      class,
 				Size:       size,
 				Href:       a.URL,
 				Target:     "_blank",
@@ -569,7 +585,7 @@ func descriptionListActionButton(a props.DescriptionListAction, size string) tem
 				return nil
 			})
 			templ_7745c5c3_Err = Button(props.Button{
-				Class:      "popui-detail-action",
+				Class:      class,
 				Size:       size,
 				Attributes: a.Attributes,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
@@ -625,7 +641,7 @@ func DT(opts ...props.DT) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 165, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 181, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -718,7 +734,7 @@ func DD(opts ...props.DD) templ.Component {
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 184, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 200, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {

@@ -24,6 +24,9 @@ type DescriptionListAction struct {
 	// Attributes wire extra behavior/extras on the button (aria-label, onclick,
 	// …) and override the defaults a Copy / URL action sets.
 	Attributes templ.Attributes
+	// Default marks this action as the row's default, triggered by clicking
+	// anywhere on the item; when no action is flagged, the first action is used.
+	Default bool
 }
 
 // DescriptionListItem defines the props for the DescriptionListItem component.
@@ -44,8 +47,9 @@ type DescriptionListItem struct {
 	PrefixLength int
 	SuffixLength int
 	// Actions are hover-revealed buttons rendered next to the value (copy,
-	// external-link, …), in order of placement. The first action is also the
-	// row's default: clicking anywhere on the item triggers it.
+	// external-link, …), in order of placement. Clicking anywhere on the item
+	// triggers the row's default action: the first action flagged Default, or
+	// the first action when none is flagged.
 	Actions []DescriptionListAction
 }
 

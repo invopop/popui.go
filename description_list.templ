@@ -35,7 +35,8 @@ templ DescriptionList(opts ...props.DescriptionList) {
 // cell filling the rest of the row, and hover-revealed action buttons pinned
 // to the row's right edge. Inline puts the label left of the value; otherwise
 // the label stacks above it. When Actions is non-empty, clicking anywhere on
-// the row triggers the first action (copy, open link, …), not just its button.
+// the row triggers the default action (the first one flagged Default, or the
+// first action otherwise), not just its button.
 templ DescriptionListItem(opts ...props.DescriptionListItem) {
 	{{ p := props.First(opts) }}
 	if p.Inline || len(p.Actions) > 0 {
@@ -69,16 +70,27 @@ templ DescriptionListItem(opts ...props.DescriptionListItem) {
 }
 
 // detailRowDefaultActionScript forwards a click anywhere on a detail row to
-// its first action button, skipping clicks that landed on an action button
+// its default action button, skipping clicks that landed on an action button
 // itself (the button already handles them) or that finished a text selection.
-const detailRowDefaultActionScript = "if (!event.target.closest('.popui-detail-action') && !window.getSelection().toString()) { this.querySelector('.popui-detail-action')?.click(); }"
+const detailRowDefaultActionScript = "if (!event.target.closest('.popui-detail-action') && !window.getSelection().toString()) { this.querySelector('.popui-detail-action-default')?.click(); }"
+
+// defaultActionIndex returns the index of the row's default action: the first
+// action flagged Default, or the first action when none is flagged.
+func defaultActionIndex(actions []props.DescriptionListAction) int {
+	for i, a := range actions {
+		if a.Default {
+			return i
+		}
+	}
+	return 0
+}
 
 // descriptionListDetailItem renders the detail-row form of a
 // DescriptionListItem on the popui-detail-* styles — the same structure the
 // side-panel detail rows use: fixed-width label (dt), flex-1 value cell (dd)
 // with a hover tint, the value growing to pin hover-revealed action buttons to
 // the row's right edge. Non-Inline stacks the label above the value. Rows with
-// actions delegate clicks anywhere on the row to the first action's button.
+// actions delegate clicks anywhere on the row to the default action's button.
 templ descriptionListDetailItem(p props.DescriptionListItem) {
 	<div
 		if p.ID != "" {
@@ -103,19 +115,23 @@ templ descriptionListDetailItem(p props.DescriptionListItem) {
 			<span class={ tailwind.Merge("popui-detail-value", classes.If(p.Mono, "font-mono")) }>
 				{ detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength) }
 			</span>
-			for _, a := range p.Actions {
-				@descriptionListActionButton(a, props.ButtonSizeIconSmall)
+			{{ defaultIdx := defaultActionIndex(p.Actions) }}
+			for i, a := range p.Actions {
+				@descriptionListActionButton(a, props.ButtonSizeIconSmall, i == defaultIdx)
 			}
 		</dd>
 	</div>
 }
 
 // descriptionListActionButton renders one DescriptionListItem action: a copy
-// button (Copy set), an external-link anchor (URL set), or a plain button.
-templ descriptionListActionButton(a props.DescriptionListAction, size string) {
+// button (Copy set), an external-link anchor (URL set), or a plain button. The
+// row's default action gets the popui-detail-action-default hook class that
+// row clicks are delegated to.
+templ descriptionListActionButton(a props.DescriptionListAction, size string, isDefault bool) {
+	{{ class := tailwind.Merge("popui-detail-action", classes.If(isDefault, "popui-detail-action-default")) }}
 	if a.Copy != "" {
 		@Button(props.Button{
-			Class: "popui-detail-action",
+			Class: class,
 			Size:  size,
 			Attributes: mergeAttributes(
 				templ.Attributes{
@@ -133,7 +149,7 @@ templ descriptionListActionButton(a props.DescriptionListAction, size string) {
 		}
 	} else if a.URL != "" {
 		@Button(props.Button{
-			Class:      "popui-detail-action",
+			Class:      class,
 			Size:       size,
 			Href:       a.URL,
 			Target:     "_blank",
@@ -146,7 +162,7 @@ templ descriptionListActionButton(a props.DescriptionListAction, size string) {
 		}
 	} else {
 		@Button(props.Button{
-			Class:      "popui-detail-action",
+			Class:      class,
 			Size:       size,
 			Attributes: a.Attributes,
 		}) {
