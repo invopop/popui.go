@@ -133,7 +133,7 @@ func DescriptionList() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Inline Rows & Actions",
-			Description: "Inline lays the item out label-left / value-right. Actions add hover-revealed buttons (copy, external-link) next to the value, and PrefixLength / SuffixLength truncate long values (the full value is still copied). Leaving Inline unset stacks the label above the value while keeping the hover reveal.",
+			Description: "Inline lays the item out label-left / value-right. Actions add hover-revealed buttons (copy, external-link) next to the value, and PrefixLength / SuffixLength truncate long values (the full value is still copied). Clicking anywhere on the item triggers the row's default action — the first action flagged Default, or the first action otherwise. Leaving Inline unset stacks the label above the value while keeping the hover reveal.",
 			Code:        examples.LoadExample("description_list_actions.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -206,7 +206,7 @@ func DescriptionList() templ.Component {
 					{Name: "Mono", Type: "bool", Default: "false", Description: "Render the value in the monospace face (ids, hashes)."},
 					{Name: "PrefixLength", Type: "int", Default: "0", Description: "Truncate the DISPLAYED value to prefix…suffix (the full value is still copied). 0 with SuffixLength 0 shows it untruncated."},
 					{Name: "SuffixLength", Type: "int", Default: "0", Description: "Suffix length for prefix…suffix truncation; 0 renders prefix… only."},
-					{Name: "Actions", Type: "[]props.DescriptionListAction", Default: "", Description: "Hover-revealed action buttons rendered next to the value, in order of placement."},
+					{Name: "Actions", Type: "[]props.DescriptionListAction", Default: "", Description: "Hover-revealed action buttons rendered next to the value, in order of placement. Clicking anywhere on the row triggers the first action flagged Default, or the first action when none is flagged."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -224,6 +224,7 @@ func DescriptionList() templ.Component {
 					{Name: "Copy", Type: "string", Default: "", Description: "When set, the button copies this text to the clipboard."},
 					{Name: "URL", Type: "templ.SafeURL", Default: "", Description: "When set, the button is an anchor opening the URL in a new tab (target=_blank, rel=noopener noreferrer)."},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Extra attributes (aria-label, onclick, …); override the defaults a Copy / URL action sets."},
+					{Name: "Default", Type: "bool", Default: "false", Description: "Marks this action as the row's default, triggered by clicking anywhere on the item; when no action is flagged, the first action is used."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
