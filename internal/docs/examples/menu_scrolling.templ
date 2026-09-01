@@ -1,0 +1,18 @@
+package examples
+
+import (
+	"fmt"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ MenuScrollingExample() {
+	@popui.Menu() {
+		for i := 1; i <= 40; i++ {
+			@popui.MenuItem(props.MenuItem{Selected: i == 1}) {
+				@popui.Avatar(props.Avatar{Initial: fmt.Sprintf("%c", 'A'+(i-1)%26)})
+				<span>{ fmt.Sprintf("Workspace %d", i) }</span>
+			}
+		}
+	}
+}
