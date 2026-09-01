@@ -33,9 +33,12 @@ type SidePanel struct {
 	// Empty / unknown values fall back to right.
 	Position string
 
-	// Width sets the panel's fixed pixel width. Zero falls back to
+	// Width sets the panel's initial pixel width. Zero falls back to
 	// 400 — a comfortable detail-panel default. Anything between
 	// 320 and 720 reads well without crowding the main content.
+	// The user can adjust the width at runtime by dragging the panel's
+	// inner edge; the adjusted width survives open/close cycles but
+	// resets to Width on the next page load.
 	Width int
 }
 
