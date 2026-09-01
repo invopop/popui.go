@@ -293,6 +293,23 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     input.focus()
   })
 
+  // Opens the native picker for inputs whose calendar indicator is replaced
+  // by the popui calendar button.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest ? e.target.closest('[data-input-picker]') : null
+    if (!btn) return
+    const input = btn.parentElement.querySelector('input[data-pickable]')
+    if (!input) return
+    input.focus()
+    if (typeof input.showPicker === 'function') {
+      try {
+        input.showPicker()
+      } catch {
+        // showPicker can throw (e.g. cross-origin iframe); focus is enough.
+      }
+    }
+  })
+
   // ------------------------------------------------------------------
   // DOM wiring
   // ------------------------------------------------------------------

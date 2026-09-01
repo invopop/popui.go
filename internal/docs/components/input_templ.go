@@ -81,7 +81,7 @@ func Input() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Input Types",
-			Description: "Input supports various types including text, email, password, date, and more. Search, date, and time inputs show a clear button while they hold a value.",
+			Description: "Input supports various types including text, email, password, date, and more. Search, date, and time inputs show a clear button while they hold a value; date, time, week, and month inputs open their native picker from a calendar icon button.",
 			Code:        examples.LoadExample("input_types.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

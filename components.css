@@ -217,25 +217,23 @@ pre {
   background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%2330333B'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
 }
 
-/* Input clear button — circled x, same colors as the Select arrow */
-[data-input-clear] {
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='8' fill='%23F3F4F6'/%3E%3Cpath d='M7.5 7.5L12.5 12.5M12.5 7.5L7.5 12.5' stroke='%23030712' stroke-width='1.1'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 1.25rem 1.25rem;
-}
-.dark [data-input-clear] {
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='8' fill='%2330333B'/%3E%3Cpath d='M7.5 7.5L12.5 12.5M12.5 7.5L7.5 12.5' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
+/* The input clear button is display:flex for icon centering, which would
+   otherwise defeat the hidden attribute popui.js toggles it with. */
+[data-input-clear][hidden] {
+  display: none;
 }
 
-/* Clearable inputs replace the native WebKit clear/picker controls with the
-   popui clear button, which would otherwise overlap them. */
+/* Clearable inputs replace the native WebKit clear control with the popui
+   clear button, which would otherwise double up with it. */
 input[data-clearable]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   appearance: none;
   display: none;
 }
-input[data-clearable]::-webkit-calendar-picker-indicator {
+
+/* Pickable inputs (date, time, week, month) replace the native calendar
+   indicator with the popui calendar button. */
+input[data-pickable]::-webkit-calendar-picker-indicator {
   display: none;
 }
 
