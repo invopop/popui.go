@@ -8,13 +8,52 @@ import (
 templ InputTypesExample() {
 	@popui.Input(props.Input{
 		Type:        "email",
+		Label:       "Email",
 		Placeholder: "email@example.com",
 	})
 	@popui.Input(props.Input{
 		Type:        "password",
+		Label:       "Password",
 		Placeholder: "Enter password",
 	})
 	@popui.Input(props.Input{
-		Type: "date",
+		Type:        "number",
+		Label:       "Number",
+		Placeholder: "42",
+	})
+	@popui.Input(props.Input{
+		Type:        "tel",
+		Label:       "Telephone",
+		Placeholder: "+34 600 000 000",
+	})
+	@popui.Input(props.Input{
+		Type:        "url",
+		Label:       "URL",
+		Placeholder: "https://example.com",
+	})
+	@popui.Input(props.Input{
+		Type:        "search",
+		Label:       "Search",
+		Placeholder: "Search…",
+	})
+	@popui.Input(props.Input{
+		Type:  "date",
+		Label: "Date",
+	})
+	@popui.Input(props.Input{
+		Type:  "time",
+		Label: "Time",
+	})
+	@popui.Input(props.Input{
+		Type:  "week",
+		Label: "Week",
+	})
+	@popui.Input(props.Input{
+		Type:  "month",
+		Label: "Month",
+	})
+	@popui.Input(props.Input{
+		Type:  "file",
+		Label: "File",
 	})
 }

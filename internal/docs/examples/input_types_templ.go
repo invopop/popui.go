@@ -36,6 +36,7 @@ func InputTypesExample() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = popui.Input(props.Input{
 			Type:        "email",
+			Label:       "Email",
 			Placeholder: "email@example.com",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -43,13 +44,75 @@ func InputTypesExample() templ.Component {
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
 			Type:        "password",
+			Label:       "Password",
 			Placeholder: "Enter password",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
-			Type: "date",
+			Type:        "number",
+			Label:       "Number",
+			Placeholder: "42",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:        "tel",
+			Label:       "Telephone",
+			Placeholder: "+34 600 000 000",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:        "url",
+			Label:       "URL",
+			Placeholder: "https://example.com",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:        "search",
+			Label:       "Search",
+			Placeholder: "Search…",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:  "date",
+			Label: "Date",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:  "time",
+			Label: "Time",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:  "week",
+			Label: "Week",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:  "month",
+			Label: "Month",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:  "file",
+			Label: "File",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

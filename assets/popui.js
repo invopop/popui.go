@@ -260,6 +260,40 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   }
 
   // ------------------------------------------------------------------
+  // Input clear buttons
+  // ------------------------------------------------------------------
+
+  // Shows or hides a clearable input's clear button based on its value.
+  function updateInputClear(input) {
+    const btn = input.parentElement ? input.parentElement.querySelector('[data-input-clear]') : null
+    if (btn) btn.hidden = input.value === ''
+  }
+
+  // Syncs every clearable input's clear button with its current value.
+  function initInputClears() {
+    document.querySelectorAll('input[data-clearable]').forEach(updateInputClear)
+  }
+
+  function onInputClearEvent(e) {
+    const t = e.target
+    if (t instanceof HTMLInputElement && t.hasAttribute('data-clearable')) updateInputClear(t)
+  }
+
+  document.addEventListener('input', onInputClearEvent)
+  document.addEventListener('change', onInputClearEvent)
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest ? e.target.closest('[data-input-clear]') : null
+    if (!btn) return
+    const input = btn.parentElement.querySelector('input[data-clearable]')
+    if (!input) return
+    input.value = ''
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    input.focus()
+  })
+
+  // ------------------------------------------------------------------
   // DOM wiring
   // ------------------------------------------------------------------
 
@@ -313,12 +347,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     initButtonCopies()
     attachTableResizers()
+    initInputClears()
   })
 
-  // Rewires ButtonCopies and table resizers inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers and input clear buttons inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
+    initInputClears()
   })
 
   // Clears button loading spinners when the page becomes visible again.
