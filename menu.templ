@@ -60,10 +60,15 @@ templ Menu(opts ...props.Menu) {
 			:style="'position-anchor: --context-menu-' + $id('context-menu')"
 			class={
 				tailwind.Merge(
-					"context-menu",
+					// context-menu-scroll caps the panel at the viewport edge
+					// (see components.css); the flex column lets the ul below
+					// scroll inside while the padding stays put.
+					"context-menu context-menu-scroll flex flex-col",
 					// max-w caps the panel when an item label is very long; the
-					// items themselves truncate (see MenuItem).
-					"border border-border rounded-xl p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+					// items themselves truncate (see MenuItem). Horizontal
+					// padding lives on the ul, not here, so MenuSeparator's
+					// -mx-1 bleed isn't clipped by the ul's overflow-x.
+					"border border-border rounded-xl py-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
 					classes.If(!p.DropUp, "mt-1"),
 					classes.If(p.DropUp, "mb-1 context-menu-up"),
 					classes.If(p.RightAlign, "context-menu-right-align"),
@@ -71,7 +76,7 @@ templ Menu(opts ...props.Menu) {
 				),
 			}
 		>
-			<ul>
+			<ul class="min-h-0 overflow-y-auto overflow-x-hidden px-1">
 				{ children... }
 			</ul>
 		</div>
@@ -116,7 +121,8 @@ templ MenuItem(opts ...props.MenuItem) {
 templ MenuSeparator(opts ...props.MenuSeparator) {
 	{{ p := props.First(opts) }}
 	// Negative inline margin lets the line span the full panel width, past
-	// the menu panel's p-1 padding.
+	// the item list's px-1 padding (in Menu; the Filter panels' p-1 works
+	// the same way).
 	<li
 		role="separator"
 		aria-hidden="true"

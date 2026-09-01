@@ -18,6 +18,9 @@ templ Index() {
 		// hx-get). Without it, a filter submit falls back to a native form
 		// navigation that reloads the whole docs page.
 		HTMX: true,
+		// Pin the layout to the viewport so the sidebar and the main content
+		// scroll independently instead of the whole page scrolling as one.
+		FillViewport: true,
 		Scripts: []props.Script{
 			{Src: "/assets/" + assets.Versioned("scripts", "docs.js")},
 		},

@@ -69,6 +69,30 @@ body {
   position-try-fallbacks: flip-block;
 }
 
+/* Viewport height cap (context-menu-scroll, set by popui.Menu): the inset
+   opposite the anchor marks the viewport edge, and max-height: stretch caps
+   the panel at that inset box — the inset alone wouldn't, since height:
+   fit-content over-constrains the box and the bottom inset gets discarded.
+   Short menus stay content-sized; long ones cap at the viewport and scroll
+   their item list inside (the panel is a flex column and the list a min-h-0
+   overflow-y-auto item, so the padding and rounded corners stay put).
+   anchor() is invalid inside max-height, so the cap needs this two-part
+   inset + stretch form. */
+[popover].context-menu.context-menu-scroll {
+  bottom: 0.75rem;
+  max-height: -webkit-fill-available; /* Safari: no `stretch` keyword yet */
+  max-height: stretch;
+}
+[popover].context-menu.context-menu-up.context-menu-scroll {
+  top: 0.75rem;
+  bottom: anchor(top);
+  /* With height: fit-content the box is over-constrained and the bottom
+     inset (the anchor pin!) would be discarded — abspos self-alignment keeps
+     the panel hugging the anchor at the end of its inset box instead.
+     flip-block (from the base -up rule) flips this along with the insets. */
+  align-self: end;
+}
+
 /* Fallback for browsers without anchor positioning support */
 @supports not (anchor-name: --test) {
   [popover].context-menu {
@@ -77,10 +101,21 @@ body {
     left: auto;
     margin: 0.5rem;
   }
+  /* No anchor() means no viewport-relative cap — fall back to a fixed one. */
+  [popover].context-menu.context-menu-scroll {
+    top: auto;
+    bottom: auto;
+    max-height: min(24rem, 70vh);
+  }
 }
 
 /* Multiselect dropdown */
 
+/* The bottom inset + max-height: stretch cap the panel at the viewport edge,
+   exactly like .context-menu-scroll above (the inset alone would be discarded
+   because the UA's height: fit-content over-constrains the box). The panel is
+   a flex column and the option list a min-h-0 overflow-y-auto item, so the
+   search input, padding, and rounded corners stay put while options scroll. */
 [popover].multiselect-panel {
   position: fixed;
   inset: unset;
@@ -88,6 +123,9 @@ body {
   top: anchor(bottom);
   left: anchor(left);
   margin-top: 0.25rem;
+  bottom: 0.75rem;
+  max-height: -webkit-fill-available; /* Safari: no `stretch` keyword yet */
+  max-height: stretch;
 }
 [popover].multiselect-panel:not(:popover-open) {
   display: none;
@@ -97,7 +135,10 @@ body {
     position: absolute;
     top: auto;
     left: auto;
+    bottom: auto;
     margin: 0.25rem 0 0;
+    /* No anchor() means no viewport-relative cap — fall back to a fixed one. */
+    max-height: min(24rem, 70vh);
   }
 }
 
@@ -638,11 +679,13 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 .popui-cal-cell:has(> .popui-cal-day[data-state="start"]),
+.popui-cal-cell:has(> .popui-cal-day[data-state="single"]),
 .popui-cal-cell:first-child:has(> .popui-cal-day[data-state]) {
   border-top-left-radius: 0.375rem;
   border-bottom-left-radius: 0.375rem;
 }
 .popui-cal-cell:has(> .popui-cal-day[data-state="end"]),
+.popui-cal-cell:has(> .popui-cal-day[data-state="single"]),
 .popui-cal-cell:last-child:has(> .popui-cal-day[data-state]) {
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
@@ -675,7 +718,8 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 .popui-cal-day[data-state="start"],
-.popui-cal-day[data-state="end"] {
+.popui-cal-day[data-state="end"],
+.popui-cal-day[data-state="single"] {
   background-color: var(--color-background-accent);
   color: var(--color-foreground-inverse);
   font-weight: 600;
