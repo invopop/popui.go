@@ -222,10 +222,10 @@ templ selectMultiple(prp props.Select) {
 			:style="'position-anchor: --' + $id('multiselect')"
 			@toggle="onToggle($event)"
 			@keydown="onKeydown($event)"
-			class="multiselect-panel min-w-48 max-w-[min(24rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
+			class="multiselect-panel flex flex-col min-w-48 max-w-[min(24rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
 		>
 			if prp.Searchable {
-				<div class="p-1">
+				<div class="p-1 shrink-0">
 					@Input(props.Input{
 						Type:        "search",
 						Placeholder: "Search…",
@@ -242,6 +242,9 @@ templ selectMultiple(prp props.Select) {
 					})
 				</div>
 			}
+			// min-h-0 lets the list shrink inside the panel's viewport height
+			// cap (see .multiselect-panel in components.css) and scroll,
+			// instead of a fixed max height.
 			<ul
 				x-ref="list"
 				tabindex="-1"
@@ -249,7 +252,7 @@ templ selectMultiple(prp props.Select) {
 				aria-multiselectable="true"
 				:id="$id('multiselect') + '-listbox'"
 				:aria-activedescendant="activeId"
-				class="max-h-60 overflow-y-auto overflow-x-hidden outline-none"
+				class="min-h-0 overflow-y-auto overflow-x-hidden outline-none"
 			>
 				<template x-for="(option, index) in filtered" :key="option.value">
 					<li
