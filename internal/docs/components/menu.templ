@@ -28,6 +28,13 @@ templ Menu() {
 		@examples.MenuCustomTriggerExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Scrolling",
+		Description: "Long menus never extend past the viewport edge — the panel caps its height there and the items scroll inside. No prop needed; a menu that fits stays content-sized.",
+		Code:        examples.LoadExample("menu_scrolling.templ"),
+	}) {
+		@examples.MenuScrollingExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "With Separator",
 		Description: "Use MenuSeparator to draw a thin line between groups of items — for example, separating destructive actions from the rest.",
 		Code:        examples.LoadExample("menu_with_separator.templ"),
