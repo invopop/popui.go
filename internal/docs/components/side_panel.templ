@@ -16,13 +16,13 @@ templ SidePanel() {
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "SidePanel",
-			Description: "Fixed-position side panel that overlays one edge of the viewport. Open / close is driven by `popui-sidepanel-open` / `popui-sidepanel-close` window events whose `event.detail` must match the panel's ID.",
+			Description: "Fixed-position side panel that overlays one edge of the viewport. Open / close is driven by `popui-sidepanel-open` / `popui-sidepanel-close` window events whose `event.detail` must match the panel's ID. The panel's inner edge is a drag handle — it highlights on hover and dragging it adjusts the panel's width.",
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the panel's <aside> element and the event scope for open/close."},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes merged with the panel's base styling."},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the <aside> element."},
 				{Name: "Position", Type: "string", Default: "right", Description: "Edge of the viewport to anchor to. One of `props.SidePanelPositionRight` or `props.SidePanelPositionLeft`."},
-				{Name: "Width", Type: "int", Default: "400", Description: "Panel width in pixels. 0 falls back to 400."},
+				{Name: "Width", Type: "int", Default: "400", Description: "Initial panel width in pixels. 0 falls back to 400. The user can resize by dragging the panel's inner edge; the adjusted width survives open/close cycles."},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
