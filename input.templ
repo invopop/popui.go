@@ -1,6 +1,7 @@
 package popui
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
@@ -23,8 +24,15 @@ import (
 //  * number
 //
 // If the Label property is provided, a simple label will be rendered above the input.
+//
+// Search, date, and time inputs render a clear button on the right while they
+// hold a value (wired up by popui.js), replacing the native browser controls.
+// Date, time, week, and month inputs replace the native calendar indicator
+// with a calendar icon button that opens the native picker via showPicker().
 templ Input(p ...props.Input) {
 	{{ prp := props.First(p) }}
+	{{ clearable := inputClearable(prp) }}
+	{{ pickable := inputPickable(prp) }}
 	<div class="flex flex-col space-y-2 w-full">
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
@@ -50,8 +58,17 @@ templ Input(p ...props.Input) {
 						classes.FormField(),
 						classes.FormFieldState(!prp.Error.Empty()),
 						inputSizeClasses(prp),
+						classes.If(clearable || pickable, "pr-8"),
+						classes.If(clearable && pickable, "pr-14"),
+						classes.If(prp.Type == "file", inputFileClasses()),
 						prp.Class,
 					),
+				}
+				if clearable {
+					data-clearable
+				}
+				if inputPickableType(prp.Type) {
+					data-pickable
 				}
 				if prp.Placeholder != "" {
 					placeholder={ prp.Placeholder }
@@ -76,6 +93,32 @@ templ Input(p ...props.Input) {
 				}
 				{ prp.Attributes... }
 			/>
+			if clearable {
+				<button
+					type="button"
+					data-input-clear
+					aria-label="Clear input"
+					hidden
+					class={
+						tailwind.Merge(
+							"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer flex items-center justify-center text-foreground-default-secondary hover:text-foreground",
+							classes.If(pickable, "right-8"),
+						),
+					}
+				>
+					@icons.Close()
+				</button>
+			}
+			if pickable {
+				<button
+					type="button"
+					data-input-picker
+					aria-label="Open picker"
+					class="absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer flex items-center justify-center text-foreground-default-secondary hover:text-foreground"
+				>
+					@icons.Calendar()
+				</button>
+			}
 		</div>
 		if !prp.Error.Empty() {
 			@InputError(prp.Error)
@@ -109,6 +152,41 @@ templ InputError(e props.Error) {
 			{ e.Text }
 		}
 	</p>
+}
+
+// inputFileClasses styles a file input's native choose-file control like the
+// secondary Button variant, with tightened field padding so the control sits
+// inset like a button rather than floating in the field's text padding.
+func inputFileClasses() string {
+	return "py-1 pl-1 file:cursor-pointer file:mr-3 file:rounded-md file:border-0 file:bg-background-default-tertiary file:hover:bg-background-default-tertiary-hover file:px-2 file:py-[3px] file:font-medium file:font-sans file:text-base file:tracking-tight file:text-foreground file:shadow-button-default file:active:shadow-button-pressed"
+}
+
+// inputClearable reports whether the input renders a clear button: search,
+// date, and time inputs get one, unless the field cannot be edited.
+func inputClearable(p props.Input) bool {
+	switch p.Type {
+	case "search", "date", "time":
+		return !p.Disabled && !p.Readonly
+	}
+	return false
+}
+
+// inputPickableType reports whether the type has a native calendar picker
+// whose indicator is replaced by the popui calendar button.
+func inputPickableType(typ string) bool {
+	switch typ {
+	case "date", "time", "week", "month":
+		return true
+	}
+	return false
+}
+
+// inputPickable reports whether the input renders a calendar button that opens
+// the native picker. The native indicator is hidden for pickable types even
+// when the field cannot be edited (see inputPickableType), but the button is
+// only rendered while the picker can actually open.
+func inputPickable(p props.Input) bool {
+	return inputPickableType(p.Type) && !p.Disabled && !p.Readonly
 }
 
 func inputType(typ string) string {
