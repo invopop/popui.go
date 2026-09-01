@@ -98,8 +98,9 @@ func Select(p ...props.Select) templ.Component {
 			var templ_7745c5c3_Var4 = []any{tailwind.Merge(
 				classes.FormField(),
 				// truncate gives the selected option an ellipsis instead of
-				// a hard clip when it exceeds the field width.
-				"pl-2 h-8 pr-9 truncate",
+				// a hard clip when it exceeds the field width. Height comes
+				// from FormField's padding so selects match inputs exactly.
+				"pl-2 pr-9 truncate",
 				classes.FormFieldState(!prp.Error.Empty()),
 				prp.Class,
 			)}
@@ -163,7 +164,7 @@ func Select(p ...props.Select) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 61, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 62, Col: 20}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -191,7 +192,7 @@ func Select(p ...props.Select) templ.Component {
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(option.Value)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 68, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 69, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -220,7 +221,7 @@ func Select(p ...props.Select) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 76, Col: 21}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 77, Col: 21}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -286,7 +287,7 @@ func selectMultiple(prp props.Select) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(selectMultipleData(prp))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 103, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 104, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -320,7 +321,7 @@ func selectMultiple(prp props.Select) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 110, Col: 15}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 111, Col: 15}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -345,7 +346,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 120, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 121, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -380,7 +381,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(option.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 131, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 132, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -403,7 +404,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 136, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 137, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -421,7 +422,9 @@ func selectMultiple(prp props.Select) templ.Component {
 		var templ_7745c5c3_Var17 = []any{tailwind.Merge(
 			classes.FormField(),
 			classes.FormFieldState(!prp.Error.Empty()),
-			"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5 mb-0",
+			// min-h-8.5 (34px) matches the natural height of Input and
+			// the single Select: 20px line + py-1.5 + borders.
+			"flex flex-wrap items-center gap-1 min-h-8.5 py-1 pl-1 pr-1.5 mb-0",
 			classes.If(prp.Disabled, "cursor-not-allowed bg-background-default-secondary"),
 			prp.Class,
 		),
@@ -511,7 +514,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 185, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 188, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -546,7 +549,7 @@ func selectMultiple(prp props.Select) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 204, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `select.templ`, Line: 207, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {

@@ -42,8 +42,9 @@ templ Select(p ...props.Select) {
 				class={ tailwind.Merge(
 					classes.FormField(),
 					// truncate gives the selected option an ellipsis instead of
-					// a hard clip when it exceeds the field width.
-					"pl-2 h-8 pr-9 truncate",
+					// a hard clip when it exceeds the field width. Height comes
+					// from FormField's padding so selects match inputs exactly.
+					"pl-2 pr-9 truncate",
 					classes.FormFieldState(!prp.Error.Empty()),
 					prp.Class,
 				) }
@@ -144,7 +145,9 @@ templ selectMultiple(prp props.Select) {
 				tailwind.Merge(
 					classes.FormField(),
 					classes.FormFieldState(!prp.Error.Empty()),
-					"flex flex-wrap items-center gap-1 min-h-8 py-1 pl-1 pr-1.5 mb-0",
+					// min-h-8.5 (34px) matches the natural height of Input and
+					// the single Select: 20px line + py-1.5 + borders.
+					"flex flex-wrap items-center gap-1 min-h-8.5 py-1 pl-1 pr-1.5 mb-0",
 					classes.If(prp.Disabled, "cursor-not-allowed bg-background-default-secondary"),
 					prp.Class,
 				),
