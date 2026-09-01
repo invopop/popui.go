@@ -20,6 +20,11 @@ import (
 // can re-fill the panel's inner content slot without losing the
 // open/close state.
 //
+// The panel's inner edge is a drag handle: hovering it shows an accent
+// line and dragging adjusts the panel's width (clamped by the sidePanel
+// controller). Width is the initial width only — the adjusted width
+// lives in Alpine state and survives open/close cycles.
+//
 // Recipe — wire to an HTMX-fetched detail panel:
 //
 //	@popui.SidePanel(props.SidePanel{ID: "my-panel"}) {
@@ -50,23 +55,27 @@ templ SidePanel(opts ...props.SidePanel) {
 		}
 	}}
 	{{
+		anchor := props.SidePanelPositionRight
 		anchorEdge := "right: 0;"
 		borderSide := "border-l"
 		offEdge := "100%"
+		handleEdge := "left-0"
 		if p.Position == props.SidePanelPositionLeft {
+			anchor = props.SidePanelPositionLeft
 			anchorEdge = "left: 0;"
 			borderSide = "border-r"
 			offEdge = "-100%"
+			handleEdge = "right-0"
 		}
 	}}
 	<aside
 		if p.ID != "" {
 			id={ p.ID }
 		}
-		x-data={ "sidePanel('" + jsSingleQuoteEscape(p.ID) + "')" }
+		x-data={ "sidePanel('" + jsSingleQuoteEscape(p.ID) + "', " + strconv.Itoa(width) + ", '" + anchor + "')" }
 		x-cloak
 		style={ "position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px; transition: transform 300ms ease, opacity 300ms ease, visibility 300ms ease; will-change: transform;" }
-		:style={ "{ transform: open ? 'translateX(0)' : 'translateX(" + offEdge + ")', opacity: open ? 1 : 0, visibility: open ? 'visible' : 'hidden' }" }
+		:style={ "{ width: width + 'px', transform: open ? 'translateX(0)' : 'translateX(" + offEdge + ")', opacity: open ? 1 : 0, visibility: open ? 'visible' : 'hidden' }" }
 		class={
 			tailwind.Merge(
 				"flex flex-col bg-background "+borderSide+" border-border overflow-hidden",
@@ -75,6 +84,12 @@ templ SidePanel(opts ...props.SidePanel) {
 		}
 		{ p.Attributes... }
 	>
+		<div
+			class={ "absolute top-0 bottom-0 z-20 w-1 cursor-col-resize transition-colors hover:bg-border-selected-bold " + handleEdge }
+			:class="resizing ? 'bg-border-selected-bold' : ''"
+			@pointerdown="startResize($event)"
+			aria-hidden="true"
+		></div>
 		{ children... }
 	</aside>
 }

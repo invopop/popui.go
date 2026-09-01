@@ -156,8 +156,9 @@ func Notification() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title: "Neutral",
-			Code:  examples.LoadExample("notification_neutral.templ"),
+			Title:       "Neutral",
+			Description: "The neutral type is a plain bordered card with a muted icon. Without Text the description becomes the main message, sharing a single centered row with any actions.",
+			Code:        examples.LoadExample("notification_neutral.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -209,7 +210,7 @@ func Notification() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Type", Type: "string", Default: "", Description: "Notification type: info, warning, error, success, or neutral"},
 					{Name: "Text", Type: "string", Default: "", Description: "Main notification text (bold), spanning the full width"},
-					{Name: "Description", Type: "string", Default: "", Description: "Additional descriptive text, shown to the left of any actions"},
+					{Name: "Description", Type: "string", Default: "", Description: "Additional descriptive text, shown to the left of any actions. When Text is empty it renders as the main message instead of a muted subline"},
 					{Name: "Actions", Type: "templ.Component", Default: "", Description: "Buttons rendered on the right of the description row"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)

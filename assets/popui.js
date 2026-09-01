@@ -260,6 +260,57 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   }
 
   // ------------------------------------------------------------------
+  // Input clear buttons
+  // ------------------------------------------------------------------
+
+  // Shows or hides a clearable input's clear button based on its value.
+  function updateInputClear(input) {
+    const btn = input.parentElement ? input.parentElement.querySelector('[data-input-clear]') : null
+    if (btn) btn.hidden = input.value === ''
+  }
+
+  // Syncs every clearable input's clear button with its current value.
+  function initInputClears() {
+    document.querySelectorAll('input[data-clearable]').forEach(updateInputClear)
+  }
+
+  function onInputClearEvent(e) {
+    const t = e.target
+    if (t instanceof HTMLInputElement && t.hasAttribute('data-clearable')) updateInputClear(t)
+  }
+
+  document.addEventListener('input', onInputClearEvent)
+  document.addEventListener('change', onInputClearEvent)
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest ? e.target.closest('[data-input-clear]') : null
+    if (!btn) return
+    const input = btn.parentElement.querySelector('input[data-clearable]')
+    if (!input) return
+    input.value = ''
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    input.focus()
+  })
+
+  // Opens the native picker for inputs whose calendar indicator is replaced
+  // by the popui calendar button.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest ? e.target.closest('[data-input-picker]') : null
+    if (!btn) return
+    const input = btn.parentElement.querySelector('input[data-pickable]')
+    if (!input) return
+    input.focus()
+    if (typeof input.showPicker === 'function') {
+      try {
+        input.showPicker()
+      } catch {
+        // showPicker can throw (e.g. cross-origin iframe); focus is enough.
+      }
+    }
+  })
+
+  // ------------------------------------------------------------------
   // DOM wiring
   // ------------------------------------------------------------------
 
@@ -313,12 +364,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     initButtonCopies()
     attachTableResizers()
+    initInputClears()
   })
 
-  // Rewires ButtonCopies and table resizers inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers and input clear buttons inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
+    initInputClears()
   })
 
   // Clears button loading spinners when the page becomes visible again.
@@ -1032,8 +1085,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }))
 
     // Side panel opened and closed by popui-sidepanel-open/close window events whose detail matches the panel id.
-    Alpine.data('sidePanel', (id) => ({
+    // The width is user-adjustable by dragging the panel's inner-edge handle.
+    Alpine.data('sidePanel', (id, width = 400, anchor = 'right') => ({
       open: false,
+      width,
+      resizing: false,
       init() {
         const matches = (e) => e && e.detail === id
         this._onOpen = (e) => { if (matches(e)) this.open = true }
@@ -1058,6 +1114,32 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         window.removeEventListener('popui-sidepanel-open', this._onOpen)
         window.removeEventListener('popui-sidepanel-close', this._onClose)
         document.removeEventListener('keydown', this._onKeydown)
+      },
+      // Drag-resizes the panel from its inner-edge handle, clamped so the
+      // panel stays usable and never covers the whole viewport.
+      startResize(e) {
+        if (e.button > 0) return
+        e.preventDefault()
+        this.resizing = true
+        const startX = e.clientX
+        const startWidth = this.width
+        const dir = anchor === 'left' ? 1 : -1
+        const min = 320
+        const max = Math.max(min, window.innerWidth - 320)
+        const onMove = (mv) => {
+          this.width = Math.min(max, Math.max(min, startWidth + dir * (mv.clientX - startX)))
+        }
+        const onUp = () => {
+          window.removeEventListener('pointermove', onMove)
+          window.removeEventListener('pointerup', onUp)
+          document.body.style.cursor = ''
+          document.body.style.userSelect = ''
+          this.resizing = false
+        }
+        document.body.style.cursor = 'col-resize'
+        document.body.style.userSelect = 'none'
+        window.addEventListener('pointermove', onMove)
+        window.addEventListener('pointerup', onUp)
       },
     }))
 
