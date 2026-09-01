@@ -83,7 +83,7 @@ templ Example(p ExampleProps) {
 					templ.KV("lg:flex-row max-h-[800px]", !p.Stacked),
 				}
 			>
-				<div class="flex-1 min-w-0 min-h-0">
+				<div class="flex flex-col flex-1 min-w-0 min-h-0 overflow-auto">
 					@PreviewBox() {
 						{ children... }
 					}
