@@ -558,12 +558,12 @@ func selectMultiple(prp props.Select) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span> <span class=\"multiselect-arrow ml-auto shrink-0 size-5 transition-transform\" :class=\"{ 'rotate-180': open }\"></span></button></div><div popover x-ref=\"panel\" :id=\"$id('multiselect')\" :style=\"'position-anchor: --' + $id('multiselect')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"multiselect-panel min-w-48 max-w-[min(24rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span> <span class=\"multiselect-arrow ml-auto shrink-0 size-5 transition-transform\" :class=\"{ 'rotate-180': open }\"></span></button></div><div popover x-ref=\"panel\" :id=\"$id('multiselect')\" :style=\"'position-anchor: --' + $id('multiselect')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"multiselect-panel flex flex-col min-w-48 max-w-[min(24rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if prp.Searchable {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"p-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"p-1 shrink-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -589,7 +589,7 @@ func selectMultiple(prp props.Select) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" aria-multiselectable=\"true\" :id=\"$id('multiselect') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"max-h-60 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(option, index) in filtered\" :key=\"option.value\"><li role=\"option\" :id=\"$id('multiselect') + '-opt-' + index\" :aria-selected=\"isSelected(option.value)\" :aria-disabled=\"option.disabled\" :class=\"{ 'opacity-40 pointer-events-none': option.disabled, 'bg-background-default-secondary': active === index }\" class=\"flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer\" @click=\"toggle(option)\" @mouseenter=\"active = index\"><span class=\"flex items-center justify-center w-4 h-4 shrink-0 rounded border [&_svg]:size-3\" :class=\"isSelected(option.value) ? 'bg-background-accent border-border-selected-bold text-foreground-inverse' : 'border-border-default-secondary text-transparent'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" aria-multiselectable=\"true\" :id=\"$id('multiselect') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(option, index) in filtered\" :key=\"option.value\"><li role=\"option\" :id=\"$id('multiselect') + '-opt-' + index\" :aria-selected=\"isSelected(option.value)\" :aria-disabled=\"option.disabled\" :class=\"{ 'opacity-40 pointer-events-none': option.disabled, 'bg-background-default-secondary': active === index }\" class=\"flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer\" @click=\"toggle(option)\" @mouseenter=\"active = index\"><span class=\"flex items-center justify-center w-4 h-4 shrink-0 rounded border [&_svg]:size-3\" :class=\"isSelected(option.value) ? 'bg-background-accent border-border-selected-bold text-foreground-inverse' : 'border-border-default-secondary text-transparent'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

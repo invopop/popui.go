@@ -169,10 +169,15 @@ func Menu(opts ...props.Menu) templ.Component {
 			}
 		}
 		var templ_7745c5c3_Var9 = []any{tailwind.Merge(
-			"context-menu",
+			// context-menu-scroll caps the panel at the viewport edge
+			// (see components.css); the flex column lets the ul below
+			// scroll inside while the padding stays put.
+			"context-menu context-menu-scroll flex flex-col",
 			// max-w caps the panel when an item label is very long; the
-			// items themselves truncate (see MenuItem).
-			"border border-border rounded-xl p-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+			// items themselves truncate (see MenuItem). Horizontal
+			// padding lives on the ul, not here, so MenuSeparator's
+			// -mx-1 bleed isn't clipped by the ul's overflow-x.
+			"border border-border rounded-xl py-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
 			classes.If(!p.DropUp, "mt-1"),
 			classes.If(p.DropUp, "mb-1 context-menu-up"),
 			classes.If(p.RightAlign, "context-menu-right-align"),
@@ -196,7 +201,7 @@ func Menu(opts ...props.Menu) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><ul class=\"min-h-0 overflow-y-auto overflow-x-hidden px-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -261,7 +266,7 @@ func MenuItem(opts ...props.MenuItem) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 89, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 94, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -368,7 +373,7 @@ func MenuSeparator(opts ...props.MenuSeparator) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 124, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 130, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -453,7 +458,7 @@ func MenuLabel(opts ...props.MenuLabel) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 142, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `menu.templ`, Line: 148, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
