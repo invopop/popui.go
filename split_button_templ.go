@@ -114,26 +114,36 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			if p.Icon != nil {
+				templ_7745c5c3_Err = p.Icon.Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			if p.Content != nil {
 				templ_7745c5c3_Err = p.Content.Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 43, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 46, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -167,9 +177,15 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 			Size:     p.Button.Size,
 			Disabled: p.Button.Disabled,
 			Class: tailwind.Merge(
-				"shrink-0 -ml-px rounded-l-none px-1 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
-				classes.If(p.Button.Size == props.ButtonSizeLarge, "px-1.5"),
+				// The explicit width matches the height each Size gives the
+				// segments (28px md, 24px sm, 32px lg), keeping the toggle a
+				// square (aspect-square can't: as a flex item with content-
+				// based height, it has no definite size to transfer from).
+				"shrink-0 -ml-px rounded-l-none px-0 w-7 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
+				classes.If(p.Button.Size == props.ButtonSizeSmall, "w-6"),
+				classes.If(p.Button.Size == props.ButtonSizeLarge, "w-8"),
 				classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("l")),
+				classes.If(p.Button.Variant == props.ButtonVariantSecondary || p.Button.Variant == props.ButtonVariantTransparent, "border-l-border hover:border-l-border active:border-l-border"),
 			),
 			Attributes: templ.Attributes{
 				"aria-haspopup":        "menu",
@@ -197,7 +213,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div popover :id=\"$id('split-button')\" :style=\"'position-anchor: --split-button-' + $id('split-button')\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div popover :id=\"$id('split-button')\" :style=\"'position-anchor: --split-button-' + $id('split-button')\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -210,7 +226,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"><ul role=\"menu\" class=\"min-h-0 overflow-y-auto overflow-x-hidden px-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\"><ul role=\"menu\" class=\"min-h-0 overflow-y-auto overflow-x-hidden px-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -218,7 +234,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</ul></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</ul></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,14 +250,15 @@ func toggleLabel(label string) string {
 }
 
 // splitButtonPrimaryDivider colors the meeting edge (side "l" or "r") of a
-// primary segment one accent step darker than the button face, so the divider
-// stays visible on the accent background in every state. Class names are
-// spelled out in full so the Tailwind scanner picks them up.
+// primary segment one accent step darker than the button face at rest
+// (accent-hover), stepping to accent-press on hover so the divider stays
+// visible over the darkened hover background. Class names are spelled out in
+// full so the Tailwind scanner picks them up.
 func splitButtonPrimaryDivider(side string) string {
 	if side == "l" {
-		return "border-l-background-accent-press hover:border-l-background-accent-press active:border-l-background-accent-press"
+		return "border-l-background-accent-hover hover:border-l-background-accent-press active:border-l-background-accent-press"
 	}
-	return "border-r-background-accent-press hover:border-r-background-accent-press active:border-r-background-accent-press"
+	return "border-r-background-accent-hover hover:border-r-background-accent-press active:border-r-background-accent-press"
 }
 
 var _ = templruntime.GeneratedTemplate

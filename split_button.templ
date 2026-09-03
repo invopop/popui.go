@@ -37,6 +37,9 @@ templ SplitButton(opts ...props.SplitButton) {
 		{ p.Attributes... }
 	>
 		@Button(btn) {
+			if p.Icon != nil {
+				@p.Icon
+			}
 			if p.Content != nil {
 				@p.Content
 			} else {
@@ -54,9 +57,15 @@ templ SplitButton(opts ...props.SplitButton) {
 			Size:     p.Button.Size,
 			Disabled: p.Button.Disabled,
 			Class: tailwind.Merge(
-				"shrink-0 -ml-px rounded-l-none px-1 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
-				classes.If(p.Button.Size == props.ButtonSizeLarge, "px-1.5"),
+				// The explicit width matches the height each Size gives the
+				// segments (28px md, 24px sm, 32px lg), keeping the toggle a
+				// square (aspect-square can't: as a flex item with content-
+				// based height, it has no definite size to transfer from).
+				"shrink-0 -ml-px rounded-l-none px-0 w-7 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
+				classes.If(p.Button.Size == props.ButtonSizeSmall, "w-6"),
+				classes.If(p.Button.Size == props.ButtonSizeLarge, "w-8"),
 				classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("l")),
+				classes.If(p.Button.Variant == props.ButtonVariantSecondary || p.Button.Variant == props.ButtonVariantTransparent, "border-l-border hover:border-l-border active:border-l-border"),
 			),
 			Attributes: templ.Attributes{
 				"aria-haspopup":        "menu",
@@ -100,12 +109,13 @@ func toggleLabel(label string) string {
 }
 
 // splitButtonPrimaryDivider colors the meeting edge (side "l" or "r") of a
-// primary segment one accent step darker than the button face, so the divider
-// stays visible on the accent background in every state. Class names are
-// spelled out in full so the Tailwind scanner picks them up.
+// primary segment one accent step darker than the button face at rest
+// (accent-hover), stepping to accent-press on hover so the divider stays
+// visible over the darkened hover background. Class names are spelled out in
+// full so the Tailwind scanner picks them up.
 func splitButtonPrimaryDivider(side string) string {
 	if side == "l" {
-		return "border-l-background-accent-press hover:border-l-background-accent-press active:border-l-background-accent-press"
+		return "border-l-background-accent-hover hover:border-l-background-accent-press active:border-l-background-accent-press"
 	}
-	return "border-r-background-accent-press hover:border-r-background-accent-press active:border-r-background-accent-press"
+	return "border-r-background-accent-hover hover:border-r-background-accent-press active:border-r-background-accent-press"
 }

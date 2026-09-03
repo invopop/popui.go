@@ -17,6 +17,10 @@ type SplitButton struct {
 	// Label is the text of the main action segment.
 	Label string
 
+	// Icon renders an icon component before the Label in the main action
+	// segment, e.g. icons.Download().
+	Icon templ.Component
+
 	// Content replaces Label with any component as the main action's
 	// content — e.g. an icon followed by a `<span>` label. Label is
 	// ignored when set.

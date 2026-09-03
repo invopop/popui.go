@@ -63,6 +63,20 @@ templ Button() {
 		@examples.ButtonSplitExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Split Button with Icons",
+		Description: "Set the Icon prop to render an icon before the label in the main action segment.",
+		Code:        examples.LoadExample("button_split_icons.templ"),
+	}) {
+		@examples.ButtonSplitIconsExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Split Button Sizes",
+		Description: "The Size on the Button prop applies to both segments; the dropdown toggle stays square at every size.",
+		Code:        examples.LoadExample("button_split_sizes.templ"),
+	}) {
+		@examples.ButtonSplitSizesExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Copy to Clipboard",
 		Description: "Setting Copy turns the button into a copy-to-clipboard control: the value renders in mono with a duplicate icon that flips to a tick on success. CopyPrefixLength / CopySuffixLength truncate the displayed value; the full value is copied.",
 		Code:        examples.LoadExample("button_copy_to_clipboard.templ"),
@@ -112,6 +126,7 @@ templ Button() {
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the wrapper styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Label", Type: "string", Default: "", Description: "Text of the main action segment"},
+				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Icon rendered before the label in the main action segment, e.g. icons.Download()"},
 				{Name: "Content", Type: "templ.Component", Default: "", Description: "Replaces Label with any component as the main action's content, e.g. an icon plus a <span> label"},
 				{Name: "Button", Type: "props.Button", Default: "", Description: "Configures the main action segment; Variant, Size, and Disabled also apply to the toggle, and Href makes the action an anchor"},
 				{Name: "ToggleLabel", Type: "string", Default: "More actions", Description: "Accessible name (aria-label) of the dropdown toggle"},
