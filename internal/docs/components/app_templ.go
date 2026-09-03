@@ -94,6 +94,16 @@ func App() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:         "Admin list with pinned rows",
+			Description:   "A centered list page with a headerless card table pinning favorite rows above a search input, and a full card table below. IDs use compact copy buttons and dates are monospace.",
+			Code:          examples.LoadExample("app_organizations.templ"),
+			IframeContent: examples.AppOrganizationsExample(),
+			Stacked:       true,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:         "App with Aside Panel",
 			Description:   "App layout with an optional aside panel on the right side. The aside has a fixed width of 400px and appears between the header and footer.",
 			Code:          examples.LoadExample("app_with_aside.templ"),
