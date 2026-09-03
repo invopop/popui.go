@@ -1,0 +1,92 @@
+package popui
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// SplitButton pairs a main action Button with an attached chevron toggle that
+// opens a dropdown of related actions. The main segment carries the default
+// action (a form button or an anchor, configured via the Button prop); the
+// toggle opens a Menu-style panel rendered from the children slot — use
+// MenuItem for each action, exactly as within a Menu. Supports dynamic IDs
+// via Alpine.js x-id for use in repeated templates.
+templ SplitButton(opts ...props.SplitButton) {
+	{{ p := props.First(opts).GenerateID() }}
+	{{ btn := p.Button }}
+	{{ btn.Class = tailwind.Merge("rounded-r-none border-r-0", btn.Class) }}
+	<div
+		x-data
+		x-id="['split-button']"
+		:style="'anchor-name: --split-button-' + $id('split-button')"
+		class={
+			tailwind.Merge(
+				"relative inline-flex max-w-full",
+				p.Class,
+			),
+		}
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		{ p.Attributes... }
+	>
+		@Button(btn) {
+			if p.Content != nil {
+				@p.Content
+			} else {
+				<span>{ p.Label }</span>
+			}
+		}
+		// The toggle keeps its full border so its left edge doubles as the
+		// divider between the two segments (the main segment drops its right
+		// border above).
+		@Button(props.Button{
+			Variant:  p.Button.Variant,
+			Size:     p.Button.Size,
+			Disabled: p.Button.Disabled,
+			Class: tailwind.Merge(
+				"shrink-0 rounded-l-none px-1",
+				classes.If(p.Button.Size == props.ButtonSizeLarge, "px-1.5"),
+			),
+			Attributes: templ.Attributes{
+				"aria-haspopup":        "menu",
+				"aria-label":           toggleLabel(p.ToggleLabel),
+				"x-bind:popovertarget": "$id('split-button')",
+			},
+		}) {
+			@icons.ChevronDown()
+		}
+		<div
+			popover
+			:id="$id('split-button')"
+			:style="'position-anchor: --split-button-' + $id('split-button')"
+			class={
+				tailwind.Merge(
+					// Same panel treatment as Menu: context-menu-scroll caps the
+					// panel at the viewport edge (see components.css); the flex
+					// column lets the ul below scroll inside while the padding
+					// stays put, and items truncate against the max width.
+					"context-menu context-menu-scroll flex flex-col",
+					"border border-border rounded-xl py-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+					classes.If(!p.DropUp, "mt-1"),
+					classes.If(p.DropUp, "mb-1 context-menu-up"),
+					classes.If(p.RightAlign, "context-menu-right-align"),
+					p.MenuClass,
+				),
+			}
+		>
+			<ul role="menu" class="min-h-0 overflow-y-auto overflow-x-hidden px-1">
+				{ children... }
+			</ul>
+		</div>
+	</div>
+}
+
+func toggleLabel(label string) string {
+	if label == "" {
+		return "More actions"
+	}
+	return label
+}

@@ -23,6 +23,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Any clickable action | `Button` (variants: default, primary, secondary, danger, transparent) |
 | Icon-only action | `Button` with `Size: "icon"` |
 | Group of buttons | `ButtonGroup` |
+| Action with related alternatives | `SplitButton` (main action + dropdown of `MenuItem`s) |
 | Copy-to-clipboard | `Button` with `Copy` |
 | Page/app shell | `App` |
 | Top bar with actions | `Header` |
@@ -485,6 +486,7 @@ Breadcrumbs
 | `Avatar` | Circular user avatar; `Size: "lg"` or default (small). Accepts `Initial` text or `Image` child |
 | `Accordion` | Native `details/summary` expandable sections |
 | `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign`. Use `MenuSeparator` to divide item groups |
+| `SplitButton` | Main action button + attached chevron toggle opening a dropdown of related actions (`MenuItem` children); supports `RightAlign` and `DropUp` |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
