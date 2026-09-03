@@ -31,5 +31,16 @@ templ ButtonSplitExample() {
 				Export as CSV
 			}
 		}
+		@popui.SplitButton(props.SplitButton{
+			Label:  "Duplicate",
+			Button: props.Button{Variant: props.ButtonVariantSecondary},
+		}) {
+			@popui.MenuItem() {
+				Duplicate with edits
+			}
+			@popui.MenuItem() {
+				Duplicate as draft
+			}
+		}
 	}
 }

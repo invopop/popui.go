@@ -44,7 +44,11 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts).GenerateID()
 		btn := p.Button
-		btn.Class = tailwind.Merge("rounded-r-none border-r-0", btn.Class)
+		btn.Class = tailwind.Merge(
+			"rounded-r-none hover:z-10 focus-visible:z-10 active:z-10",
+			classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("r")),
+			btn.Class,
+		)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"relative inline-flex max-w-full",
 			p.Class,
@@ -79,7 +83,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 31, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 35, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -123,7 +127,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 39, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 43, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -163,8 +167,9 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 			Size:     p.Button.Size,
 			Disabled: p.Button.Disabled,
 			Class: tailwind.Merge(
-				"shrink-0 rounded-l-none px-1",
+				"shrink-0 -ml-px rounded-l-none px-1 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
 				classes.If(p.Button.Size == props.ButtonSizeLarge, "px-1.5"),
+				classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("l")),
 			),
 			Attributes: templ.Attributes{
 				"aria-haspopup":        "menu",
@@ -226,6 +231,17 @@ func toggleLabel(label string) string {
 		return "More actions"
 	}
 	return label
+}
+
+// splitButtonPrimaryDivider colors the meeting edge (side "l" or "r") of a
+// primary segment one accent step darker than the button face, so the divider
+// stays visible on the accent background in every state. Class names are
+// spelled out in full so the Tailwind scanner picks them up.
+func splitButtonPrimaryDivider(side string) string {
+	if side == "l" {
+		return "border-l-background-accent-press hover:border-l-background-accent-press active:border-l-background-accent-press"
+	}
+	return "border-r-background-accent-press hover:border-r-background-accent-press active:border-r-background-accent-press"
 }
 
 var _ = templruntime.GeneratedTemplate
