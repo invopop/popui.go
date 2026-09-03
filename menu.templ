@@ -1,16 +1,18 @@
 package popui
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
 // Menu provides a trigger Button that opens a dropdown menu of actions.
-// The default trigger is a "···" icon button, customizable via ButtonLabel
-// and ButtonVariant. Menu items render from the children slot — use
-// MenuItem for each action. Supports dynamic IDs via Alpine.js x-id for use
-// in repeated templates.
+// The default trigger is a "···" icon button, customizable via ButtonLabel,
+// ButtonIcon, ButtonVariant and ButtonSize. Menu items render from the
+// children slot — use MenuItem for each action and MenuSub for a nested
+// level. Supports dynamic IDs via Alpine.js x-id for use in repeated
+// templates.
 templ Menu(opts ...props.Menu) {
 	{{ p := props.First(opts).GenerateID() }}
 	<div
@@ -44,12 +46,15 @@ templ Menu(opts ...props.Menu) {
 				Attributes: templ.Attributes{
 					"x-bind:popovertarget": "$id('context-menu')",
 				},
-				Size:    "icon",
+				Size:    p.TriggerSize(),
 				Variant: p.ButtonVariant,
 			}) {
+				if p.ButtonIcon != nil {
+					@p.ButtonIcon
+				}
 				if p.ButtonLabel != "" {
 					{ p.ButtonLabel }
-				} else {
+				} else if p.ButtonIcon == nil {
 					···
 				}
 			}
@@ -112,6 +117,69 @@ templ MenuItem(opts ...props.MenuItem) {
 					@selectCheckIcon()
 				</span>
 			}
+		</div>
+	</li>
+}
+
+// MenuSub nests a second level of items behind one row of a Menu. The row
+// shows an optional Icon, the Label and a trailing chevron; hovering or
+// clicking it opens a flyout panel beside the row — to the right, flipping
+// to the left at the viewport edge — holding the children: MenuItems,
+// MenuSeparators, MenuLabels or further MenuSubs. The flyout is a popover
+// nested inside the parent panel, so opening it keeps the parent open,
+// opening a sibling submenu closes this one, and Escape closes the innermost
+// panel first. Choosing an item inside does not close the menu by itself;
+// hide the outermost panel from the item's handler, as with any MenuItem.
+templ MenuSub(opts ...props.MenuSub) {
+	{{ p := props.First(opts) }}
+	<li
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		x-data
+		x-id="['submenu']"
+		class={
+			tailwind.Merge(
+				"font-sans font-medium text-base w-full rounded-md text-foreground hover:bg-background-default-secondary has-[[popover]:popover-open]:bg-background-default-secondary",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<button
+			type="button"
+			aria-haspopup="menu"
+			x-bind:popovertarget="$id('submenu')"
+			:style="'anchor-name: --submenu-' + $id('submenu')"
+			@mouseenter="if (!$refs.panel.matches(':popover-open')) $refs.panel.showPopover()"
+			class="w-full px-2 py-1.5 flex items-center gap-2 cursor-pointer whitespace-nowrap min-w-0 text-left [&>span]:truncate [&>div]:shrink-0"
+		>
+			if p.Icon != nil {
+				@p.Icon
+			}
+			<span class="flex-1">{ p.Label }</span>
+			<div class="text-icon-default-secondary">
+				@icons.ChevronRight()
+			</div>
+		</button>
+		<div
+			popover
+			x-ref="panel"
+			:id="$id('submenu')"
+			:style="'position-anchor: --submenu-' + $id('submenu')"
+			class={
+				tailwind.Merge(
+					// context-menu-sub pins the panel beside its row (see
+					// components.css); no mt-1 or scroll cap, unlike the root.
+					"context-menu context-menu-sub flex flex-col",
+					"border border-border rounded-xl py-1 w-fit min-w-48 max-w-80 bg-background shadow-lg",
+					p.PanelClass,
+				),
+			}
+		>
+			<ul class="min-h-0 overflow-y-auto overflow-x-hidden px-1">
+				{ children... }
+			</ul>
 		</div>
 	</li>
 }
