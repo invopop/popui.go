@@ -494,6 +494,26 @@ form {
   background-color: var(--color-background-default-secondary);
 }
 
+/* Clickable rows — a body row that carries click wiring advertises it with a
+   pointer cursor automatically, so consumers don't have to remember to add
+   cursor-pointer by hand. "Click wiring" is detected from the attributes the
+   supported stacks put on the row: onclick (plain JS), the HTMX verbs, and
+   Alpine's @click / x-on:click. Rows whose listener is attached
+   programmatically (no attribute to see) can opt in with data-clickable. */
+.popui-table-row-hover tbody tr:is(
+  [onclick],
+  [data-clickable],
+  [hx-get],
+  [hx-post],
+  [hx-put],
+  [hx-patch],
+  [hx-delete],
+  [x-on\:click],
+  [\@click]
+) {
+  cursor: pointer;
+}
+
 /* Resizable — drag handle on the right edge of each header cell (attached by
    popui.js). The handle is absolutely positioned, so the th needs a
    positioning context; a sticky header already provides one, so only add

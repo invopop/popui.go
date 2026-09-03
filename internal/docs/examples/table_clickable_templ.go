@@ -10,7 +10,6 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
 )
 
 func TableClickableExample() templ.Component {
@@ -46,15 +45,13 @@ func TableClickableExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Product</th><th>Status</th><th>Price</th></tr></thead> <tbody><tr><td>Widget A</td><td>Available</td><td>$29.99</td></tr><tr><td>Widget B</td><td>Out of Stock</td><td>$39.99</td></tr><tr><td>Widget C</td><td>Available</td><td>$49.99</td></tr></tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Product</th><th>Status</th><th>Price</th></tr></thead> <tbody><tr onclick=\"alert('Widget A')\"><td>Widget A</td><td>Available</td><td>$29.99</td></tr><tr onclick=\"alert('Widget B')\"><td>Widget B</td><td>Out of Stock</td><td>$39.99</td></tr><tr data-clickable><td>Widget C</td><td>Available</td><td>$49.99</td></tr></tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Table(props.Table{
-			Class: "[&_tr:hover_td]:bg-background-default-secondary [&_tr:hover_td]:cursor-pointer",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Table().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
