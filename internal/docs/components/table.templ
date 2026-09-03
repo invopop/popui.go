@@ -21,7 +21,7 @@ templ Table() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Clickable Rows",
-		Description: "Add hover effects to table rows by passing additional classes via the Class prop.",
+		Description: "A body row that carries click wiring (onclick, the hx-* verbs, Alpine's @click or x-on:click) gets a pointer cursor automatically. Rows whose listener is attached programmatically can opt in with the data-clickable attribute.",
 		Code:        examples.LoadExample("table_clickable.templ"),
 	}) {
 		@examples.TableClickableExample()

@@ -2,13 +2,10 @@ package examples
 
 import (
 	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
 )
 
 templ TableClickableExample() {
-	@popui.Table(props.Table{
-		Class: "[&_tr:hover_td]:bg-background-default-secondary [&_tr:hover_td]:cursor-pointer",
-	}) {
+	@popui.Table() {
 		<thead>
 			<tr>
 				<th>Product</th>
@@ -17,17 +14,19 @@ templ TableClickableExample() {
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
+			<tr onclick="alert('Widget A')">
 				<td>Widget A</td>
 				<td>Available</td>
 				<td>$29.99</td>
 			</tr>
-			<tr>
+			<tr onclick="alert('Widget B')">
 				<td>Widget B</td>
 				<td>Out of Stock</td>
 				<td>$39.99</td>
 			</tr>
-			<tr>
+			// Rows whose listener is attached programmatically opt in
+			// with data-clickable to get the same pointer cursor.
+			<tr data-clickable>
 				<td>Widget C</td>
 				<td>Available</td>
 				<td>$49.99</td>
