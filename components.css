@@ -69,6 +69,17 @@ body {
   position-try-fallbacks: flip-block;
 }
 
+/* Submenu flyout (popui.MenuSub): pinned beside its row with the first item
+   level with the row (the panel's own py-1 is pulled back up) and clear of
+   the parent panel's border and padding; flips to the row's left edge, then
+   upwards, when there is no room. */
+[popover].context-menu.context-menu-sub {
+  top: anchor(top);
+  left: anchor(right);
+  margin: -0.25rem 0 0 0.375rem;
+  position-try-fallbacks: flip-inline, flip-block;
+}
+
 /* Viewport height cap (context-menu-scroll, set by popui.Menu): the inset
    opposite the anchor marks the viewport edge, and max-height: stretch caps
    the panel at that inset box — the inset alone wouldn't, since height:
@@ -106,6 +117,10 @@ body {
     top: auto;
     bottom: auto;
     max-height: min(24rem, 70vh);
+  }
+  /* popui.js positions submenus beside their row; the offsets live there. */
+  [popover].context-menu.context-menu-sub {
+    margin: 0;
   }
 }
 

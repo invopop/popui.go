@@ -46,6 +46,21 @@ var groups = []*Group{
 		},
 	},
 	{
+		Title: "Patterns",
+		Path:  "patterns",
+		Pages: []*Page{
+			{
+				Title: "Subscription Phases",
+				Desc: here.Doc(`
+					Phases of a subscription laid out as CardDecks on a horizontally
+					scrolling plane, each holding the products billed during that phase.
+				`),
+				Path:     "subscription-phases",
+				Template: components.SubscriptionPhases(),
+			},
+		},
+	},
+	{
 		Title: "Components",
 		Path:  "components",
 		Pages: []*Page{
