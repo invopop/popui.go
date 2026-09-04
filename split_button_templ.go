@@ -44,11 +44,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts).GenerateID()
 		btn := p.Button
-		btn.Class = tailwind.Merge(
-			"rounded-r-none hover:z-10 focus-visible:z-10 active:z-10",
-			classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("r")),
-			btn.Class,
-		)
+		btn.Class = tailwind.Merge("rounded-r-none border-r-0", btn.Class)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"relative inline-flex max-w-full",
 			p.Class,
@@ -83,7 +79,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 35, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 31, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -137,7 +133,7 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 46, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `split_button.templ`, Line: 42, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -181,11 +177,17 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 				// segments (28px md, 24px sm, 32px lg), keeping the toggle a
 				// square (aspect-square can't: as a flex item with content-
 				// based height, it has no definite size to transfer from).
-				"shrink-0 -ml-px rounded-l-none px-0 w-7 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
+				"shrink-0 rounded-l-none px-0 w-7 popui-icon-xs",
 				classes.If(p.Button.Size == props.ButtonSizeSmall, "w-6"),
 				classes.If(p.Button.Size == props.ButtonSizeLarge, "w-8"),
-				classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("l")),
-				classes.If(p.Button.Variant == props.ButtonVariantSecondary || p.Button.Variant == props.ButtonVariantTransparent, "border-l-border hover:border-l-border active:border-l-border"),
+				classes.If(p.Button.Variant == "",
+					"[:hover+&]:border-l-border-default-secondary-hover [&:has(+:popover-open)]:border-border-default-secondary-hover"),
+				classes.If(p.Button.Variant == props.ButtonVariantPrimary,
+					"border-l-background-accent-hover hover:border-l-background-accent-press active:border-l-background-accent-press [:hover+&]:border-l-background-accent-press [&:has(+:popover-open)]:bg-background-accent-hover [&:has(+:popover-open)]:border-l-background-accent-press"),
+				classes.If(p.Button.Variant == props.ButtonVariantSecondary || p.Button.Variant == props.ButtonVariantTransparent,
+					"border-l border-l-border hover:border-l-border active:border-l-border [&:has(+:popover-open)]:bg-background-default-tertiary-hover"),
+				classes.If(p.Button.Variant == props.ButtonVariantTransparent,
+					"[&:has(+:popover-open)]:shadow-button-default"),
 			),
 			Attributes: templ.Attributes{
 				"aria-haspopup":        "menu",
@@ -247,18 +249,6 @@ func toggleLabel(label string) string {
 		return "More actions"
 	}
 	return label
-}
-
-// splitButtonPrimaryDivider colors the meeting edge (side "l" or "r") of a
-// primary segment one accent step darker than the button face at rest
-// (accent-hover), stepping to accent-press on hover so the divider stays
-// visible over the darkened hover background. Class names are spelled out in
-// full so the Tailwind scanner picks them up.
-func splitButtonPrimaryDivider(side string) string {
-	if side == "l" {
-		return "border-l-background-accent-hover hover:border-l-background-accent-press active:border-l-background-accent-press"
-	}
-	return "border-r-background-accent-hover hover:border-r-background-accent-press active:border-r-background-accent-press"
 }
 
 var _ = templruntime.GeneratedTemplate

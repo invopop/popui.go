@@ -16,11 +16,7 @@ import (
 templ SplitButton(opts ...props.SplitButton) {
 	{{ p := props.First(opts).GenerateID() }}
 	{{ btn := p.Button }}
-	{{ btn.Class = tailwind.Merge(
-		"rounded-r-none hover:z-10 focus-visible:z-10 active:z-10",
-		classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("r")),
-		btn.Class,
-	) }}
+	{{ btn.Class = tailwind.Merge("rounded-r-none border-r-0", btn.Class) }}
 	<div
 		x-data
 		x-id="['split-button']"
@@ -46,12 +42,16 @@ templ SplitButton(opts ...props.SplitButton) {
 				<span>{ p.Label }</span>
 			}
 		}
-		// Both segments keep their full border and overlap by 1px, so the
-		// shared edge draws a single divider line; on hover (or focus) a
-		// segment lifts above its sibling with z-10 so its complete border
-		// ring shows. Borderless variants (secondary, transparent) reinstate
-		// just the divider with an explicit border-l. The popui-icon-xs
-		// marker scales the chevron down to the 12px icon size.
+		// The segments sit flush (no overlap): the main segment drops its
+		// right border and the toggle's left border is the single divider
+		// line, so nothing stacks, flips paint order, or casts a shadow
+		// sliver across the seam. The [:hover+&] variant darkens the divider
+		// while the MAIN segment is hovered, completing its hover ring, and
+		// [&:has(+:popover-open)] holds the toggle's hover styles while its
+		// menu (the next sibling popover) is open. Borderless variants
+		// (secondary, transparent) reinstate just the divider with an
+		// explicit border-l. The popui-icon-xs marker scales the chevron
+		// down to the 12px icon size.
 		@Button(props.Button{
 			Variant:  p.Button.Variant,
 			Size:     p.Button.Size,
@@ -61,11 +61,17 @@ templ SplitButton(opts ...props.SplitButton) {
 				// segments (28px md, 24px sm, 32px lg), keeping the toggle a
 				// square (aspect-square can't: as a flex item with content-
 				// based height, it has no definite size to transfer from).
-				"shrink-0 -ml-px rounded-l-none px-0 w-7 popui-icon-xs border-l hover:z-10 focus-visible:z-10 active:z-10",
+				"shrink-0 rounded-l-none px-0 w-7 popui-icon-xs",
 				classes.If(p.Button.Size == props.ButtonSizeSmall, "w-6"),
 				classes.If(p.Button.Size == props.ButtonSizeLarge, "w-8"),
-				classes.If(p.Button.Variant == props.ButtonVariantPrimary, splitButtonPrimaryDivider("l")),
-				classes.If(p.Button.Variant == props.ButtonVariantSecondary || p.Button.Variant == props.ButtonVariantTransparent, "border-l-border hover:border-l-border active:border-l-border"),
+				classes.If(p.Button.Variant == "",
+					"[:hover+&]:border-l-border-default-secondary-hover [&:has(+:popover-open)]:border-border-default-secondary-hover"),
+				classes.If(p.Button.Variant == props.ButtonVariantPrimary,
+					"border-l-background-accent-hover hover:border-l-background-accent-press active:border-l-background-accent-press [:hover+&]:border-l-background-accent-press [&:has(+:popover-open)]:bg-background-accent-hover [&:has(+:popover-open)]:border-l-background-accent-press"),
+				classes.If(p.Button.Variant == props.ButtonVariantSecondary || p.Button.Variant == props.ButtonVariantTransparent,
+					"border-l border-l-border hover:border-l-border active:border-l-border [&:has(+:popover-open)]:bg-background-default-tertiary-hover"),
+				classes.If(p.Button.Variant == props.ButtonVariantTransparent,
+					"[&:has(+:popover-open)]:shadow-button-default"),
 			),
 			Attributes: templ.Attributes{
 				"aria-haspopup":        "menu",
@@ -106,16 +112,4 @@ func toggleLabel(label string) string {
 		return "More actions"
 	}
 	return label
-}
-
-// splitButtonPrimaryDivider colors the meeting edge (side "l" or "r") of a
-// primary segment one accent step darker than the button face at rest
-// (accent-hover), stepping to accent-press on hover so the divider stays
-// visible over the darkened hover background. Class names are spelled out in
-// full so the Tailwind scanner picks them up.
-func splitButtonPrimaryDivider(side string) string {
-	if side == "l" {
-		return "border-l-background-accent-hover hover:border-l-background-accent-press active:border-l-background-accent-press"
-	}
-	return "border-r-background-accent-hover hover:border-r-background-accent-press active:border-r-background-accent-press"
 }
