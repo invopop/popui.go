@@ -177,7 +177,11 @@ func SplitButton(opts ...props.SplitButton) templ.Component {
 				// segments (28px md, 24px sm, 32px lg), keeping the toggle a
 				// square (aspect-square can't: as a flex item with content-
 				// based height, it has no definite size to transfer from).
-				"shrink-0 rounded-l-none px-0 w-7 popui-icon-xs",
+				// active:translate-y-0 overrides the base button's 1px press
+				// dip: the toggle opens a menu rather than performing an
+				// action, so it stays put when clicked (the pressed shadow
+				// still gives feedback).
+				"shrink-0 rounded-l-none px-0 w-7 popui-icon-xs active:translate-y-0",
 				classes.If(p.Button.Size == props.ButtonSizeSmall, "w-6"),
 				classes.If(p.Button.Size == props.ButtonSizeLarge, "w-8"),
 				classes.If(p.Button.Variant == "",
