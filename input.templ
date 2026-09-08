@@ -19,20 +19,28 @@ import (
 //  * url
 //  * date
 //  * time
+//  * datetime-local
 //  * week
 //  * month
 //  * number
 //
 // If the Label property is provided, a simple label will be rendered above the input.
 //
-// Search, date, and time inputs render a clear button on the right while they
-// hold a value (wired up by popui.js), replacing the native browser controls.
-// Date, time, week, and month inputs replace the native calendar indicator
+// Search, date, time, and datetime-local inputs render a clear button on the
+// right while they hold a value (wired up by popui.js), replacing the native
+// browser controls. Date, time, datetime-local, week, and month inputs replace
+// the native calendar indicator
 // with a calendar icon button that opens the native picker via showPicker().
+//
+// Setting ISO on a datetime-local input renders a text field holding an
+// RFC 3339 timestamp, so the value can be read, copied, and pasted directly.
+// The calendar button opens a native datetime-local picker that fills the
+// field with the chosen instant in the browser's local offset (popui.js).
 templ Input(p ...props.Input) {
 	{{ prp := props.First(p) }}
 	{{ clearable := inputClearable(prp) }}
 	{{ pickable := inputPickable(prp) }}
+	{{ iso := inputISO(prp) }}
 	<div class="flex flex-col space-y-2 w-full">
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
@@ -52,7 +60,7 @@ templ Input(p ...props.Input) {
 			}
 			<input
 				id={ prp.ID }
-				type={ inputType(prp.Type) }
+				type={ inputType(prp) }
 				class={
 					tailwind.Merge(
 						classes.FormField(),
@@ -61,17 +69,25 @@ templ Input(p ...props.Input) {
 						classes.If(clearable || pickable, "pr-8"),
 						classes.If(clearable && pickable, "pr-14"),
 						classes.If(prp.Type == "file", inputFileClasses()),
+						classes.If(iso, "font-mono"),
 						prp.Class,
 					),
 				}
 				if clearable {
 					data-clearable
 				}
-				if inputPickableType(prp.Type) {
+				if inputPickableType(prp.Type) && !iso {
 					data-pickable
+				}
+				if iso {
+					data-datetime-iso
+					pattern={ inputISOPattern }
+					spellcheck="false"
 				}
 				if prp.Placeholder != "" {
 					placeholder={ prp.Placeholder }
+				} else if iso {
+					placeholder="YYYY-MM-DDThh:mm:ss+hh:mm"
 				}
 				if prp.Autofocus {
 					autofocus
@@ -93,6 +109,16 @@ templ Input(p ...props.Input) {
 				}
 				{ prp.Attributes... }
 			/>
+			if iso && pickable {
+				<input
+					type="datetime-local"
+					data-pickable
+					data-datetime-iso-picker
+					tabindex="-1"
+					aria-hidden="true"
+					class="absolute right-1.5 top-1/2 -translate-y-1/2 size-5 opacity-0 pointer-events-none"
+				/>
+			}
 			if clearable {
 				<button
 					type="button"
@@ -162,10 +188,11 @@ func inputFileClasses() string {
 }
 
 // inputClearable reports whether the input renders a clear button: search,
-// date, and time inputs get one, unless the field cannot be edited.
+// date, time, and datetime-local inputs get one, unless the field cannot be
+// edited.
 func inputClearable(p props.Input) bool {
 	switch p.Type {
-	case "search", "date", "time":
+	case "search", "date", "time", "datetime-local":
 		return !p.Disabled && !p.Readonly
 	}
 	return false
@@ -175,7 +202,7 @@ func inputClearable(p props.Input) bool {
 // whose indicator is replaced by the popui calendar button.
 func inputPickableType(typ string) bool {
 	switch typ {
-	case "date", "time", "week", "month":
+	case "date", "time", "datetime-local", "week", "month":
 		return true
 	}
 	return false
@@ -189,10 +216,24 @@ func inputPickable(p props.Input) bool {
 	return inputPickableType(p.Type) && !p.Disabled && !p.Readonly
 }
 
-func inputType(typ string) string {
-	switch typ {
-	case "email", "file", "search", "password", "tel", "url", "date", "time", "week", "month", "number":
-		return typ
+// inputISO reports whether the input is a text field holding an RFC 3339
+// timestamp with a native datetime-local picker beside it; only datetime-local
+// inputs with ISO set are.
+func inputISO(p props.Input) bool {
+	return p.Type == "datetime-local" && p.ISO
+}
+
+// inputISOPattern is the native validation pattern for ISO datetime fields:
+// an RFC 3339 timestamp with optional seconds and a mandatory zone.
+const inputISOPattern = `\d{4}-\d{2}-\d{2}[Tt ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?([Zz]|[+\-]\d{2}:\d{2})`
+
+func inputType(p props.Input) string {
+	if inputISO(p) {
+		return "text"
+	}
+	switch p.Type {
+	case "email", "file", "search", "password", "tel", "url", "date", "time", "datetime-local", "week", "month", "number":
+		return p.Type
 	default:
 		return "text"
 	}

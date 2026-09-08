@@ -231,7 +231,7 @@ input[data-clearable]::-webkit-search-cancel-button {
   display: none;
 }
 
-/* Pickable inputs (date, time, week, month) replace the native calendar
+/* Pickable inputs (date, time, datetime-local, week, month) replace the native calendar
    indicator with the popui calendar button. */
 input[data-pickable]::-webkit-calendar-picker-indicator {
   display: none;
