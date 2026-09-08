@@ -300,7 +300,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     if (!btn) return
     const input = btn.parentElement.querySelector('input[data-pickable]')
     if (!input) return
-    input.focus()
+    // The ISO picker is invisible; the text field keeps focus instead.
+    if (!input.hasAttribute('data-datetime-iso-picker')) input.focus()
     if (typeof input.showPicker === 'function') {
       try {
         input.showPicker()
@@ -308,6 +309,64 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // showPicker can throw (e.g. cross-origin iframe); focus is enough.
       }
     }
+  })
+
+  // ------------------------------------------------------------------
+  // ISO datetime inputs
+  // ------------------------------------------------------------------
+
+  const pad2 = (n) => String(n).padStart(2, '0')
+
+  // Formats a Date as the zone-less local string a datetime-local input accepts.
+  function toLocalDateTime(d) {
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+  }
+
+  // Formats a Date as an RFC 3339 timestamp carrying the browser's local offset.
+  function toISOLocal(d) {
+    const offset = -d.getTimezoneOffset()
+    const sign = offset >= 0 ? '+' : '-'
+    const abs = Math.abs(offset)
+    return `${toLocalDateTime(d)}:${pad2(d.getSeconds())}${sign}${pad2(Math.floor(abs / 60))}:${pad2(abs % 60)}`
+  }
+
+  // Parses a datetime string, returning null when empty or invalid.
+  function parseDateTime(value) {
+    if (value === '') return null
+    const d = new Date(value)
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  // Keeps an ISO datetime field's native picker positioned on the field's
+  // current value, so the picker opens at the right instant.
+  function syncDateTimeISOPicker(input) {
+    const picker = input.parentElement ? input.parentElement.querySelector('input[data-datetime-iso-picker]') : null
+    if (!picker) return
+    const d = parseDateTime(input.value)
+    picker.value = d ? toLocalDateTime(d) : ''
+  }
+
+  function initDateTimeISOs() {
+    document.querySelectorAll('input[data-datetime-iso]').forEach(syncDateTimeISOPicker)
+  }
+
+  document.addEventListener('input', (e) => {
+    const t = e.target
+    if (t instanceof HTMLInputElement && t.hasAttribute('data-datetime-iso')) syncDateTimeISOPicker(t)
+  })
+
+  // Writes the instant chosen in the native picker into the ISO field as an
+  // RFC 3339 timestamp with the browser's local offset.
+  document.addEventListener('change', (e) => {
+    const picker = e.target
+    if (!(picker instanceof HTMLInputElement) || !picker.hasAttribute('data-datetime-iso-picker')) return
+    const input = picker.parentElement.querySelector('input[data-datetime-iso]')
+    if (!input) return
+    const d = parseDateTime(picker.value)
+    input.value = d ? toISOLocal(d) : ''
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    input.focus()
   })
 
   // ------------------------------------------------------------------
@@ -364,13 +423,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     initButtonCopies()
     attachTableResizers()
+    initDateTimeISOs()
     initInputClears()
   })
 
-  // Rewires ButtonCopies, table resizers and input clear buttons inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers, ISO datetime inputs and input clear
+  // buttons inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
+    initDateTimeISOs()
     initInputClears()
   })
 
