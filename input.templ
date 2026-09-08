@@ -33,9 +33,10 @@ import (
 // with a calendar icon button that opens the native picker via showPicker().
 //
 // Setting ISO on a datetime-local input renders a text field holding an
-// RFC 3339 timestamp, so the value can be read, copied, and pasted directly.
-// The calendar button opens a native datetime-local picker that fills the
-// field with the chosen instant in the browser's local offset (popui.js).
+// RFC 3339 timestamp, so the value can be read, copied, pasted, and deleted
+// directly (no clear button). The calendar button opens a native
+// datetime-local picker that fills the field with the chosen instant in the
+// browser's local offset (popui.js).
 templ Input(p ...props.Input) {
 	{{ prp := props.First(p) }}
 	{{ clearable := inputClearable(prp) }}
@@ -189,8 +190,12 @@ func inputFileClasses() string {
 
 // inputClearable reports whether the input renders a clear button: search,
 // date, time, and datetime-local inputs get one, unless the field cannot be
-// edited.
+// edited. ISO datetime fields are plain text, so their value can be deleted
+// directly and they get no clear button.
 func inputClearable(p props.Input) bool {
+	if inputISO(p) {
+		return false
+	}
 	switch p.Type {
 	case "search", "date", "time", "datetime-local":
 		return !p.Disabled && !p.Readonly
