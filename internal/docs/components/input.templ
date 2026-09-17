@@ -22,7 +22,7 @@ templ Input() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "ISO Datetime",
-		Description: "Set ISO on a datetime-local input to render a text field holding an RFC 3339 timestamp that can be read, copied, and pasted directly. The calendar button opens a native picker that fills the field with the chosen instant in the browser's local offset, and the field is validated against an RFC 3339 pattern on submit.",
+		Description: "Set ISO on a datetime-local input to render a text field holding an RFC 3339 timestamp that can be read, copied, and pasted directly. The calendar button opens a single-date Calendar seeded from the field's date; Confirm replaces only the yyyy-mm-dd prefix and leaves the time and zone as typed, with no timezone conversion. Time is edited by hand. The field is validated against an RFC 3339 pattern on submit.",
 		Code:        examples.LoadExample("input_datetime_iso.templ"),
 	}) {
 		@examples.InputDateTimeISOExample()
@@ -91,7 +91,7 @@ templ Input() {
 				{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the input"},
 				{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Tooltip card shown on hover of a question mark icon after the label; only used when Label is set"},
 				{Name: "Prefix", Type: "string", Default: "", Description: "Text or symbol displayed before the input field"},
-				{Name: "ISO", Type: "bool", Default: "false", Description: "For datetime-local inputs, renders a text field holding an RFC 3339 timestamp with a native picker that fills it in the browser's local offset"},
+				{Name: "ISO", Type: "bool", Default: "false", Description: "For datetime-local inputs, renders a text field holding an RFC 3339 timestamp with a single-date Calendar that replaces only the date prefix, leaving time and zone as typed"},
 				{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the input on page load"},
 				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the input"},
 				{Name: "Readonly", Type: "bool", Default: "false", Description: "Makes the input read-only"},
