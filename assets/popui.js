@@ -898,17 +898,21 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     // Dual-month date-range picker with a preset rail and a Cancel / Confirm footer; only Confirm applies the pending selection.
     // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.
+    // An indefinite range is a start date with no end (to stays null, indefinite is true): the grid paints every day
+    // after the start, a day click moves the start, and the value submits as "from..". Seeding from without to starts indefinite.
     Alpine.data('rangeCalendar', (init) => ({
       name: (init && init.name) || '',
       single: !!(init && init.single),
       open: false,
-      preset: 'custom',
+      preset: (init && init.from && !init.to && !init.single) ? 'indefinite' : 'custom',
+      indefinite: !!(init && init.from && !init.to && !init.single),
       // Pending selection edited by the grids.
       from: (init && init.from) || null,
       to: (init && init.to) || null,
       // Committed selection exposed as rangeValue and summary.
       committedFrom: (init && init.from) || null,
       committedTo: (init && init.to) || null,
+      committedIndefinite: !!(init && init.from && !init.to && !init.single),
       viewY: 2000,
       viewM: 0,
       dows: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
@@ -983,9 +987,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       // Returns a day's range state, with outside-month days always unstyled.
       // A one-day range (from === to) reports 'single' so it rounds on both sides.
+      // An indefinite range has no end: every day after the start is 'middle'.
       dayState(iso, outside) {
         if (outside) return null
         if (!this.from) return null
+        if (this.indefinite) return iso === this.from ? 'start' : (iso > this.from ? 'middle' : null)
         if (!this.to) return iso === this.from ? 'start' : null
         if (iso === this.from) return this.to === this.from ? 'single' : 'start'
         if (iso === this.to) return 'end'
@@ -993,11 +999,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return null
       },
       // Starts a new range, moves the start when clicking before it, or completes
-      // the range. In single mode a click just selects that day (from = to).
+      // the range. In single mode a click just selects that day (from = to);
+      // in indefinite mode it moves the open-ended start.
       selectDay(iso, outside) {
         if (outside) return
         if (this.single) {
           this.from = iso; this.to = iso
+          return
+        }
+        if (this.indefinite) {
+          this.from = iso; this.to = null
           return
         }
         if (!this.from || (this.from && this.to)) {
@@ -1008,26 +1019,48 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         if (iso < this.from) { this.from = iso }
         else { this.to = iso }
       },
-      // Applies a preset's date range and jumps the view to it.
+      // Applies a preset's date range and jumps the view to it. "This"/"last"
+      // presets are calendar-aligned; "next" presets roll from today to the same
+      // day N months out (17 Sep → 17 Oct). Indefinite keeps a half-picked start
+      // (a day clicked with no end yet), otherwise starts today, and has no end.
       setPreset(key) {
         this.preset = key
+        this.indefinite = key === 'indefinite'
+        const t = new Date(); t.setHours(0, 0, 0, 0)
         if (key === 'custom') {
-          const c = new Date(); c.setHours(0, 0, 0, 0)
-          this.from = this.iso(c); this.to = null
+          this.from = this.iso(t); this.to = null
           return
         }
-        const t = new Date(); t.setHours(0, 0, 0, 0)
+        if (key === 'indefinite') {
+          this.from = (this.from && !this.to) ? this.from : this.iso(t); this.to = null
+          const f = this.parse(this.from)
+          this.viewY = f.getFullYear(); this.viewM = f.getMonth()
+          return
+        }
         const sow = (d) => { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); return x }
+        const y = t.getFullYear(), m = t.getMonth()
+        // Whole calendar months: from the first of month m (0-based, may underflow the year) for n months.
+        const months = (mm, n) => { from = new Date(y, mm, 1); to = new Date(y, mm + n, 0) }
+        // Rolling from today to the same day n months ahead (clamped to that month's last day).
+        const ahead = (n) => { from = new Date(t); to = new Date(y, m + n, Math.min(t.getDate(), new Date(y, m + n + 1, 0).getDate())) }
         let from, to
         if (key === 'thisWeek') { from = sow(t); to = new Date(from); to.setDate(to.getDate() + 6) }
         else if (key === 'lastWeek') { to = sow(t); to.setDate(to.getDate() - 1); from = new Date(to); from.setDate(from.getDate() - 6) }
-        else if (key === 'thisMonth') { from = new Date(t.getFullYear(), t.getMonth(), 1); to = new Date(t.getFullYear(), t.getMonth() + 1, 0) }
-        else if (key === 'lastMonth') { from = new Date(t.getFullYear(), t.getMonth() - 1, 1); to = new Date(t.getFullYear(), t.getMonth(), 0) }
-        else if (key === 'thisQuarter') { const q = Math.floor(t.getMonth() / 3); from = new Date(t.getFullYear(), q * 3, 1); to = new Date(t.getFullYear(), q * 3 + 3, 0) }
-        else if (key === 'lastQuarter') { let q = Math.floor(t.getMonth() / 3) - 1, y = t.getFullYear(); if (q < 0) { q = 3; y-- } from = new Date(y, q * 3, 1); to = new Date(y, q * 3 + 3, 0) }
+        else if (key === 'thisMonth') months(m, 1)
+        else if (key === 'lastMonth') months(m - 1, 1)
+        else if (key === 'thisQuarter') months(Math.floor(m / 3) * 3, 3)
+        else if (key === 'lastQuarter') months(Math.floor(m / 3) * 3 - 3, 3)
+        else if (key === 'nextMonth') ahead(1)
+        else if (key === 'next3Months') ahead(3)
+        else if (key === 'next6Months') ahead(6)
+        else if (key === 'next12Months') ahead(12)
         else return
         this.from = this.iso(from); this.to = this.iso(to)
         this.viewY = from.getFullYear(); this.viewM = from.getMonth()
+      },
+      // Confirm needs a complete range, or just a start when the range is indefinite.
+      get canConfirm() {
+        return this.indefinite ? !!this.from : !!this.to
       },
       // Formats an ISO date as dd/mm/yyyy.
       fmt(iso) {
@@ -1035,13 +1068,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return p[2] + '/' + p[1] + '/' + p[0]
       },
       get summary() {
+        if (this.committedFrom && this.committedIndefinite) return this.fmt(this.committedFrom) + ' → ∞'
         if (this.committedFrom && this.committedTo) {
           if (this.single) return this.fmt(this.committedFrom)
           return this.fmt(this.committedFrom) + ' → ' + this.fmt(this.committedTo)
         }
         return ''
       },
+      // "from..to" for a range, "from.." (empty end) for an indefinite one, "from" for a single date.
       get rangeValue() {
+        if (this.committedFrom && this.committedIndefinite) return this.committedFrom + '..'
         if (this.committedFrom && this.committedTo) {
           if (this.single) return this.committedFrom
           return this.committedFrom + '..' + this.committedTo
@@ -1058,13 +1094,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       clear() {
         this.from = null; this.to = null
         this.committedFrom = null; this.committedTo = null
+        this.indefinite = false; this.committedIndefinite = false
         this.preset = 'custom'
       },
       // Commits the pending range, closes the panel, announces it, and submits the enclosing form.
       confirm() {
-        if (!this.to) return
+        if (!this.canConfirm) return
         this.committedFrom = this.from
         this.committedTo = this.to
+        this.committedIndefinite = this.indefinite
         this.open = false
         if (this.$root) this.$root.dispatchEvent(new CustomEvent('popui-cal-confirm', { bubbles: true }))
         this._submit()
@@ -1074,6 +1112,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         const hadCommitted = !!(this.committedFrom || this.committedTo)
         this.from = null; this.to = null
         this.committedFrom = null; this.committedTo = null
+        this.indefinite = false; this.committedIndefinite = false
         this.preset = 'custom'
         this.open = false
         if (this.$root) this.$root.dispatchEvent(new CustomEvent('popui-cal-cancel', { bubbles: true }))

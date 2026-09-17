@@ -9,11 +9,17 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
 
-func CalendarExample() templ.Component {
+// CalendarRangeInputsExample pairs two text inputs holding ISO 8601 timestamps
+// with a single calendar button. Confirming a range in the calendar replaces
+// the leading YYYY-MM-DD of each field and keeps the rest of the string (time
+// and zone) as typed; an indefinite range clears the end field. The calendar
+// floats below the fields so opening it never shifts the surrounding layout.
+func CalendarRangeInputsExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,7 +40,27 @@ func CalendarExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ show: false }\" @click.outside=\"show = false\" @popui-cal-confirm=\"show = false\" @popui-cal-cancel=\"show = false\" class=\"w-fit\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T00:00:00Z'; input.value = iso ? iso + rest : '' } }\" @click.outside=\"show = false\" @popui-cal-cancel=\"show = false\" @popui-cal-confirm=\"show = false; const cal = Alpine.$data($event.target); setDate($refs.start, cal.committedFrom); setDate($refs.end, cal.committedIndefinite ? null : cal.committedTo)\" class=\"relative w-fit\"><div class=\"flex items-end gap-3\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:       "text",
+			Label:      "Start",
+			Name:       "start",
+			Value:      "2026-09-17T09:00:00Z",
+			Attributes: templ.Attributes{"x-ref": "start"},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:       "text",
+			Label:      "End",
+			Name:       "end",
+			Value:      "2026-10-17T18:00:00Z",
+			Attributes: templ.Attributes{"x-ref": "end"},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,43 +76,33 @@ func CalendarExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "Open calendar")
+			templ_7745c5c3_Err = icons.Calendar().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = popui.Button(props.Button{
-			Attributes: templ.Attributes{
-				"@click": "show = !show",
-			},
+			Size:       props.ButtonSizeIconLarge,
+			Attributes: templ.Attributes{"type": "button", "@click": "show = !show", "aria-label": "Pick dates"},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div x-show=\"show\" x-cloak class=\"mt-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div x-show=\"show\" x-cloak class=\"absolute left-0 top-full mt-2 z-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Calendar(props.Calendar{
-			Name: "period",
-			Presets: []props.CalendarPreset{
-				{Key: props.CalendarPresetThisMonth},
-				{Key: props.CalendarPresetLastMonth},
-				{Key: props.CalendarPresetThisQuarter},
-				{Key: props.CalendarPresetLastQuarter},
-				{Key: props.CalendarPresetNextMonth},
-				{Key: props.CalendarPresetNext3Months},
-				{Key: props.CalendarPresetNext6Months},
-				{Key: props.CalendarPresetNext12Months},
-				{Key: props.CalendarPresetIndefinite},
-				{Key: props.CalendarPresetCustom, Label: "Custom range"},
-			},
+			Name:    "period",
+			From:    "2026-09-17",
+			To:      "2026-10-17",
+			Presets: props.FutureCalendarPresets(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

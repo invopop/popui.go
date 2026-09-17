@@ -381,7 +381,7 @@ entirely on borders.
 
 - Buttons are grouped in `ButtonGroup` containers with `gap-2` spacing
 - `ButtonGroup` supports `Align` prop: `left` (default), `center`, `right`
-- Icon-only buttons use `Size: "icon"` with a single icon child
+- Icon-only buttons use `Size: "icon"` with a single icon child; use `Size: "icon-lg"` (34px) when the button sits beside a default-height `Input`
 - Buttons can render as `<a>` by setting `Href`
 
 **Usage patterns:**

@@ -11,8 +11,10 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	_ "embed"
 
+	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/internal/docs/examples"
 	"github.com/invopop/popui.go/internal/docs/modules"
+	"github.com/invopop/popui.go/props"
 )
 
 func Calendar() templ.Component {
@@ -55,9 +57,20 @@ func Calendar() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code:    examples.LoadExample("calendar.templ"),
-			Stacked: true,
+			Description: "The preset rail is configurable. Past presets (this/last week, month, quarter) suit filters; forward-looking ones (next month, next 3 / 6 / 12 months) start today and run to the same day of the month N months ahead, which suits validity periods; props.FutureCalendarPresets() returns that rail ready made. Indefinite selects a start date with no end: every day after the start is painted as selected, clicking a day moves the start, and the value is submitted as YYYY-MM-DD.. with an empty end.",
+			Code:        examples.LoadExample("calendar.templ"),
+			Stacked:     true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:         "Date range inputs",
+			Description:   "One calendar button drives a pair of text inputs holding ISO 8601 timestamps. Confirming a range replaces only the leading YYYY-MM-DD of each field and keeps the time and zone as typed; an indefinite range clears the end field.",
+			Code:          examples.LoadExample("calendar_range_inputs.templ"),
+			Stacked:       true,
+			IframeContent: calendarRangeInputsFrame(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,7 +138,7 @@ func Calendar() templ.Component {
 				Title:       "CalendarPreset",
 				Description: "CalendarPreset is one shortcut in the preset rail. The date computation for each key lives in the `rangeCalendar` controller.",
 				Items: []modules.APITableItem{
-					{Name: "Key", Type: "string", Default: "", Description: "Selects the built in date range. Use one of the `CalendarPreset` constants such as `CalendarPresetThisMonth` or `CalendarPresetCustom`."},
+					{Name: "Key", Type: "string", Default: "", Description: "Selects the built in date range. Use one of the `CalendarPreset` constants: `ThisWeek`, `LastWeek`, `ThisMonth`, `LastMonth`, `ThisQuarter`, `LastQuarter`, `NextMonth`, `Next3Months`, `Next6Months`, `Next12Months`, `Indefinite` or `Custom`. `DefaultCalendarPresets()` and `FutureCalendarPresets()` return ready made rails."},
 					{Name: "Label", Type: "string", Default: "Key default", Description: "Overrides the text shown in the rail. It falls back to the standard label for the key when empty."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
@@ -135,6 +148,90 @@ func Calendar() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// calendarRangeInputsFrame wraps the date range inputs example in a full
+// document so it can render in an iframe, where the floating calendar has room
+// to open without being clipped by the preview box.
+func calendarRangeInputsFrame() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = popui.Head(props.Head{Title: "Date range inputs", AlpineJS: true}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "  <div class=\"p-6\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = examples.CalendarRangeInputsExample().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = popui.Body().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = popui.HTML().Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
