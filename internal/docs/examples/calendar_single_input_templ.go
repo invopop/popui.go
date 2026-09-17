@@ -46,6 +46,7 @@ func CalendarSingleInputExample() templ.Component {
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
 			Type:       "text",
+			Class:      "w-64",
 			Label:      "Due",
 			Name:       "due",
 			Value:      "2026-09-17T09:00:00Z",
