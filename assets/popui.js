@@ -300,8 +300,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     if (!btn) return
     const input = btn.parentElement.querySelector('input[data-pickable]')
     if (!input) return
-    // The ISO picker is invisible; the text field keeps focus instead.
-    if (!input.hasAttribute('data-datetime-iso-picker')) input.focus()
+    input.focus()
     if (typeof input.showPicker === 'function') {
       try {
         input.showPicker()
@@ -309,60 +308,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // showPicker can throw (e.g. cross-origin iframe); focus is enough.
       }
     }
-  })
-
-  // ------------------------------------------------------------------
-  // ISO datetime inputs
-  // ------------------------------------------------------------------
-
-  // Matches an RFC 3339 timestamp: date, separator, wall-clock time with
-  // optional seconds, optional fraction, and a mandatory zone suffix.
-  const ISO_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})[Tt ](\d{2}:\d{2}(?::\d{2})?)(?:\.\d+)?([Zz]|[+\-]\d{2}:\d{2})$/
-
-  // Splits an RFC 3339 timestamp into the wall-clock digits a datetime-local
-  // input accepts and its zone suffix, e.g. "2026-09-20T12:30:00Z" becomes
-  // { local: "2026-09-20T12:30:00", zone: "Z" }. Returns null when the value
-  // is empty or not RFC 3339-shaped. Fractional seconds are dropped from the
-  // digits since the native picker cannot represent them.
-  function splitISODateTime(value) {
-    const m = ISO_DATETIME_RE.exec(String(value).trim())
-    return m ? { local: m[1] + 'T' + m[2], zone: m[3] } : null
-  }
-
-  // Keeps an ISO datetime field's native picker showing the field's wall-clock
-  // digits verbatim, so the picker opens on the digits the field holds. No
-  // Date conversion happens, so the browser's timezone never shifts them.
-  function syncDateTimeISOPicker(input) {
-    const picker = input.parentElement ? input.parentElement.querySelector('input[data-datetime-iso-picker]') : null
-    if (!picker) return
-    const parts = splitISODateTime(input.value)
-    picker.value = parts ? parts.local : ''
-  }
-
-  function initDateTimeISOs() {
-    document.querySelectorAll('input[data-datetime-iso]').forEach(syncDateTimeISOPicker)
-  }
-
-  document.addEventListener('input', (e) => {
-    const t = e.target
-    if (t instanceof HTMLInputElement && t.hasAttribute('data-datetime-iso')) syncDateTimeISOPicker(t)
-  })
-
-  // Writes the digits chosen in the native picker into the ISO field, keeping
-  // the zone suffix the field already had (Z when it had none). Seconds are
-  // always written so the value stays a full RFC 3339 timestamp.
-  document.addEventListener('change', (e) => {
-    const picker = e.target
-    if (!(picker instanceof HTMLInputElement) || !picker.hasAttribute('data-datetime-iso-picker')) return
-    const input = picker.parentElement.querySelector('input[data-datetime-iso]')
-    if (!input) return
-    const prev = splitISODateTime(input.value)
-    let local = picker.value
-    if (local && local.length === 16) local += ':00'
-    input.value = local ? local + (prev ? prev.zone : 'Z') : ''
-    input.dispatchEvent(new Event('input', { bubbles: true }))
-    input.dispatchEvent(new Event('change', { bubbles: true }))
-    input.focus()
   })
 
   // ------------------------------------------------------------------
@@ -419,16 +364,13 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     initButtonCopies()
     attachTableResizers()
-    initDateTimeISOs()
     initInputClears()
   })
 
-  // Rewires ButtonCopies, table resizers, ISO datetime inputs and input clear
-  // buttons inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers and input clear buttons inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
-    initDateTimeISOs()
     initInputClears()
   })
 
@@ -956,9 +898,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     // Dual-month date-range picker with a preset rail and a Cancel / Confirm footer; only Confirm applies the pending selection.
     // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.
-    Alpine.data('rangeCalendar', (init) => ({
+    // With submit: false, confirming or cancelling does not submit the enclosing form.
+    const rangeCalendarData = (init) => ({
       name: (init && init.name) || '',
       single: !!(init && init.single),
+      submit: !(init && init.submit === false),
       open: false,
       preset: 'custom',
       // Pending selection edited by the grids.
@@ -1138,9 +1082,48 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         if (hadCommitted) this._submit()
       },
       _submit() {
+        if (!this.submit) return
         this.$nextTick(() => submitClosestForm(this.$root))
       },
-    }))
+    })
+    Alpine.data('rangeCalendar', rangeCalendarData)
+
+    // Date picker for an ISO datetime text field (popui.Input with ISO set):
+    // a single-date rangeCalendar whose popover is seeded from the field's
+    // yyyy-mm-dd prefix and whose Confirm writes only that prefix back, leaving
+    // the time and zone as typed. No Date conversion touches the field value.
+    const ISO_DATE_PREFIX_RE = /^\d{4}-\d{2}-\d{2}/
+    Alpine.data('isoDateTime', () => {
+      const cal = rangeCalendarData({ single: true, submit: false })
+      const baseConfirm = cal.confirm
+      // Seeds the pending and committed day from the field, jumps the view there, and opens the popover.
+      cal.openPanel = function () {
+        const field = this.$refs.field
+        const m = field ? ISO_DATE_PREFIX_RE.exec(field.value.trim()) : null
+        const day = m ? m[0] : null
+        this.from = day; this.to = day
+        this.committedFrom = day; this.committedTo = day
+        const base = day ? this.parse(day) : new Date()
+        this.viewY = base.getFullYear(); this.viewM = base.getMonth()
+        this.open = true
+        this.$nextTick(() => clampPanelX(this.$refs.panel))
+      }
+      // Commits the day, then swaps it into the field's date prefix. A field
+      // without a date prefix becomes midnight UTC on the chosen day.
+      cal.confirm = function () {
+        if (!this.to) return
+        baseConfirm.call(this)
+        const field = this.$refs.field
+        if (!field || !this.committedFrom) return
+        const day = this.committedFrom
+        const v = field.value.trim()
+        field.value = ISO_DATE_PREFIX_RE.test(v) ? v.replace(ISO_DATE_PREFIX_RE, day) : day + 'T00:00:00Z'
+        field.dispatchEvent(new Event('input', { bubbles: true }))
+        field.dispatchEvent(new Event('change', { bubbles: true }))
+        field.focus()
+      }
+      return cal
+    })
 
     // Side panel opened and closed by popui-sidepanel-open/close window events whose detail matches the panel id.
     // The width is user-adjustable by dragging the panel's inner-edge handle.
