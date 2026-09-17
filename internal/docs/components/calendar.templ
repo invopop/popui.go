@@ -25,6 +25,13 @@ templ Calendar() {
 		IframeContent: calendarRangeInputsFrame(),
 	})
 	@modules.Example(modules.ExampleProps{
+		Title:         "Single date input",
+		Description:   "One calendar button drives a text input holding an ISO 8601 timestamp, using the single-date calendar. Confirming a day replaces only the leading YYYY-MM-DD of the field and keeps the time and zone as typed.",
+		Code:          examples.LoadExample("calendar_single_input.templ"),
+		Stacked:       true,
+		IframeContent: calendarSingleInputFrame(),
+	})
+	@modules.Example(modules.ExampleProps{
 		Title:       "Single date",
 		Description: "Set Single to switch the calendar to single-date selection: one month grid, no preset rail, and clicking a day selects just that day.",
 		Code:        examples.LoadExample("calendar_single.templ"),
@@ -69,6 +76,19 @@ templ calendarRangeInputsFrame() {
 			// padding lives on a wrapper that matches PreviewBox.
 			<div class="p-6">
 				@examples.CalendarRangeInputsExample()
+			</div>
+		}
+	}
+}
+
+// calendarSingleInputFrame is the iframe document for the single date input
+// example; see calendarRangeInputsFrame.
+templ calendarSingleInputFrame() {
+	@popui.HTML() {
+		@popui.Head(props.Head{Title: "Single date input", AlpineJS: true})
+		@popui.Body() {
+			<div class="p-6">
+				@examples.CalendarSingleInputExample()
 			</div>
 		}
 	}
