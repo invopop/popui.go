@@ -1,0 +1,24 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ InputDateTimeISOExample() {
+	@popui.Input(props.Input{
+		ID:    "starts-at",
+		Name:  "starts_at",
+		Type:  "datetime-local",
+		ISO:   true,
+		Label: "Starts at",
+		Value: "2026-09-20T12:30:00Z",
+	})
+	@popui.Input(props.Input{
+		ID:    "ends-at",
+		Name:  "ends_at",
+		Type:  "datetime-local",
+		ISO:   true,
+		Label: "Ends at",
+	})
+}
