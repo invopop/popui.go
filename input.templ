@@ -35,8 +35,9 @@ import (
 // Setting ISO on a datetime-local input renders a text field holding an
 // RFC 3339 timestamp, so the value can be read, copied, pasted, and deleted
 // directly (no clear button). The calendar button opens a native
-// datetime-local picker that fills the field with the chosen instant in the
-// browser's local offset (popui.js).
+// datetime-local picker seeded with the field's wall-clock digits; picking a
+// time writes those digits back and keeps the zone suffix the field already
+// had (Z when empty). No timezone conversion is applied (popui.js).
 templ Input(p ...props.Input) {
 	{{ prp := props.First(p) }}
 	{{ clearable := inputClearable(prp) }}
@@ -115,6 +116,7 @@ templ Input(p ...props.Input) {
 					type="datetime-local"
 					data-pickable
 					data-datetime-iso-picker
+					step="1"
 					tabindex="-1"
 					aria-hidden="true"
 					class="absolute right-1.5 top-1/2 -translate-y-1/2 size-5 opacity-0 pointer-events-none"

@@ -35,10 +35,12 @@ type Input struct {
 	// ISO turns a datetime-local input into a text field holding an RFC 3339
 	// timestamp, such as "2026-09-20T12:30:00Z", so the value can be read,
 	// copied, and pasted directly. The calendar button opens a native
-	// datetime-local picker that fills the field with the chosen instant in
-	// the browser's local offset (popui.js). The field is validated against
-	// an RFC 3339 pattern on submit; an empty field submits an empty string.
-	// Only used when Type is "datetime-local".
+	// datetime-local picker showing the field's wall-clock digits as written;
+	// picking a time writes the digits back and keeps the field's existing
+	// zone suffix (Z when the field was empty). No timezone conversion is
+	// applied, so a UTC value is shown and edited as UTC. The field is
+	// validated against an RFC 3339 pattern on submit; an empty field submits
+	// an empty string. Only used when Type is "datetime-local".
 	ISO bool
 
 	Autofocus bool

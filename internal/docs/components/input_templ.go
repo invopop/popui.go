@@ -107,7 +107,7 @@ func Input() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "ISO Datetime",
-			Description: "Set ISO on a datetime-local input to render a text field holding an RFC 3339 timestamp that can be read, copied, and pasted directly. The calendar button opens a native picker that fills the field with the chosen instant in the browser's local offset, and the field is validated against an RFC 3339 pattern on submit.",
+			Description: "Set ISO on a datetime-local input to render a text field holding an RFC 3339 timestamp that can be read, copied, and pasted directly. The calendar button opens a native picker on the field's wall-clock digits as written and writes the chosen digits back, keeping the existing zone suffix (Z when empty) with no timezone conversion. The field is validated against an RFC 3339 pattern on submit.",
 			Code:        examples.LoadExample("input_datetime_iso.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func Input() templ.Component {
 					{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the input"},
 					{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Tooltip card shown on hover of a question mark icon after the label; only used when Label is set"},
 					{Name: "Prefix", Type: "string", Default: "", Description: "Text or symbol displayed before the input field"},
-					{Name: "ISO", Type: "bool", Default: "false", Description: "For datetime-local inputs, renders a text field holding an RFC 3339 timestamp with a native picker that fills it in the browser's local offset"},
+					{Name: "ISO", Type: "bool", Default: "false", Description: "For datetime-local inputs, renders a text field holding an RFC 3339 timestamp with a native picker that edits its wall-clock digits verbatim, keeping the zone suffix and applying no timezone conversion"},
 					{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the input on page load"},
 					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the input"},
 					{Name: "Readonly", Type: "bool", Default: "false", Description: "Makes the input read-only"},

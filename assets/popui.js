@@ -315,35 +315,28 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // ISO datetime inputs
   // ------------------------------------------------------------------
 
-  const pad2 = (n) => String(n).padStart(2, '0')
+  // Matches an RFC 3339 timestamp: date, separator, wall-clock time with
+  // optional seconds, optional fraction, and a mandatory zone suffix.
+  const ISO_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})[Tt ](\d{2}:\d{2}(?::\d{2})?)(?:\.\d+)?([Zz]|[+\-]\d{2}:\d{2})$/
 
-  // Formats a Date as the zone-less local string a datetime-local input accepts.
-  function toLocalDateTime(d) {
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+  // Splits an RFC 3339 timestamp into the wall-clock digits a datetime-local
+  // input accepts and its zone suffix, e.g. "2026-09-20T12:30:00Z" becomes
+  // { local: "2026-09-20T12:30:00", zone: "Z" }. Returns null when the value
+  // is empty or not RFC 3339-shaped. Fractional seconds are dropped from the
+  // digits since the native picker cannot represent them.
+  function splitISODateTime(value) {
+    const m = ISO_DATETIME_RE.exec(String(value).trim())
+    return m ? { local: m[1] + 'T' + m[2], zone: m[3] } : null
   }
 
-  // Formats a Date as an RFC 3339 timestamp carrying the browser's local offset.
-  function toISOLocal(d) {
-    const offset = -d.getTimezoneOffset()
-    const sign = offset >= 0 ? '+' : '-'
-    const abs = Math.abs(offset)
-    return `${toLocalDateTime(d)}:${pad2(d.getSeconds())}${sign}${pad2(Math.floor(abs / 60))}:${pad2(abs % 60)}`
-  }
-
-  // Parses a datetime string, returning null when empty or invalid.
-  function parseDateTime(value) {
-    if (value === '') return null
-    const d = new Date(value)
-    return isNaN(d.getTime()) ? null : d
-  }
-
-  // Keeps an ISO datetime field's native picker positioned on the field's
-  // current value, so the picker opens at the right instant.
+  // Keeps an ISO datetime field's native picker showing the field's wall-clock
+  // digits verbatim, so the picker opens on the digits the field holds. No
+  // Date conversion happens, so the browser's timezone never shifts them.
   function syncDateTimeISOPicker(input) {
     const picker = input.parentElement ? input.parentElement.querySelector('input[data-datetime-iso-picker]') : null
     if (!picker) return
-    const d = parseDateTime(input.value)
-    picker.value = d ? toLocalDateTime(d) : ''
+    const parts = splitISODateTime(input.value)
+    picker.value = parts ? parts.local : ''
   }
 
   function initDateTimeISOs() {
@@ -355,15 +348,18 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     if (t instanceof HTMLInputElement && t.hasAttribute('data-datetime-iso')) syncDateTimeISOPicker(t)
   })
 
-  // Writes the instant chosen in the native picker into the ISO field as an
-  // RFC 3339 timestamp with the browser's local offset.
+  // Writes the digits chosen in the native picker into the ISO field, keeping
+  // the zone suffix the field already had (Z when it had none). Seconds are
+  // always written so the value stays a full RFC 3339 timestamp.
   document.addEventListener('change', (e) => {
     const picker = e.target
     if (!(picker instanceof HTMLInputElement) || !picker.hasAttribute('data-datetime-iso-picker')) return
     const input = picker.parentElement.querySelector('input[data-datetime-iso]')
     if (!input) return
-    const d = parseDateTime(picker.value)
-    input.value = d ? toISOLocal(d) : ''
+    const prev = splitISODateTime(input.value)
+    let local = picker.value
+    if (local && local.length === 16) local += ':00'
+    input.value = local ? local + (prev ? prev.zone : 'Z') : ''
     input.dispatchEvent(new Event('input', { bubbles: true }))
     input.dispatchEvent(new Event('change', { bubbles: true }))
     input.focus()
