@@ -13,7 +13,7 @@ import (
 // opening it never shifts the surrounding layout.
 templ CalendarSingleInputExample() {
 	<div
-		x-data="{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T00:00:00Z'; input.value = iso ? iso + rest : '' } }"
+		x-data="{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T12:00:00Z'; input.value = iso ? iso + rest : '' } }"
 		@click.outside="if (show) Alpine.$data($refs.panel.firstElementChild).cancel()"
 		@popui-cal-cancel="show = false"
 		@popui-cal-confirm="show = false; setDate($refs.due, Alpine.$data($event.target).committedFrom)"

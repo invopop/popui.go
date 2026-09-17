@@ -40,7 +40,7 @@ func CalendarRangeInputsExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T00:00:00Z'; input.value = iso ? iso + rest : '' } }\" @click.outside=\"if (show) Alpine.$data($refs.panel.firstElementChild).cancel()\" @popui-cal-cancel=\"show = false\" @popui-cal-confirm=\"show = false; const cal = Alpine.$data($event.target); setDate($refs.start, cal.committedFrom); setDate($refs.end, cal.committedIndefinite ? null : cal.committedTo)\" class=\"relative w-fit\"><div class=\"flex items-end gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T12:00:00Z'; input.value = iso ? iso + rest : '' } }\" @click.outside=\"if (show) Alpine.$data($refs.panel.firstElementChild).cancel()\" @popui-cal-cancel=\"show = false\" @popui-cal-confirm=\"show = false; const cal = Alpine.$data($event.target); setDate($refs.start, cal.committedFrom); setDate($refs.end, cal.committedIndefinite ? null : cal.committedTo)\" class=\"relative w-fit\"><div class=\"flex items-end gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
