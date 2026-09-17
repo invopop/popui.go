@@ -40,7 +40,7 @@ func CalendarSingleInputExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T00:00:00Z'; input.value = iso ? iso + rest : '' } }\" @click.outside=\"show = false\" @popui-cal-cancel=\"show = false\" @popui-cal-confirm=\"show = false; setDate($refs.due, Alpine.$data($event.target).committedFrom)\" class=\"relative w-fit\"><div class=\"flex items-end gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T00:00:00Z'; input.value = iso ? iso + rest : '' } }\" @click.outside=\"if (show) Alpine.$data($refs.panel.firstElementChild).cancel()\" @popui-cal-cancel=\"show = false\" @popui-cal-confirm=\"show = false; setDate($refs.due, Alpine.$data($event.target).committedFrom)\" class=\"relative w-fit\"><div class=\"flex items-end gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,7 +80,7 @@ func CalendarSingleInputExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div x-show=\"show\" x-cloak class=\"absolute left-0 top-full mt-2 z-10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div x-show=\"show\" x-cloak x-ref=\"panel\" class=\"absolute left-0 top-full mt-2 z-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

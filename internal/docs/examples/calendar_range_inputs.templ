@@ -14,7 +14,7 @@ import (
 templ CalendarRangeInputsExample() {
 	<div
 		x-data="{ show: false, setDate(input, iso) { const rest = input.value.slice(10) || 'T00:00:00Z'; input.value = iso ? iso + rest : '' } }"
-		@click.outside="show = false"
+		@click.outside="if (show) Alpine.$data($refs.panel.firstElementChild).cancel()"
 		@popui-cal-cancel="show = false"
 		@popui-cal-confirm="show = false; const cal = Alpine.$data($event.target); setDate($refs.start, cal.committedFrom); setDate($refs.end, cal.committedIndefinite ? null : cal.committedTo)"
 		class="relative w-fit"
@@ -41,7 +41,7 @@ templ CalendarRangeInputsExample() {
 				@icons.Calendar()
 			}
 		</div>
-		<div x-show="show" x-cloak class="absolute left-0 top-full mt-2 z-10">
+		<div x-show="show" x-cloak x-ref="panel" class="absolute left-0 top-full mt-2 z-10">
 			@popui.Calendar(props.Calendar{
 				Name:    "period",
 				From:    "2026-09-17",

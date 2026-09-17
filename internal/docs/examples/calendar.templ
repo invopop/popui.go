@@ -8,7 +8,7 @@ import (
 templ CalendarExample() {
 	<div
 		x-data="{ show: false }"
-		@click.outside="show = false"
+		@click.outside="if (show) Alpine.$data($refs.panel.firstElementChild).cancel()"
 		@popui-cal-confirm="show = false"
 		@popui-cal-cancel="show = false"
 		class="w-fit"
@@ -20,7 +20,7 @@ templ CalendarExample() {
 		}) {
 			Open calendar
 		}
-		<div x-show="show" x-cloak class="mt-2">
+		<div x-show="show" x-cloak x-ref="panel" class="mt-2">
 			@popui.Calendar(props.Calendar{
 				Name: "period",
 				Presets: []props.CalendarPreset{
