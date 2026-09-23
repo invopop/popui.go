@@ -276,7 +276,6 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		templ_7745c5c3_Err = Input(props.Input{
 			Type:        "search",
 			Placeholder: "Filter fields, e.g. supplier name",
-			Size:        props.InputSizeSmall,
 			Icon:        icons.Search(),
 			Attributes: templ.Attributes{
 				"x-ref":                  "search",
@@ -300,7 +299,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Root)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_selector.templ`, Line: 153, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_selector.templ`, Line: 154, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -320,7 +319,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <button type=\"button\" @click=\"trail = trail.slice(0, index + 1)\" x-text=\"entries[entry].name + (entries[entry].array ? '[]' : '')\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-mono text-base text-foreground-default-secondary hover:bg-background-default-secondary\"></button></span></template></div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-selector') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-selector') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex }\" class=\"flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"size-1.5 shrink-0 rounded-full\" :class=\"entries[row.i].always ? 'bg-background-success-bold' : ''\"></span> <span class=\"flex items-baseline gap-1.5 min-w-0 flex-1\"><span class=\"font-mono text-base shrink-0 max-w-full truncate text-foreground\"><template x-for=\"(part, p) in label(row)\" :key=\"p\"><span :class=\"part.m ? 'font-semibold' : ''\" x-text=\"part.t\"></span></template></span><template x-if=\"entries[row.i].description || entries[row.i].title\"><span class=\"truncate min-w-0 flex-1 text-base text-foreground-default-tertiary\" x-text=\"entries[row.i].description || entries[row.i].title\"></span></template></span><span class=\"ml-auto shrink-0 flex items-center gap-1 pl-2 w-30\"><span class=\"font-mono text-base text-foreground-default-tertiary\" x-text=\"entries[row.i].type\"></span><template x-if=\"isSelected(row.i)\"><span class=\"shrink-0 text-icon-selected\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <button type=\"button\" @click=\"trail = trail.slice(0, index + 1)\" x-text=\"entries[entry].name + (entries[entry].array ? '[]' : '')\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-mono text-base text-foreground-default-secondary hover:bg-background-default-secondary\"></button></span></template></div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-selector') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-selector') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex }\" class=\"flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"size-1.5 shrink-0 rounded-full\" :class=\"entries[row.i].always ? 'bg-background-success-bold' : ''\"></span> <span class=\"flex items-baseline gap-1.5 min-w-0 flex-1\"><span class=\"font-mono text-base shrink-0 max-w-full truncate text-foreground\"><template x-for=\"(part, p) in label(row)\" :key=\"p\"><span :class=\"part.m ? 'font-semibold' : ''\" x-text=\"part.t\"></span></template></span><template x-if=\"entries[row.i].description || entries[row.i].title\"><span class=\"truncate min-w-0 flex-1 text-base text-foreground-default-tertiary\" x-text=\"entries[row.i].description || entries[row.i].title\"></span></template></span><span class=\"ml-auto shrink-0 flex items-center justify-end gap-1 pl-2 pr-1 min-w-23 rounded\" :class=\"entries[row.i].children ? 'cursor-pointer hover:bg-background-default-tertiary' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span class=\"font-mono text-base text-foreground-default-tertiary\" x-text=\"entries[row.i].type\"></span><template x-if=\"isSelected(row.i)\"><span class=\"shrink-0 text-icon-selected\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -328,7 +327,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></template><span aria-hidden=\"true\" @click.stop=\"drill(row.i)\" class=\"shrink-0 ml-auto p-0.5 -mr-0.5 rounded\" :class=\"entries[row.i].children ? 'text-icon-default-secondary hover:bg-background-default-tertiary hover:text-icon-default-bold' : 'invisible'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></template><span aria-hidden=\"true\" class=\"shrink-0\" :class=\"entries[row.i].children ? 'text-icon-default-secondary' : 'invisible'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -122,10 +122,11 @@ templ fieldSelector(prp props.FieldSelector) {
 			class="field-selector-panel flex flex-col min-w-72 max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
 		>
 			<div class="p-1 shrink-0">
+				// Default size, so the filter box is the same height as the
+				// trigger it drops out of.
 				@Input(props.Input{
 					Type:        "search",
 					Placeholder: "Filter fields, e.g. supplier name",
-					Size:        props.InputSizeSmall,
 					Icon:        icons.Search(),
 					Attributes: templ.Attributes{
 						"x-ref":                  "search",
@@ -209,25 +210,29 @@ templ fieldSelector(prp props.FieldSelector) {
 								<span class="truncate min-w-0 flex-1 text-base text-foreground-default-tertiary" x-text="entries[row.i].description || entries[row.i].title"></span>
 							</template>
 						</span>
-						// The trailing column is a fixed width and the
-						// chevron keeps its slot on a field with nothing
-						// under it, so the types line up down the list and
-						// every description ends in the same place.
-						<span class="ml-auto shrink-0 flex items-center gap-1 pl-2 w-30">
+						// Type and caret are one target — clicking either
+						// drills in, the keyboard does it with Right — packed
+						// against the right edge so the column is only as
+						// wide as the longest type, and the caret keeps its
+						// slot on a field with nothing under it. Every
+						// description therefore ends in the same place,
+						// except on the selected row, where the tick widens
+						// the column by its own width.
+						<span
+							class="ml-auto shrink-0 flex items-center justify-end gap-1 pl-2 pr-1 min-w-23 rounded"
+							:class="entries[row.i].children ? 'cursor-pointer hover:bg-background-default-tertiary' : ''"
+							@click="if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }"
+						>
 							<span class="font-mono text-base text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
 							<template x-if="isSelected(row.i)">
 								<span class="shrink-0 text-icon-selected">
 									@icons.Tick()
 								</span>
 							</template>
-							// Drilling in is a separate hit target from
-							// selecting the object itself; the keyboard does
-							// it with Right.
 							<span
 								aria-hidden="true"
-								@click.stop="drill(row.i)"
-								class="shrink-0 ml-auto p-0.5 -mr-0.5 rounded"
-								:class="entries[row.i].children ? 'text-icon-default-secondary hover:bg-background-default-tertiary hover:text-icon-default-bold' : 'invisible'"
+								class="shrink-0"
+								:class="entries[row.i].children ? 'text-icon-default-secondary' : 'invisible'"
 							>
 								@icons.ChevronRight()
 							</span>
