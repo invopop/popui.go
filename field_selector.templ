@@ -142,10 +142,12 @@ templ fieldSelector(prp props.FieldSelector) {
 			// The breadcrumb only makes sense while browsing: a filter searches
 			// the whole tree, not the level that happens to be open.
 			<div x-show="!searching" class="flex items-center gap-0.5 px-1 pb-1 shrink-0 overflow-x-auto">
+				// The root names the schema rather than a field, so it is
+				// set as a heading (MenuLabel's style) and not as a path.
 				<button
 					type="button"
 					@click="trail = []"
-					class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-base text-foreground-default-secondary hover:bg-background-default-secondary"
+					class="shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary"
 				>
 					if prp.Root != "" {
 						{ prp.Root }
@@ -207,23 +209,29 @@ templ fieldSelector(prp props.FieldSelector) {
 								<span class="truncate min-w-0 flex-1 text-base text-foreground-default-tertiary" x-text="entries[row.i].description || entries[row.i].title"></span>
 							</template>
 						</span>
-						<span class="ml-auto pl-2 shrink-0 font-mono text-base text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
-						<template x-if="isSelected(row.i)">
-							<span class="shrink-0 text-icon-selected">
-								@icons.Tick()
-							</span>
-						</template>
-						// Drilling in is a separate hit target from selecting
-						// the object itself; the keyboard does it with Right.
-						<template x-if="entries[row.i].children">
+						// The trailing column is a fixed width and the
+						// chevron keeps its slot on a field with nothing
+						// under it, so the types line up down the list and
+						// every description ends in the same place.
+						<span class="ml-auto shrink-0 flex items-center gap-1 pl-2 w-30">
+							<span class="font-mono text-base text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
+							<template x-if="isSelected(row.i)">
+								<span class="shrink-0 text-icon-selected">
+									@icons.Tick()
+								</span>
+							</template>
+							// Drilling in is a separate hit target from
+							// selecting the object itself; the keyboard does
+							// it with Right.
 							<span
 								aria-hidden="true"
 								@click.stop="drill(row.i)"
-								class="shrink-0 p-0.5 -mr-0.5 rounded text-icon-default-secondary hover:bg-background-default-tertiary hover:text-icon-default-bold"
+								class="shrink-0 ml-auto p-0.5 -mr-0.5 rounded"
+								:class="entries[row.i].children ? 'text-icon-default-secondary hover:bg-background-default-tertiary hover:text-icon-default-bold' : 'invisible'"
 							>
 								@icons.ChevronRight()
 							</span>
-						</template>
+						</span>
 					</li>
 				</template>
 				<li role="presentation" x-show="rows.length === 0" class="px-2 py-1.5 text-base text-foreground-default-tertiary">
