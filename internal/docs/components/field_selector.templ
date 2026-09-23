@@ -68,8 +68,8 @@ templ FieldSelector() {
 				{Name: "Name", Type: "string", Default: "", Description: "The last segment of the path, without the array marker. Shown while browsing"},
 				{Name: "Path", Type: "string", Default: "", Description: "The full dotted path from the root. Shown while filtering, and emitted unless Value overrides it"},
 				{Name: "Value", Type: "string", Default: "Path", Description: "Overrides what selecting the field emits — a Go template variable, say, rather than the path the user reads"},
-				{Name: "Title", Type: "string", Default: "", Description: "Human label from the schema, shown after the path"},
-				{Name: "Description", Type: "string", Default: "", Description: "Long description, shown as the row's tooltip. `goblfields` leaves it out unless `Options.Descriptions` is set, as descriptions dominate the payload"},
+				{Name: "Title", Type: "string", Default: "", Description: "Short human label from the schema. Stands in after the path when a field has no Description"},
+				{Name: "Description", Type: "string", Default: "", Description: "Long description, shown after the path and as the row's tooltip, truncating before the path does. `goblfields` leaves it out unless `Options.Descriptions` is set: they roughly double the payload"},
 				{Name: "Type", Type: "string", Default: "", Description: "Type label shown at the end of the row: `string`, `object`, `string[]`"},
 				{Name: "Array", Type: "bool", Default: "false", Description: "Marks a field that is itself an array. Its children describe one item"},
 				{Name: "Required", Type: "bool", Default: "false", Description: "Marks a field its immediate parent requires"},
@@ -82,7 +82,7 @@ templ FieldSelector() {
 			Description: "Tune how `goblfields.Build` walks the schemas.",
 			Items: []modules.APITableItem{
 				{Name: "MaxDepth", Type: "int", Default: "6", Description: "How far a branch is expanded, counting the root document's properties as depth 1. A branch also stops on its own when it revisits a schema it already contains, which is what bounds recursive schemas"},
-				{Name: "Descriptions", Type: "bool", Default: "false", Description: "Keeps each field's schema description. They run to several lines for many GOBL fields and multiply the size of the payload sent to the browser"},
+				{Name: "Descriptions", Type: "bool", Default: "false", Description: "Keeps each field's schema description, which is what a row shows after the path. They run to several lines for many GOBL fields, and roughly double the payload sent to the browser — without them rows fall back to the shorter `Title`"},
 				{Name: "Source", Type: "fs.FS", Default: "goblfields.Schemas", Description: "Where schema documents are read from. Defaults to the documents embedded in the gobl module"},
 			},
 		})

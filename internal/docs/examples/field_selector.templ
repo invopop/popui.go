@@ -7,7 +7,9 @@ import (
 )
 
 // The tree is built once: it only changes when the GOBL dependency does.
-var invoiceFields = goblfields.MustBuild("bill/invoice")
+// Descriptions roughly double the payload, and are what each row shows after
+// the path.
+var invoiceFields = goblfields.MustBuild("bill/invoice", goblfields.Options{Descriptions: true})
 
 templ FieldSelectorExample() {
 	@popui.FieldSelector(props.FieldSelector{

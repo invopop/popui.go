@@ -15,7 +15,9 @@ import (
 )
 
 // The tree is built once: it only changes when the GOBL dependency does.
-var invoiceFields = goblfields.MustBuild("bill/invoice")
+// Descriptions roughly double the payload, and are what each row shows after
+// the path.
+var invoiceFields = goblfields.MustBuild("bill/invoice", goblfields.Options{Descriptions: true})
 
 func FieldSelectorExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

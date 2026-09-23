@@ -106,7 +106,7 @@ templ fieldSelector(prp props.FieldSelector) {
 					Select a field
 				}
 			</span>
-			<span x-show="value" x-text="value" class="truncate font-mono text-sm text-foreground"></span>
+			<span x-show="value" x-text="value" class="truncate font-mono text-base text-foreground"></span>
 			<span class="multiselect-arrow ml-auto shrink-0 size-5 transition-transform" :class="{ 'rotate-180': open }"></span>
 		</button>
 		// The panel is capped at the viewport edge by .field-selector-panel
@@ -145,7 +145,7 @@ templ fieldSelector(prp props.FieldSelector) {
 				<button
 					type="button"
 					@click="trail = []"
-					class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-sm text-foreground-default-secondary hover:bg-background-default-secondary"
+					class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-base text-foreground-default-secondary hover:bg-background-default-secondary"
 				>
 					if prp.Root != "" {
 						{ prp.Root }
@@ -162,7 +162,7 @@ templ fieldSelector(prp props.FieldSelector) {
 							type="button"
 							@click="trail = trail.slice(0, index + 1)"
 							x-text="entries[entry].name + (entries[entry].array ? '[]' : '')"
-							class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-sm text-foreground-default-secondary hover:bg-background-default-secondary"
+							class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-base text-foreground-default-secondary hover:bg-background-default-secondary"
 						></button>
 					</span>
 				</template>
@@ -192,15 +192,22 @@ templ fieldSelector(prp props.FieldSelector) {
 							class="size-1.5 shrink-0 rounded-full"
 							:class="entries[row.i].always ? 'bg-background-success-bold' : ''"
 						></span>
-						<span class="flex items-baseline gap-1.5 min-w-0">
-							<span class="font-mono text-sm shrink-0 max-w-full truncate">
-								<template x-for="(part, p) in label(row)" :key="p"><span :class="part.m ? 'text-foreground font-medium' : 'text-foreground-default-secondary'" x-text="part.t"></span></template>
+						<span class="flex items-baseline gap-1.5 min-w-0 flex-1">
+							// The whole path reads at full strength, so a
+							// matched run is set apart by weight alone —
+							// semibold, since medium barely shows in mono.
+							<span class="font-mono text-base shrink-0 max-w-full truncate text-foreground">
+								<template x-for="(part, p) in label(row)" :key="p"><span :class="part.m ? 'font-semibold' : ''" x-text="part.t"></span></template>
 							</span>
-							<template x-if="entries[row.i].title">
-								<span class="truncate min-w-0 flex-1 text-base text-foreground-default-tertiary" x-text="entries[row.i].title"></span>
+							// The description carries the explanation, and the
+							// title stands in for it when a tree was built
+							// without descriptions. Either way it truncates
+							// first: the path is what identifies the row.
+							<template x-if="entries[row.i].description || entries[row.i].title">
+								<span class="truncate min-w-0 flex-1 text-base text-foreground-default-tertiary" x-text="entries[row.i].description || entries[row.i].title"></span>
 							</template>
 						</span>
-						<span class="ml-auto pl-2 shrink-0 font-mono text-sm text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
+						<span class="ml-auto pl-2 shrink-0 font-mono text-base text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
 						<template x-if="isSelected(row.i)">
 							<span class="shrink-0 text-icon-selected">
 								@icons.Tick()

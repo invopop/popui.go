@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-var envelopeFields = goblfields.MustBuild("envelope")
+var envelopeFields = goblfields.MustBuild("envelope", goblfields.Options{Descriptions: true})
 
 templ FieldSelectorWithLabelExample() {
 	@popui.FieldSelector(props.FieldSelector{

@@ -14,7 +14,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-var envelopeFields = goblfields.MustBuild("envelope")
+var envelopeFields = goblfields.MustBuild("envelope", goblfields.Options{Descriptions: true})
 
 func FieldSelectorWithLabelExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
