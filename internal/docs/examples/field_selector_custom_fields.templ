@@ -1,0 +1,29 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+// A tree does not have to come from a schema. Value overrides what selecting
+// a field emits, so the path a user reads can differ from the string the
+// consumer needs — here, Go template variables.
+var emailVariables = []props.Field{
+	{Name: "job_id", Path: "job_id", Value: "{{.job_id}}", Title: "Job ID", Type: "string", AlwaysPresent: true},
+	{Name: "faults", Path: "faults", Value: "{{.faults}}", Title: "Faults", Type: "string"},
+	{Name: "doc", Path: "doc", Title: "Document", Type: "object", AlwaysPresent: true, Children: []props.Field{
+		{Name: "code", Path: "doc.code", Value: "{{.doc.code}}", Title: "Code", Type: "string"},
+		{Name: "supplier", Path: "doc.supplier", Title: "Supplier", Type: "object", AlwaysPresent: true, Children: []props.Field{
+			{Name: "name", Path: "doc.supplier.name", Value: "{{.doc.supplier.name}}", Title: "Name", Type: "string"},
+		}},
+	}},
+}
+
+templ FieldSelectorCustomFieldsExample() {
+	@popui.FieldSelector(props.FieldSelector{
+		Name:        "variable",
+		Root:        "email",
+		Placeholder: "Insert a variable",
+		Fields:      emailVariables,
+	})
+}

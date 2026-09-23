@@ -676,6 +676,55 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
 
   // ------------------------------------------------------------------
+  // Field selector helpers
+  // ------------------------------------------------------------------
+
+  // Splits text into matched and unmatched runs, so a field row can highlight
+  // the part of its path a query hit. Overlapping matches are merged rather
+  // than split twice.
+  function highlightParts(text, terms) {
+    const lower = text.toLowerCase()
+    const ranges = []
+
+    for (const term of terms) {
+      const needle = term.toLowerCase()
+      let from = lower.indexOf(needle)
+      while (from !== -1) {
+        ranges.push([from, from + needle.length])
+        from = lower.indexOf(needle, from + needle.length)
+      }
+    }
+
+    if (!ranges.length) return [{ m: false, t: text }]
+
+    ranges.sort((a, b) => a[0] - b[0])
+
+    const parts = []
+    let cursor = 0
+    for (const [start, end] of ranges) {
+      if (end <= cursor) continue
+      const from = Math.max(start, cursor)
+      if (from > cursor) parts.push({ m: false, t: text.slice(cursor, from) })
+      parts.push({ m: true, t: text.slice(from, end) })
+      cursor = end
+    }
+    if (cursor < text.length) parts.push({ m: false, t: text.slice(cursor) })
+
+    return parts
+  }
+
+  // Reports whether the characters of term appear in text in order, which is
+  // what lets `supname` find `supplier.name`.
+  function isSubsequence(term, text) {
+    let cursor = 0
+    for (const character of text) {
+      if (character === term[cursor]) cursor++
+      if (cursor === term.length) return true
+    }
+    return false
+  }
+
+  // ------------------------------------------------------------------
   // Alpine controllers
   // ------------------------------------------------------------------
 
@@ -893,6 +942,235 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // Reports whether any field is still inactive, which keeps the add button visible.
       hasAvailable() {
         return this.all.some((n) => !this.active.includes(n))
+      },
+    }))
+
+
+    // Field picker over a nested data shape (usually a GOBL document): filters the whole tree by path, or browses it a level at a time.
+    // The tree arrives as JSON in a script element; paths are rebuilt here from each entry's parent index.
+    Alpine.data('fieldSelector', (init) => ({
+      entries: [],
+      roots: [],
+      value: (init && init.value) || '',
+      name: (init && init.name) || '',
+      query: '',
+      open: false,
+      // The objects drilled into, root first, as entry indices.
+      trail: [],
+      // The keyboard highlight follows a path rather than a row index, so it
+      // survives the list changing underneath it.
+      activePath: '',
+
+      init() {
+        const el = init && init.source ? document.getElementById(init.source) : null
+        let raw = []
+        if (el) {
+          try { raw = JSON.parse(el.textContent) || [] } catch (e) { raw = [] }
+        } else if (init && Array.isArray(init.fields)) {
+          raw = init.fields
+        }
+        this.entries = raw.map((e) => ({
+          name: e.n || '',
+          title: e.t || '',
+          type: e.y || '',
+          description: e.d || '',
+          own: e.v || '',
+          parent: typeof e.p === 'number' ? e.p : -1,
+          array: !!(e.f & 1),
+          always: !!(e.f & 2),
+          children: !!(e.f & 4),
+          path: '',
+          depth: 0,
+          kids: [],
+        }))
+        this.entries.forEach((entry, i) => {
+          const parent = entry.parent >= 0 ? this.entries[entry.parent] : null
+          entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
+          entry.depth = parent ? parent.depth + 1 : 1
+          if (parent) parent.kids.push(i)
+          else this.roots.push(i)
+        })
+      },
+
+      get searching() {
+        return this.query.trim().length > 0
+      },
+      // The entries of the level currently browsed.
+      get level() {
+        if (!this.trail.length) return this.roots
+        return this.entries[this.trail[this.trail.length - 1]].kids
+      },
+      get rows() {
+        if (this.searching) return this.match(this.query)
+        return this.level.map((i) => ({ i, parts: null }))
+      },
+      get activeIndex() {
+        const i = this.rows.findIndex((row) => this.entries[row.i].path === this.activePath)
+        return i === -1 ? 0 : i
+      },
+      get activeId() {
+        if (!this.open || !this.rows.length) return null
+        return this.$id('field-selector') + '-opt-' + this.activeIndex
+      },
+
+      // The value a field emits: its own override when it has one, its path
+      // otherwise. Not named valueOf: Alpine resolves an expression's names
+      // against a proxy that inherits Object.prototype, so a method by that
+      // name is shadowed and silently returns the scope object.
+      emitted(i) {
+        const entry = this.entries[i]
+        return entry ? entry.own || entry.path : ''
+      },
+      isSelected(i) {
+        return !!this.value && this.emitted(i) === this.value
+      },
+      // Browsing has no query to highlight, so the row falls back to the field name.
+      label(row) {
+        if (row.parts) return row.parts
+        const entry = this.entries[row.i]
+        return [{ m: false, t: entry.name + (entry.array ? '[]' : '') }]
+      },
+
+      // Ranks every field against the query. Terms are matched against the whole
+      // path, so `sup name` and `supplier.name` find the same field.
+      match(query, limit = 80) {
+        const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
+        if (!terms.length) return []
+
+        const found = []
+        for (let i = 0; i < this.entries.length; i++) {
+          const score = this.score(this.entries[i], terms)
+          if (score === null) continue
+          found.push({ i, score })
+        }
+
+        found.sort((a, b) => {
+          const x = this.entries[a.i]
+          const y = this.entries[b.i]
+          return b.score - a.score || x.path.length - y.path.length || x.path.localeCompare(y.path)
+        })
+
+        // Only the rows that are rendered are worth highlighting.
+        return found.slice(0, limit).map((row) => ({ i: row.i, parts: highlightParts(this.entries[row.i].path, terms) }))
+      },
+
+      score(entry, terms) {
+        const path = entry.path.toLowerCase()
+        const name = entry.name.toLowerCase()
+        const title = entry.title.toLowerCase()
+
+        // Shallow fields win ties: `code` should beat `lines[].item.code`.
+        let score = -entry.depth * 3
+
+        for (const term of terms) {
+          const index = path.indexOf(term)
+          if (index >= 0) {
+            score += 100 - Math.min(index, 60)
+            if (name === term) score += 80
+            else if (name.startsWith(term)) score += 40
+            continue
+          }
+          if (title.includes(term)) {
+            score += 45
+            continue
+          }
+          if (isSubsequence(term, path)) {
+            score += 20
+            continue
+          }
+          return null
+        }
+
+        return score
+      },
+
+      move(delta) {
+        if (!this.rows.length) return
+        const next = (this.activeIndex + delta + this.rows.length) % this.rows.length
+        this.activePath = this.entries[this.rows[next].i].path
+        this.scrollActiveIntoView()
+      },
+      drill(i) {
+        const entry = this.entries[i]
+        if (!entry || !entry.kids.length) return
+        this.trail = [...this.trail, i]
+        this.query = ''
+        this.activePath = ''
+      },
+      back() {
+        if (!this.trail.length) return
+        const parent = this.trail[this.trail.length - 1]
+        this.trail = this.trail.slice(0, -1)
+        this.activePath = this.entries[parent].path
+      },
+      select(i) {
+        const entry = this.entries[i]
+        if (!entry) return
+        this.value = this.emitted(i)
+        this.$root.dispatchEvent(new CustomEvent('field-select', {
+          bubbles: true,
+          detail: { path: entry.path, value: this.value, title: entry.title, type: entry.type },
+        }))
+        this.$refs.panel.hidePopover()
+      },
+      scrollActiveIntoView() {
+        this.$nextTick(() => {
+          const el = document.getElementById(this.activeId)
+          if (el) el.scrollIntoView({ block: 'nearest' })
+        })
+      },
+      // Opens where the current value lives rather than at the root.
+      openAtValue() {
+        this.trail = []
+        this.activePath = ''
+        if (!this.value) return
+        const found = this.entries.findIndex((_, i) => this.isSelected(i))
+        if (found === -1) return
+        this.activePath = this.entries[found].path
+        const trail = []
+        for (let i = this.entries[found].parent; i >= 0; i = this.entries[i].parent) trail.unshift(i)
+        this.trail = trail
+      },
+
+      onKeydown(e) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault()
+          if (!this.open) this.$refs.panel.showPopover()
+          else this.move(1)
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault()
+          if (!this.open) this.$refs.panel.showPopover()
+          else this.move(-1)
+        } else if (e.key === 'Enter') {
+          if (!this.open) return
+          e.preventDefault()
+          const row = this.rows[this.activeIndex]
+          if (row) this.select(row.i)
+        } else if (e.key === 'Escape') {
+          if (!this.open) return
+          e.preventDefault()
+          // Escape clears the filter first, so a mistyped query does not cost
+          // the whole dropdown.
+          if (this.query) this.query = ''
+          else this.$refs.panel.hidePopover()
+        } else if (this.open && !this.searching && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+          // Left and Right move the caret while there is something to filter.
+          e.preventDefault()
+          const row = this.rows[this.activeIndex]
+          if (e.key === 'ArrowRight') { if (row) this.drill(row.i) } else this.back()
+        }
+      },
+      onToggle(e) {
+        if (e.newState === 'open') {
+          this.open = true
+          this.$refs.panel.style.minWidth = this.$refs.field.offsetWidth + 'px'
+          this.query = ''
+          this.openAtValue()
+          this.$nextTick(() => { if (this.$refs.search) this.$refs.search.focus() })
+        } else {
+          this.open = false
+          this.query = ''
+        }
       },
     }))
 

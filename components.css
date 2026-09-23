@@ -109,14 +109,15 @@ body {
   }
 }
 
-/* Multiselect dropdown */
+/* Multiselect and field selector dropdowns */
 
 /* The bottom inset + max-height: stretch cap the panel at the viewport edge,
    exactly like .context-menu-scroll above (the inset alone would be discarded
    because the UA's height: fit-content over-constrains the box). The panel is
    a flex column and the option list a min-h-0 overflow-y-auto item, so the
    search input, padding, and rounded corners stay put while options scroll. */
-[popover].multiselect-panel {
+[popover].multiselect-panel,
+[popover].field-selector-panel {
   position: fixed;
   inset: unset;
   overflow: visible;
@@ -127,11 +128,13 @@ body {
   max-height: -webkit-fill-available; /* Safari: no `stretch` keyword yet */
   max-height: stretch;
 }
-[popover].multiselect-panel:not(:popover-open) {
+[popover].multiselect-panel:not(:popover-open),
+[popover].field-selector-panel:not(:popover-open) {
   display: none;
 }
 @supports not (anchor-name: --test) {
-  [popover].multiselect-panel {
+  [popover].multiselect-panel,
+  [popover].field-selector-panel {
     position: absolute;
     top: auto;
     left: auto;

@@ -1,0 +1,19 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/goblfields"
+	"github.com/invopop/popui.go/props"
+)
+
+var envelopeFields = goblfields.MustBuild("envelope")
+
+templ FieldSelectorWithLabelExample() {
+	@popui.FieldSelector(props.FieldSelector{
+		Label:  "Envelope field",
+		Name:   "field",
+		Root:   "envelope",
+		Value:  "head.stamps[].val",
+		Fields: envelopeFields,
+	})
+}

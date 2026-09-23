@@ -1,0 +1,28 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ FieldSelectorOnSelectExample() {
+	<div x-data="{ picked: null }" class="flex flex-col gap-2 w-full">
+		@popui.FieldSelector(props.FieldSelector{
+			Name:   "field",
+			Root:   "envelope",
+			Fields: envelopeFields,
+			Attributes: templ.Attributes{
+				"@field-select": "picked = $event.detail",
+			},
+		})
+		<p class="text-base text-foreground-default-secondary">
+			<span x-show="!picked">Nothing selected yet.</span>
+			<template x-if="picked">
+				<span>
+					Selected <code class="font-mono text-sm text-foreground" x-text="picked.value"></code>
+					(<span x-text="picked.type"></span>)
+				</span>
+			</template>
+		</p>
+	</div>
+}

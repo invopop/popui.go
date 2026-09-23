@@ -138,6 +138,12 @@ var groups = []*Group{
 				Template: components.Fieldset(),
 			},
 			{
+				Title:    "FieldSelector",
+				Desc:     "Picker for one field of a nested data shape — filter a GOBL document's whole tree, or browse it a level at a time.",
+				Path:     "field-selector",
+				Template: components.FieldSelector(),
+			},
+			{
 				Title:    "File",
 				Desc:     "File components for selecting, uploading and displaying files. Use InputFile for basic file selection, FileUpload for avatar/image uploads with preview, and FileDownload for displaying stored files.",
 				Path:     "file",

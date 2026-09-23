@@ -1,0 +1,307 @@
+package popui
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// FieldSelector renders a picker for one field of a nested data shape — most
+// often a GOBL document, whose tree the goblfields package builds from the
+// schemas embedded in gobl.
+//
+// The trigger reads as a form field showing the current path. Opening it
+// reveals a filter box over the whole tree: terms are matched against the full
+// path, so "sup name", "supplier.name" and "supname" all find supplier.name,
+// and the matched runs are highlighted. With the filter empty the dropdown
+// browses one level at a time, with a breadcrumb back to the root. A green dot
+// marks a field that is required at every step from the root, and so present
+// on every document of the schema.
+//
+// It is fully keyboard operable: Arrow Up/Down move the active field, Right
+// opens an object, Left goes back, Enter selects, and Escape clears the filter
+// before closing. The selected path is submitted under Name via a visually
+// hidden input, and every selection also raises a `field-select` DOM event
+// carrying the path, the emitted value, and the field's title and type.
+//
+// The whole tree is rendered into the page as JSON, so filtering and drilling
+// never go back to the server. That is a few hundred kilobytes for a schema
+// the size of bill/invoice — pass a tree built with a smaller
+// goblfields.Options.MaxDepth where that matters.
+templ FieldSelector(p ...props.FieldSelector) {
+	@fieldSelector(props.First(p).GenerateID())
+}
+
+templ fieldSelector(prp props.FieldSelector) {
+	// relative keeps the sr-only value input (position: absolute) contained
+	// by the component, as in Select's Multiple variant.
+	// Consumer Attributes go on the root — the element carrying x-modelable,
+	// so an Alpine x-model placed here two-way binds the selected value.
+	<div
+		class="relative flex flex-col space-y-2 w-full"
+		x-data={ fieldSelectorData(prp) }
+		x-id="['field-selector']"
+		x-modelable="value"
+		{ prp.Attributes... }
+	>
+		@templ.JSONScript(fieldSelectorFieldsID(prp), fieldSelectorEntries(prp.Fields))
+		if prp.Label != "" {
+			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
+				{ prp.Label }
+			}
+		}
+		<input
+			x-model="value"
+			class="sr-only"
+			tabindex="-1"
+			aria-hidden="true"
+			if prp.Name != "" {
+				name={ prp.Name }
+			}
+			if prp.Required {
+				required
+			}
+			if prp.Disabled {
+				disabled
+			}
+		/>
+		<button
+			type="button"
+			id={ prp.ID }
+			x-ref="field"
+			role="combobox"
+			aria-haspopup="listbox"
+			:aria-expanded="open"
+			:aria-controls="$id('field-selector') + '-listbox'"
+			:aria-activedescendant="activeId"
+			:popovertarget="$id('field-selector')"
+			:style="'anchor-name: --' + $id('field-selector')"
+			@keydown="onKeydown($event)"
+			if prp.Required {
+				aria-required="true"
+			}
+			if prp.Disabled {
+				disabled
+			}
+			class={ tailwind.Merge(
+				classes.FormField(),
+				classes.FormFieldState(!prp.Error.Empty()),
+				// min-h-8.5 (34px) matches the natural height of Input and
+				// Select: 20px line + py-1.5 + borders.
+				"flex items-center gap-2 min-h-8.5 text-left pr-1.5 disabled:cursor-not-allowed",
+				prp.Class,
+			) }
+		>
+			<span class="shrink-0 text-icon-default-secondary">
+				@icons.Brackets()
+			</span>
+			<span x-show="!value" class="truncate text-foreground-default-tertiary">
+				if prp.Placeholder != "" {
+					{ prp.Placeholder }
+				} else {
+					Select a field
+				}
+			</span>
+			<span x-show="value" x-text="value" class="truncate font-mono text-sm text-foreground"></span>
+			<span class="multiselect-arrow ml-auto shrink-0 size-5 transition-transform" :class="{ 'rotate-180': open }"></span>
+		</button>
+		// The panel is capped at the viewport edge by .field-selector-panel
+		// (components.css) and is a flex column, so the filter box, breadcrumb
+		// and legend stay put while the field list scrolls.
+		<div
+			popover
+			x-ref="panel"
+			:id="$id('field-selector')"
+			:style="'position-anchor: --' + $id('field-selector')"
+			@toggle="onToggle($event)"
+			@keydown="onKeydown($event)"
+			class="field-selector-panel flex flex-col min-w-72 max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
+		>
+			<div class="p-1 shrink-0">
+				@Input(props.Input{
+					Type:        "search",
+					Placeholder: "Filter fields, e.g. supplier name",
+					Size:        props.InputSizeSmall,
+					Icon:        icons.Search(),
+					Attributes: templ.Attributes{
+						"x-ref":                  "search",
+						"x-model":                "query",
+						"autocomplete":           "off",
+						"data-1p-ignore":         "true",
+						"data-lpignore":          "true",
+						"aria-autocomplete":      "list",
+						":aria-controls":         "$id('field-selector') + '-listbox'",
+						":aria-activedescendant": "activeId",
+					},
+				})
+			</div>
+			// The breadcrumb only makes sense while browsing: a filter searches
+			// the whole tree, not the level that happens to be open.
+			<div x-show="!searching" class="flex items-center gap-0.5 px-1 pb-1 shrink-0 overflow-x-auto">
+				<button
+					type="button"
+					@click="trail = []"
+					class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-sm text-foreground-default-secondary hover:bg-background-default-secondary"
+				>
+					if prp.Root != "" {
+						{ prp.Root }
+					} else {
+						root
+					}
+				</button>
+				<template x-for="(entry, index) in trail" :key="entry">
+					<span class="flex items-center gap-0.5 shrink-0">
+						<span class="shrink-0 text-icon-default-secondary">
+							@icons.ChevronRight()
+						</span>
+						<button
+							type="button"
+							@click="trail = trail.slice(0, index + 1)"
+							x-text="entries[entry].name + (entries[entry].array ? '[]' : '')"
+							class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-sm text-foreground-default-secondary hover:bg-background-default-secondary"
+						></button>
+					</span>
+				</template>
+			</div>
+			<ul
+				x-ref="list"
+				tabindex="-1"
+				role="listbox"
+				:id="$id('field-selector') + '-listbox'"
+				:aria-activedescendant="activeId"
+				class="min-h-0 overflow-y-auto overflow-x-hidden outline-none"
+			>
+				<template x-for="(row, index) in rows" :key="entries[row.i].path">
+					<li
+						role="option"
+						:id="$id('field-selector') + '-opt-' + index"
+						:aria-selected="isSelected(row.i)"
+						:class="{ 'bg-background-default-secondary': index === activeIndex }"
+						class="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer"
+						:title="entries[row.i].description || entries[row.i].path"
+						@click="select(row.i)"
+						@mouseenter="activePath = entries[row.i].path"
+					>
+						// The dot column is always there, so paths line up
+						// whether or not a field is always present.
+						<span
+							class="size-1.5 shrink-0 rounded-full"
+							:class="entries[row.i].always ? 'bg-background-success-bold' : ''"
+						></span>
+						<span class="flex items-baseline gap-1.5 min-w-0">
+							<span class="font-mono text-sm shrink-0 max-w-full truncate">
+								<template x-for="(part, p) in label(row)" :key="p"><span :class="part.m ? 'text-foreground font-medium' : 'text-foreground-default-secondary'" x-text="part.t"></span></template>
+							</span>
+							<template x-if="entries[row.i].title">
+								<span class="truncate min-w-0 flex-1 text-base text-foreground-default-tertiary" x-text="entries[row.i].title"></span>
+							</template>
+						</span>
+						<span class="ml-auto pl-2 shrink-0 font-mono text-sm text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
+						<template x-if="isSelected(row.i)">
+							<span class="shrink-0 text-icon-selected">
+								@icons.Tick()
+							</span>
+						</template>
+						// Drilling in is a separate hit target from selecting
+						// the object itself; the keyboard does it with Right.
+						<template x-if="entries[row.i].children">
+							<span
+								aria-hidden="true"
+								@click.stop="drill(row.i)"
+								class="shrink-0 p-0.5 -mr-0.5 rounded text-icon-default-secondary hover:bg-background-default-tertiary hover:text-icon-default-bold"
+							>
+								@icons.ChevronRight()
+							</span>
+						</template>
+					</li>
+				</template>
+				<li role="presentation" x-show="rows.length === 0" class="px-2 py-1.5 text-base text-foreground-default-tertiary">
+					No fields found
+				</li>
+			</ul>
+			<div class="flex items-center gap-3 shrink-0 px-2 pt-2 pb-1 mt-1 border-t border-border text-sm text-foreground-default-tertiary">
+				<span class="flex items-center gap-1.5">
+					<span class="size-1.5 rounded-full bg-background-success-bold"></span>
+					Always present
+				</span>
+				<span class="ml-auto shrink-0" x-text="rows.length + (searching ? ' matches' : ' fields')"></span>
+			</div>
+		</div>
+		if !prp.Error.Empty() {
+			@InputError(prp.Error)
+		}
+	</div>
+}
+
+// fieldSelectorFieldsID is the id of the script element holding the field
+// tree, derived from the component id so the controller can find it.
+func fieldSelectorFieldsID(p props.FieldSelector) string {
+	return p.ID + "-fields"
+}
+
+// fieldSelectorEntry is one field as the browser receives it. The keys are
+// short and the empty ones dropped because a tree the size of bill/invoice
+// runs to a couple of thousand entries: the path is not sent at all, but
+// rebuilt in the browser from the parent index, which alone saves a third of
+// the payload.
+type fieldSelectorEntry struct {
+	N string `json:"n"`
+	T string `json:"t,omitempty"`
+	Y string `json:"y,omitempty"`
+	V string `json:"v,omitempty"`
+	D string `json:"d,omitempty"`
+	// F is a bit set: 1 array, 2 always present, 4 has children.
+	F int `json:"f,omitempty"`
+	// P is the index of the parent entry, -1 at the root.
+	P int `json:"p"`
+}
+
+// fieldSelectorEntries flattens the tree depth first, which is also the order
+// the picker renders it in.
+func fieldSelectorEntries(fields []props.Field) []fieldSelectorEntry {
+	entries := make([]fieldSelectorEntry, 0, len(fields))
+	return appendFieldSelectorEntries(entries, fields, -1)
+}
+
+func appendFieldSelectorEntries(entries []fieldSelectorEntry, fields []props.Field, parent int) []fieldSelectorEntry {
+	for _, field := range fields {
+		flags := 0
+		if field.Array {
+			flags |= 1
+		}
+		if field.AlwaysPresent {
+			flags |= 2
+		}
+		if len(field.Children) > 0 {
+			flags |= 4
+		}
+
+		entries = append(entries, fieldSelectorEntry{
+			N: field.Name,
+			T: field.Title,
+			Y: field.Type,
+			V: field.Value,
+			D: field.Description,
+			F: flags,
+			P: parent,
+		})
+
+		index := len(entries) - 1
+		entries = appendFieldSelectorEntries(entries, field.Children, index)
+	}
+	return entries
+}
+
+// fieldSelectorData builds the x-data="fieldSelector({...})" snippet: where to
+// read the field tree from, the initially selected value, the hidden input's
+// name, and the label of the root breadcrumb.
+func fieldSelectorData(p props.FieldSelector) string {
+	source, _ := json.Marshal(fieldSelectorFieldsID(p))
+	value, _ := json.Marshal(p.Value)
+	name, _ := json.Marshal(p.Name)
+	return fmt.Sprintf("fieldSelector({source: %s, value: %s, name: %s})", source, value, name)
+}

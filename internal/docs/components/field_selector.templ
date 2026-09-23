@@ -1,0 +1,93 @@
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ FieldSelector() {
+	@modules.Example(modules.ExampleProps{
+		Description: "Type to filter the whole tree, or browse it a level at a time with the breadcrumb. Terms are matched against the full path, so \"sup name\", \"supplier.name\" and \"supname\" all find the same field.",
+		Code:        examples.LoadExample("field_selector.templ"),
+	}) {
+		@examples.FieldSelectorExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "With Label and Value",
+		Description: "Use the Label prop for a simple text label above the field. Set Value to preselect a path: the dropdown then opens where that value lives rather than at the root.",
+		Code:        examples.LoadExample("field_selector_with_label.templ"),
+	}) {
+		@examples.FieldSelectorWithLabelExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Custom Fields",
+		Description: "Fields do not have to come from a schema. Give a field a Value to emit something other than its path, and mix hand-written entries with a schema-built tree to offer both from one picker.",
+		Code:        examples.LoadExample("field_selector_custom_fields.templ"),
+	}) {
+		@examples.FieldSelectorCustomFieldsExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Reacting to a Selection",
+		Description: "Every selection raises a `field-select` DOM event on the component root, carrying the path, the emitted value, and the field's title and type. The root is also x-modelable, so an Alpine x-model on it two-way binds the value.",
+		Code:        examples.LoadExample("field_selector_on_select.templ"),
+	}) {
+		@examples.FieldSelectorOnSelectExample()
+	}
+	@modules.Section("Building a GOBL tree", "gobl") {
+		@modules.Example(modules.ExampleProps{
+			Description: "The goblfields package builds a tree from the GOBL JSON Schemas embedded in the gobl module — no requests, and the fields are pinned to the GOBL release go.mod already selects. Building walks a few dozen documents, so build once and reuse the result.",
+			Code:        goblFieldsSnippet,
+			Stacked:     true,
+		})
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "FieldSelector",
+			Description: "Picker for one field of a nested data shape, with filtering, drill-down browsing and full keyboard operation.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier, applied to the trigger. Auto-generated when omitted so the label links correctly"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the trigger styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes, applied to the component root — the element exposed via x-modelable, so an Alpine x-model there two-way binds the selected value"},
+				{Name: "Name", Type: "string", Default: "", Description: "Name of the hidden input the selected value is submitted under"},
+				{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the field"},
+				{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Tooltip card shown on hover of a question mark icon after the label; only used when Label is set"},
+				{Name: "Placeholder", Type: "string", Default: "\"Select a field\"", Description: "Text shown in the trigger when nothing is selected"},
+				{Name: "Value", Type: "string", Default: "", Description: "The initially selected value. The dropdown opens where it lives rather than at the root"},
+				{Name: "Root", Type: "string", Default: "\"root\"", Description: "Label of the first breadcrumb, naming what the tree describes: `bill/invoice`, `envelope`"},
+				{Name: "Fields", Type: "[]props.Field", Default: "", Description: "The tree to pick from, usually built with `goblfields.Build`"},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the field"},
+				{Name: "Required", Type: "bool", Default: "false", Description: "Marks the field as required for form validation"},
+				{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the field"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Field",
+			Description: "One entry in the tree. Paths are dotted, with `[]` marking each array crossed on the way: `lines[].item.name`.",
+			Items: []modules.APITableItem{
+				{Name: "Name", Type: "string", Default: "", Description: "The last segment of the path, without the array marker. Shown while browsing"},
+				{Name: "Path", Type: "string", Default: "", Description: "The full dotted path from the root. Shown while filtering, and emitted unless Value overrides it"},
+				{Name: "Value", Type: "string", Default: "Path", Description: "Overrides what selecting the field emits — a Go template variable, say, rather than the path the user reads"},
+				{Name: "Title", Type: "string", Default: "", Description: "Human label from the schema, shown after the path"},
+				{Name: "Description", Type: "string", Default: "", Description: "Long description, shown as the row's tooltip. `goblfields` leaves it out unless `Options.Descriptions` is set, as descriptions dominate the payload"},
+				{Name: "Type", Type: "string", Default: "", Description: "Type label shown at the end of the row: `string`, `object`, `string[]`"},
+				{Name: "Array", Type: "bool", Default: "false", Description: "Marks a field that is itself an array. Its children describe one item"},
+				{Name: "Required", Type: "bool", Default: "false", Description: "Marks a field its immediate parent requires"},
+				{Name: "AlwaysPresent", Type: "bool", Default: "false", Description: "Marks a field required at every step from the root, shown with a green dot. Inside an array it reads per item: `lines[].item` is marked when every line that exists carries an item"},
+				{Name: "Children", Type: "[]props.Field", Default: "", Description: "The fields one level down, for a field that can be drilled into"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "goblfields.Options",
+			Description: "Tune how `goblfields.Build` walks the schemas.",
+			Items: []modules.APITableItem{
+				{Name: "MaxDepth", Type: "int", Default: "6", Description: "How far a branch is expanded, counting the root document's properties as depth 1. A branch also stops on its own when it revisits a schema it already contains, which is what bounds recursive schemas"},
+				{Name: "Descriptions", Type: "bool", Default: "false", Description: "Keeps each field's schema description. They run to several lines for many GOBL fields and multiply the size of the payload sent to the browser"},
+				{Name: "Source", Type: "fs.FS", Default: "goblfields.Schemas", Description: "Where schema documents are read from. Defaults to the documents embedded in the gobl module"},
+			},
+		})
+	}
+}
+
+//go:embed field_selector_gobl.go.txt
+var goblFieldsSnippet string
