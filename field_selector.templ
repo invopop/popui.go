@@ -143,8 +143,8 @@ templ fieldSelector(prp props.FieldSelector) {
 			// The breadcrumb only makes sense while browsing: a filter searches
 			// the whole tree, not the level that happens to be open.
 			<div x-show="!searching" class="flex items-center gap-0.5 px-1 pb-1 shrink-0 overflow-x-auto">
-				// The root names the schema rather than a field, so it is
-				// set as a heading (MenuLabel's style) and not as a path.
+				// The crumbs are a heading for the level on show, in
+				// MenuLabel's style, rather than a path to read.
 				<button
 					type="button"
 					@click="trail = []"
@@ -165,7 +165,7 @@ templ fieldSelector(prp props.FieldSelector) {
 							type="button"
 							@click="trail = trail.slice(0, index + 1)"
 							x-text="entries[entry].name + (entries[entry].array ? '[]' : '')"
-							class="shrink-0 px-1.5 py-0.5 rounded-md font-mono text-base text-foreground-default-secondary hover:bg-background-default-secondary"
+							class="shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary"
 						></button>
 					</span>
 				</template>
@@ -195,20 +195,21 @@ templ fieldSelector(prp props.FieldSelector) {
 							class="size-1.5 shrink-0 rounded-full"
 							:class="entries[row.i].always ? 'bg-background-success-bold' : ''"
 						></span>
-						<span class="flex items-baseline gap-1.5 min-w-0 flex-1">
-							// The whole path reads at full strength, so a
-							// matched run is set apart by weight alone —
-							// semibold, since medium barely shows in mono.
-							<span class="font-mono text-base shrink-0 max-w-full truncate text-foreground">
-								<template x-for="(part, p) in label(row)" :key="p"><span :class="part.m ? 'font-semibold' : ''" x-text="part.t"></span></template>
-							</span>
-							// The description carries the explanation, and the
-							// title stands in for it when a tree was built
-							// without descriptions. Either way it truncates
-							// first: the path is what identifies the row.
-							<template x-if="entries[row.i].description || entries[row.i].title">
-								<span class="truncate min-w-0 flex-1 text-base text-foreground-default-tertiary" x-text="entries[row.i].description || entries[row.i].title"></span>
-							</template>
+						// Path and description share one line box, so they
+						// sit on a common baseline. Laying them out as flex
+						// items would not: truncation makes their overflow
+						// non-visible, and a flex item like that aligns by
+						// its bottom edge, which puts two fonts with
+						// different metrics out by a pixel or two.
+						//
+						// The line truncates as a whole, so the description
+						// is what gives way — the path is what identifies the
+						// row. The whole path reads at full strength, with a
+						// matched run set apart by weight alone: semibold,
+						// since medium barely shows in mono. The title stands
+						// in for a tree built without descriptions.
+						<span class="min-w-0 flex-1 truncate text-base text-foreground">
+							<template x-for="(part, p) in label(row)" :key="p"><span class="font-mono" :class="part.m ? 'font-semibold' : ''" x-text="part.t"></span></template><template x-if="entries[row.i].description || entries[row.i].title"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description || entries[row.i].title"></span></template>
 						</span>
 						// Type and caret are one target — clicking either
 						// drills in, the keyboard does it with Right — packed
