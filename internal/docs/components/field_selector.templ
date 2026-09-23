@@ -70,7 +70,7 @@ templ FieldSelector() {
 				{Name: "Value", Type: "string", Default: "Path", Description: "Overrides what selecting the field emits — a Go template variable, say, rather than the path the user reads"},
 				{Name: "Title", Type: "string", Default: "", Description: "Short human label from the schema. Stands in after the path when a field has no Description"},
 				{Name: "Description", Type: "string", Default: "", Description: "Long description, shown after the path and as the row's tooltip, truncating before the path does. `goblfields` leaves it out unless `Options.Descriptions` is set: they roughly double the payload"},
-				{Name: "Type", Type: "string", Default: "", Description: "Type label shown at the end of the row: `string`, `object`, `string[]`"},
+				{Name: "Type", Type: "string", Default: "", Description: "JSON Schema type shown at the end of the row: `string`, `object`, `array`, `integer`, `number`, `boolean`"},
 				{Name: "Array", Type: "bool", Default: "false", Description: "Marks a field that is itself an array. Its children describe one item"},
 				{Name: "Required", Type: "bool", Default: "false", Description: "Marks a field its immediate parent requires"},
 				{Name: "AlwaysPresent", Type: "bool", Default: "false", Description: "Marks a field required at every step from the root, shown with a green dot. Inside an array it reads per item: `lines[].item` is marked when every line that exists carries an item"},

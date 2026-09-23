@@ -196,7 +196,7 @@ func TestBuildListsTheRootProperties(t *testing.T) {
 
 func TestBuildMarksArraysInThePathAndType(t *testing.T) {
 	fields := build(t, "bill/invoice")
-	if lines := field(t, fields, "lines[]"); !lines.Array || lines.Type != "object[]" {
+	if lines := field(t, fields, "lines[]"); !lines.Array || lines.Type != "array" {
 		t.Fatalf("lines[]: array=%v type=%q", lines.Array, lines.Type)
 	}
 	if got := field(t, fields, "uuid").Type; got != "string" {
@@ -205,8 +205,10 @@ func TestBuildMarksArraysInThePathAndType(t *testing.T) {
 }
 
 func TestBuildFollowsARefThatPointsAtAnArraySchema(t *testing.T) {
+	// The property is a plain $ref, so it only comes out as an array at all
+	// because the document it points at is itself one.
 	addons := field(t, build(t, "bill/invoice"), "$addons[]")
-	if !addons.Array || addons.Type != "string[]" {
+	if !addons.Array || addons.Type != "array" {
 		t.Fatalf("$addons[]: array=%v type=%q", addons.Array, addons.Type)
 	}
 }
@@ -358,7 +360,7 @@ func TestBuildFromTheEmbeddedSchemas(t *testing.T) {
 	if got := field(t, fields, "issue_time"); got.AlwaysPresent {
 		t.Error("issue_time is calculated, not always present")
 	}
-	if got := field(t, fields, "lines[]"); got.Type != "object[]" || !got.Array {
+	if got := field(t, fields, "lines[]"); got.Type != "array" || !got.Array {
 		t.Errorf("lines[]: type=%q array=%v", got.Type, got.Array)
 	}
 }

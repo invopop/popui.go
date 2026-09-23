@@ -31,8 +31,8 @@ type Field struct {
 	// goblfields leaves it out unless asked for, and a row falls back to
 	// Title when a tree was built without descriptions.
 	Description string
-	// Type is the label shown at the end of the row: string, object,
-	// string[], object[].
+	// Type is the JSON Schema type shown at the end of the row: string,
+	// object, array, integer, number, boolean.
 	Type string
 	// Array marks a field that is itself an array. Its children describe one
 	// item, so their paths carry the [] marker of this field.

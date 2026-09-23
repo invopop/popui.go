@@ -320,15 +320,19 @@ func (b *builder) document(id string) (*definition, error) {
 	return doc, nil
 }
 
+// typeLabel names the JSON Schema type of a field's value. An array is just
+// "array": the element type would repeat what the path's [] already says for
+// all but a handful of fields (a bill/invoice has 192 arrays, and 182 of them
+// hold objects), and what is actually worth knowing — whether there is
+// anything underneath — the row shows with its drill-in chevron.
 func typeLabel(node *definition, isArray bool) string {
-	label := node.Type
-	if node.Properties.len() > 0 || label == "" {
-		label = "object"
-	}
 	if isArray {
-		return label + "[]"
+		return "array"
 	}
-	return label
+	if node.Properties.len() > 0 || node.Type == "" {
+		return "object"
+	}
+	return node.Type
 }
 
 func firstString(values ...string) string {
