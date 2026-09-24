@@ -291,7 +291,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><div x-show=\"!searching\" class=\"flex items-center gap-0.5 px-1 pb-2.5 shrink-0 overflow-x-auto\"><button type=\"button\" @click=\"trail = []\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><div x-show=\"!searching\" class=\"flex items-center gap-0.5 p-1 shrink-0 overflow-x-auto\"><button type=\"button\" @click=\"trail = []\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
