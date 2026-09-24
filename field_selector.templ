@@ -184,7 +184,7 @@ templ fieldSelector(prp props.FieldSelector) {
 						:id="$id('field-selector') + '-opt-' + index"
 						:aria-selected="isSelected(row.i)"
 						:class="{ 'bg-background-default-secondary': index === activeIndex }"
-						class="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer"
+						class="flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer"
 						:title="entries[row.i].description || entries[row.i].path"
 						@click="select(row.i)"
 						@mouseenter="activePath = entries[row.i].path"
@@ -220,8 +220,8 @@ templ fieldSelector(prp props.FieldSelector) {
 						// except on the selected row, where the tick widens
 						// the column by its own width.
 						<span
-							class="ml-auto shrink-0 flex items-center justify-end gap-1 pl-2 pr-1 min-w-23 rounded"
-							:class="entries[row.i].children ? 'cursor-pointer hover:bg-background-default-tertiary' : ''"
+							class="ml-auto shrink-0 group flex items-center justify-end gap-1 pl-2 pr-1 min-w-25"
+							:class="entries[row.i].children ? 'cursor-pointer' : ''"
 							@click="if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }"
 						>
 							<span class="font-mono text-base text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
@@ -230,10 +230,19 @@ templ fieldSelector(prp props.FieldSelector) {
 									@icons.Tick()
 								</span>
 							</template>
+							// The caret carries Button's default chrome so it
+							// reads as the control it is, but stays a span:
+							// an option may not contain a focusable element,
+							// and the target is the whole column anyway — so
+							// it lights up from a hover on either half.
 							<span
 								aria-hidden="true"
-								class="shrink-0"
-								:class="entries[row.i].children ? 'text-icon-default-secondary' : 'invisible'"
+								class={ tailwind.Merge(
+									buttonBaseClasses(),
+									buttonClasses("", props.ButtonSizeIconSmall),
+									"shrink-0 group-hover:border-border-default-secondary-hover",
+								) }
+								:class="entries[row.i].children ? '' : 'invisible'"
 							>
 								@icons.ChevronRight()
 							</span>
