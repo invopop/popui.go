@@ -1077,16 +1077,17 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         isSelected(i) {
           return !!this.value && this.emitted(i) === this.value
         },
-        // The row's label as one HTML string — matched runs in <b> — rather
-        // than a list for a nested x-for: eighty rows each running their own
-        // loop was most of what a keystroke cost. Browsing has no query to
-        // highlight, so the label is then just the field name.
+        // The row's label as one HTML string rather than a list for a nested
+        // x-for: eighty rows each running their own loop was most of what a
+        // keystroke cost. The path is semibold as a whole, so while filtering
+        // it is the runs a term did not hit that are marked, by dimming them.
+        // Browsing has no query, so the label is then just the field name.
         labelHTML(row) {
           if (!row.parts) {
             const entry = this.entries[row.i]
             return escapeHTML(entry.name + (entry.array ? '[]' : ''))
           }
-          return row.parts.map((part) => (part.m ? '<b class="font-semibold">' + escapeHTML(part.t) + '</b>' : escapeHTML(part.t))).join('')
+          return row.parts.map((part) => (part.m ? escapeHTML(part.t) : '<span class="text-foreground-default-secondary">' + escapeHTML(part.t) + '</span>')).join('')
         },
 
         // Ranks every field against the query. Terms are matched against the

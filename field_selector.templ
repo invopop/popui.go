@@ -204,11 +204,11 @@ templ fieldSelector(prp props.FieldSelector) {
 						//
 						// The line truncates as a whole, so the description
 						// is what gives way — the path is what identifies the
-						// row. The whole path reads at full strength, with a
-						// matched run set apart by weight alone: semibold,
-						// since medium barely shows in mono.
+						// row. The path is semibold throughout; while
+						// filtering, the runs a term did not hit are dimmed
+						// so the ones it did still read.
 						<span class="min-w-0 flex-1 truncate text-base text-foreground">
-							<span class="font-mono" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
+							<span class="font-mono font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
 						// Type and caret are one target — clicking either
 						// drills in, the keyboard does it with Right — packed
