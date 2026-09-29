@@ -319,33 +319,68 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <button type=\"button\" @click=\"trail = trail.slice(0, index + 1)\" x-text=\"entries[entry].name + (entries[entry].array ? '[]' : '')\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\"></button></span></template></div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-selector') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-selector') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex }\" class=\"flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-mono font-semibold\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center gap-1 pl-2\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span class=\"size-1.5 shrink-0 rounded-full\" :class=\"entries[row.i].always ? 'bg-background-success-bold' : ''\"></span><span class=\"w-9 shrink-0 font-mono text-base text-foreground-default-tertiary\" x-text=\"typeLabel(row.i)\"></span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <button type=\"button\" @click=\"trail = trail.slice(0, index + 1)\" x-text=\"entries[entry].name + (entries[entry].array ? '[]' : '')\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\"></button></span></template>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 = []any{tailwind.Merge(
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "Clear")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = Button(props.Button{
+			Type:    "button",
+			Variant: props.ButtonVariantTransparent,
+			Size:    props.ButtonSizeSmall,
+			Class:   "ml-auto shrink-0",
+			Attributes: templ.Attributes{
+				"x-show": "trail.length > 0",
+				"@click": "trail = []",
+			},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-selector') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-selector') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex }\" class=\"flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-mono font-semibold\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center gap-1 pl-2\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span class=\"size-1.5 shrink-0 rounded-full\" :class=\"entries[row.i].always ? 'bg-background-success-bold' : ''\"></span><span class=\"w-9 shrink-0 font-mono text-base text-foreground-default-tertiary\" x-text=\"typeLabel(row.i)\"></span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 = []any{tailwind.Merge(
 			buttonBaseClasses(),
 			buttonClasses("", props.ButtonSizeIconSmall),
 			"shrink-0 group-hover:border-border-default-secondary-hover",
 		)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<span aria-hidden=\"true\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<span aria-hidden=\"true\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var12).String())
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var13).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_selector.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" :class=\"entries[row.i].children ? '' : 'invisible'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" :class=\"entries[row.i].children ? '' : 'invisible'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -353,7 +388,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span> <span class=\"shrink-0 text-icon-selected\" :class=\"isSelected(row.i) ? '' : 'invisible'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</span> <span class=\"shrink-0 text-icon-selected\" :class=\"isSelected(row.i) ? '' : 'invisible'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -361,7 +396,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</span></span></li></template><li role=\"presentation\" x-show=\"rows.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No fields found</li></ul><div class=\"flex items-center gap-3 shrink-0 px-2 pt-2 pb-1 mt-1 border-t border-border text-sm text-foreground-default-tertiary\"><span class=\"flex items-center gap-1.5\"><span class=\"size-1.5 rounded-full bg-background-success-bold\"></span> Always present</span> <span class=\"ml-auto shrink-0\" x-text=\"rows.length + (searching ? ' matches' : ' fields')\"></span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</span></span></li></template><li role=\"presentation\" x-show=\"rows.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No fields found</li></ul><div class=\"flex items-center gap-3 shrink-0 px-2 pt-2 pb-1 mt-1 border-t border-border text-sm text-foreground-default-tertiary\"><span class=\"flex items-center gap-1.5\"><span class=\"size-1.5 rounded-full bg-background-success-bold\"></span> Always present</span> <span class=\"ml-auto shrink-0\" x-text=\"rows.length + (searching ? ' matches' : ' fields')\"></span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -371,7 +406,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

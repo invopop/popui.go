@@ -1191,6 +1191,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             else this.move(-1)
           } else if (e.key === 'Enter') {
             if (!this.open) return
+            // A button in the panel — a crumb, Clear — takes its own Enter.
+            if (e.target.closest && e.target.closest('button')) return
             e.preventDefault()
             const row = this.rows[this.activeIndex]
             if (row) this.select(row.i)

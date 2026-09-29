@@ -169,6 +169,20 @@ templ fieldSelector(prp props.FieldSelector) {
 						></button>
 					</span>
 				</template>
+				// Clear drops the whole trail in one go. At the top level
+				// there is nothing to drop, so it is not offered.
+				@Button(props.Button{
+					Type:    "button",
+					Variant: props.ButtonVariantTransparent,
+					Size:    props.ButtonSizeSmall,
+					Class:   "ml-auto shrink-0",
+					Attributes: templ.Attributes{
+						"x-show": "trail.length > 0",
+						"@click": "trail = []",
+					},
+				}) {
+					Clear
+				}
 			</div>
 			<ul
 				x-ref="list"
