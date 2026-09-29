@@ -215,7 +215,6 @@ func (b *builder) field(owner *target, property *definition, name, parentPath st
 	field := props.Field{
 		Name:          name,
 		Path:          path,
-		Title:         firstString(property.Title, node.Title),
 		Type:          typeLabel(node, isArray),
 		Array:         isArray,
 		Required:      required,

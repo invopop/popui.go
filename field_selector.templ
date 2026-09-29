@@ -26,7 +26,7 @@ import (
 // opens an object, Left goes back, Enter selects, and Escape clears the filter
 // before closing. The selected path is submitted under Name via a visually
 // hidden input, and every selection also raises a `field-select` DOM event
-// carrying the path, the emitted value, and the field's title and type.
+// carrying the path, the emitted value, and the field's type.
 //
 // The whole tree is rendered into the page as JSON, so filtering and drilling
 // never go back to the server. That is a few hundred kilobytes for a schema
@@ -206,10 +206,9 @@ templ fieldSelector(prp props.FieldSelector) {
 						// is what gives way — the path is what identifies the
 						// row. The whole path reads at full strength, with a
 						// matched run set apart by weight alone: semibold,
-						// since medium barely shows in mono. The title stands
-						// in for a tree built without descriptions.
+						// since medium barely shows in mono.
 						<span class="min-w-0 flex-1 truncate text-base text-foreground">
-							<template x-for="(part, p) in label(row)" :key="p"><span class="font-mono" :class="part.m ? 'font-semibold' : ''" x-text="part.t"></span></template><template x-if="entries[row.i].description || entries[row.i].title"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description || entries[row.i].title"></span></template>
+							<span class="font-mono [&_b]:font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
 						// Type and caret are one target — clicking either
 						// drills in, the keyboard does it with Right — packed
@@ -280,7 +279,6 @@ func fieldSelectorFieldsID(p props.FieldSelector) string {
 // the payload.
 type fieldSelectorEntry struct {
 	N string `json:"n"`
-	T string `json:"t,omitempty"`
 	Y string `json:"y,omitempty"`
 	V string `json:"v,omitempty"`
 	D string `json:"d,omitempty"`
@@ -312,7 +310,6 @@ func appendFieldSelectorEntries(entries []fieldSelectorEntry, fields []props.Fie
 
 		entries = append(entries, fieldSelectorEntry{
 			N: field.Name,
-			T: field.Title,
 			Y: field.Type,
 			V: field.Value,
 			D: field.Description,

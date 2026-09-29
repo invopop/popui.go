@@ -23,13 +23,11 @@ type Field struct {
 	// and reports on the select event. Use it when the path the user reads is
 	// not the string the consumer needs — a Go template variable, say.
 	Value string
-	// Title is the short human label from the schema. It stands in after the
-	// path when a field has no Description.
-	Title string
 	// Description is the schema's long description, shown after the path and
-	// as the row's tooltip. It truncates before the path does. Optional:
-	// goblfields leaves it out unless asked for, and a row falls back to
-	// Title when a tree was built without descriptions.
+	// as the row's tooltip. It truncates before the path does, and is never
+	// searched: filtering matches the path alone. Optional — goblfields
+	// leaves it out unless asked for, and a row without one shows just its
+	// path.
 	Description string
 	// Type is the JSON Schema type shown at the end of the row: string,
 	// object, array, integer, number, boolean.

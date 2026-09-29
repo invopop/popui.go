@@ -21,7 +21,6 @@ type definition struct {
 	Items       *definition            `json:"items"`
 	Properties  *propertySet           `json:"properties"`
 	Required    []string               `json:"required"`
-	Title       string                 `json:"title"`
 	Type        string                 `json:"type"`
 }
 

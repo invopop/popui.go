@@ -131,6 +131,9 @@ const (
 	linesPath       = "lines[]"
 	lineItemName    = "lines[].item.name"
 	uuidPath        = "uuid"
+	// The one scalar label the tests check for; the builder passes it
+	// through from the schema rather than naming it itself.
+	typeString = "string"
 )
 
 // build is the invoice tree every test works from.
@@ -209,7 +212,7 @@ func TestBuildMarksArraysInThePathAndType(t *testing.T) {
 	if lines := field(t, fields, linesPath); !lines.Array || lines.Type != goblfields.TypeArray {
 		t.Fatalf("lines[]: array=%v type=%q", lines.Array, lines.Type)
 	}
-	if got := field(t, fields, uuidPath).Type; got != "string" {
+	if got := field(t, fields, uuidPath).Type; got != typeString {
 		t.Fatalf("uuid type = %q", got)
 	}
 }
@@ -228,10 +231,11 @@ func TestBuildResolvesRefsIntoOtherDocuments(t *testing.T) {
 	if got := field(t, fields, "supplier").Type; got != "object" {
 		t.Fatalf("supplier type = %q", got)
 	}
-	if got := field(t, fields, "supplier.name").Title; got != "Name" {
-		t.Fatalf("supplier.name title = %q", got)
+	// supplier.name only exists at all if org/party was resolved.
+	if got := field(t, fields, "supplier.name").Type; got != typeString {
+		t.Fatalf("supplier.name type = %q", got)
 	}
-	if got := field(t, fields, "currency").Type; got != "string" {
+	if got := field(t, fields, "currency").Type; got != typeString {
 		t.Fatalf("currency type = %q", got)
 	}
 }
