@@ -184,17 +184,11 @@ templ fieldSelector(prp props.FieldSelector) {
 						:id="$id('field-selector') + '-opt-' + index"
 						:aria-selected="isSelected(row.i)"
 						:class="{ 'bg-background-default-secondary': index === activeIndex }"
-						class="flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer"
+						class="flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer"
 						:title="entries[row.i].description || entries[row.i].path"
 						@click="select(row.i)"
 						@mouseenter="activePath = entries[row.i].path"
 					>
-						// The dot column is always there, so paths line up
-						// whether or not a field is always present.
-						<span
-							class="size-1.5 shrink-0 rounded-full"
-							:class="entries[row.i].always ? 'bg-background-success-bold' : ''"
-						></span>
 						// Path and description share one line box, so they
 						// sit on a common baseline. Laying them out as flex
 						// items would not: truncation makes their overflow
@@ -210,30 +204,28 @@ templ fieldSelector(prp props.FieldSelector) {
 						<span class="min-w-0 flex-1 truncate text-base text-foreground">
 							<span class="font-mono font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
-						// Type and caret are one target — clicking either
-						// drills in, the keyboard does it with Right — packed
-						// against the right edge so the column is only as
-						// wide as the longest type, and the caret keeps its
-						// slot on a field with nothing under it. Every
-						// description therefore ends in the same place,
-						// except on the selected row, where the tick widens
-						// the column by its own width.
+						// The trailing column is four slots, every one of
+						// them kept on every row so they line up down the
+						// list: the always-present dot, the type, the drill
+						// caret, and the selected tick. Type and caret are one
+						// target — clicking either drills in, the keyboard
+						// does it with Right — and the caret lights up from a
+						// hover over either.
 						<span
-							class="ml-auto shrink-0 group flex items-center justify-end gap-1 pl-2 pr-1 min-w-25"
+							class="ml-auto shrink-0 group flex items-center gap-1 pl-2"
 							:class="entries[row.i].children ? 'cursor-pointer' : ''"
 							@click="if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }"
 						>
-							<span class="font-mono text-base text-foreground-default-tertiary" x-text="entries[row.i].type"></span>
-							<template x-if="isSelected(row.i)">
-								<span class="shrink-0 text-icon-selected">
-									@icons.Tick()
-								</span>
-							</template>
+							<span
+								class="size-1.5 shrink-0 rounded-full"
+								:class="entries[row.i].always ? 'bg-background-success-bold' : ''"
+							></span>
+							// Wide enough for the longest abbreviation, so the
+							// caret starts in the same place under obj and bool.
+							<span class="w-9 shrink-0 font-mono text-base text-foreground-default-tertiary" x-text="typeLabel(row.i)"></span>
 							// The caret carries Button's default chrome so it
-							// reads as the control it is, but stays a span:
-							// an option may not contain a focusable element,
-							// and the target is the whole column anyway — so
-							// it lights up from a hover on either half.
+							// reads as the control it is, but stays a span: an
+							// option may not contain a focusable element.
 							<span
 								aria-hidden="true"
 								class={ tailwind.Merge(
@@ -244,6 +236,9 @@ templ fieldSelector(prp props.FieldSelector) {
 								:class="entries[row.i].children ? '' : 'invisible'"
 							>
 								@icons.ChevronRight()
+							</span>
+							<span class="shrink-0 text-icon-selected" :class="isSelected(row.i) ? '' : 'invisible'">
+								@icons.Tick()
 							</span>
 						</span>
 					</li>

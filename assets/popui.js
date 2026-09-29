@@ -741,6 +741,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     return score
   }
 
+  const TYPE_ABBREVIATIONS = {
+    object: 'obj',
+    string: 'str',
+    array: 'arr',
+    integer: 'int',
+    number: 'num',
+    boolean: 'bool',
+  }
+
   // Escapes text for x-html. Field names come from schemas, but a tree can
   // be hand-written too.
   function escapeHTML(text) {
@@ -1081,6 +1090,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // x-for: eighty rows each running their own loop was most of what a
         // keystroke cost. The path is semibold as a whole, so while filtering
         // it is the runs a term did not hit that are marked, by dimming them.
+        // The type as the row shows it: the JSON Schema name cut to three
+        // letters (four for bool), since the column only has to tell an
+        // object from a string from an array at a glance. The full name
+        // stays on the entry, and is what the select event reports.
+        typeLabel(i) {
+          const entry = this.entries[i]
+          if (!entry) return ''
+          return TYPE_ABBREVIATIONS[entry.type] || entry.type
+        },
         // Browsing has no query, so the label is then just the field name.
         labelHTML(row) {
           if (!row.parts) {
