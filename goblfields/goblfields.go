@@ -30,6 +30,15 @@ import (
 // SchemaPrefix is the base every GOBL schema id is built on.
 const SchemaPrefix = "https://gobl.org/draft-0/"
 
+// Type labels the builder chooses itself, rather than copies from a schema:
+// a field with properties, or with nothing more specific to say, is an
+// object, and an array is just that. Scalar labels (string, integer, …) pass
+// through from the schema's own type.
+const (
+	TypeArray  = "array"
+	TypeObject = "object"
+)
+
 // DefaultMaxDepth is deep enough to reach every field GOBL can express: a
 // branch stops growing on its own once it revisits a schema it already
 // contains, so the cap is a backstop rather than the thing bounding the tree.
@@ -38,7 +47,7 @@ const DefaultMaxDepth = 6
 // Schemas holds the GOBL schema documents, rooted so that bill/invoice.json
 // is the document for bill/invoice. It defaults to the copy embedded in the
 // gobl module; Options.Source overrides it.
-var Schemas fs.FS = mustSub(data.Content, "schemas")
+var Schemas = mustSub(data.Content, "schemas")
 
 // Options tune how a field tree is built.
 type Options struct {
@@ -235,7 +244,7 @@ func (b *builder) field(owner *target, property *definition, name, parentPath st
 // (tax/addon-list, for one), so that is unwrapped too.
 func (b *builder) resolveProperty(property *definition, ownerDocID string) (bool, *definition, *target) {
 	var items *definition
-	if property.Type == "array" {
+	if property.Type == TypeArray {
 		items = property.Items
 	}
 
@@ -249,7 +258,7 @@ func (b *builder) resolveProperty(property *definition, ownerDocID string) (bool
 		resolved = b.resolveRef(source.Ref, ownerDocID)
 	}
 
-	if resolved != nil && resolved.def.Type == "array" && resolved.def.Items != nil {
+	if resolved != nil && resolved.def.Type == TypeArray && resolved.def.Items != nil {
 		nested := resolved.def.Items
 		var nestedTarget *target
 		if nested.Ref != "" {
@@ -327,10 +336,10 @@ func (b *builder) document(id string) (*definition, error) {
 // anything underneath — the row shows with its drill-in chevron.
 func typeLabel(node *definition, isArray bool) string {
 	if isArray {
-		return "array"
+		return TypeArray
 	}
 	if node.Properties.len() > 0 || node.Type == "" {
-		return "object"
+		return TypeObject
 	}
 	return node.Type
 }

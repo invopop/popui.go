@@ -1,6 +1,7 @@
 package goblfields_test
 
 import (
+	"strings"
 	"testing"
 	"testing/fstest"
 
@@ -123,6 +124,15 @@ var testSchemas = fstest.MapFS{
 
 var testOptions = goblfields.Options{Source: testSchemas}
 
+// Paths several tests meet: an array of schema/object, and a required field
+// three levels down inside an array.
+const (
+	complementsPath = "complements[]"
+	linesPath       = "lines[]"
+	lineItemName    = "lines[].item.name"
+	uuidPath        = "uuid"
+)
+
 // build is the invoice tree every test works from.
 func build(t *testing.T, schema string, opts ...goblfields.Options) []props.Field {
 	t.Helper()
@@ -190,16 +200,16 @@ func TestBuildFailsOnAnUnknownSchema(t *testing.T) {
 
 func TestBuildListsTheRootProperties(t *testing.T) {
 	equal(t, paths(build(t, "bill/invoice")), []string{
-		"$addons[]", "uuid", "currency", "supplier", "lines[]", "complements[]",
+		"$addons[]", uuidPath, "currency", "supplier", linesPath, complementsPath,
 	})
 }
 
 func TestBuildMarksArraysInThePathAndType(t *testing.T) {
 	fields := build(t, "bill/invoice")
-	if lines := field(t, fields, "lines[]"); !lines.Array || lines.Type != "array" {
+	if lines := field(t, fields, linesPath); !lines.Array || lines.Type != goblfields.TypeArray {
 		t.Fatalf("lines[]: array=%v type=%q", lines.Array, lines.Type)
 	}
-	if got := field(t, fields, "uuid").Type; got != "string" {
+	if got := field(t, fields, uuidPath).Type; got != "string" {
 		t.Fatalf("uuid type = %q", got)
 	}
 }
@@ -208,7 +218,7 @@ func TestBuildFollowsARefThatPointsAtAnArraySchema(t *testing.T) {
 	// The property is a plain $ref, so it only comes out as an array at all
 	// because the document it points at is itself one.
 	addons := field(t, build(t, "bill/invoice"), "$addons[]")
-	if !addons.Array || addons.Type != "array" {
+	if !addons.Array || addons.Type != goblfields.TypeArray {
 		t.Fatalf("$addons[]: array=%v type=%q", addons.Array, addons.Type)
 	}
 }
@@ -230,9 +240,9 @@ func TestBuildMarksAlwaysPresentOnlyWhenEveryStepIsRequired(t *testing.T) {
 	fields := build(t, "bill/invoice")
 	for path, want := range map[string]bool{
 		"currency":                     true,
-		"uuid":                         false,
+		uuidPath:                       false,
 		"supplier.name":                true,
-		"lines[].item.name":            true,
+		lineItemName:                   true,
 		"lines[].item.price":           false, // price is optional on the item,
 		"supplier.people[].name.given": false, // and people optional on the supplier
 	} {
@@ -247,7 +257,7 @@ func TestBuildKeepsRequiredSeparateFromTheInheritedAnswer(t *testing.T) {
 	for path, want := range map[string]bool{
 		"supplier.people[].name.given": false,
 		"lines[].item.price":           false,
-		"lines[].item.name":            true,
+		lineItemName:                   true,
 	} {
 		if got := field(t, fields, path).Required; got != want {
 			t.Errorf("%s: required = %v, want %v", path, got, want)
@@ -303,24 +313,24 @@ func TestSchemaObjectDoesNotStopTheRestOfTheSchemaExpanding(t *testing.T) {
 
 func TestSchemaObjectIsALeafInsideAnArrayToo(t *testing.T) {
 	fields := build(t, "bill/invoice")
-	if !has(fields, "complements[]") {
+	if !has(fields, complementsPath) {
 		t.Fatal("complements[] should be there")
 	}
 	for _, f := range goblfields.Flatten(fields) {
-		if len(f.Path) > 13 && f.Path[:13] == "complements[]" && f.Path != "complements[]" {
+		if strings.HasPrefix(f.Path, complementsPath+".") {
 			t.Fatalf("complements[] should be a leaf, found %s", f.Path)
 		}
 	}
 }
 
 func TestTrailReturnsTheChainDownToTheField(t *testing.T) {
-	trail := goblfields.Trail(build(t, "bill/invoice"), "lines[].item.name")
-	equal(t, paths(trail), []string{"lines[]", "lines[].item", "lines[].item.name"})
+	trail := goblfields.Trail(build(t, "bill/invoice"), lineItemName)
+	equal(t, paths(trail), []string{linesPath, "lines[].item", lineItemName})
 }
 
 func TestTrailFallsBackToTheDeepestPartOfThePathThatExists(t *testing.T) {
 	trail := goblfields.Trail(build(t, "bill/invoice"), "lines[].item.nope")
-	equal(t, paths(trail), []string{"lines[]", "lines[].item"})
+	equal(t, paths(trail), []string{linesPath, "lines[].item"})
 }
 
 func TestTrailHasNothingToReturnForAnEmptyPath(t *testing.T) {
@@ -346,7 +356,7 @@ func TestBuildFromTheEmbeddedSchemas(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	equal(t, paths(fields)[:6], []string{"$regime", "$addons[]", "$tags[]", "uuid", "type", "series"})
+	equal(t, paths(fields)[:6], []string{"$regime", "$addons[]", "$tags[]", uuidPath, "type", "series"})
 
 	// org/party has no `required` of its own, so nothing under the supplier
 	// is guaranteed even though the supplier itself is.
@@ -360,7 +370,7 @@ func TestBuildFromTheEmbeddedSchemas(t *testing.T) {
 	if got := field(t, fields, "issue_time"); got.AlwaysPresent {
 		t.Error("issue_time is calculated, not always present")
 	}
-	if got := field(t, fields, "lines[]"); got.Type != "array" || !got.Array {
+	if got := field(t, fields, linesPath); got.Type != goblfields.TypeArray || !got.Array {
 		t.Errorf("lines[]: type=%q array=%v", got.Type, got.Array)
 	}
 }
