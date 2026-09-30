@@ -3,6 +3,8 @@ package popui
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
@@ -137,9 +139,11 @@ templ templateEditor(prp props.Textarea) {
 							"x-modelable": "tab",
 							"x-model":     "view",
 						},
+						// Icon-only: the eye is the preview with chips, the
+						// braces the template as written.
 						Tabs: []props.TabItem{
-							{Value: props.ContenteditableViewRich, Label: "Rich text"},
-							{Value: props.ContenteditableViewPlain, Label: "Plain text"},
+							{Value: props.ContenteditableViewRich, Icon: icons.Preview(), Title: "Preview"},
+							{Value: props.ContenteditableViewPlain, Icon: icons.Brackets(), Title: "Template"},
 						},
 					})
 				}

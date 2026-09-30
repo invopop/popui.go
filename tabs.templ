@@ -48,6 +48,10 @@ templ Tabs(p ...props.Tabs) {
 						"inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-base cursor-pointer min-w-0 [&>div]:shrink-0",
 						tabTriggerClasses(prp.Variant),
 					) }
+					if t.Title != "" {
+						title={ t.Title }
+						aria-label={ t.Title }
+					}
 					@click={ model + " = '" + jsSingleQuoteEscape(t.Value) + "'" }
 					:data-state={ model + " === '" + jsSingleQuoteEscape(t.Value) + "' ? 'active' : 'inactive'" }
 					:aria-selected={ model + " === '" + jsSingleQuoteEscape(t.Value) + "'" }
@@ -55,7 +59,9 @@ templ Tabs(p ...props.Tabs) {
 					if t.Icon != nil {
 						@t.Icon
 					}
-					<span class="truncate">{ t.Label }</span>
+					if t.Label != "" {
+						<span class="truncate">{ t.Label }</span>
+					}
 					if t.Count > 0 {
 						if prp.Variant == "pill" {
 							<span class="inline-flex items-center justify-center rounded bg-background-default-tertiary px-1 text-sm tabular-nums shrink-0">{ strconv.Itoa(t.Count) }</span>
