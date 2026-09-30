@@ -172,9 +172,10 @@ templ fieldSelector(prp props.FieldSelector) {
 				// Clear drops the whole trail in one go. At the top level
 				// there is nothing to drop, so it is not offered.
 				@Button(props.Button{
-					Type:  "button",
-					Size:  props.ButtonSizeIconSmall,
-					Class: "ml-auto shrink-0",
+					Type:    "button",
+					Variant: props.ButtonVariantSecondary,
+					Size:    props.ButtonSizeIconSmall,
+					Class:   "ml-auto shrink-0",
 					Attributes: templ.Attributes{
 						"x-show":     "trail.length > 0",
 						"@click":     "trail = []",
@@ -241,12 +242,15 @@ templ fieldSelector(prp props.FieldSelector) {
 							// The caret carries Button's default chrome so it
 							// reads as the control it is, but stays a span: an
 							// option may not contain a focusable element.
+							// Nudged right by the difference between the row's
+							// padding and the crumb row's, so the carets line
+							// up under the Clear button.
 							<span
 								aria-hidden="true"
 								class={ tailwind.Merge(
 									buttonBaseClasses(),
 									buttonClasses("", props.ButtonSizeIconSmall),
-									"shrink-0 group-hover:border-border-default-secondary-hover",
+									"shrink-0 relative left-1.5 group-hover:border-border-default-secondary-hover",
 								) }
 								:class="entries[row.i].children ? '' : 'invisible'"
 							>

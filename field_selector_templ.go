@@ -342,9 +342,10 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = Button(props.Button{
-			Type:  "button",
-			Size:  props.ButtonSizeIconSmall,
-			Class: "ml-auto shrink-0",
+			Type:    "button",
+			Variant: props.ButtonVariantSecondary,
+			Size:    props.ButtonSizeIconSmall,
+			Class:   "ml-auto shrink-0",
 			Attributes: templ.Attributes{
 				"x-show":     "trail.length > 0",
 				"@click":     "trail = []",
@@ -362,7 +363,7 @@ func fieldSelector(prp props.FieldSelector) templ.Component {
 		var templ_7745c5c3_Var13 = []any{tailwind.Merge(
 			buttonBaseClasses(),
 			buttonClasses("", props.ButtonSizeIconSmall),
-			"shrink-0 group-hover:border-border-default-secondary-hover",
+			"shrink-0 relative left-1.5 group-hover:border-border-default-secondary-hover",
 		)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
