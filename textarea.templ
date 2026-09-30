@@ -140,10 +140,10 @@ templ templateEditor(prp props.Textarea) {
 							"x-model":     "view",
 						},
 						// Icon-only: the eye is the preview with chips, the
-						// braces the template as written.
+						// code glyph the template as written.
 						Tabs: []props.TabItem{
 							{Value: props.ContenteditableViewRich, Icon: icons.Preview(), Title: "Preview"},
-							{Value: props.ContenteditableViewPlain, Icon: icons.Brackets(), Title: "Template"},
+							{Value: props.ContenteditableViewPlain, Icon: icons.Code(), Title: "Code"},
 						},
 					})
 				}
@@ -198,11 +198,12 @@ templ templateEditor(prp props.Textarea) {
 			x-show="view === 'plain'"
 			x-cloak
 			x-model="value"
-			rows={ prp.GetRows() }
+			rows="1"
+			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
 			class={ tailwind.Merge(
 					classes.FormField(),
 					classes.FormFieldState(!prp.Error.Empty()),
-					"font-mono",
+					"min-h-[80px] font-mono resize-none",
 					prp.Class,
 				) }
 			if prp.Disabled {

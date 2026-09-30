@@ -146,6 +146,9 @@ func Tabs(p ...props.Tabs) templ.Component {
 				// icon wrappers (divs) keep their size.
 				"inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-base cursor-pointer min-w-0 [&>div]:shrink-0",
 				tabTriggerClasses(prp.Variant),
+				// An icon-only pill is a square around its glyph, the
+				// way the console's mode switch draws one.
+				classes.If(prp.Variant == "pill" && t.Label == "", "p-1 w-auto"),
 			)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 			if templ_7745c5c3_Err != nil {
@@ -176,7 +179,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(t.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 52, Col: 21}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 55, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -189,7 +192,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(t.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 53, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 56, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -207,7 +210,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(model + " = '" + jsSingleQuoteEscape(t.Value) + "'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 55, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 58, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -220,7 +223,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(model + " === '" + jsSingleQuoteEscape(t.Value) + "' ? 'active' : 'inactive'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 56, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 59, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -233,7 +236,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(model + " === '" + jsSingleQuoteEscape(t.Value) + "'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 57, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 60, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -257,7 +260,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 63, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 66, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -277,7 +280,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 					var templ_7745c5c3_Var16 string
 					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(t.Count))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 67, Col: 158}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 70, Col: 158}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
@@ -295,7 +298,7 @@ func Tabs(p ...props.Tabs) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(t.Count))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 69, Col: 67}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 72, Col: 67}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -373,7 +376,7 @@ func Tab(p ...props.Tab) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 91, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 94, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -391,7 +394,7 @@ func Tab(p ...props.Tab) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(model + " === '" + jsSingleQuoteEscape(prp.Value) + "'")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 94, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `tabs.templ`, Line: 97, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -437,14 +440,14 @@ func Tab(p ...props.Tab) templ.Component {
 func tabsClasses(variant string) string {
 	return tailwind.Merge(
 		classes.If(variant != "pill", "gap-6 overflow-visible border-b border-border"),
-		classes.If(variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5"),
+		classes.If(variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5 gap-0.5"),
 	)
 }
 
 func tabTriggerClasses(variant string) string {
 	return tailwind.Merge(
 		classes.If(variant != "pill", "relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"),
-		classes.If(variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm"),
+		classes.If(variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=inactive]:text-foreground-default-secondary"),
 	)
 }
 

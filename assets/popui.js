@@ -1075,7 +1075,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         this.render()
         // The chips are rebuilt from the value whenever the rich view comes
         // back, since the plain view may have changed the text.
-        this.$watch('view', (view) => { if (view === 'rich') this.$nextTick(() => this.render()) })
+        this.$watch('view', (view) => {
+          // The views trade places at the height the last one had, so the
+          // box does not jump: the rich one grows with its content while the
+          // textarea keeps whatever height it was given.
+          const from = view === 'rich' ? this.$refs.plain : this.$refs.editor
+          const to = view === 'rich' ? this.$refs.editor : this.$refs.plain
+          if (from && to && from.offsetHeight) to.style.minHeight = from.offsetHeight + 'px'
+          if (view === 'rich') this.$nextTick(() => this.render())
+        })
         // Something else may set the value — an x-model from outside, a
         // fetch — so a change that did not come from the editor redraws it.
         this.$watch('value', (value) => { if (this.view === 'rich' && serializeTemplate(this.$refs.editor) !== value) this.render() })
