@@ -112,7 +112,7 @@ The palette is a neutral off-white/off-black range with semantic color layers fo
 
 **Key Characteristics:**
 - Light-mode native with a white/near-white canvas
-- Inter for all UI text; CommitMono for code and mono labels
+- Inter for all UI text; Geist Mono (shipped with popui) for code and mono labels
 - Semantic token system: colors are named by role (`foreground`, `background`, `border`, `icon`), not by value
 - Configurable workspace accent color (`--workspace-accent-color`)
 - Moderate border radius scale (4px–12px); no pill shapes except in specific badge contexts
@@ -249,7 +249,7 @@ Workflow and invoice statuses each have their own token. Use these for `TagStatu
 | Token | Family | Use |
 |-------|--------|-----|
 | `font-sans` | Inter, sans-serif | All UI text |
-| `font-mono` | CommitMono, monospace | Code, technical labels, IDs |
+| `font-mono` | Geist Mono, monospace | Code, technical labels, IDs |
 
 ### Font Weights
 
@@ -291,7 +291,7 @@ Letter spacing is tied to size — tighter at larger sizes, slightly looser at s
 
 - Use `text-foreground` for primary content, `text-foreground-default-secondary` for supporting text, `text-foreground-default-tertiary` for muted/placeholder text
 - Apply negative letter-spacing at large sizes (`text-2xl`, `text-xl`) — this is deliberate
-- `font-mono` / CommitMono is reserved for code, IDs, hash values, and technical labels. Never use it for regular content
+- `font-mono` / Geist Mono is reserved for code, IDs, hash values, and technical labels. Never use it for regular content
 
 ---
 
@@ -726,7 +726,7 @@ templ AppWithTableExample() {
 - Use `border border-dashed border-border-document-png bg-background-document-png rounded-2xl text-foreground-default-tertiary` for placeholder/empty content zones — this is the canonical pattern
 - Use `gap-2` between buttons in `ButtonGroup`, `space-y-4` between form fields
 - Apply `tracking-tightest` at `text-2xl`, `tracking-tighter` at `text-xl` — negative tracking at large sizes is intentional
-- Use `font-mono` (CommitMono) for IDs, hashes, codes, and technical values
+- Use `font-mono` (Geist Mono) for IDs, hashes, codes, and technical values
 - Use `TagStatus` with `status-{state}` tokens for any workflow/invoice state display
 - Wrap form fields in `Fieldset` with `Variant: "card"` for grouped settings sections
 - Use `Variant: "transparent"` + `Size: "icon"` for toolbar/contextual icon buttons
@@ -739,7 +739,7 @@ templ AppWithTableExample() {
 - Don't use Tailwind color utilities like `text-gray-500`, `bg-blue-100` — use semantic tokens instead
 - Don't use font-bold (700) — the system uses 400, 500, 600 only
 - Don't use `rounded-full` / pill shapes for product UI elements
-- Don't use CommitMono for UI labels, navigation, or headings — Inter only
+- Don't use Geist Mono for UI labels, navigation, or headings — Inter only
 - Don't add box-shadows to cards or containers — only buttons use shadows
 - Don't add color sections or gradient backgrounds — the product UI is white/neutral throughout
 - Don't place Footer content left-aligned — Footer is always `justify-end`

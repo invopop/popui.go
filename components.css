@@ -1,3 +1,16 @@
+/* Geist Mono is shipped with popui (assets/geist-mono.woff2) so the mono
+   weights the system uses — 400, 500, 600 — are real faces everywhere, not
+   whatever monospace happens to be installed. One variable file covers the
+   whole weight range. The URL assumes the standard /_popui asset mount, as
+   the SignaturePad's Caveat face does. */
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/_popui/assets/geist-mono.woff2") format("woff2");
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
