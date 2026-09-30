@@ -172,16 +172,17 @@ templ fieldSelector(prp props.FieldSelector) {
 				// Clear drops the whole trail in one go. At the top level
 				// there is nothing to drop, so it is not offered.
 				@Button(props.Button{
-					Type:    "button",
-					Variant: props.ButtonVariantTransparent,
-					Size:    props.ButtonSizeSmall,
-					Class:   "ml-auto shrink-0",
+					Type:  "button",
+					Size:  props.ButtonSizeIconSmall,
+					Class: "ml-auto shrink-0",
 					Attributes: templ.Attributes{
-						"x-show": "trail.length > 0",
-						"@click": "trail = []",
+						"x-show":     "trail.length > 0",
+						"@click":     "trail = []",
+						"aria-label": "Clear",
+						"title":      "Clear",
 					},
 				}) {
-					Clear
+					@icons.Close()
 				}
 			</div>
 			<ul
@@ -218,10 +219,10 @@ templ fieldSelector(prp props.FieldSelector) {
 						<span class="min-w-0 flex-1 truncate text-base text-foreground">
 							<span class="font-mono font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
-						// The trailing column is four slots, every one of
+						// The trailing column is three slots, every one of
 						// them kept on every row so they line up down the
-						// list: the always-present dot, the type, the drill
-						// caret, and the selected tick. Type and caret are one
+						// list: the always-present dot, the type, and the
+						// drill caret flush against the right edge. Type and caret are one
 						// target — clicking either drills in, the keyboard
 						// does it with Right — and the caret lights up from a
 						// hover over either.
@@ -250,9 +251,6 @@ templ fieldSelector(prp props.FieldSelector) {
 								:class="entries[row.i].children ? '' : 'invisible'"
 							>
 								@icons.ChevronRight()
-							</span>
-							<span class="shrink-0 text-icon-selected" :class="isSelected(row.i) ? '' : 'invisible'">
-								@icons.Tick()
 							</span>
 						</span>
 					</li>
