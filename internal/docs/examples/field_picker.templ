@@ -12,16 +12,20 @@ import (
 var invoiceFields = goblfields.MustBuild("bill/invoice", goblfields.Options{Descriptions: true})
 
 // An email body is a Go template over the envelope, so a pick is wrapped as
-// {{.doc.<path>}} and dropped in at the caret.
-var emailDraft = "Hello {{.doc.customer.name}},<br><br>Your invoice {{.doc.code}} is ready. "
+// {{.doc.<path>}} and dropped in at the caret — as a chip, since the body
+// is a template editor.
+var emailDraft = "Hello {{.doc.customer.name}},\n\nYour invoice {{.doc.code}} is ready. "
 
 templ FieldPickerExample() {
 	<div class="flex flex-col gap-2 w-full">
 		@popui.Contenteditable(props.Textarea{
-			ID:    "email-body",
-			Label: "Email body",
-			Rows:  3,
-			Value: emailDraft,
+			ID:             "email-body",
+			Name:           "body",
+			Label:          "Email body",
+			Rows:           3,
+			Value:          emailDraft,
+			VariableFormat: "{{.%s}}",
+			ViewToggle:     true,
 		})
 		@popui.FieldPicker(props.FieldPicker{
 			Root:   "bill/invoice",

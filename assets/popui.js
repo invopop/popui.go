@@ -768,6 +768,80 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   }
 
   // ------------------------------------------------------------------
+  // Template editor helpers (Contenteditable with a VariableFormat)
+  // ------------------------------------------------------------------
+
+  // Builds the regular expression that finds variables written in a format
+  // such as "{{.%s}}": everything in the format is literal except %s, which
+  // stands for the name.
+  function variablePattern(format, whole) {
+    const escaped = String(format).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const source = escaped.replace('%s', '(.+?)')
+    // The whole-string form is used with match(), which only reports the
+    // capture group — the variable's name — without the global flag.
+    return whole ? new RegExp('^' + source + '$') : new RegExp(source, 'g')
+  }
+
+  // The chip a variable is drawn as. data-variable carries the variable as
+  // written, so serialising the editor gives the template back verbatim.
+  function variableChipHTML(variable, name) {
+    return '<span class="tag" contenteditable="false" data-variable="' + escapeHTML(variable) + '">' + escapeHTML(name) + '</span>'
+  }
+
+  function variableChipNode(variable, name) {
+    const span = document.createElement('span')
+    span.className = 'tag'
+    span.setAttribute('contenteditable', 'false')
+    span.setAttribute('data-variable', variable)
+    span.textContent = name
+    return span
+  }
+
+  // Template text → editor HTML: variables become chips, newlines line breaks.
+  function renderTemplate(value, format) {
+    const pattern = variablePattern(format, false)
+    let html = ''
+    let last = 0
+    for (const m of String(value).matchAll(pattern)) {
+      html += escapeHTML(value.slice(last, m.index))
+      html += variableChipHTML(m[0], m[1])
+      last = m.index + m[0].length
+    }
+    html += escapeHTML(value.slice(last))
+    return html.replace(/\n/g, '<br>')
+  }
+
+  // Editor DOM → template text: chips give back the variable they carry,
+  // <br> and the <div>/<p> blocks browsers create on Enter become newlines,
+  // and the non-breaking spaces browsers put in contenteditables become
+  // ordinary ones.
+  function serializeTemplate(root) {
+    let out = ''
+    const walk = (node) => {
+      for (const child of node.childNodes) {
+        if (child.nodeType === 3) {
+          out += child.nodeValue.replace(/\u00a0/g, ' ')
+          continue
+        }
+        if (child.nodeType !== 1) continue
+        if (child.hasAttribute('data-variable')) {
+          out += child.getAttribute('data-variable')
+          continue
+        }
+        const tag = child.tagName
+        if (tag === 'BR') {
+          out += '\n'
+          continue
+        }
+        if ((tag === 'DIV' || tag === 'P') && out && !out.endsWith('\n')) out += '\n'
+        walk(child)
+      }
+    }
+    walk(root)
+    return out
+  }
+
+  // ------------------------------------------------------------------
   // Alpine controllers
   // ------------------------------------------------------------------
 
@@ -989,6 +1063,84 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }))
 
 
+    // Template editor: a Contenteditable that draws each variable as a chip and keeps the template text —
+    // variables written out — as its value. Rich view edits the chips in place; plain view edits the text.
+    Alpine.data('templateEditor', (init) => ({
+      value: (init && init.value) || '',
+      format: (init && init.format) || '{{.%s}}',
+      view: (init && init.view) || 'rich',
+      savedRange: null,
+
+      init() {
+        this.render()
+        // The chips are rebuilt from the value whenever the rich view comes
+        // back, since the plain view may have changed the text.
+        this.$watch('view', (view) => { if (view === 'rich') this.$nextTick(() => this.render()) })
+        // Something else may set the value — an x-model from outside, a
+        // fetch — so a change that did not come from the editor redraws it.
+        this.$watch('value', (value) => { if (this.view === 'rich' && serializeTemplate(this.$refs.editor) !== value) this.render() })
+        // The caret is tracked while the editor has the selection: a picker
+        // that inserts into it takes focus first, and the insert has to go
+        // where the caret was.
+        this._onSelectionChange = () => {
+          const sel = window.getSelection()
+          if (!sel || !sel.rangeCount) return
+          const range = sel.getRangeAt(0)
+          if (this.$refs.editor && this.$refs.editor.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
+        }
+        document.addEventListener('selectionchange', this._onSelectionChange)
+      },
+      destroy() {
+        if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
+      },
+
+      render() {
+        if (this.$refs.editor) this.$refs.editor.innerHTML = renderTemplate(this.value, this.format)
+      },
+      // Called on every edit of the rich view.
+      sync() {
+        this.value = serializeTemplate(this.$refs.editor)
+      },
+      isVariable(text) {
+        return variablePattern(this.format, true).test(text)
+      },
+      // Puts text at the caret of whichever view is showing. In the rich view
+      // a variable becomes a chip and anything else plain text; the caret
+      // ends up after it. This is what FieldPicker calls.
+      insertText(text) {
+        if (this.view === 'plain') {
+          const area = this.$refs.plain
+          if (!area) return
+          const start = area.selectionStart == null ? area.value.length : area.selectionStart
+          const end = area.selectionEnd == null ? start : area.selectionEnd
+          area.setRangeText(text, start, end, 'end')
+          area.focus()
+          area.dispatchEvent(new Event('input', { bubbles: true }))
+          return
+        }
+        const editor = this.$refs.editor
+        editor.focus()
+        const sel = window.getSelection()
+        let range = this.savedRange && editor.contains(this.savedRange.commonAncestorContainer) ? this.savedRange : null
+        if (!range) {
+          range = document.createRange()
+          range.selectNodeContents(editor)
+          range.collapse(false)
+        }
+        range.deleteContents()
+        const match = String(text).match(variablePattern(this.format, true))
+        const node = match ? variableChipNode(text, match[1]) : document.createTextNode(text)
+        range.insertNode(node)
+        range.setStartAfter(node)
+        range.collapse(true)
+        sel.removeAllRanges()
+        sel.addRange(range)
+        this.savedRange = range.cloneRange()
+        this.sync()
+        editor.dispatchEvent(new Event('input', { bubbles: true }))
+      },
+    }))
+
     // Field picker over a nested data shape (usually a GOBL document): filters the whole tree by path, or browses it a level at a time.
     // The tree arrives as JSON in a script element; paths are rebuilt here from each entry's parent index. Picking a field
     // formats its path, inserts it at the caret of the target element when there is one, and raises field-select.
@@ -1198,6 +1350,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // savedRange, and with nothing to go on the text goes at the end.
         insert(text, target = this.targetEl()) {
           if (!target) return
+          // A template editor draws variables as chips, so it does the
+          // inserting itself.
+          if (target.hasAttribute('data-template-editor') && window.Alpine) {
+            const editor = window.Alpine.$data(target)
+            if (editor && typeof editor.insertText === 'function') {
+              editor.insertText(text)
+              return
+            }
+          }
           if (isTextInput(target)) {
             const start = target.selectionStart == null ? target.value.length : target.selectionStart
             const end = target.selectionEnd == null ? start : target.selectionEnd
