@@ -13,7 +13,17 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func FieldSelectorOnSelectExample() templ.Component {
+// A tree does not have to come from a schema, and one that does can be
+// added to. The email app offers a few things that are not in the document
+// — the job that sent it, its faults — above the document's own fields. Each
+// of those carries a Value, so it is emitted as is instead of being wrapped
+// in the Format like the document fields below it.
+var notificationFields = append([]props.Field{
+	{Name: "job_id", Path: "job_id", Value: "{{.job_id}}", Description: "Identifier of the job that sent this notification", Type: "string", AlwaysPresent: true},
+	{Name: "faults", Path: "faults", Value: "{{.faults}}", Description: "Rendered list of the faults the job hit", Type: "string"},
+}, invoiceFields...)
+
+func FieldPickerCustomFieldsExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,22 +44,29 @@ func FieldSelectorOnSelectExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ picked: null }\" class=\"flex flex-col gap-2 w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-2 w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = popui.FieldSelector(props.FieldSelector{
-			Name:   "field",
-			Root:   "envelope",
-			Fields: envelopeFields,
-			Attributes: templ.Attributes{
-				"@field-select": "picked = $event.detail",
-			},
+		templ_7745c5c3_Err = popui.Textarea(props.Textarea{
+			ID:    "notification-body",
+			Label: "Notification",
+			Rows:  2,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-base text-foreground-default-secondary\"><span x-show=\"!picked\">Nothing selected yet.</span><template x-if=\"picked\"><span>Selected <code class=\"font-mono text-sm text-foreground\" x-text=\"picked.value\"></code> (<span x-text=\"picked.type\"></span>)</span></template></p></div>")
+		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
+			TriggerLabel: "Insert a variable",
+			Root:         "notification",
+			Fields:       notificationFields,
+			Format:       "{{.doc.%s}}",
+			Target:       "#notification-body",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

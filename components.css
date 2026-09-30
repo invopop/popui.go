@@ -130,7 +130,7 @@ body {
    a flex column and the option list a min-h-0 overflow-y-auto item, so the
    search input, padding, and rounded corners stay put while options scroll. */
 [popover].multiselect-panel,
-[popover].field-selector-panel {
+[popover].field-picker-panel {
   position: fixed;
   inset: unset;
   overflow: visible;
@@ -142,12 +142,12 @@ body {
   max-height: stretch;
 }
 [popover].multiselect-panel:not(:popover-open),
-[popover].field-selector-panel:not(:popover-open) {
+[popover].field-picker-panel:not(:popover-open) {
   display: none;
 }
 @supports not (anchor-name: --test) {
   [popover].multiselect-panel,
-  [popover].field-selector-panel {
+  [popover].field-picker-panel {
     position: absolute;
     top: auto;
     left: auto;

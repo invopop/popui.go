@@ -42,7 +42,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Multi-line text | `Textarea` |
 | Dropdown / select | `Select` |
 | Multi-select with tag chips | `Select` with `Multiple: true` |
-| Pick one field of a document or schema | `FieldSelector` (trees built with `goblfields`) |
+| Pick a field of a document, or insert it into a template | `FieldPicker` (trees built with `goblfields`) |
 | Checkbox | `Checkbox` |
 | Toggle switch | `Checkbox` with `Variant: "switch"` |
 | Radio buttons | `Radio` |
@@ -92,7 +92,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a settings gear icon button" | `Button` with `Variant: "transparent"`, `Size: "icon"`, `@icons.Settings()` |
 | "a toggle / on-off switch" | `Checkbox` with `Variant: "switch"` |
 | "a status badge / pill" | `TagStatus` (color dot) or `StatusBadge` (icon outcome: success/failed/warning/running) |
-| "insert a variable / pick an invoice field" | `FieldSelector` |
+| "insert a variable / pick an invoice field" | `FieldPicker` |
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `DescriptionList` |
@@ -492,7 +492,7 @@ Breadcrumbs
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
 | `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |
 | `Popover` | Floating content panel |
-| `FieldSelector` | Picker for one field of a nested data shape: filters a whole tree by path or browses it a level at a time. `goblfields.Build` makes the tree from the GOBL schemas embedded in `gobl` |
+| `FieldPicker` | Picker for one field of a nested data shape: filters a whole tree by path or browses it a level at a time, and inserts the pick into an editable at the caret. Any trigger goes in its children slot. `goblfields.Build` makes the tree from the GOBL schemas embedded in `gobl` |
 | `Notification` | In-app notification display |
 | `PageState` | Empty/error state with illustration, title, description, CTA |
 | `Slider` | Range input |

@@ -138,10 +138,10 @@ var groups = []*Group{
 				Template: components.Fieldset(),
 			},
 			{
-				Title:    "FieldSelector",
-				Desc:     "Picker for one field of a nested data shape — filter a GOBL document's whole tree, or browse it a level at a time.",
-				Path:     "field-selector",
-				Template: components.FieldSelector(),
+				Title:    "FieldPicker",
+				Desc:     "Pick a field of a nested data shape — filter a GOBL document's whole tree or browse it a level at a time — and insert it into a template at the caret.",
+				Path:     "field-picker",
+				Template: components.FieldPicker(),
 			},
 			{
 				Title:    "File",

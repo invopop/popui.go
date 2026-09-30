@@ -13,21 +13,9 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-// A tree does not have to come from a schema. Value overrides what selecting
-// a field emits, so the path a user reads can differ from the string the
-// consumer needs — here, Go template variables.
-var emailVariables = []props.Field{
-	{Name: "job_id", Path: "job_id", Value: "{{.job_id}}", Description: "Identifier of the job that sent this email", Type: "string", AlwaysPresent: true},
-	{Name: "faults", Path: "faults", Value: "{{.faults}}", Description: "Rendered list of the faults the job hit", Type: "string"},
-	{Name: "doc", Path: "doc", Description: "The GOBL document itself", Type: "object", AlwaysPresent: true, Children: []props.Field{
-		{Name: "code", Path: "doc.code", Value: "{{.doc.code}}", Description: "Sequential code of the document", Type: "string"},
-		{Name: "supplier", Path: "doc.supplier", Description: "The party supplying the goods or services", Type: "object", AlwaysPresent: true, Children: []props.Field{
-			{Name: "name", Path: "doc.supplier.name", Value: "{{.doc.supplier.name}}", Description: "Legal name of the supplier", Type: "string"},
-		}},
-	}},
-}
-
-func FieldSelectorCustomFieldsExample() templ.Component {
+// Without a Target nothing is inserted anywhere: the pick is only announced,
+// for a consumer that wants to handle it itself.
+func FieldPickerOnSelectExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -48,12 +36,22 @@ func FieldSelectorCustomFieldsExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = popui.FieldSelector(props.FieldSelector{
-			Name:        "variable",
-			Root:        "email",
-			Placeholder: "Insert a variable",
-			Fields:      emailVariables,
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ picked: null }\" class=\"flex flex-col gap-2 w-full\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
+			Root:   "envelope",
+			Fields: envelopeFields,
+			Format: "{{.%s}}",
+			Attributes: templ.Attributes{
+				"@field-select": "picked = $event.detail",
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-base text-foreground-default-secondary\"><span x-show=\"!picked\">Nothing picked yet.</span><template x-if=\"picked\"><span>Picked <code class=\"font-mono text-sm text-foreground\" x-text=\"picked.value\"></code> (<span x-text=\"picked.type\"></span>)</span></template></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

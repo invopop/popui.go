@@ -990,8 +990,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
 
     // Field picker over a nested data shape (usually a GOBL document): filters the whole tree by path, or browses it a level at a time.
-    // The tree arrives as JSON in a script element; paths are rebuilt here from each entry's parent index.
-    Alpine.data('fieldSelector', (init) => {
+    // The tree arrives as JSON in a script element; paths are rebuilt here from each entry's parent index. Picking a field
+    // formats its path, inserts it at the caret of the target element when there is one, and raises field-select.
+    Alpine.data('fieldPicker', (init) => {
       // The entries live here as plain objects as well as on the component,
       // so the scorer reads them without going through Alpine's proxies —
       // two thousand fields times a few properties per keystroke adds up.
@@ -1001,12 +1002,19 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // without a cache one keystroke would rank the whole tree eighty times.
       let rowsKey = null
       let rowsCache = []
+      const isTextInput = (el) => !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')
 
       return {
         entries: [],
         roots: [],
         value: (init && init.value) || '',
         name: (init && init.name) || '',
+        // What a picked path is wrapped in: %s stands for the path. A field
+        // with a Value of its own skips it.
+        format: (init && init.format) || '%s',
+        // Selector of the element a pick is inserted into, if any.
+        target: (init && init.target) || '',
+        disabled: !!(init && init.disabled),
         query: '',
         open: false,
         // The objects drilled into, root first, as entry indices.
@@ -1014,6 +1022,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // The keyboard highlight follows a path rather than a row index, so it
         // survives the list changing underneath it.
         activePath: '',
+        // The last caret position seen inside a contenteditable target. The
+        // filter box takes focus when the panel opens, which moves the
+        // document selection away from the target, so it is tracked while
+        // the target still has it.
+        savedRange: null,
 
         init() {
           const el = init && init.source ? document.getElementById(init.source) : null
@@ -1048,6 +1061,21 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           })
           this.entries = list
           rowsKey = null
+
+          if (this.target) {
+            this._onSelectionChange = () => {
+              const target = this.targetEl()
+              if (!target || isTextInput(target)) return
+              const sel = window.getSelection()
+              if (!sel || !sel.rangeCount) return
+              const range = sel.getRangeAt(0)
+              if (target.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
+            }
+            document.addEventListener('selectionchange', this._onSelectionChange)
+          }
+        },
+        destroy() {
+          if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
         },
 
         get searching() {
@@ -1072,45 +1100,41 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         },
         get activeId() {
           if (!this.open || !this.rows.length) return null
-          return this.$id('field-selector') + '-opt-' + this.activeIndex
+          return this.$id('field-picker') + '-opt-' + this.activeIndex
         },
 
-        // The value a field emits: its own override when it has one, its path
-        // otherwise. Not named valueOf: Alpine resolves an expression's names
-        // against a proxy that inherits Object.prototype, so a method by that
-        // name is shadowed and silently returns the scope object.
+        // The value a field emits: its own override when it has one, otherwise
+        // its path wrapped in the format. Not named valueOf: Alpine resolves an
+        // expression's names against a proxy that inherits Object.prototype,
+        // so a method by that name is shadowed and silently returns the scope.
         emitted(i) {
           const entry = this.entries[i]
-          return entry ? entry.own || entry.path : ''
+          if (!entry) return ''
+          if (entry.own) return entry.own
+          return this.format.includes('%s') ? this.format.replace('%s', entry.path) : this.format + entry.path
         },
         isSelected(i) {
           return !!this.value && this.emitted(i) === this.value
         },
-        // The row's label as one HTML string rather than a list for a nested
-        // x-for: eighty rows each running their own loop was most of what a
-        // keystroke cost. The path is semibold as a whole, so while filtering
-        // it is the runs a term did not hit that are marked, by dimming them.
-        // The type as the row shows it: the JSON Schema name cut to three
-        // letters (four for bool), since the column only has to tell an
-        // object from a string from an array at a glance. The full name
-        // stays on the entry, and is what the select event reports.
         typeLabel(i) {
-          const entry = this.entries[i]
-          if (!entry) return ''
-          return TYPE_ABBREVIATIONS[entry.type] || entry.type
+          const type = this.entries[i] ? this.entries[i].type : ''
+          return TYPE_ABBREVIATIONS[type] || type
         },
-        // Browsing has no query, so the label is then just the field name.
+        // The row's path as escaped HTML: the whole path while browsing, and
+        // while filtering the runs a term did not hit dimmed, so the ones it
+        // did still read at full strength.
         labelHTML(row) {
-          if (!row.parts) {
-            const entry = this.entries[row.i]
-            return escapeHTML(entry.name + (entry.array ? '[]' : ''))
+          const entry = this.entries[row.i]
+          if (!row.parts) return escapeHTML(entry.name + (entry.array ? '[]' : ''))
+          let html = ''
+          for (const part of row.parts) {
+            html += part.m ? escapeHTML(part.t) : '<span class="text-foreground-default-secondary">' + escapeHTML(part.t) + '</span>'
           }
-          return row.parts.map((part) => (part.m ? escapeHTML(part.t) : '<span class="text-foreground-default-secondary">' + escapeHTML(part.t) + '</span>')).join('')
+          return html
         },
 
         // Ranks every field against the query. Terms are matched against the
-        // path and nothing else — not the description, which is prose — so
-        // `sup name` and `supplier.name` find the same field.
+        // whole path, so `sup name` and `supplier.name` find the same field.
         match(query, limit = 80) {
           const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
           if (!terms.length) return []
@@ -1125,7 +1149,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           found.sort((a, b) => {
             const x = list[a.i]
             const y = list[b.i]
-            return b.score - a.score || x.path.length - y.path.length || x.path.localeCompare(y.path)
+            return b.score - a.score || x.path.length - y.path.length || (x.path < y.path ? -1 : x.path > y.path ? 1 : 0)
           })
 
           // Only the rows that are rendered are worth highlighting.
@@ -1155,11 +1179,58 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           const entry = this.entries[i]
           if (!entry) return
           this.value = this.emitted(i)
+          const target = this.targetEl()
+          if (target) this.insert(this.value, target)
           this.$root.dispatchEvent(new CustomEvent('field-select', {
             bubbles: true,
-            detail: { path: entry.path, value: this.value, type: entry.type },
+            detail: { path: entry.path, value: this.value, type: entry.type, inserted: !!target },
           }))
           this.$refs.panel.hidePopover()
+        },
+        targetEl() {
+          if (!this.target) return null
+          try { return document.querySelector(this.target) } catch (e) { return null }
+        },
+        // Puts text at the caret of an input, textarea or contenteditable
+        // element, replacing any selection there, and leaves the caret after
+        // it. The caret is where it was when the target last had focus:
+        // inputs remember that themselves, a contenteditable is tracked via
+        // savedRange, and with nothing to go on the text goes at the end.
+        insert(text, target = this.targetEl()) {
+          if (!target) return
+          if (isTextInput(target)) {
+            const start = target.selectionStart == null ? target.value.length : target.selectionStart
+            const end = target.selectionEnd == null ? start : target.selectionEnd
+            target.setRangeText(text, start, end, 'end')
+            target.focus()
+            target.dispatchEvent(new Event('input', { bubbles: true }))
+            return
+          }
+          target.focus()
+          const sel = window.getSelection()
+          let range = this.savedRange && target.contains(this.savedRange.commonAncestorContainer) ? this.savedRange : null
+          if (!range) {
+            range = document.createRange()
+            range.selectNodeContents(target)
+            range.collapse(false)
+          }
+          sel.removeAllRanges()
+          sel.addRange(range)
+          // insertText keeps the edit on the undo stack and fires the input
+          // events itself; the manual path is for engines without it.
+          let done = false
+          try { done = document.execCommand('insertText', false, text) } catch (e) { done = false }
+          if (!done) {
+            range.deleteContents()
+            const node = document.createTextNode(text)
+            range.insertNode(node)
+            range.setStartAfter(node)
+            range.collapse(true)
+            sel.removeAllRanges()
+            sel.addRange(range)
+            target.dispatchEvent(new Event('input', { bubbles: true }))
+          }
+          if (sel.rangeCount) this.savedRange = sel.getRangeAt(0).cloneRange()
         },
         scrollActiveIntoView() {
           this.$nextTick(() => {
@@ -1179,20 +1250,24 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           for (let i = this.entries[found].parent; i >= 0; i = this.entries[i].parent) trail.unshift(i)
           this.trail = trail
         },
+        show() {
+          if (this.disabled || this.open) return
+          this.$refs.panel.showPopover()
+        },
 
         onKeydown(e) {
+          // Buttons inside the panel — the crumbs, Clear — keep their own Enter.
+          if (e.key === 'Enter' && e.target && e.target.tagName === 'BUTTON' && this.$refs.panel.contains(e.target)) return
           if (e.key === 'ArrowDown') {
             e.preventDefault()
-            if (!this.open) this.$refs.panel.showPopover()
+            if (!this.open) this.show()
             else this.move(1)
           } else if (e.key === 'ArrowUp') {
             e.preventDefault()
-            if (!this.open) this.$refs.panel.showPopover()
+            if (!this.open) this.show()
             else this.move(-1)
           } else if (e.key === 'Enter') {
             if (!this.open) return
-            // A button in the panel — a crumb, Clear — takes its own Enter.
-            if (e.target.closest && e.target.closest('button')) return
             e.preventDefault()
             const row = this.rows[this.activeIndex]
             if (row) this.select(row.i)
@@ -1213,7 +1288,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         onToggle(e) {
           if (e.newState === 'open') {
             this.open = true
-            this.$refs.panel.style.minWidth = this.$refs.field.offsetWidth + 'px'
+            // At least as wide as the trigger, so a full-width field gets a
+            // panel to match; the stylesheet sets the floor for a button.
+            const trigger = this.$refs.field.firstElementChild || this.$refs.field
+            this.$refs.panel.style.minWidth = trigger.offsetWidth + 'px'
             this.query = ''
             this.openAtValue()
             this.$nextTick(() => { if (this.$refs.search) this.$refs.search.focus() })

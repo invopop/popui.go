@@ -10,13 +10,13 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/goblfields"
 	"github.com/invopop/popui.go/props"
 )
 
-var envelopeFields = goblfields.MustBuild("envelope", goblfields.Options{Descriptions: true})
-
-func FieldSelectorWithLabelExample() templ.Component {
+// Format is whatever the template on the other end expects — here a
+// ${...} placeholder — and the target can be a plain Textarea as well as a
+// contenteditable.
+func FieldPickerTextareaExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -37,13 +37,30 @@ func FieldSelectorWithLabelExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = popui.FieldSelector(props.FieldSelector{
-			Label:  "Envelope field",
-			Name:   "field",
-			Root:   "envelope",
-			Value:  "head.stamps[].val",
-			Fields: envelopeFields,
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-2 w-full\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Textarea(props.Textarea{
+			ID:          "sms-body",
+			Label:       "SMS",
+			Rows:        3,
+			Placeholder: "Invoice ${code} for ${totals.payable} is due on ${payment.terms.due_dates[].date}.",
 		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
+			TriggerLabel: "Insert value",
+			Root:         "bill/invoice",
+			Fields:       invoiceFields,
+			Format:       "${%s}",
+			Target:       "#sms-body",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

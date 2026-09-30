@@ -1,4 +1,4 @@
-// Package goblfields builds the field trees consumed by popui's FieldSelector
+// Package goblfields builds the field trees consumed by popui's FieldPicker
 // from the GOBL JSON Schemas embedded in github.com/invopop/gobl.
 //
 // Everything is resolved locally: there are no requests to the GOBL schema
@@ -9,7 +9,7 @@
 //	if err != nil {
 //		return err
 //	}
-//	@popui.FieldSelector(props.FieldSelector{Root: "bill/invoice", Fields: fields})
+//	@popui.FieldPicker(props.FieldPicker{Root: "bill/invoice", Fields: fields, Format: "{{.doc.%s}}", Target: "#body"})
 //
 // Building a tree walks a few dozen schema documents, so consumers that render
 // a picker on every request should build once and reuse the result: the tree

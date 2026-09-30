@@ -1,54 +1,76 @@
 package popui
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"strings"
 
 	"github.com/invopop/icons"
-	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// FieldSelector renders a picker for one field of a nested data shape — most
-// often a GOBL document, whose tree the goblfields package builds from the
-// schemas embedded in gobl.
+// FieldPicker picks one field of a nested data shape — most often a GOBL
+// document, whose tree the goblfields package builds from the schemas
+// embedded in gobl — and hands it to whatever is being written: an email
+// body, a notification, a workflow setting.
 //
-// The trigger reads as a form field showing the current path. Opening it
-// reveals a filter box over the whole tree: terms are matched against the full
-// path, so "sup name", "supplier.name" and "supname" all find supplier.name,
-// and the matched runs are highlighted. With the filter empty the dropdown
-// browses one level at a time, with a breadcrumb back to the root. A green dot
-// marks a field that is required at every step from the root, and so present
-// on every document of the schema.
+// The panel opens from a trigger. By default that is a button; anything in
+// the children slot replaces it — a Button of another variant, or a read-only
+// Input bound to the value, which makes the picker behave like a select:
+//
+//	@popui.FieldPicker(props.FieldPicker{Root: "bill/invoice", Fields: fields}) {
+//		@popui.Input(props.Input{Attributes: templ.Attributes{":value": "value", "readonly": true}})
+//	}
+//
+// The panel has a filter box over the whole tree: terms are matched against
+// the full path, so "sup name", "supplier.name" and "supname" all find
+// supplier.name. With the filter empty it browses one level at a time, with
+// a breadcrumb back to the root. A green dot marks a field that is required
+// at every step from the root, and so present on every document.
+//
+// A pick is wrapped in Format ("{{.doc.%s}}" turns supplier.name into
+// {{.doc.supplier.name}}), inserted at the caret of the Target element when
+// there is one — an input, a textarea or a contenteditable — submitted under
+// Name via a hidden input, and announced with a `field-select` DOM event
+// carrying the path, the value emitted, the field's type, and whether it was
+// inserted.
 //
 // It is fully keyboard operable: Arrow Up/Down move the active field, Right
-// opens an object, Left goes back, Enter selects, and Escape clears the filter
-// before closing. The selected path is submitted under Name via a visually
-// hidden input, and every selection also raises a `field-select` DOM event
-// carrying the path, the emitted value, and the field's type.
+// opens an object, Left goes back, Enter picks, and Escape clears the filter
+// before closing.
 //
 // The whole tree is rendered into the page as JSON, so filtering and drilling
-// never go back to the server. That is a few hundred kilobytes for a schema
-// the size of bill/invoice — pass a tree built with a smaller
+// never go back to the server. That is tens of kilobytes for a schema the
+// size of bill/invoice — pass a tree built with a smaller
 // goblfields.Options.MaxDepth where that matters.
-templ FieldSelector(p ...props.FieldSelector) {
-	@fieldSelector(props.First(p).GenerateID())
+func FieldPicker(p ...props.FieldPicker) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
+		// The children slot is rendered up front, so an empty slot can be
+		// told from a supplied trigger and get the default button instead.
+		var trigger strings.Builder
+		if err := templ.GetChildren(ctx).Render(ctx, &trigger); err != nil {
+			return err
+		}
+		return fieldPicker(props.First(p).GenerateID(), strings.TrimSpace(trigger.String())).Render(templ.ClearChildren(ctx), w)
+	})
 }
 
-templ fieldSelector(prp props.FieldSelector) {
+templ fieldPicker(prp props.FieldPicker, trigger string) {
 	// relative keeps the sr-only value input (position: absolute) contained
 	// by the component, as in Select's Multiple variant.
 	// Consumer Attributes go on the root — the element carrying x-modelable,
-	// so an Alpine x-model placed here two-way binds the selected value.
+	// so an Alpine x-model placed here two-way binds the value.
 	<div
-		class="relative flex flex-col space-y-2 w-full"
-		x-data={ fieldSelectorData(prp) }
-		x-id="['field-selector']"
+		class="relative flex flex-col gap-2"
+		x-data={ fieldPickerData(prp) }
+		x-id="['field-picker']"
 		x-modelable="value"
 		{ prp.Attributes... }
 	>
-		@templ.JSONScript(fieldSelectorFieldsID(prp), fieldSelectorEntries(prp.Fields))
+		@templ.JSONScript(fieldPickerFieldsID(prp), fieldPickerEntries(prp.Fields))
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
 				{ prp.Label }
@@ -69,61 +91,54 @@ templ fieldSelector(prp props.FieldSelector) {
 				disabled
 			}
 		/>
-		<button
-			type="button"
-			id={ prp.ID }
+		// The trigger wrapper is the panel's anchor and what opens it, so
+		// whatever sits inside — the default button or the consumer's own
+		// element — needs no wiring of its own.
+		<div
 			x-ref="field"
-			role="combobox"
-			aria-haspopup="listbox"
-			:aria-expanded="open"
-			:aria-controls="$id('field-selector') + '-listbox'"
-			:aria-activedescendant="activeId"
-			:popovertarget="$id('field-selector')"
-			:style="'anchor-name: --' + $id('field-selector')"
+			class="flex"
+			:style="'anchor-name: --' + $id('field-picker')"
+			@click="show()"
 			@keydown="onKeydown($event)"
-			if prp.Required {
-				aria-required="true"
-			}
-			if prp.Disabled {
-				disabled
-			}
-			class={ tailwind.Merge(
-				classes.FormField(),
-				classes.FormFieldState(!prp.Error.Empty()),
-				// min-h-8.5 (34px) matches the natural height of Input and
-				// Select: 20px line + py-1.5 + borders.
-				"flex items-center gap-2 min-h-8.5 text-left pr-1.5 disabled:cursor-not-allowed",
-				prp.Class,
-			) }
 		>
-			<span class="shrink-0 text-icon-default-secondary">
-				@icons.Brackets()
-			</span>
-			<span x-show="!value" class="truncate text-foreground-default-tertiary">
-				if prp.Placeholder != "" {
-					{ prp.Placeholder }
-				} else {
-					Select a field
+			if trigger != "" {
+				@templ.Raw(trigger)
+			} else {
+				@Button(props.Button{
+					ID:       prp.ID,
+					Type:     "button",
+					Disabled: prp.Disabled,
+					Class:    prp.Class,
+					Attributes: templ.Attributes{
+						"aria-haspopup":  "listbox",
+						":aria-expanded": "open",
+						":aria-controls": "$id('field-picker') + '-listbox'",
+					},
+				}) {
+					@icons.Brackets()
+					<span>
+						if prp.TriggerLabel != "" {
+							{ prp.TriggerLabel }
+						} else {
+							Insert field
+						}
+					</span>
 				}
-			</span>
-			<span x-show="value" x-text="value" class="truncate font-mono text-base text-foreground"></span>
-			<span class="multiselect-arrow ml-auto shrink-0 size-5 transition-transform" :class="{ 'rotate-180': open }"></span>
-		</button>
-		// The panel is capped at the viewport edge by .field-selector-panel
+			}
+		</div>
+		// The panel is capped at the viewport edge by .field-picker-panel
 		// (components.css) and is a flex column, so the filter box, breadcrumb
 		// and legend stay put while the field list scrolls.
 		<div
 			popover
 			x-ref="panel"
-			:id="$id('field-selector')"
-			:style="'position-anchor: --' + $id('field-selector')"
+			:id="$id('field-picker')"
+			:style="'position-anchor: --' + $id('field-picker')"
 			@toggle="onToggle($event)"
 			@keydown="onKeydown($event)"
-			class="field-selector-panel flex flex-col min-w-72 max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
+			class="field-picker-panel flex flex-col min-w-[min(26rem,calc(100vw-2rem))] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
 		>
 			<div class="p-1 shrink-0">
-				// Default size, so the filter box is the same height as the
-				// trigger it drops out of.
 				@Input(props.Input{
 					Type:        "search",
 					Placeholder: "Filter fields, e.g. supplier name",
@@ -135,7 +150,7 @@ templ fieldSelector(prp props.FieldSelector) {
 						"data-1p-ignore":         "true",
 						"data-lpignore":          "true",
 						"aria-autocomplete":      "list",
-						":aria-controls":         "$id('field-selector') + '-listbox'",
+						":aria-controls":         "$id('field-picker') + '-listbox'",
 						":aria-activedescendant": "activeId",
 					},
 				})
@@ -190,14 +205,14 @@ templ fieldSelector(prp props.FieldSelector) {
 				x-ref="list"
 				tabindex="-1"
 				role="listbox"
-				:id="$id('field-selector') + '-listbox'"
+				:id="$id('field-picker') + '-listbox'"
 				:aria-activedescendant="activeId"
 				class="min-h-0 overflow-y-auto overflow-x-hidden outline-none"
 			>
 				<template x-for="(row, index) in rows" :key="entries[row.i].path">
 					<li
 						role="option"
-						:id="$id('field-selector') + '-opt-' + index"
+						:id="$id('field-picker') + '-opt-' + index"
 						:aria-selected="isSelected(row.i)"
 						:class="{ 'bg-background-default-secondary': index === activeIndex }"
 						class="flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer"
@@ -223,10 +238,10 @@ templ fieldSelector(prp props.FieldSelector) {
 						// The trailing column is three slots, every one of
 						// them kept on every row so they line up down the
 						// list: the always-present dot, the type, and the
-						// drill caret flush against the right edge. Type and caret are one
-						// target — clicking either drills in, the keyboard
-						// does it with Right — and the caret lights up from a
-						// hover over either.
+						// drill caret flush against the right edge. Type and
+						// caret are one target — clicking either drills in,
+						// the keyboard does it with Right — and the caret
+						// lights up from a hover over either.
 						<span
 							class="ml-auto shrink-0 group flex items-center gap-1 pl-2"
 							:class="entries[row.i].children ? 'cursor-pointer' : ''"
@@ -277,18 +292,18 @@ templ fieldSelector(prp props.FieldSelector) {
 	</div>
 }
 
-// fieldSelectorFieldsID is the id of the script element holding the field
+// fieldPickerFieldsID is the id of the script element holding the field
 // tree, derived from the component id so the controller can find it.
-func fieldSelectorFieldsID(p props.FieldSelector) string {
+func fieldPickerFieldsID(p props.FieldPicker) string {
 	return p.ID + "-fields"
 }
 
-// fieldSelectorEntry is one field as the browser receives it. The keys are
+// fieldPickerEntry is one field as the browser receives it. The keys are
 // short and the empty ones dropped because a tree the size of bill/invoice
 // runs to a couple of thousand entries: the path is not sent at all, but
 // rebuilt in the browser from the parent index, which alone saves a third of
 // the payload.
-type fieldSelectorEntry struct {
+type fieldPickerEntry struct {
 	N string `json:"n"`
 	Y string `json:"y,omitempty"`
 	V string `json:"v,omitempty"`
@@ -299,14 +314,14 @@ type fieldSelectorEntry struct {
 	P int `json:"p"`
 }
 
-// fieldSelectorEntries flattens the tree depth first, which is also the order
+// fieldPickerEntries flattens the tree depth first, which is also the order
 // the picker renders it in.
-func fieldSelectorEntries(fields []props.Field) []fieldSelectorEntry {
-	entries := make([]fieldSelectorEntry, 0, len(fields))
-	return appendFieldSelectorEntries(entries, fields, -1)
+func fieldPickerEntries(fields []props.Field) []fieldPickerEntry {
+	entries := make([]fieldPickerEntry, 0, len(fields))
+	return appendFieldPickerEntries(entries, fields, -1)
 }
 
-func appendFieldSelectorEntries(entries []fieldSelectorEntry, fields []props.Field, parent int) []fieldSelectorEntry {
+func appendFieldPickerEntries(entries []fieldPickerEntry, fields []props.Field, parent int) []fieldPickerEntry {
 	for _, field := range fields {
 		flags := 0
 		if field.Array {
@@ -319,7 +334,7 @@ func appendFieldSelectorEntries(entries []fieldSelectorEntry, fields []props.Fie
 			flags |= 4
 		}
 
-		entries = append(entries, fieldSelectorEntry{
+		entries = append(entries, fieldPickerEntry{
 			N: field.Name,
 			Y: field.Type,
 			V: field.Value,
@@ -329,17 +344,20 @@ func appendFieldSelectorEntries(entries []fieldSelectorEntry, fields []props.Fie
 		})
 
 		index := len(entries) - 1
-		entries = appendFieldSelectorEntries(entries, field.Children, index)
+		entries = appendFieldPickerEntries(entries, field.Children, index)
 	}
 	return entries
 }
 
-// fieldSelectorData builds the x-data="fieldSelector({...})" snippet: where to
-// read the field tree from, the initially selected value, the hidden input's
-// name, and the label of the root breadcrumb.
-func fieldSelectorData(p props.FieldSelector) string {
-	source, _ := json.Marshal(fieldSelectorFieldsID(p))
+// fieldPickerData builds the x-data="fieldPicker({...})" snippet: where to
+// read the field tree from, the initial value, the hidden input's name, the
+// format a pick is wrapped in, and the element it is inserted into.
+func fieldPickerData(p props.FieldPicker) string {
+	source, _ := json.Marshal(fieldPickerFieldsID(p))
 	value, _ := json.Marshal(p.Value)
 	name, _ := json.Marshal(p.Name)
-	return fmt.Sprintf("fieldSelector({source: %s, value: %s, name: %s})", source, value, name)
+	format, _ := json.Marshal(p.Format)
+	target, _ := json.Marshal(p.Target)
+	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, disabled: %s})",
+		source, value, name, format, target, boolStr(p.Disabled))
 }
