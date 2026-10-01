@@ -676,6 +676,172 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
 
   // ------------------------------------------------------------------
+  // Field selector helpers
+  // ------------------------------------------------------------------
+
+  // Splits text into matched and unmatched runs, so a field row can highlight
+  // the part of its path a query hit. Overlapping matches are merged rather
+  // than split twice.
+  function highlightParts(text, terms) {
+    const lower = text.toLowerCase()
+    const ranges = []
+
+    for (const term of terms) {
+      const needle = term.toLowerCase()
+      let from = lower.indexOf(needle)
+      while (from !== -1) {
+        ranges.push([from, from + needle.length])
+        from = lower.indexOf(needle, from + needle.length)
+      }
+    }
+
+    if (!ranges.length) return [{ m: false, t: text }]
+
+    ranges.sort((a, b) => a[0] - b[0])
+
+    const parts = []
+    let cursor = 0
+    for (const [start, end] of ranges) {
+      if (end <= cursor) continue
+      const from = Math.max(start, cursor)
+      if (from > cursor) parts.push({ m: false, t: text.slice(cursor, from) })
+      parts.push({ m: true, t: text.slice(from, end) })
+      cursor = end
+    }
+    if (cursor < text.length) parts.push({ m: false, t: text.slice(cursor) })
+
+    return parts
+  }
+
+  // Scores one field against the query's terms, or null when any term misses.
+  // Only the path is consulted: the description is prose, and matching it
+  // would surface fields for words that merely occur in their explanation.
+  function scoreField(entry, terms) {
+    const path = entry.lower
+    const name = entry.name.toLowerCase()
+
+    // Shallow fields win ties: `code` should beat `lines[].item.code`.
+    let score = -entry.depth * 3
+
+    for (const term of terms) {
+      const index = path.indexOf(term)
+      if (index >= 0) {
+        score += 100 - Math.min(index, 60)
+        if (name === term) score += 80
+        else if (name.startsWith(term)) score += 40
+        continue
+      }
+      if (isSubsequence(term, path)) {
+        score += 20
+        continue
+      }
+      return null
+    }
+
+    return score
+  }
+
+  const TYPE_ABBREVIATIONS = {
+    object: 'obj',
+    string: 'str',
+    array: 'arr',
+    integer: 'int',
+    number: 'num',
+    boolean: 'bool',
+  }
+
+  // Escapes text for x-html. Field names come from schemas, but a tree can
+  // be hand-written too.
+  function escapeHTML(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  }
+
+  // Reports whether the characters of term appear in text in order, which is
+  // what lets `supname` find `supplier.name`.
+  function isSubsequence(term, text) {
+    let cursor = 0
+    for (const character of text) {
+      if (character === term[cursor]) cursor++
+      if (cursor === term.length) return true
+    }
+    return false
+  }
+
+  // ------------------------------------------------------------------
+  // Template editor helpers (Contenteditable with a VariableFormat)
+  // ------------------------------------------------------------------
+
+  // Builds the regular expression that finds variables written in a format
+  // such as "{{.%s}}": everything in the format is literal except %s, which
+  // stands for the name.
+  function variablePattern(format, whole) {
+    const escaped = String(format).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const source = escaped.replace('%s', '(.+?)')
+    // The whole-string form is used with match(), which only reports the
+    // capture group — the variable's name — without the global flag.
+    return whole ? new RegExp('^' + source + '$') : new RegExp(source, 'g')
+  }
+
+  // The chip a variable is drawn as. data-variable carries the variable as
+  // written, so serialising the editor gives the template back verbatim.
+  function variableChipHTML(variable, name) {
+    return '<span class="tag" contenteditable="false" data-variable="' + escapeHTML(variable) + '">' + escapeHTML(name) + '</span>'
+  }
+
+  function variableChipNode(variable, name) {
+    const span = document.createElement('span')
+    span.className = 'tag'
+    span.setAttribute('contenteditable', 'false')
+    span.setAttribute('data-variable', variable)
+    span.textContent = name
+    return span
+  }
+
+  // Template text → editor HTML: variables become chips, newlines line breaks.
+  function renderTemplate(value, format) {
+    const pattern = variablePattern(format, false)
+    let html = ''
+    let last = 0
+    for (const m of String(value).matchAll(pattern)) {
+      html += escapeHTML(value.slice(last, m.index))
+      html += variableChipHTML(m[0], m[1])
+      last = m.index + m[0].length
+    }
+    html += escapeHTML(value.slice(last))
+    return html.replace(/\n/g, '<br>')
+  }
+
+  // Editor DOM → template text: chips give back the variable they carry,
+  // <br> and the <div>/<p> blocks browsers create on Enter become newlines,
+  // and the non-breaking spaces browsers put in contenteditables become
+  // ordinary ones.
+  function serializeTemplate(root) {
+    let out = ''
+    const walk = (node) => {
+      for (const child of node.childNodes) {
+        if (child.nodeType === 3) {
+          out += child.nodeValue.replace(/\u00a0/g, ' ')
+          continue
+        }
+        if (child.nodeType !== 1) continue
+        if (child.hasAttribute('data-variable')) {
+          out += child.getAttribute('data-variable')
+          continue
+        }
+        const tag = child.tagName
+        if (tag === 'BR') {
+          out += '\n'
+          continue
+        }
+        if ((tag === 'DIV' || tag === 'P') && out && !out.endsWith('\n')) out += '\n'
+        walk(child)
+      }
+    }
+    walk(root)
+    return out
+  }
+
+  // ------------------------------------------------------------------
   // Alpine controllers
   // ------------------------------------------------------------------
 
@@ -895,6 +1061,492 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return this.all.some((n) => !this.active.includes(n))
       },
     }))
+
+
+    // Template editor: a Contenteditable that draws each variable as a chip and keeps the template text —
+    // variables written out — as its value. Rich view edits the chips in place; plain view edits the text.
+    Alpine.data('templateEditor', (init) => ({
+      value: (init && init.value) || '',
+      format: (init && init.format) || '{{.%s}}',
+      view: (init && init.view) || 'rich',
+      savedRange: null,
+
+      init() {
+        this.render()
+        // The chips are rebuilt from the value whenever the rich view comes
+        // back, since the plain view may have changed the text.
+        this.$watch('view', (view) => {
+          // The views trade places at the height the last one had, so the
+          // box does not jump: the rich one grows with its content while the
+          // textarea keeps whatever height it was given.
+          const from = view === 'rich' ? this.$refs.plain : this.$refs.editor
+          const to = view === 'rich' ? this.$refs.editor : this.$refs.plain
+          if (from && to && from.offsetHeight) to.style.minHeight = from.offsetHeight + 'px'
+          if (view === 'rich') this.$nextTick(() => this.render())
+        })
+        // Something else may set the value — an x-model from outside, a
+        // fetch — so a change that did not come from the editor redraws it.
+        this.$watch('value', (value) => { if (this.view === 'rich' && serializeTemplate(this.$refs.editor) !== value) this.render() })
+        // The caret is tracked while the editor has the selection: a picker
+        // that inserts into it takes focus first, and the insert has to go
+        // where the caret was.
+        this._onSelectionChange = () => {
+          const sel = window.getSelection()
+          if (!sel || !sel.rangeCount) return
+          const range = sel.getRangeAt(0)
+          if (this.$refs.editor && this.$refs.editor.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
+        }
+        document.addEventListener('selectionchange', this._onSelectionChange)
+      },
+      destroy() {
+        if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
+      },
+
+      render() {
+        if (this.$refs.editor) this.$refs.editor.innerHTML = renderTemplate(this.value, this.format)
+      },
+      // Called on every edit of the rich view. A variable typed out by hand
+      // — the closing brace just landed — is turned into a chip right away,
+      // which means redrawing the editor; the caret is carried across as an
+      // offset into the template text, which both the old and the new DOM
+      // serialise to.
+      sync() {
+        const editor = this.$refs.editor
+        this.value = serializeTemplate(editor)
+        if (!this.hasTypedVariable(editor)) return
+        const offset = this.caretOffset(editor)
+        this.render()
+        if (offset !== null) this.setCaretOffset(editor, offset)
+      },
+      // Reports whether any text in the editor — outside the chips — is a
+      // complete variable.
+      hasTypedVariable(editor) {
+        editor.normalize()
+        const pattern = variablePattern(this.format, false)
+        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT)
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (node.parentElement && node.parentElement.closest('[data-variable]')) continue
+          pattern.lastIndex = 0
+          if (pattern.test(node.nodeValue)) return true
+        }
+        return false
+      },
+      // The caret's position as a number of characters into the template.
+      caretOffset(editor) {
+        const sel = window.getSelection()
+        if (!sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        if (!editor.contains(range.startContainer)) return null
+        const before = document.createRange()
+        before.setStart(editor, 0)
+        before.setEnd(range.startContainer, range.startOffset)
+        return serializeTemplate(before.cloneContents()).length
+      },
+      // Puts the caret at a template offset in a freshly rendered editor,
+      // whose children are only text, chips and line breaks.
+      setCaretOffset(editor, offset) {
+        const place = (node, at) => {
+          const range = document.createRange()
+          range.setStart(node, at)
+          range.collapse(true)
+          const sel = window.getSelection()
+          sel.removeAllRanges()
+          sel.addRange(range)
+          this.savedRange = range.cloneRange()
+        }
+        let remaining = offset
+        const children = Array.from(editor.childNodes)
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i]
+          if (child.nodeType === 3) {
+            if (remaining <= child.nodeValue.length) return place(child, remaining)
+            remaining -= child.nodeValue.length
+            continue
+          }
+          if (child.nodeType !== 1) continue
+          const length = child.hasAttribute('data-variable') ? child.getAttribute('data-variable').length : child.tagName === 'BR' ? 1 : 0
+          if (remaining === 0) return place(editor, i)
+          if (remaining <= length) return place(editor, i + 1)
+          remaining -= length
+        }
+        place(editor, children.length)
+      },
+      isVariable(text) {
+        return variablePattern(this.format, true).test(text)
+      },
+      // Puts text at the caret of whichever view is showing. In the rich view
+      // a variable becomes a chip and anything else plain text; the caret
+      // ends up after it. This is what FieldPicker calls.
+      insertText(text) {
+        if (this.view === 'plain') {
+          const area = this.$refs.plain
+          if (!area) return
+          const start = area.selectionStart == null ? area.value.length : area.selectionStart
+          const end = area.selectionEnd == null ? start : area.selectionEnd
+          area.setRangeText(text, start, end, 'end')
+          area.focus()
+          area.dispatchEvent(new Event('input', { bubbles: true }))
+          return
+        }
+        const editor = this.$refs.editor
+        editor.focus()
+        const sel = window.getSelection()
+        let range = this.savedRange && editor.contains(this.savedRange.commonAncestorContainer) ? this.savedRange : null
+        if (!range) {
+          range = document.createRange()
+          range.selectNodeContents(editor)
+          range.collapse(false)
+        }
+        range.deleteContents()
+        const match = String(text).match(variablePattern(this.format, true))
+        const node = match ? variableChipNode(text, match[1]) : document.createTextNode(text)
+        range.insertNode(node)
+        range.setStartAfter(node)
+        range.collapse(true)
+        sel.removeAllRanges()
+        sel.addRange(range)
+        this.savedRange = range.cloneRange()
+        this.sync()
+        editor.dispatchEvent(new Event('input', { bubbles: true }))
+      },
+    }))
+
+    // Field picker over a nested data shape (usually a GOBL document): filters the whole tree by path, or browses it a level at a time.
+    // The tree arrives as JSON in a script element; paths are rebuilt here from each entry's parent index. Picking a field
+    // formats its path, inserts it at the caret of the target element when there is one, and raises field-select.
+    Alpine.data('fieldPicker', (init) => {
+      // The entries live here as plain objects as well as on the component,
+      // so the scorer reads them without going through Alpine's proxies —
+      // two thousand fields times a few properties per keystroke adds up.
+      const list = []
+      // rows is a getter, and the template asks for it once per row (every
+      // row's highlight compares against activeIndex, which reads rows), so
+      // without a cache one keystroke would rank the whole tree eighty times.
+      let rowsKey = null
+      let rowsCache = []
+      const isTextInput = (el) => !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')
+
+      return {
+        entries: [],
+        roots: [],
+        value: (init && init.value) || '',
+        name: (init && init.name) || '',
+        // What a picked path is wrapped in: %s stands for the path. A field
+        // with a Value of its own skips it.
+        format: (init && init.format) || '%s',
+        // Selector of the element a pick is inserted into, if any.
+        target: (init && init.target) || '',
+        disabled: !!(init && init.disabled),
+        // Browse-only objects and arrays: they open but are not picked.
+        scalarsOnly: !!(init && init.scalarsOnly),
+        query: '',
+        open: false,
+        // The objects drilled into, root first, as entry indices.
+        trail: [],
+        // The keyboard highlight follows a path rather than a row index, so it
+        // survives the list changing underneath it.
+        activePath: '',
+        // The last caret position seen inside a contenteditable target. The
+        // filter box takes focus when the panel opens, which moves the
+        // document selection away from the target, so it is tracked while
+        // the target still has it.
+        savedRange: null,
+
+        init() {
+          const el = init && init.source ? document.getElementById(init.source) : null
+          let raw = []
+          if (el) {
+            try { raw = JSON.parse(el.textContent) || [] } catch (e) { raw = [] }
+          } else if (init && Array.isArray(init.fields)) {
+            raw = init.fields
+          }
+          list.length = 0
+          raw.forEach((e) => list.push({
+            name: e.n || '',
+            type: e.y || '',
+            description: e.d || '',
+            own: e.v || '',
+            parent: typeof e.p === 'number' ? e.p : -1,
+            array: !!(e.f & 1),
+            always: !!(e.f & 2),
+            children: !!(e.f & 4),
+            path: '',
+            lower: '',
+            depth: 0,
+            kids: [],
+          }))
+          list.forEach((entry, i) => {
+            const parent = entry.parent >= 0 ? list[entry.parent] : null
+            entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            entry.lower = entry.path.toLowerCase()
+            entry.depth = parent ? parent.depth + 1 : 1
+            if (parent) parent.kids.push(i)
+            else this.roots.push(i)
+          })
+          this.entries = list
+          rowsKey = null
+
+          if (this.target) {
+            this._onSelectionChange = () => {
+              const target = this.targetEl()
+              if (!target || isTextInput(target)) return
+              const sel = window.getSelection()
+              if (!sel || !sel.rangeCount) return
+              const range = sel.getRangeAt(0)
+              if (target.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
+            }
+            document.addEventListener('selectionchange', this._onSelectionChange)
+          }
+        },
+        destroy() {
+          if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
+        },
+
+        get searching() {
+          return this.query.trim().length > 0
+        },
+        // The entries of the level currently browsed.
+        get level() {
+          if (!this.trail.length) return this.roots
+          return this.entries[this.trail[this.trail.length - 1]].kids
+        },
+        get rows() {
+          const key = this.query + '\n' + this.trail.join(',')
+          if (key !== rowsKey) {
+            rowsKey = key
+            rowsCache = this.searching ? this.match(this.query) : this.level.map((i) => ({ i, parts: null }))
+          }
+          return rowsCache
+        },
+        get activeIndex() {
+          const i = this.rows.findIndex((row) => this.entries[row.i].path === this.activePath)
+          return i === -1 ? 0 : i
+        },
+        get activeId() {
+          if (!this.open || !this.rows.length) return null
+          return this.$id('field-picker') + '-opt-' + this.activeIndex
+        },
+
+        // The value a field emits: its own override when it has one, otherwise
+        // its path wrapped in the format. Not named valueOf: Alpine resolves an
+        // expression's names against a proxy that inherits Object.prototype,
+        // so a method by that name is shadowed and silently returns the scope.
+        emitted(i) {
+          const entry = this.entries[i]
+          if (!entry) return ''
+          if (entry.own) return entry.own
+          return this.format.includes('%s') ? this.format.replace('%s', entry.path) : this.format + entry.path
+        },
+        isSelected(i) {
+          return !!this.value && this.emitted(i) === this.value
+        },
+        // Whether picking the field is allowed at all: with scalarsOnly an
+        // object or array is there to be opened, not taken as a value.
+        pickable(i) {
+          const entry = this.entries[i]
+          if (!entry) return false
+          return !this.scalarsOnly || (entry.type !== 'object' && entry.type !== 'array')
+        },
+        typeLabel(i) {
+          const type = this.entries[i] ? this.entries[i].type : ''
+          return TYPE_ABBREVIATIONS[type] || type
+        },
+        // The row's path as escaped HTML: the whole path while browsing, and
+        // while filtering the runs a term did not hit dimmed, so the ones it
+        // did still read at full strength.
+        labelHTML(row) {
+          const entry = this.entries[row.i]
+          if (!row.parts) return escapeHTML(entry.name + (entry.array ? '[]' : ''))
+          let html = ''
+          for (const part of row.parts) {
+            html += part.m ? escapeHTML(part.t) : '<span class="text-foreground-default-secondary">' + escapeHTML(part.t) + '</span>'
+          }
+          return html
+        },
+
+        // Ranks every field against the query. Terms are matched against the
+        // whole path, so `sup name` and `supplier.name` find the same field.
+        match(query, limit = 80) {
+          const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
+          if (!terms.length) return []
+
+          const found = []
+          for (let i = 0; i < list.length; i++) {
+            const score = scoreField(list[i], terms)
+            if (score === null) continue
+            found.push({ i, score })
+          }
+
+          found.sort((a, b) => {
+            const x = list[a.i]
+            const y = list[b.i]
+            return b.score - a.score || x.path.length - y.path.length || (x.path < y.path ? -1 : x.path > y.path ? 1 : 0)
+          })
+
+          // Only the rows that are rendered are worth highlighting.
+          return found.slice(0, limit).map((row) => ({ i: row.i, parts: highlightParts(list[row.i].path, terms) }))
+        },
+
+        move(delta) {
+          if (!this.rows.length) return
+          const next = (this.activeIndex + delta + this.rows.length) % this.rows.length
+          this.activePath = this.entries[this.rows[next].i].path
+          this.scrollActiveIntoView()
+        },
+        drill(i) {
+          const entry = this.entries[i]
+          if (!entry || !entry.kids.length) return
+          this.trail = [...this.trail, i]
+          this.query = ''
+          this.activePath = ''
+        },
+        back() {
+          if (!this.trail.length) return
+          const parent = this.trail[this.trail.length - 1]
+          this.trail = this.trail.slice(0, -1)
+          this.activePath = this.entries[parent].path
+        },
+        select(i) {
+          const entry = this.entries[i]
+          if (!entry) return
+          // A browse-only row's only action is to open it.
+          if (!this.pickable(i)) {
+            if (entry.kids.length) this.drill(i)
+            return
+          }
+          this.value = this.emitted(i)
+          const target = this.targetEl()
+          if (target) this.insert(this.value, target)
+          this.$root.dispatchEvent(new CustomEvent('field-select', {
+            bubbles: true,
+            detail: { path: entry.path, value: this.value, type: entry.type, inserted: !!target },
+          }))
+          this.$refs.panel.hidePopover()
+        },
+        targetEl() {
+          if (!this.target) return null
+          try { return document.querySelector(this.target) } catch (e) { return null }
+        },
+        // Puts text at the caret of an input, textarea or contenteditable
+        // element, replacing any selection there, and leaves the caret after
+        // it. The caret is where it was when the target last had focus:
+        // inputs remember that themselves, a contenteditable is tracked via
+        // savedRange, and with nothing to go on the text goes at the end.
+        insert(text, target = this.targetEl()) {
+          if (!target) return
+          // A template editor draws variables as chips, so it does the
+          // inserting itself.
+          if (target.hasAttribute('data-template-editor') && window.Alpine) {
+            const editor = window.Alpine.$data(target)
+            if (editor && typeof editor.insertText === 'function') {
+              editor.insertText(text)
+              return
+            }
+          }
+          if (isTextInput(target)) {
+            const start = target.selectionStart == null ? target.value.length : target.selectionStart
+            const end = target.selectionEnd == null ? start : target.selectionEnd
+            target.setRangeText(text, start, end, 'end')
+            target.focus()
+            target.dispatchEvent(new Event('input', { bubbles: true }))
+            return
+          }
+          target.focus()
+          const sel = window.getSelection()
+          let range = this.savedRange && target.contains(this.savedRange.commonAncestorContainer) ? this.savedRange : null
+          if (!range) {
+            range = document.createRange()
+            range.selectNodeContents(target)
+            range.collapse(false)
+          }
+          sel.removeAllRanges()
+          sel.addRange(range)
+          // insertText keeps the edit on the undo stack and fires the input
+          // events itself; the manual path is for engines without it.
+          let done = false
+          try { done = document.execCommand('insertText', false, text) } catch (e) { done = false }
+          if (!done) {
+            range.deleteContents()
+            const node = document.createTextNode(text)
+            range.insertNode(node)
+            range.setStartAfter(node)
+            range.collapse(true)
+            sel.removeAllRanges()
+            sel.addRange(range)
+            target.dispatchEvent(new Event('input', { bubbles: true }))
+          }
+          if (sel.rangeCount) this.savedRange = sel.getRangeAt(0).cloneRange()
+        },
+        scrollActiveIntoView() {
+          this.$nextTick(() => {
+            const el = document.getElementById(this.activeId)
+            if (el) el.scrollIntoView({ block: 'nearest' })
+          })
+        },
+        // Opens where the current value lives rather than at the root.
+        openAtValue() {
+          this.trail = []
+          this.activePath = ''
+          if (!this.value) return
+          const found = this.entries.findIndex((_, i) => this.isSelected(i))
+          if (found === -1) return
+          this.activePath = this.entries[found].path
+          const trail = []
+          for (let i = this.entries[found].parent; i >= 0; i = this.entries[i].parent) trail.unshift(i)
+          this.trail = trail
+        },
+        show() {
+          if (this.disabled || this.open) return
+          this.$refs.panel.showPopover()
+        },
+
+        onKeydown(e) {
+          // Buttons inside the panel — the crumbs, Clear — keep their own Enter.
+          if (e.key === 'Enter' && e.target && e.target.tagName === 'BUTTON' && this.$refs.panel.contains(e.target)) return
+          if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            if (!this.open) this.show()
+            else this.move(1)
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            if (!this.open) this.show()
+            else this.move(-1)
+          } else if (e.key === 'Enter') {
+            if (!this.open) return
+            e.preventDefault()
+            const row = this.rows[this.activeIndex]
+            if (row) this.select(row.i)
+          } else if (e.key === 'Escape') {
+            if (!this.open) return
+            e.preventDefault()
+            // Escape clears the filter first, so a mistyped query does not cost
+            // the whole dropdown.
+            if (this.query) this.query = ''
+            else this.$refs.panel.hidePopover()
+          } else if (this.open && !this.searching && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+            // Left and Right move the caret while there is something to filter.
+            e.preventDefault()
+            const row = this.rows[this.activeIndex]
+            if (e.key === 'ArrowRight') { if (row) this.drill(row.i) } else this.back()
+          }
+        },
+        onToggle(e) {
+          if (e.newState === 'open') {
+            this.open = true
+            // At least as wide as the trigger, so a full-width field gets a
+            // panel to match; the stylesheet sets the floor for a button.
+            const trigger = this.$refs.field.firstElementChild || this.$refs.field
+            this.$refs.panel.style.minWidth = trigger.offsetWidth + 'px'
+            this.query = ''
+            this.openAtValue()
+            this.$nextTick(() => { if (this.$refs.search) this.$refs.search.focus() })
+          } else {
+            this.open = false
+            this.query = ''
+          }
+        },
+      }
+    })
 
     // Dual-month date-range picker with a preset rail and a Cancel / Confirm footer; only Confirm applies the pending selection.
     // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.

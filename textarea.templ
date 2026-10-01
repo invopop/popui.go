@@ -1,7 +1,10 @@
 package popui
 
 import (
+	"encoding/json"
 	"fmt"
+
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
@@ -61,34 +64,176 @@ templ Textarea(p ...props.Textarea) {
 // It behaves as a Textarea component.
 //
 // If the Label property is provided, a simple label will be rendered above the contenteditable div.
+//
+// With VariableFormat set it is a template editor instead: each variable in
+// the text ("{{.code}}" for a format of "{{.%s}}") is drawn as a chip, the
+// template text is what Value holds and what is submitted under Name, and
+// ViewToggle adds a Rich / Plain switch. FieldPicker inserts into it as
+// chips. Attributes then go on the component root, the element carrying
+// x-modelable, so an Alpine x-model there binds the template text.
 templ Contenteditable(p ...props.Textarea) {
 	{{ prp := props.First(p) }}
-	<div class="flex flex-col gap-2 w-full">
-		if prp.Label != "" {
-			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
-				{ prp.Label }
+	if prp.VariableFormat != "" {
+		@templateEditor(prp)
+	} else {
+		<div class="flex flex-col gap-2 w-full">
+			if prp.Label != "" {
+				@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
+					{ prp.Label }
+				}
 			}
+			<div
+				tabindex="0"
+				role="textarea"
+				contenteditable="true"
+				id={ prp.ID }
+				style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
+				class={ tailwind.Merge(
+						classes.FormField(),
+						"min-h-[80px]",
+						classes.FormFieldState(!prp.Error.Empty()),
+						prp.Class,
+					) }
+				{ prp.Attributes... }
+			>
+				if prp.Value != "" {
+					@templ.Raw(prp.Value)
+				}
+			</div>
+			if !prp.Error.Empty() {
+				@InputError(prp.Error)
+			}
+		</div>
+	}
+}
+
+// templateEditor is Contenteditable with a VariableFormat: the chips are
+// drawn by the templateEditor controller in popui.js from the template text,
+// which stays the single source of truth — the rich view serialises back to
+// it on every edit, and the plain view edits it directly.
+templ templateEditor(prp props.Textarea) {
+	// relative keeps the sr-only value input (position: absolute) contained
+	// by the component.
+	<div
+		class="relative flex flex-col gap-2 w-full"
+		x-data={ templateEditorData(prp) }
+		x-modelable="value"
+		{ prp.Attributes... }
+	>
+		if prp.Label != "" || prp.ViewToggle {
+			<div class="flex items-center gap-2">
+				if prp.Label != "" {
+					@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
+						{ prp.Label }
+					}
+				}
+				if prp.ViewToggle {
+					// The pill Tabs row, made compact and bound to the
+					// editor's view: x-modelable exposes its own tab
+					// variable, and the x-model ties that to view.
+					@Tabs(props.Tabs{
+						Variant: "pill",
+						Active:  templateEditorView(prp),
+						Class:   "ml-auto w-fit [&>[role=tablist]]:mb-0",
+						Attributes: templ.Attributes{
+							"x-modelable": "tab",
+							"x-model":     "view",
+						},
+						// Icon-only: the eye is the preview with chips, the
+						// code glyph the template as written.
+						Tabs: []props.TabItem{
+							{Value: props.ContenteditableViewRich, Icon: icons.Preview(), Title: "Preview"},
+							{Value: props.ContenteditableViewPlain, Icon: icons.Code(), Title: "Code"},
+						},
+					})
+				}
+			</div>
 		}
+		// A textarea rather than an input, since an input drops the
+		// template's line breaks from its value.
+		<textarea
+			x-model="value"
+			class="sr-only"
+			tabindex="-1"
+			aria-hidden="true"
+			if prp.Name != "" {
+				name={ prp.Name }
+			}
+			if prp.Required {
+				required
+			}
+			if prp.Disabled {
+				disabled
+			}
+		></textarea>
+		// The rich view. Its content is rendered by the controller, so the
+		// element ships empty; data-template-editor is how FieldPicker
+		// recognises it.
 		<div
-			tabindex="0"
-			role="textarea"
-			contenteditable="true"
+			x-ref="editor"
+			x-show="view === 'rich'"
+			@input="sync()"
+			data-template-editor
+			role="textbox"
+			aria-multiline="true"
 			id={ prp.ID }
+			if prp.Disabled {
+				contenteditable="false"
+			} else {
+				contenteditable="true"
+				tabindex="0"
+			}
 			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
 			class={ tailwind.Merge(
 					classes.FormField(),
-					"min-h-[80px]",
+					"min-h-[80px] whitespace-pre-wrap",
 					classes.FormFieldState(!prp.Error.Empty()),
+					classes.If(prp.Disabled, "bg-background-default-secondary text-foreground-default-tertiary"),
 					prp.Class,
 				) }
-			{ prp.Attributes... }
-		>
-			if prp.Value != "" {
-				@templ.Raw(prp.Value)
+		></div>
+		// The plain view: the template as text, monospaced.
+		<textarea
+			x-ref="plain"
+			x-show="view === 'plain'"
+			x-cloak
+			x-model="value"
+			rows="1"
+			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
+			class={ tailwind.Merge(
+					classes.FormField(),
+					classes.FormFieldState(!prp.Error.Empty()),
+					"min-h-[80px] font-mono resize-none",
+					prp.Class,
+				) }
+			if prp.Disabled {
+				disabled
 			}
-		</div>
+			if prp.Placeholder != "" {
+				placeholder={ prp.Placeholder }
+			}
+		></textarea>
 		if !prp.Error.Empty() {
 			@InputError(prp.Error)
 		}
 	</div>
+}
+
+// templateEditorView is the view the editor starts in, rich unless asked
+// otherwise.
+func templateEditorView(p props.Textarea) string {
+	if p.View == props.ContenteditableViewPlain {
+		return props.ContenteditableViewPlain
+	}
+	return props.ContenteditableViewRich
+}
+
+// templateEditorData builds the x-data="templateEditor({...})" snippet: the
+// template text, the syntax its variables are written in, and the view to
+// start in.
+func templateEditorData(p props.Textarea) string {
+	value, _ := json.Marshal(p.Value)
+	format, _ := json.Marshal(p.VariableFormat)
+	view, _ := json.Marshal(templateEditorView(p))
+	return fmt.Sprintf("templateEditor({value: %s, format: %s, view: %s})", value, format, view)
 }
