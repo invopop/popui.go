@@ -1105,9 +1105,71 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       render() {
         if (this.$refs.editor) this.$refs.editor.innerHTML = renderTemplate(this.value, this.format)
       },
-      // Called on every edit of the rich view.
+      // Called on every edit of the rich view. A variable typed out by hand
+      // — the closing brace just landed — is turned into a chip right away,
+      // which means redrawing the editor; the caret is carried across as an
+      // offset into the template text, which both the old and the new DOM
+      // serialise to.
       sync() {
-        this.value = serializeTemplate(this.$refs.editor)
+        const editor = this.$refs.editor
+        this.value = serializeTemplate(editor)
+        if (!this.hasTypedVariable(editor)) return
+        const offset = this.caretOffset(editor)
+        this.render()
+        if (offset !== null) this.setCaretOffset(editor, offset)
+      },
+      // Reports whether any text in the editor — outside the chips — is a
+      // complete variable.
+      hasTypedVariable(editor) {
+        editor.normalize()
+        const pattern = variablePattern(this.format, false)
+        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT)
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (node.parentElement && node.parentElement.closest('[data-variable]')) continue
+          pattern.lastIndex = 0
+          if (pattern.test(node.nodeValue)) return true
+        }
+        return false
+      },
+      // The caret's position as a number of characters into the template.
+      caretOffset(editor) {
+        const sel = window.getSelection()
+        if (!sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        if (!editor.contains(range.startContainer)) return null
+        const before = document.createRange()
+        before.setStart(editor, 0)
+        before.setEnd(range.startContainer, range.startOffset)
+        return serializeTemplate(before.cloneContents()).length
+      },
+      // Puts the caret at a template offset in a freshly rendered editor,
+      // whose children are only text, chips and line breaks.
+      setCaretOffset(editor, offset) {
+        const place = (node, at) => {
+          const range = document.createRange()
+          range.setStart(node, at)
+          range.collapse(true)
+          const sel = window.getSelection()
+          sel.removeAllRanges()
+          sel.addRange(range)
+          this.savedRange = range.cloneRange()
+        }
+        let remaining = offset
+        const children = Array.from(editor.childNodes)
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i]
+          if (child.nodeType === 3) {
+            if (remaining <= child.nodeValue.length) return place(child, remaining)
+            remaining -= child.nodeValue.length
+            continue
+          }
+          if (child.nodeType !== 1) continue
+          const length = child.hasAttribute('data-variable') ? child.getAttribute('data-variable').length : child.tagName === 'BR' ? 1 : 0
+          if (remaining === 0) return place(editor, i)
+          if (remaining <= length) return place(editor, i + 1)
+          remaining -= length
+        }
+        place(editor, children.length)
       },
       isVariable(text) {
         return variablePattern(this.format, true).test(text)
