@@ -214,8 +214,9 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						role="option"
 						:id="$id('field-picker') + '-opt-' + index"
 						:aria-selected="isSelected(row.i)"
-						:class="{ 'bg-background-default-secondary': index === activeIndex }"
-						class="flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer"
+						:aria-disabled="!pickable(row.i) && !entries[row.i].children"
+						:class="{ 'bg-background-default-secondary': index === activeIndex, 'cursor-pointer': pickable(row.i) || entries[row.i].children, 'cursor-default': !pickable(row.i) && !entries[row.i].children }"
+						class="flex items-center gap-2 px-2.5 py-1 rounded-md"
 						:title="entries[row.i].description || entries[row.i].path"
 						@click="select(row.i)"
 						@mouseenter="activePath = entries[row.i].path"
@@ -232,7 +233,13 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						// row. The path is semibold throughout; while
 						// filtering, the runs a term did not hit are dimmed
 						// so the ones it did still read.
-						<span class="min-w-0 flex-1 truncate text-base text-foreground">
+						// A browse-only row reads quieter: secondary when it
+						// can at least be opened, tertiary when it is a dead
+						// end — a non-scalar with nothing underneath.
+						<span
+							class="min-w-0 flex-1 truncate text-base"
+							:class="pickable(row.i) ? 'text-foreground' : entries[row.i].children ? 'text-foreground-default-secondary' : 'text-foreground-default-tertiary'"
+						>
 							<span class="font-mono font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
 						// The trailing column is three slots, every one of
@@ -358,6 +365,6 @@ func fieldPickerData(p props.FieldPicker) string {
 	name, _ := json.Marshal(p.Name)
 	format, _ := json.Marshal(p.Format)
 	target, _ := json.Marshal(p.Target)
-	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, disabled: %s})",
-		source, value, name, format, target, boolStr(p.Disabled))
+	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, disabled: %s, scalarsOnly: %s})",
+		source, value, name, format, target, boolStr(p.Disabled), boolStr(p.ScalarsOnly))
 }

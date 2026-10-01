@@ -32,6 +32,7 @@ templ FieldPickerExample() {
 			Fields: invoiceFields,
 			Format: "{{.doc.%s}}",
 			Target: "#email-body",
+			ScalarsOnly: true,
 		})
 	</div>
 }

@@ -28,6 +28,7 @@ templ FieldPickerCustomFieldsExample() {
 			Fields:       notificationFields,
 			Format:       "{{.doc.%s}}",
 			Target:       "#notification-body",
+			ScalarsOnly:  true,
 		})
 	</div>
 }

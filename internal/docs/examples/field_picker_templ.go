@@ -62,10 +62,11 @@ func FieldPickerExample() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
-			Root:   "bill/invoice",
-			Fields: invoiceFields,
-			Format: "{{.doc.%s}}",
-			Target: "#email-body",
+			Root:        "bill/invoice",
+			Fields:      invoiceFields,
+			Format:      "{{.doc.%s}}",
+			Target:      "#email-body",
+			ScalarsOnly: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

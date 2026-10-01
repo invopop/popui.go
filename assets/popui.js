@@ -1237,6 +1237,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // Selector of the element a pick is inserted into, if any.
         target: (init && init.target) || '',
         disabled: !!(init && init.disabled),
+        // Browse-only objects and arrays: they open but are not picked.
+        scalarsOnly: !!(init && init.scalarsOnly),
         query: '',
         open: false,
         // The objects drilled into, root first, as entry indices.
@@ -1338,6 +1340,13 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         isSelected(i) {
           return !!this.value && this.emitted(i) === this.value
         },
+        // Whether picking the field is allowed at all: with scalarsOnly an
+        // object or array is there to be opened, not taken as a value.
+        pickable(i) {
+          const entry = this.entries[i]
+          if (!entry) return false
+          return !this.scalarsOnly || (entry.type !== 'object' && entry.type !== 'array')
+        },
         typeLabel(i) {
           const type = this.entries[i] ? this.entries[i].type : ''
           return TYPE_ABBREVIATIONS[type] || type
@@ -1400,6 +1409,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         select(i) {
           const entry = this.entries[i]
           if (!entry) return
+          // A browse-only row's only action is to open it.
+          if (!this.pickable(i)) {
+            if (entry.kids.length) this.drill(i)
+            return
+          }
           this.value = this.emitted(i)
           const target = this.targetEl()
           if (target) this.insert(this.value, target)

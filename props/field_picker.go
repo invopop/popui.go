@@ -88,10 +88,16 @@ type FieldPicker struct {
 	// Target is a CSS selector for an input, textarea or contenteditable
 	// element. When set, a pick is inserted there at the caret, replacing
 	// any selection, with the caret left after it.
-	Target   string
-	Disabled bool
-	Required bool
-	Error    Error
+	Target string
+	// ScalarsOnly makes objects and arrays browse-only: they can be opened
+	// but not picked, and one with nothing underneath is shown disabled.
+	// For a template, where a picked object would print as a Go map dump.
+	// Off by default, since a picker may be choosing a field for its own
+	// sake rather than for its value.
+	ScalarsOnly bool
+	Disabled    bool
+	Required    bool
+	Error       Error
 }
 
 // GenerateID returns a new FieldPicker with either the existing ID or a
