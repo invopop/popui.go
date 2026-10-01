@@ -267,14 +267,13 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 							// Nudged right by the difference between the row's
 							// padding and the crumb row's, so the carets line
 							// up under the Clear button.
+							// On a browse-only row the whole row is the one
+							// target, so the caret is a bare glyph there with
+							// no chrome or hover of its own.
 							<span
 								aria-hidden="true"
-								class={ tailwind.Merge(
-									buttonBaseClasses(),
-									buttonClasses("", props.ButtonSizeIconSmall),
-									"shrink-0 relative left-1.5 group-hover:border-border-default-secondary-hover",
-								) }
-								:class="entries[row.i].children ? '' : 'invisible'"
+								class="shrink-0 relative left-1.5"
+								:class={ fieldPickerCaretClass() }
 							>
 								@icons.ChevronRight()
 							</span>
@@ -297,6 +296,21 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 			@InputError(prp.Error)
 		}
 	</div>
+}
+
+// fieldPickerCaretClass is the Alpine expression choosing the caret's look
+// for a row: Button's default chrome when the field can be picked, so the
+// drill reads as the separate action it is there; a bare glyph when the row
+// is browse-only and the drill is all the row does; and hidden when there
+// is nothing to open.
+func fieldPickerCaretClass() string {
+	chrome := tailwind.Merge(
+		buttonBaseClasses(),
+		buttonClasses("", props.ButtonSizeIconSmall),
+		"group-hover:border-border-default-secondary-hover",
+	)
+	bare := "inline-flex items-center justify-center size-6 text-icon-default-secondary"
+	return "!entries[row.i].children ? 'invisible " + jsSingleQuoteEscape(bare) + "' : pickable(row.i) ? '" + jsSingleQuoteEscape(chrome) + "' : '" + jsSingleQuoteEscape(bare) + "'"
 }
 
 // fieldPickerFieldsID is the id of the script element holding the field
