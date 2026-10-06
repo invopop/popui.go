@@ -9,6 +9,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/examples/apps"
 	"github.com/invopop/popui.go/internal/docs"
 	"github.com/spf13/cobra"
 )
@@ -48,6 +49,17 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		log.Fatalf("Error rendering index page: %v", err)
 	}
+
+	// Render the Applications admin prototype as static pages so it can be
+	// browsed on the published docs site (forms there have no server to post
+	// to; see examples/apps/HANDOFF.md).
+	pages := apps.StaticPages()
+	for _, pg := range pages {
+		if err := renderPageCtx(apps.StaticContext(), buildOutputPath, path.Join(pg.Path, "index.html"), pg.Component); err != nil {
+			log.Fatalf("Error rendering %s: %v", pg.Path, err)
+		}
+	}
+	log.Printf("Applications prototype published (%d pages)", len(pages))
 
 	// Copy over the static assets
 	publicAssetPath := path.Join(buildOutputPath, popui.AssetPath, "assets")
@@ -98,6 +110,10 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 }
 
 func renderPage(basePath, pagePath string, component templ.Component) error {
+	return renderPageCtx(context.Background(), basePath, pagePath, component)
+}
+
+func renderPageCtx(ctx context.Context, basePath, pagePath string, component templ.Component) error {
 	fullPath := path.Join(basePath, pagePath)
 	dir := path.Dir(fullPath)
 
@@ -118,7 +134,7 @@ func renderPage(basePath, pagePath string, component templ.Component) error {
 	}()
 
 	// Render component
-	return component.Render(context.Background(), f)
+	return component.Render(ctx, f)
 }
 
 // copyFile copies a file from source to destination path

@@ -5,6 +5,13 @@ This directory is a clickable, backend-free prototype of the Access admin
 NATS credentials), built with PopUI. It exists so that the UI can be designed
 here while the backend evolves separately in `invopop/access`, and then merged.
 
+`popui build` also writes every GET page of the prototype under
+`public/examples/apps/…/index.html` (`static.go` → `StaticPages`), so the
+published docs site and its Netlify deploy previews can be browsed and
+reviewed; HTMX navigation works there because each file is a full document
+and htmx extracts the body. Saving, issuing, reordering and deleting need
+the dev server and 404 on the static site.
+
 Run it with `air` (or `go run ./cmd/popui serve`) and open
 <http://localhost:3000/examples/apps>. Append `?sudo=0` to any URL to see the
 non-sudo rendering.
