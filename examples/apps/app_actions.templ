@@ -1,0 +1,874 @@
+package apps
+
+import (
+	"fmt"
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/flash"
+	"github.com/invopop/popui.go/props"
+	"strconv"
+	"strings"
+)
+
+// appActionFormID lets the header Save button submit the action form below it
+// via the HTML form= attribute.
+const appActionFormID = "app-action-form"
+
+templ AppActions(org *Org, app *Application, ac *ActionCollection, err error) {
+	@appsLayout(org) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{Label: app.Name},
+			},
+		}) {
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			@popui.Button(props.Button{
+				Variant:    "primary",
+				Attributes: navAttrs(baseURL(org, "apps", app.ID, "actions", "new")),
+			}) {
+				@icons.Add()
+				New action
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:              app.Name,
+				HideTitleSeparator: true,
+			}) {
+				@appTabs(org, ApplicationModelToForm(app), "actions")
+				if err != nil {
+					@popui.InputError(props.Error{Text: err.Error()})
+				}
+				if ac == nil || len(ac.List) == 0 {
+					@popui.Info() {
+						No actions yet. Create one and it will appear under its channel.
+					}
+				} else {
+					// Named channels in the app's order, then the default channel.
+					for _, ch := range app.Channels {
+						@actionChannelSection(org, app, ch.Label, ac.GroupsForChannel(app, ch.Key))
+					}
+					@actionChannelSection(org, app, "Default channel", ac.GroupsForChannel(app, ""))
+				}
+			}
+		}
+	}
+}
+
+// actionChannelSection is the titled block for one channel, skipped when the
+// channel has no actions.
+templ actionChannelSection(org *Org, app *Application, label string, groups []*ActionGroup) {
+	if len(groups) > 0 {
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:      label,
+				Horizontal: true,
+			})
+			for _, g := range groups {
+				@actionDeck(org, app, g)
+			}
+		</div>
+	}
+}
+
+// actionDeck is one reorderable deck: the actions of a channel that accept
+// the same schemas. Reorder mode is entered from the kebab menu and left with
+// the Done button; each move posts the order without swapping.
+templ actionDeck(org *Org, app *Application, g *ActionGroup) {
+	{{
+		channelSeg := g.Channel
+		if channelSeg == "" {
+			channelSeg = "default"
+		}
+	}}
+	// hx-disinherit keeps the form's trigger and swap="none" off the cards,
+	// which carry their own hx-get and would otherwise never navigate.
+	<form
+		hx-post={ baseURL(org, "apps", app.ID, "actions", "groups", channelSeg, g.SchemaKey(), "reorder") }
+		hx-trigger="popui-card-deck-reorder"
+		hx-swap="none"
+		hx-disinherit="*"
+		class="w-full"
+	>
+		@popui.CardDeck(props.CardDeck{Reorderable: true, Name: "order"}) {
+			@popui.CardDeckHead() {
+				<span class="flex items-center gap-2 min-w-0">
+					<span class="text-foreground text-base font-medium truncate">{ g.Label() }</span>
+					if len(g.Schemas) > 0 {
+						<code class="text-sm text-foreground-default-tertiary truncate">{ strings.Join(g.Schemas, ", ") }</code>
+					}
+				</span>
+				<div class="flex items-center gap-1 shrink-0">
+					@popui.Button(props.Button{
+						Size:       props.ButtonSizeSmall,
+						Attributes: navAttrs(baseURL(org, "apps", app.ID, "actions", "new") + "?channel=" + g.Channel),
+					}) {
+						@icons.Add()
+						Add
+					}
+					@popui.CardDeckReorderButton(props.CardDeckReorderButton{
+						Attributes: templ.Attributes{"x-show": "reordering", "x-cloak": ""},
+					})
+					if len(g.Actions) > 1 {
+						@popui.Menu(props.Menu{RightAlign: true}) {
+							@popui.MenuItem(props.MenuItem{Attributes: templ.Attributes{
+								"@click": "toggleReorder(); $el.closest('[popover]').hidePopover()",
+							}}) {
+								@icons.Drag()
+								<span>Reorder</span>
+							}
+						}
+					}
+				</div>
+			}
+			for _, act := range g.Actions {
+				@actionCard(org, app, act)
+			}
+		}
+	</form>
+}
+
+templ actionCard(org *Org, app *Application, act *Action) {
+	{{
+		attrs := navAttrs(baseURL(org, "apps", app.ID, "actions", act.Id))
+		attrs["data-card-id"] = act.Id
+	}}
+	@popui.Card(props.Card{
+		Class:      "flex-row items-center gap-3 p-3 cursor-pointer hover:bg-background-default-secondary",
+		Attributes: attrs,
+	}) {
+		<div class="flex flex-col grow min-w-0">
+			<span class="text-base font-medium text-foreground truncate">{ act.Name }</span>
+			<span class="font-mono text-sm text-foreground-default-secondary truncate">{ act.Id }</span>
+		</div>
+		<div class="flex items-center gap-2 shrink-0">
+			if act.DisabledAt != "" {
+				@popui.TagStatus(props.TagStatus{Status: "grey", Label: "Disabled"})
+			}
+			// Unroll implies a seat action, so one tag covers it.
+			if act.Unroll {
+				@popui.TagStatus(props.TagStatus{Status: "grey", Label: "Releases seat"})
+			} else if act.Seat {
+				{{
+					label := "Seat"
+					if act.RenewalPeriod != "" {
+						label += " · " + act.RenewalPeriod
+					}
+				}}
+				@popui.TagStatus(props.TagStatus{Status: "green", Label: label, Dot: true})
+			}
+			@popsTag(act.Pops)
+			// Stop the click so the row's hx-get does not fire when using the menu.
+			<div @click.stop>
+				@popui.Menu(props.Menu{RightAlign: true}) {
+					@popui.MenuItem(props.MenuItem{Attributes: navAttrs(baseURL(org, "apps", app.ID, "actions", act.Id))}) {
+						@icons.Edit()
+						<span>Edit</span>
+					}
+					if isSudo(ctx) {
+						@popui.MenuSeparator()
+						if act.DisabledAt != "" {
+							@popui.MenuItem(props.MenuItem{Attributes: templ.Attributes{
+								"hx-post":   baseURL(org, "apps", app.ID, "actions", act.Id, "enable"),
+								"hx-target": popui.AppTarget,
+							}}) {
+								@icons.Ok()
+								<span>Enable</span>
+							}
+						} else {
+							@popui.MenuItem(props.MenuItem{Variant: props.MenuItemVariantDanger, Attributes: templ.Attributes{
+								"hx-post":    baseURL(org, "apps", app.ID, "actions", act.Id, "disable"),
+								"hx-confirm": "Disable “" + act.Name + "”? Workflows using it will fail at this step.",
+								"hx-target":  popui.AppTarget,
+							}}) {
+								@icons.Block()
+								<span>Disable</span>
+							}
+						}
+					}
+				}
+			</div>
+		</div>
+	}
+}
+
+templ AppActionEdit(org *Org, app *Application, act *Action, err error) {
+	@appsLayout(org) {
+		{{
+			title := act.Name
+			if title == "" {
+				title = "New action"
+			}
+		}}
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{
+					Label:      app.Name,
+					Href:       templ.SafeURL(baseURL(org, "apps", app.ID, "actions")),
+					Attributes: navAttrs(baseURL(org, "apps", app.ID, "actions")),
+				},
+				{Label: title},
+			},
+		}) {
+			// As on the app config form, Save lives in the header and reaches the
+			// form below via the HTML form= attribute.
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			@popui.Button(props.Button{
+				ID:      "apps-action-save",
+				Type:    "submit",
+				Variant: "primary",
+				Form:    appActionFormID,
+			}) {
+				Save
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:       "App action information",
+				Description: "How the action will be presented to the user.",
+			}) {
+				<form id={ appActionFormID } class="flex flex-col gap-4" hx-encoding="multipart/form-data" hx-post={ baseURL(org, "apps", app.ID, "actions") } hx-target={ popui.AppTarget } hx-indicator="#apps-action-save">
+					@appActionForm(app, actionFormFromAction(act), err)
+				</form>
+			}
+		}
+	}
+}
+
+// taskRequestExample and taskResultExample render the action contract as the
+// developer will see it on the wire (JSON rendering of the protobuf messages).
+func taskRequestExample(app *Application, form *ActionForm) string {
+	id := form.ID
+	if id == "" {
+		id = app.ID + ".<verb>"
+	}
+	return `{
+  "id": "<task uuid>",
+  "action": "` + id + `",
+  "job_id": "<job uuid>",
+  "enrollment_id": "<enrollment uuid>",
+  "token": "<enrollment-scoped bearer>",
+  "config": { … per step, see Config schema … },
+  "silo_entry": { … omitted when "Exclude silo entry" … }
+}`
+}
+
+func taskResultExample() string {
+	return `{
+  "status": "OK | KO | SKIP | ERR | QUEUED | NA",
+  "code": "accepted",
+  "message": "human-readable detail",
+  "patch": { … JSON patch for the envelope … },
+  "attachments": [ { "name": "receipt.pdf", "mime": "application/pdf", "hash": "sha256:…" } ]
+}`
+}
+
+// popsTag shows an action's pops cost the way the Console does in workflow
+// steps (console-ui PopsTag): the Pops icon in its green tile with the count
+// in mono next to it, or a muted dash when the action is free.
+templ popsTag(pops int32) {
+	if pops > 0 {
+		<span class="inline-flex items-center gap-1.5 h-6" title={ strconv.Itoa(int(pops)) + " pops" }>
+			<span class="size-4 shrink-0 rounded-sm overflow-hidden flex">
+				@icons.Pops()
+			</span>
+			<span class="font-mono text-sm font-medium tabular-nums">{ strconv.Itoa(int(pops)) }</span>
+		</span>
+	} else {
+		<span class="text-foreground-default-tertiary">-</span>
+	}
+}
+
+// schemaOptions maps the supported document schemas to select options. No
+// selection means the action applies to every schema.
+func schemaOptions(form *ActionForm) []props.SelectOption {
+	opts := make([]props.SelectOption, 0, len(actionSchemas))
+	for _, schema := range actionSchemas {
+		opts = append(opts, props.SelectOption{
+			Value:    schema,
+			Label:    schema,
+			Selected: form.hasSchema(schema),
+		})
+	}
+	return opts
+}
+
+// addonOptions maps the available GOBL tax addons to select options. The addon
+// key is the submitted value and the chip label; its human-readable name is the
+// dimmed description in the dropdown.
+func addonOptions(form *ActionForm) []props.SelectOption {
+	opts := make([]props.SelectOption, 0, len(addons))
+	for _, addon := range addons {
+		opts = append(opts, props.SelectOption{
+			Value:       addon.Key,
+			Label:       addon.Key,
+			Description: addon.Name,
+			Selected:    form.hasAddon(addon.Key),
+		})
+	}
+	return opts
+}
+
+templ appActionForm(app *Application, form *ActionForm, err error) {
+	@popui.Fieldset() {
+		if err != nil {
+			@popui.InputError(props.Error{Text: err.Error()})
+		}
+		<div class="w-full flex flex-col gap-3">
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Info",
+				Description: "How the action is presented in workflows",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Input(props.Input{
+					Label:       "Name",
+					Name:        "name",
+					Value:       form.Name,
+					Required:    true,
+					Placeholder: "Name of the action",
+				})
+				@popui.Textarea(props.Textarea{
+					Label:       "Description (optional)",
+					Name:        "description",
+					Value:       form.Description,
+					Rows:        3,
+					Placeholder: "Description of the action",
+				})
+				// The icon is uploaded rather than linked; the current URL travels
+				// in a hidden input so an untouched form keeps it.
+				<div class="flex flex-col gap-2">
+					@popui.Label(props.Label{
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Icon",
+							Description: "Square image shown on the workflow step. Use a simple mark, ideally SVG or PNG at 128×128; it falls back to the app icon when empty.",
+						},
+					}) {
+						Icon
+					}
+					@popui.FileUpload(props.InputFile{
+						Name:      "icon",
+						Accept:    "image/*",
+						AvatarURL: form.IconURL,
+						AvatarAlt: "Action icon",
+						Text:      uploadText(form.IconURL, "No icon uploaded"),
+					})
+					<input type="hidden" name="icon_url" value={ form.IconURL }/>
+				</div>
+				if !form.isNew() {
+					@popui.Input(props.Input{
+						Label:    "ID",
+						Name:     "id",
+						Value:    form.ID,
+						Disabled: true,
+					})
+					<input type="hidden" name="id" value={ form.ID }/>
+					<input type="hidden" name="rev" value={ form.Rev }/>
+				}
+			}
+		</div>
+		if form.isNew() {
+			// The ID is composed from fixed segments and is immutable once created:
+			// "<app_id>[.<channel>].<action>[.<qualifier>]".
+			<div class="w-full flex flex-col gap-3">
+				@popui.Separator()
+				@popui.TitleGroup(props.TitleGroup{
+					Title:       "Action ID",
+					Description: "Composed from fixed segments; immutable once created",
+					Horizontal:  true,
+				})
+				@popui.Fieldset(props.Fieldset{
+					Variant:    props.FieldsetVariantCard,
+					Attributes: templ.Attributes{"x-data": "actionId('" + app.ID + "')"},
+				}) {
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+						@popui.Select(props.Select{
+							Label:      "Channel",
+							Name:       "channel",
+							Attributes: templ.Attributes{"x-model": "channel"},
+						}) {
+							<option value="">Default</option>
+							for _, ch := range app.Channels {
+								<option value={ ch.Key }>{ ch.Label }</option>
+							}
+						}
+						@popui.Select(props.Select{
+							Label:      "Action (verb)",
+							Name:       "action_choice",
+							Required:   true,
+							Attributes: templ.Attributes{"x-model": "choice"},
+						}) {
+							<option value="">Select…</option>
+							for _, verb := range actionVerbs {
+								<option value={ verb }>{ verb }</option>
+							}
+							<option value="__other__">Other…</option>
+						}
+						@popui.Input(props.Input{
+							Label:       "Qualifier (optional)",
+							Name:        "qualifier",
+							Placeholder: "issued",
+							Attributes:  templ.Attributes{"x-model": "qualifier"},
+						})
+					</div>
+					// Shown only when the verb is "Other…"; it feeds the hidden action_verb.
+					<div x-show="choice === '__other__'" style="display: none;">
+						@popui.Input(props.Input{
+							Label:       "Custom verb",
+							Name:        "action_custom",
+							Placeholder: "verb",
+							Attributes: templ.Attributes{
+								"x-model":   "custom",
+								":required": "choice === '__other__'",
+							},
+						})
+					</div>
+					// The effective verb is submitted here, sourced from the select or the
+					// custom input above.
+					<input type="hidden" name="action_verb" :value="verb"/>
+					<div class="text-sm text-foreground-default-secondary mt-1">
+						Action ID: <code x-text="composed"></code>
+					</div>
+				}
+			</div>
+		}
+		// Category is deprecated: it is now derived from the application. Only sudo
+		// users may still override it (see the Sudo section); everyone else carries
+		// the current value through unchanged.
+		if !isSudo(ctx) {
+			<input type="hidden" name="category" value={ form.Category }/>
+		}
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Pricing",
+				Description: "What running the action costs a workspace",
+				Horizontal:  true,
+			})
+			// The renewal period and unroll flag only make sense on a seat action, so
+			// both are disabled until the seat box is checked. Disabled controls are
+			// not submitted, so unchecking seat also clears them on save.
+			@popui.Fieldset(props.Fieldset{
+				Variant:    props.FieldsetVariantCard,
+				Attributes: templ.Attributes{"x-data": fmt.Sprintf("{ seat: %t }", form.Seat)},
+			}) {
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					@popui.Input(props.Input{
+						Label: "Pops cost",
+						Name:  "pops",
+						Type:  "number",
+						Value: form.Pops,
+					})
+					@popui.Select(props.Select{
+						Label:      "Renewal period",
+						Name:       "renewal_period",
+						Attributes: templ.Attributes{":disabled": "!seat"},
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Renewal period",
+							Description: "How often a seat allocated by this action re-charges its pops. Only applies to seat actions.",
+						},
+					}) {
+						<option value="">No auto-renewal</option>
+						for _, period := range seatRenewalPeriods {
+							<option value={ period.Value } selected?={ form.RenewalPeriod == period.Value }>{ period.Label }</option>
+						}
+					}
+				</div>
+				@popui.Checkbox(props.Checkbox{
+					Label:       "Seat",
+					Description: "Allocates a billing seat for the workspace when the action runs",
+					Name:        "seat",
+					Checked:     form.Seat,
+					Value:       "true",
+					Attributes:  templ.Attributes{"x-model": "seat"},
+				})
+				@popui.Checkbox(props.Checkbox{
+					Label:       "Unroll",
+					Description: "Releases the seat instead of allocating one",
+					Name:        "unroll",
+					Checked:     form.Unroll,
+					Value:       "true",
+					Attributes:  templ.Attributes{":disabled": "!seat"},
+				})
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "URLs",
+				Description: "Where the console finds the action's configuration and docs",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					@popui.Input(props.Input{
+						Label:       "Config URL (optional)",
+						Name:        "config_url",
+						Value:       form.ConfigURL,
+						Placeholder: "https://",
+					})
+					@popui.Input(props.Input{
+						Label:       "Info URL (optional)",
+						Name:        "info_url",
+						Value:       form.InfoURL,
+						Placeholder: "https://",
+					})
+				</div>
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Schemas",
+				Description: "Document schemas the action accepts; leave empty to allow all",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Select(props.Select{
+					Name:        "schemas",
+					Multiple:    true,
+					Searchable:  true,
+					Placeholder: "All schemas",
+					Options:     schemaOptions(form),
+				})
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Processing",
+				Description: "Where the action applies and what it writes back to the silo",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Input(props.Input{
+					Label: "Countries (optional)",
+					Name:  "countries",
+					Value: form.Countries,
+				})
+				@popui.Checkbox(props.Checkbox{
+					Label:       "Exclude silo entry",
+					Description: "The task carries only the entry ID and an enrollment-scoped token; the app fetches the document itself. Recommended: it keeps payloads small and will become the default.",
+					Name:        "exclude_silo_entry",
+					Checked:     form.ExcludeSiloEntry,
+					Value:       "true",
+				})
+				@popui.Checkbox(props.Checkbox{
+					Label:       "Optional silo entry",
+					Description: "The action can run from a workflow that has no document, e.g. a party registration.",
+					Name:        "optional_silo_entry",
+					Checked:     form.OptionalSiloEntry,
+					Value:       "true",
+				})
+				@popui.Info() {
+					<p class="text-sm text-foreground-default-secondary">
+						Retries: a task answered <code>ERR</code> is retried with back-off for up to 12 hours; answer
+						permanent failures with <code>KO</code> and nothing-to-do with <code>SKIP</code>.
+					</p>
+				}
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Configuration",
+				Description: "Settings a workflow step of this action can carry",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Textarea(props.Textarea{
+					Label:       "Config schema",
+					Name:        "config_schema",
+					Value:       form.ConfigSchema,
+					Rows:        8,
+					Monospace:   true,
+					Placeholder: `{ "type": "object", "properties": { "template": { "type": "string" } } }`,
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "Config schema",
+						Description: "JSON Schema for the step's config object. The Console renders a form from it when a user adds the step, and the values arrive in the task's config. Leave empty when the action needs no per-step settings.",
+					},
+				})
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Contract",
+				Description: "What the app receives for this action and what it must answer",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="flex flex-col gap-1">
+						@popui.Label() {
+							Task (request)
+						}
+						<pre class="font-mono text-sm whitespace-pre rounded-lg bg-background p-3 border border-border-default-secondary overflow-x-auto">{ taskRequestExample(app, form) }</pre>
+					</div>
+					<div class="flex flex-col gap-1">
+						@popui.Label() {
+							Result (reply)
+						}
+						<pre class="font-mono text-sm whitespace-pre rounded-lg bg-background p-3 border border-border-default-secondary overflow-x-auto">{ taskResultExample() }</pre>
+					</div>
+				</div>
+				@popui.Info() {
+					<p class="text-sm text-foreground-default-secondary">
+						The verb is the last segment of the action ID; the app receives the full ID. With "Exclude silo entry"
+						the <code>silo_entry</code> is omitted and the app fetches it with the token. The patch is applied to the
+						envelope; attachments are stored on the entry.
+					</p>
+				}
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Action results",
+				Description: "Result states the action can report back",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@actionResultsManager(form)
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Silo entry options",
+				Description: "Legacy silo entry settings, scheduled for removal",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Select(props.Select{
+					Label: "Convert into currency (optional)",
+					Name:  "convert_into_currency",
+				}) {
+					<option value="">None</option>
+					for _, cur := range currencies {
+						<option value={ cur.Key } selected?={ form.ConvertIntoCurrency == cur.Key }>{ cur.Key } - { cur.Name }</option>
+					}
+				}
+				@popui.Input(props.Input{
+					Label: "Tax regimes (optional)",
+					Name:  "tax_regimes",
+					Value: form.TaxRegimes,
+				})
+				@popui.Select(props.Select{
+					Label:       "Addons required (optional)",
+					Name:        "addons",
+					Multiple:    true,
+					Searchable:  true,
+					Placeholder: "Select addons",
+					Options:     addonOptions(form),
+				})
+				@popui.Checkbox(props.Checkbox{
+					Label:   "Respond with shared metadata",
+					Name:    "shared_meta",
+					Checked: form.SharedMeta,
+					Value:   "true",
+				})
+				@popui.Checkbox(props.Checkbox{
+					Label:   "Require signature",
+					Name:    "require_signature",
+					Checked: form.RequireSignature,
+					Value:   "true",
+				})
+				@popui.Checkbox(props.Checkbox{
+					Label:   "Remove included tax",
+					Name:    "remove_included_tax",
+					Checked: form.RemoveIncludedTax,
+					Value:   "true",
+				})
+			}
+		</div>
+		if form.CreatedAt != "" || form.UpdatedAt != "" {
+			<div class="w-full flex flex-col gap-3">
+				@popui.Separator()
+				@popui.TitleGroup(props.TitleGroup{
+					Title:      "Metadata",
+					Horizontal: true,
+				})
+				@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						if form.CreatedAt != "" {
+							@popui.Input(props.Input{
+								Label:    "Created at",
+								Name:     "created_at",
+								Value:    form.CreatedAt,
+								Readonly: true,
+							})
+						}
+						if form.UpdatedAt != "" {
+							@popui.Input(props.Input{
+								Label:    "Updated at",
+								Name:     "updated_at",
+								Value:    form.UpdatedAt,
+								Readonly: true,
+							})
+						}
+					</div>
+				}
+			</div>
+		}
+		if isSudo(ctx) {
+			<div class="w-full flex flex-col gap-3">
+				@popui.Separator()
+				@popui.TitleGroup(props.TitleGroup{
+					Title:       "Sudo",
+					Description: "Operational overrides reserved for Invopop administrators",
+					Horizontal:  true,
+				})
+				@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard, Class: "gap-0 bg-background-default-secondary"}) {
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+						@popui.Select(props.Select{
+							Label: "Category (deprecated — now derived from the app)",
+							Name:  "category",
+						}) {
+							for _, opt := range ApplicationCategories() {
+								<option value={ opt.Key } selected?={ form.Category == opt.Key }>{ opt.Name }</option>
+							}
+						}
+						@popui.Input(props.Input{
+							Label: "Worker count",
+							Name:  "worker_count",
+							Type:  "number",
+							Value: form.WorkerCount,
+						})
+						@popui.Checkbox(props.Checkbox{
+							ID:      "disabled",
+							Label:   "Disabled",
+							Name:    "disabled",
+							Value:   "true",
+							Checked: form.Disabled,
+						})
+						if form.disabledAt != "" {
+							@popui.Input(props.Input{
+								Label:    "Disabled at",
+								Name:     "disabled_at",
+								Value:    form.disabledAt,
+								Disabled: true,
+							})
+						}
+					</div>
+				}
+			</div>
+		}
+	}
+}
+
+templ actionResultsManager(form *ActionForm) {
+	{{
+		alpineData := fmt.Sprintf(`{
+			results: %s,
+			addResult() {
+				this.results.push({ status: '0', code: '', description: '', default: false });
+			},
+			removeResult(index) {
+				this.results.splice(index, 1);
+			}
+		}`, actionResultsToJSON(form.Results))
+	}}
+	<div x-data={ alpineData } class="space-y-4">
+		@popui.Info() {
+			Define possible result codes for this action to be used when defining conditions.
+		}
+		@popui.CardDeck(props.CardDeck{Attributes: templ.Attributes{"x-show": "results.length > 0"}}) {
+			<template x-for="(result, index) in results" :key="index">
+				@popui.Card() {
+					<div class="flex justify-between items-start">
+						<h4 class="text-sm font-medium" x-text="'Result ' + (index + 1)"></h4>
+						@popui.Button(props.Button{
+							Size:    props.ButtonSizeIcon,
+							Type:    "button",
+							Variant: "transparent",
+							Attributes: templ.Attributes{
+								"@click":     "removeResult(index)",
+								"aria-label": "Remove result",
+							},
+						}) {
+							@icons.Delete()
+						}
+					</div>
+					<div class="grid grid-cols-2 gap-3">
+						<div>
+							@popui.Select(props.Select{
+								Label: "Status",
+								Attributes: templ.Attributes{
+									":name":   "'results[' + index + '].status'",
+									"x-model": "result.status",
+								},
+							}) {
+								for _, st := range actionResultStatuses {
+									<option value={ st.Key }>{ st.Name } — { st.Desc }</option>
+								}
+							}
+						</div>
+						<div>
+							@popui.Input(props.Input{
+								Label:       "Code",
+								Placeholder: "e.g., accepted, rejected",
+								Attributes: templ.Attributes{
+									":name":   "'results[' + index + '].code'",
+									"x-model": "result.code",
+								},
+							})
+						</div>
+					</div>
+					<div>
+						@popui.Input(props.Input{
+							Label:       "Description",
+							Placeholder: "Human-readable description",
+							Attributes: templ.Attributes{
+								":name":   "'results[' + index + '].description'",
+								"x-model": "result.description",
+							},
+						})
+					</div>
+					<div>
+						@popui.Checkbox(props.Checkbox{
+							Label: "Default result - always show when added",
+							Value: "true",
+							Attributes: templ.Attributes{
+								":name":          "'results[' + index + '].default'",
+								"x-bind:checked": "result.default",
+								"@change":        "result.default = $event.target.checked",
+							},
+						})
+					</div>
+				}
+			</template>
+		}
+		@popui.Button(props.Button{
+			Size:    props.ButtonSizeLarge,
+			Type:    "button",
+			Variant: "secondary",
+			Attributes: templ.Attributes{
+				"@click": "addResult()",
+			},
+		}) {
+			@icons.Add()
+			Add result
+		}
+	</div>
+}

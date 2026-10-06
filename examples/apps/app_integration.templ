@@ -1,0 +1,659 @@
+package apps
+
+import (
+	"encoding/base64"
+	"fmt"
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/flash"
+	"github.com/invopop/popui.go/props"
+)
+
+// appIntegrationFormID lets the header Save button submit the integration
+// form (delivery, OAuth, enrollment) via the HTML form= attribute.
+const appIntegrationFormID = "app-integration-form"
+
+// AppIntegration is everything the app's code needs to talk to Invopop: how
+// tasks are delivered, the credentials to connect, the OAuth client and what
+// a workspace configures on enrollment. The App tab keeps identity and
+// presentation. A freshly created app lands here so its one-time secrets
+// are shown once.
+templ AppIntegration(org *Org, app *Application, form *ApplicationForm, enabled bool, revocationEnabled bool, creds *CredentialCollection, issued *Credential, err error) {
+	@appsLayout(org) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{Label: app.Name},
+			},
+		}) {
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			if enabled && form.transportOrDefault() == TransportNATS {
+				@popui.Button(props.Button{Variant: "secondary", PopoverTarget: "issue-credential"}) {
+					@icons.Key()
+					Issue credentials
+				}
+			}
+			@popui.Button(props.Button{
+				ID:      "apps-integration-save",
+				Type:    "submit",
+				Variant: "primary",
+				Form:    appIntegrationFormID,
+			}) {
+				Save
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:              app.Name,
+				HideTitleSeparator: true,
+			}) {
+				@appTabs(org, form, "integration")
+				if err != nil {
+					@popui.InputError(props.Error{Text: err.Error()})
+				}
+				@howToConnect(org, app, form)
+				<form id={ appIntegrationFormID } class="flex flex-col gap-4" hx-put={ orgURL(org, "apps", app.ID, "integration") } hx-target={ popui.AppTarget } hx-indicator="#apps-integration-save">
+					<input type="hidden" name="id" value={ form.ID }/>
+					<input type="hidden" name="rev" value={ form.Rev }/>
+					@popui.Fieldset() {
+						@deliverySection(org, app, form)
+						@oauthSection(org, app, form)
+						@enrollmentSection(form)
+					}
+				</form>
+				if form.transportOrDefault() == TransportNATS {
+					<div class="w-full flex flex-col gap-3">
+						@popui.Separator()
+						@popui.TitleGroup(props.TitleGroup{
+							Title:       "Credentials",
+							Description: "NATS users issued for this app's workers",
+							Horizontal:  true,
+						})
+						@credentialsList(org, app, revocationEnabled, creds)
+						if enabled {
+							@issueCredentialPopover(org, app)
+							if issued != nil {
+								@credentialResultPopover(app, issued)
+							}
+						} else {
+							@popui.Info() {
+								<p class="text-sm text-foreground-default-secondary">
+									NATS credential issuance is not configured in this environment.
+								</p>
+							}
+						}
+					</div>
+				}
+			}
+		}
+	}
+}
+
+// deliverySection, oauthSection and enrollmentSection are the form blocks
+// that used to live on the App tab.
+templ deliverySection(org *Org, app *Application, form *ApplicationForm) {
+	<div class="w-full flex flex-col gap-3" x-data={ fmt.Sprintf("{ transport: '%s' }", form.transportOrDefault()) }>
+		@popui.Separator()
+		@popui.TitleGroup(props.TitleGroup{
+			Title:       "Delivery",
+			Description: "How the gateway hands tasks to the app",
+			Horizontal:  true,
+		})
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				@popui.Select(props.Select{
+					Label:      "Transport",
+					Name:       "transport",
+					Attributes: templ.Attributes{"x-model": "transport"},
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "Transport",
+						Description: "NATS: your worker subscribes to the app's task subject and replies; needs a long-running process and the Go SDK. HTTP: the gateway POSTs each task to your API URL and reads the result from the response; works from any language or serverless platform.",
+					},
+				}) {
+					for _, opt := range transportOptions {
+						<option value={ opt.Key } selected?={ form.transportOrDefault() == opt.Key }>{ opt.Name }</option>
+					}
+				}
+				@popui.Input(props.Input{
+					Label:       "API URL",
+					Name:        "api_url",
+					Value:       form.APIURL,
+					Placeholder: "https://",
+					Attributes:  templ.Attributes{":required": "transport === 'http'"},
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "API URL",
+						Description: "Where the Invopop API proxies requests for this app. With the HTTP transport it is also where tasks are POSTed, so it is required.",
+					},
+				})
+			</div>
+			<div x-show="transport === 'nats'" class="flex flex-col gap-2">
+				@popui.Info() {
+					<p class="text-sm text-foreground-default-secondary">
+						Workers connect to <code>{ natsURL }</code> and serve <code>gw.{ form.idOrPlaceholder() }.task</code> with
+						protobuf request/reply. Issue the connection credentials in the Credentials section below.
+					</p>
+				}
+			</div>
+			<div x-show="transport === 'http'" class="flex flex-col gap-3">
+				if form.SigningSecret != "" {
+					@popui.Input(props.Input{
+						Label:    "Signing secret",
+						Name:     "signing_secret",
+						Value:    form.SigningSecret,
+						Readonly: true,
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Signing secret",
+							Description: "Used to HMAC-sign every task POST so your endpoint can verify it came from Invopop. Only the hash is stored.",
+						},
+					})
+				}
+				@popui.Info() {
+					<p class="text-sm text-foreground-default-secondary">
+						Each task is a <code>POST</code> to the API URL with a JSON body, an
+						<code>Invopop-Signature</code> header (<code>t=&lt;unix&gt;,v1=&lt;hex HMAC-SHA256 of "t.body"&gt;</code>,
+						5-minute replay window) and a 30-second timeout. Respond <code>200</code> with the task result,
+						or <code>202</code> to report it later. The secret is shown once, at creation or after a rotation.
+					</p>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ oauthSection(org *Org, app *Application, form *ApplicationForm) {
+	<div class="w-full flex flex-col gap-3">
+		@popui.Separator()
+		@popui.TitleGroup(props.TitleGroup{
+			Title:       "OAuth",
+			Description: "The client the app uses to act on a workspace's behalf",
+			Horizontal:  true,
+		})
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				@popui.Input(props.Input{
+					Label:       "OAuth client ID",
+					Name:        "client_id",
+					Value:       form.ClientID,
+					Placeholder: "Unique identifier for the application",
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "OAuth client ID",
+						Description: "Public identifier the app sends when it requests a token. Generated for you; change it only if the app already uses a fixed client ID.",
+					},
+				})
+				@popui.Input(props.Input{
+					Label:       "OAuth redirect URL",
+					Name:        "redirect_url",
+					Value:       form.RedirectURL,
+					Placeholder: "https://",
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "OAuth redirect URL",
+						Description: "Where users are sent back to after authorizing the app in the browser flow. It must match the URL the app requests exactly, and its origin is also used for CORS.",
+					},
+				})
+			</div>
+			@popui.Select(props.Select{
+				Label:       "Scopes",
+				Name:        "scopes",
+				Multiple:    true,
+				Searchable:  true,
+				Placeholder: "Select scopes",
+				Options:     scopeOptions(form),
+				Tooltip: props.Tooltip{
+					Delay:       tooltipDelay,
+					Title:       "Scopes",
+					Description: "The most the app's tokens may do. Every token issued to the app carries these scopes, narrowed to the enrollment's workspace. \"enrolled\" is what lets workspaces enable the app at all.",
+				},
+			}.GenerateID())
+			if form.ClientSecret != "" {
+				@popui.Input(props.Input{
+					Label:    "OAuth client secret",
+					Name:     "client_secret",
+					Value:    form.ClientSecret,
+					Readonly: true,
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "OAuth client secret",
+						Description: "Secret the app presents alongside its client ID. Only the hash is stored, so this is the one time it can be read.",
+					},
+				})
+				<input type="hidden" name="client_secret_hash" value={ form.ClientSecretHash }/>
+				@popui.Info() {
+					<p class="text-sm text-foreground-default-secondary">
+						Copy the secret and store it securely. You will not be able to retrieve it again; you can only reset it.
+					</p>
+				}
+			} else if form.persisted() {
+				// The secret is only ever shown once; a lost one is replaced, not recovered.
+				<div class="flex items-center justify-between gap-4">
+					<div class="flex flex-col">
+						@popui.Label() {
+							OAuth client secret
+						}
+						<span class="text-sm text-foreground-default-secondary">Set. Resetting it issues a new secret and invalidates the current one immediately.</span>
+					</div>
+					@popui.Button(props.Button{
+						Size:    props.ButtonSizeSmall,
+						Variant: "secondary",
+						Type:    "button",
+						Attributes: templ.Attributes{
+							"hx-post":    orgURL(org, "apps", app.ID, "integration", "reset-client-secret"),
+							"hx-confirm": "Reset the OAuth client secret? The app will not be able to get tokens until it uses the new one.",
+							"hx-target":  popui.AppTarget,
+						},
+					}) {
+						@icons.Reload()
+						Reset secret
+					}
+				</div>
+			}
+			@popui.Accordion() {
+				@popui.AccordionTrigger() {
+					How the app gets a token for a workspace
+				}
+				@popui.AccordionContent() {
+					@oauthFlowInfo(form)
+				}
+			}
+		}
+	</div>
+}
+
+templ enrollmentSection(form *ApplicationForm) {
+	<div class="w-full flex flex-col gap-3">
+		@popui.Separator()
+		@popui.TitleGroup(props.TitleGroup{
+			Title:       "Enrollment",
+			Description: "What a workspace configures when it enables the app, and where the config page may call from",
+			Horizontal:  true,
+		})
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			@popui.Textarea(props.Textarea{
+				Label:       "Settings schema",
+				Name:        "settings_schema",
+				Value:       form.SettingsSchema,
+				Rows:        10,
+				Monospace:   true,
+				Placeholder: `{ "type": "object", "properties": { "environment": { "type": "string", "enum": ["production", "testing"] } } }`,
+				Tooltip: props.Tooltip{
+					Delay:       tooltipDelay,
+					Title:       "Settings schema",
+					Description: "JSON Schema describing the enrollment data your Config URL page reads and writes through PATCH /access/v1/enrollment. The Console validates against it and can render a default form when the app has no config page.",
+				},
+			})
+			<div x-data="appOriginList" class="flex flex-col gap-2">
+				@templ.JSONScript("app-allowed-origins", form.AllowedOrigins)
+				@popui.Label(props.Label{
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "Allowed origins",
+						Description: "Browser origins allowed to call the Invopop API with this app's tokens (CORS). The origin of the Config URL is implied; add any other host your embedded pages run on.",
+					},
+				}) {
+					Allowed origins
+				}
+				<ul x-show="origins.length" style="display: none;" class="flex flex-wrap gap-1">
+					<template x-for="origin in origins">
+						<li class="inline-flex items-center gap-1 px-2 py-0.5 bg-background-default-secondary rounded text-sm font-mono">
+							<input type="hidden" name="allowed_origins[]" :value="origin"/>
+							<span x-text="origin"></span>
+							<button type="button" @click="remove(origin)" aria-label="Remove origin">×</button>
+						</li>
+					</template>
+				</ul>
+				<div class="flex gap-2 items-center">
+					<div class="flex-1">
+						@popui.Input(props.Input{
+							Name:        "newOrigin",
+							Placeholder: "https://app.example.com",
+							Attributes: templ.Attributes{
+								"x-model":                "newOrigin",
+								"@keydown.enter.prevent": "add",
+								"@keyup":                 "validate",
+							},
+						})
+					</div>
+					<div class="flex">
+						@popui.Button(props.Button{
+							Size: props.ButtonSizeLarge,
+							Type: "button",
+							Attributes: templ.Attributes{
+								"@click":    "add",
+								":disabled": "addDisabled",
+							},
+						}) {
+							Add
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+// oauthFlowInfo documents the client-credentials flow next to the OAuth
+// fields, so a developer never has to find it in source.
+templ oauthFlowInfo(form *ApplicationForm) {
+	<div class="flex flex-col gap-2 text-sm text-foreground-default-secondary">
+		<p>
+			There is no interactive consent step: enabling the app in a workspace creates an enrollment, and the app
+			exchanges its client credentials for a token scoped to that enrollment. Use it for every API call made
+			on the workspace's behalf:
+		</p>
+		<pre class="font-mono text-sm whitespace-pre-wrap rounded-lg bg-background p-3 border border-border-default-secondary">{ oauthExample(form) }</pre>
+		<p>
+			Tokens carry the scopes above, narrowed to the enrollment's workspace, and expire after an hour; request
+			a new one rather than refreshing. The enrollment's <code>data</code> holds what the Config URL page saved,
+			validated against the settings schema below. The redirect URL is only used by the browser flow that signs
+			a Console user into the app's own pages.
+		</p>
+	</div>
+}
+
+func oauthExample(form *ApplicationForm) string {
+	return "POST https://api.invopop.com/access/v1/oauth/token\n" +
+		"grant_type=client_credentials\n" +
+		"&client_id=" + form.clientIDOrPlaceholder() + "\n" +
+		"&client_secret=••••••••\n" +
+		"&enrollment_id=<enrollment id from the task or config page>\n\n" +
+		"→ { \"access_token\": \"…\", \"token_type\": \"bearer\", \"expires_in\": 3600 }"
+}
+
+// howToConnect gives the developer everything the credentials alone do not:
+// the server to connect to, the subject to serve, and the message contract.
+// For HTTP apps it shows the webhook details instead.
+templ howToConnect(org *Org, app *Application, form *ApplicationForm) {
+	<div class="w-full flex flex-col gap-3">
+		@popui.TitleGroup(props.TitleGroup{
+			Title:       "How to connect",
+			Description: "What your code needs to receive tasks",
+			Horizontal:  true,
+		})
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			if form.transportOrDefault() == TransportHTTP {
+				@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-3"}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Transport", Value: "HTTP webhook"})
+					@popui.DescriptionListItem() {
+						@popui.DT() {
+							Task endpoint
+						}
+						@popui.DD() {
+							@popui.Button(props.Button{Size: props.ButtonSizeSmall, Variant: "secondary", Copy: app.APIURL})
+						}
+					}
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Signature header", Value: "Invopop-Signature: t=<unix>,v1=<HMAC-SHA256(secret, t + \".\" + body)>"})
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Replay window", Value: "5 minutes; timeout 30 seconds per task"})
+				}
+				<div class="flex items-center justify-between gap-4">
+					<p class="text-sm text-foreground-default-secondary">
+						NATS credentials are not needed for HTTP apps. Rotating the signing secret invalidates the previous one immediately.
+					</p>
+					@popui.Button(props.Button{
+						Size:    props.ButtonSizeSmall,
+						Variant: "secondary",
+						Type:    "button",
+						Attributes: templ.Attributes{
+							"hx-post":    orgURL(org, "apps", app.ID, "integration", "rotate-secret"),
+							"hx-confirm": "Rotate the signing secret? Deliveries signed with the old secret will be rejected.",
+							"hx-target":  popui.AppTarget,
+						},
+					}) {
+						@icons.Reload()
+						Rotate secret
+					}
+				</div>
+			} else {
+				@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-3"}) {
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "Transport", Value: "NATS request/reply, protobuf"})
+					@popui.DescriptionListItem() {
+						@popui.DT() {
+							Server
+						}
+						@popui.DD() {
+							@popui.Button(props.Button{Size: props.ButtonSizeSmall, Variant: "secondary", Copy: natsURL})
+						}
+					}
+					@popui.DescriptionListItem() {
+						@popui.DT() {
+							Subject
+						}
+						@popui.DD() {
+							@popui.Button(props.Button{Size: props.ButtonSizeSmall, Variant: "secondary", Copy: "gw." + app.ID + ".task"})
+						}
+					}
+					@popui.DescriptionListItem(props.DescriptionListItem{Label: "SDK", Value: "github.com/invopop/client.go/gateway (Go); other languages speak the protobuf contract directly"})
+				}
+				@popui.Info() {
+					<p class="text-sm text-foreground-default-secondary">
+						Reply to every task with a result status. <code>OK</code>, <code>KO</code> and <code>SKIP</code> are final;
+						<code>ERR</code> is retried with back-off for up to 12 hours, so answer permanent failures with
+						<code>KO</code>. A reply may carry a patch for the envelope and attachments to store.
+					</p>
+				}
+			}
+		}
+	</div>
+}
+
+// issueCredentialPopover presents the credential creation form in a modal so
+// that issuing feels like a deliberate, recorded action and the admin can give
+// the credential a human-friendly label.
+templ issueCredentialPopover(org *Org, app *Application) {
+	@popui.Popover(props.Popover{ID: "issue-credential", Backdrop: true, Class: "w-[28rem] max-w-full"}) {
+		<form
+			class="flex flex-col gap-4"
+			hx-post={ orgURL(org, "apps", app.ID, "integration", "credentials") }
+			hx-target={ popui.AppTarget }
+		>
+			@popui.Title() {
+				Issue NATS credentials
+			}
+			@popui.P() {
+				Generates a new NATS user for <strong>{ app.ID }</strong>, signed with the
+				Synadia account key. Give it a label so you can recognise it later.
+			}
+			@popui.Input(props.Input{
+				Name:        "label",
+				Label:       "Label",
+				Placeholder: "e.g. Production worker",
+				Required:    true,
+				Autofocus:   true,
+			})
+			@popui.ButtonGroup(props.ButtonGroup{Align: "right"}) {
+				@popui.Button(props.Button{
+					Size:                props.ButtonSizeLarge,
+					Variant:             "secondary",
+					Type:                "button",
+					PopoverTarget:       "issue-credential",
+					PopoverTargetAction: "hide",
+				}) {
+					Cancel
+				}
+				@popui.Button(props.Button{Size: props.ButtonSizeLarge, Variant: "primary", Type: "submit"}) {
+					Issue credentials
+				}
+			}
+		</form>
+	}
+}
+
+// credentialResultPopover shows the freshly minted credentials in a modal. It
+// auto-opens on render (via Alpine x-init, which fires on the htmx-swapped
+// content) so the one-time-only secret is presented immediately after issuing.
+templ credentialResultPopover(app *Application, cred *Credential) {
+	@popui.Popover(props.Popover{
+		ID:         "credential-result",
+		Backdrop:   true,
+		Class:      "w-[40rem] max-w-full",
+		Attributes: templ.Attributes{"x-init": "$el.showPopover()"},
+	}) {
+		<div class="flex flex-col gap-4">
+			@popui.Title() {
+				Credentials issued
+			}
+			@credentialResult(app, cred)
+			@popui.ButtonGroup(props.ButtonGroup{Align: "right"}) {
+				@popui.Button(props.Button{
+					Size:                props.ButtonSizeLarge,
+					Variant:             "primary",
+					Type:                "button",
+					PopoverTarget:       "credential-result",
+					PopoverTargetAction: "hide",
+				}) {
+					Done
+				}
+			}
+		</div>
+	}
+}
+
+templ credentialResult(app *Application, cred *Credential) {
+	@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+		@popui.Info() {
+			<p class="text-sm text-foreground-default-secondary">
+				Copy or download these credentials now. They will <strong>not</strong> be shown again.
+			</p>
+		}
+		@popui.Description() {
+			Connect to <code>{ natsURL }</code> and serve <code>gw.{ app.ID }.task</code> with this file.
+		}
+		@popui.Textarea(props.Textarea{
+			Label:     "Credentials (.creds)",
+			Name:      "creds",
+			Value:     cred.Creds,
+			Rows:      14,
+			Readonly:  true,
+			Monospace: true,
+		})
+		@popui.ButtonGroup() {
+			@popui.Button(props.Button{
+				Size:       props.ButtonSizeLarge,
+				Variant:    "secondary",
+				Href:       credentialDataURI(cred),
+				Download:   true,
+				Attributes: templ.Attributes{"download": app.ID + ".creds"},
+			}) {
+				@icons.Download()
+				Download .creds
+			}
+		}
+		<div class="flex items-center gap-2">
+			@popui.Description() {
+				User public key
+			}
+			// Copy button shows the key truncated to its head and tail, as in the table.
+			@popui.Button(props.Button{
+				Size:             props.ButtonSizeSmall,
+				Variant:          "secondary",
+				Copy:             cred.UserPublicKey,
+				CopyPrefixLength: 10,
+				CopySuffixLength: 6,
+			})
+		</div>
+	}
+}
+
+templ credentialsList(org *Org, app *Application, revocationEnabled bool, creds *CredentialCollection) {
+	if !revocationEnabled {
+		@popui.Info() {
+			<p class="text-sm text-foreground-default-secondary">
+				Revocation via the Synadia API is not configured, so credentials cannot be revoked from here.
+			</p>
+		}
+	}
+	@popui.Table(props.Table{Variant: "card", ScrollHorizontal: true}) {
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Public key</th>
+				<th>Issued</th>
+				<th>Issued by</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			if creds != nil && creds.Len() > 0 {
+				for _, cred := range creds.List {
+					@credentialRow(org, app, revocationEnabled, cred)
+				}
+			} else {
+				<tr>
+					<td colspan="6" class="text-center">No credentials issued</td>
+				</tr>
+			}
+		</tbody>
+	}
+}
+
+templ credentialRow(org *Org, app *Application, revocationEnabled bool, cred *Credential) {
+	<tr>
+		<td>{ cred.Label }</td>
+		<td><code class="whitespace-nowrap" title={ cred.UserPublicKey }>{ truncateKey(cred.UserPublicKey) }</code></td>
+		<td class="whitespace-nowrap">{ cred.CreatedAt.Format("2006-01-02 15:04") }</td>
+		<td class="whitespace-nowrap">{ cred.IssuedBy }</td>
+		<td>
+			if cred.Revoked() {
+				<div class="flex items-center gap-1">
+					@popui.TagStatus(props.TagStatus{Label: "Revoked", Status: "red", Dot: true})
+					<span class="inline-flex text-foreground-default-secondary cursor-help" title={ revokedTooltip(cred) }>
+						@icons.Info()
+					</span>
+				</div>
+			} else {
+				@popui.TagStatus(props.TagStatus{Label: "Active", Status: "green", Dot: true})
+			}
+		</td>
+		<td>
+			if !cred.Revoked() && revocationEnabled {
+				<form
+					hx-post={ orgURL(org, "apps", app.ID, "integration", "credentials", cred.ID, "revoke") }
+					hx-target={ popui.AppTarget }
+					hx-confirm="Revoke this credential? Any client using it will be disconnected."
+					hx-disabled-elt="find button"
+				>
+					@popui.Button(props.Button{Size: props.ButtonSizeSmall, Variant: "danger"}) {
+						Revoke
+					}
+				</form>
+			}
+		</td>
+	</tr>
+}
+
+// revokedTooltip builds the hover text shown on a revoked credential's info
+// icon, recording when it was revoked and by whom.
+func revokedTooltip(cred *Credential) string {
+	s := "Revoked " + cred.RevokedAt.Format("2006-01-02 15:04")
+	if cred.RevokedBy != "" {
+		s += " by " + cred.RevokedBy
+	}
+	return s
+}
+
+// truncateKey shortens a NATS public key for compact display in the table,
+// keeping the head and tail so it can be told apart at a glance.
+func truncateKey(s string) string {
+	if len(s) <= 20 {
+		return s
+	}
+	return s[:10] + "…" + s[len(s)-6:]
+}
+
+// credentialDataURI encodes the creds file as a downloadable data URI so the
+// admin can save it without the server ever persisting the secret.
+func credentialDataURI(cred *Credential) templ.SafeURL {
+	enc := base64.StdEncoding.EncodeToString([]byte(cred.Creds))
+	return templ.SafeURL("data:application/octet-stream;base64," + enc)
+}

@@ -9,6 +9,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/examples"
+	"github.com/invopop/popui.go/examples/apps"
 	"github.com/invopop/popui.go/internal/docs"
 	"github.com/invopop/popui.go/internal/docs/assets"
 	"github.com/labstack/echo/v4"
@@ -55,6 +56,9 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e.GET("/examples/console", renderComponent(examples.Console()))
 	e.GET("/examples/prose", renderComponent(examples.Prose()))
 	e.GET("/examples/stress", renderComponent(examples.Stress()))
+
+	// Applications admin prototype (see examples/apps/HANDOFF.md)
+	apps.Register(e)
 
 	// Wizard example
 	e.GET("/examples/wizard", renderComponent(examples.Wizard()))

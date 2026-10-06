@@ -428,7 +428,7 @@ func getStarted() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Examples</h2><p class=\"text-foreground-default-secondary\">The <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">examples</code> directory contains standalone projects that demonstrate how to use PopUI components in different scenarios. Run the development server and visit the links below:</p><ul class=\"flex flex-col gap-2 text-foreground-default-secondary\"><li><a href=\"/examples/admin\" class=\"underline\" target=\"_blank\">Admin</a> — An admin panel with sidebar navigation, tables, and action buttons.</li><li><a href=\"/examples/app\" class=\"underline\" target=\"_blank\">App</a> — A simple app layout with a header, main content area, and footer.</li><li><a href=\"/examples/console\" class=\"underline\" target=\"_blank\">Console</a> — A minimal console layout with basic content.</li><li><a href=\"/examples/prose\" class=\"underline\" target=\"_blank\">Prose</a> — A prose-styled article page showcasing typography and rich text formatting.</li><li><a href=\"/examples/wizard\" class=\"underline\" target=\"_blank\">Wizard</a> — A multi-step wizard flow with forms, file uploads, and confirmation screens.</li></ul></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Examples</h2><p class=\"text-foreground-default-secondary\">The <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">examples</code> directory contains standalone projects that demonstrate how to use PopUI components in different scenarios. Run the development server and visit the links below:</p><ul class=\"flex flex-col gap-2 text-foreground-default-secondary\"><li><a href=\"/examples/admin\" class=\"underline\" target=\"_blank\">Admin</a> — An admin panel with sidebar navigation, tables, and action buttons.</li><li><a href=\"/examples/apps\" class=\"underline\" target=\"_blank\">Applications admin</a> — A clickable, backend-free prototype of the Access admin \"Applications\" area: app list, configuration, actions, availability and credentials.</li><li><a href=\"/examples/app\" class=\"underline\" target=\"_blank\">App</a> — A simple app layout with a header, main content area, and footer.</li><li><a href=\"/examples/console\" class=\"underline\" target=\"_blank\">Console</a> — A minimal console layout with basic content.</li><li><a href=\"/examples/prose\" class=\"underline\" target=\"_blank\">Prose</a> — A prose-styled article page showcasing typography and rich text formatting.</li><li><a href=\"/examples/wizard\" class=\"underline\" target=\"_blank\">Wizard</a> — A multi-step wizard flow with forms, file uploads, and confirmation screens.</li></ul></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -494,7 +494,7 @@ func article(id, title, description string) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 148, Col: 12}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 151, Col: 12}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -521,7 +521,7 @@ func article(id, title, description string) templ.Component {
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 151, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 154, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -800,7 +800,7 @@ func sidebarItem(href, title string) templ.Component {
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 205, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 208, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 			if templ_7745c5c3_Err != nil {
