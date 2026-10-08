@@ -1,0 +1,43 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ButtonSplitSizesExample() {
+	@popui.ButtonGroup() {
+		@popui.SplitButton(props.SplitButton{
+			Label:  "Small",
+			Button: props.Button{Size: props.ButtonSizeSmall},
+		}) {
+			@popui.MenuItem() {
+				Option one
+			}
+			@popui.MenuItem() {
+				Option two
+			}
+		}
+		@popui.SplitButton(props.SplitButton{
+			Label: "Default",
+		}) {
+			@popui.MenuItem() {
+				Option one
+			}
+			@popui.MenuItem() {
+				Option two
+			}
+		}
+		@popui.SplitButton(props.SplitButton{
+			Label:  "Large",
+			Button: props.Button{Size: props.ButtonSizeLarge},
+		}) {
+			@popui.MenuItem() {
+				Option one
+			}
+			@popui.MenuItem() {
+				Option two
+			}
+		}
+	}
+}
