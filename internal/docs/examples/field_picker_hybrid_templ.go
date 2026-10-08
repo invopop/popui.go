@@ -14,21 +14,41 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
+var deliveryFields = goblfields.MustBuild("bill/delivery", goblfields.Options{Descriptions: true})
+
 // The Slack app's own variables: computed in Go from the job and the
-// document, each a ready-to-print string — a joined invoice code, a
-// rendered fault list, ids the document does not carry. They sit at the top
-// level of the template data by these names, so each emits as {{.name}}.
-// Beneath them the whole document is one row away, nested under doc so its
-// fields share the same Format: {{.doc.supplier.name}}.
-var slackFields = append([]props.Field{
-	{Name: "full_code", Path: "full_code", Description: "Full invoice code (series-code)", Type: "string", AlwaysPresent: true},
-	{Name: "issue_date", Path: "issue_date", Description: "Invoice issue date", Type: "string", AlwaysPresent: true},
-	{Name: "supplier_name", Path: "supplier_name", Description: "Supplier name", Type: "string"},
-	{Name: "customer_name", Path: "customer_name", Description: "Customer name", Type: "string"},
-	{Name: "job_id", Path: "job_id", Description: "Job ID", Type: "string", AlwaysPresent: true},
-	{Name: "silo_entry_id", Path: "silo_entry_id", Description: "Silo entry ID", Type: "string", AlwaysPresent: true},
-	{Name: "faults", Path: "faults", Description: "Faults", Type: "string"},
-}, goblfields.Nest("doc", invoiceFields))
+// document, each a ready-to-print string — a joined code, a rendered fault
+// list, ids the document does not carry. They sit at the top level of the
+// template data by these names, so each emits as {{.name}}. Beneath them the
+// whole document is one row away, nested under doc so its fields share the
+// same Format: {{.doc.supplier.name}}.
+func slackVariables(docFields []props.Field, codeDescription string) []props.Field {
+	return append([]props.Field{
+		{Name: "full_code", Path: "full_code", Description: codeDescription, Type: "string", AlwaysPresent: true},
+		{Name: "issue_date", Path: "issue_date", Description: "Issue date", Type: "string", AlwaysPresent: true},
+		{Name: "supplier_name", Path: "supplier_name", Description: "Supplier name", Type: "string"},
+		{Name: "customer_name", Path: "customer_name", Description: "Customer name", Type: "string"},
+		{Name: "job_id", Path: "job_id", Description: "Job ID", Type: "string", AlwaysPresent: true},
+		{Name: "silo_entry_id", Path: "silo_entry_id", Description: "Silo entry ID", Type: "string", AlwaysPresent: true},
+		{Name: "faults", Path: "faults", Description: "Faults", Type: "string"},
+	}, goblfields.Nest("doc", docFields))
+}
+
+// A message may be about any of several document types, so the picker's
+// first level is one group per schema. A group is a heading: it opens like
+// an object, but the fields beneath keep their paths, so a pick under
+// Delivery still emits {{.doc.supplier.name}} — the same template works
+// whichever document the job carries.
+var slackFields = []props.Field{
+	schemaGroup("Invoice", "bill/invoice", slackVariables(invoiceFields, "Full invoice code (series-code)")),
+	schemaGroup("Delivery", "bill/delivery", slackVariables(deliveryFields, "Full delivery code (series-code)")),
+}
+
+func schemaGroup(label, schema string, fields []props.Field) props.Field {
+	g := goblfields.Group(label, fields)
+	g.Description = schema
+	return g
+}
 
 var slackMessage = "Invoice {{.full_code}} from {{.supplier_name}} is ready — issued {{.issue_date}}, {{.doc.totals.payable}} {{.doc.currency}}."
 
@@ -71,7 +91,7 @@ func FieldPickerHybridExample() templ.Component {
 		}
 		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
 			TriggerLabel: "Insert variable",
-			Root:         "slack",
+			Root:         "Schemas",
 			Fields:       slackFields,
 			Format:       "{{.%s}}",
 			Target:       "#slack-message",

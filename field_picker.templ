@@ -231,9 +231,10 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						// is what gives way — the path is what identifies the
 						// row. The path is semibold throughout; while
 						// filtering, the runs a term did not hit are dimmed
-						// so the ones it did still read.
+						// so the ones it did still read. A group is a heading,
+						// not a path, so its own row reads in the sans.
 						<span class="min-w-0 flex-1 truncate text-base text-foreground">
-							<span class="font-mono font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
+							<span class="font-semibold" :class="entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
 						// The trailing column is three slots, every one of
 						// them kept on every row so they line up down the
@@ -322,7 +323,7 @@ type fieldPickerEntry struct {
 	Y string `json:"y,omitempty"`
 	V string `json:"v,omitempty"`
 	D string `json:"d,omitempty"`
-	// F is a bit set: 1 array, 2 always present, 4 has children.
+	// F is a bit set: 1 array, 2 always present, 4 has children, 8 group.
 	F int `json:"f,omitempty"`
 	// P is the index of the parent entry, -1 at the root.
 	P int `json:"p"`
@@ -346,6 +347,9 @@ func appendFieldPickerEntries(entries []fieldPickerEntry, fields []props.Field, 
 		}
 		if len(field.Children) > 0 {
 			flags |= 4
+		}
+		if field.Group {
+			flags |= 8
 		}
 
 		entries = append(entries, fieldPickerEntry{

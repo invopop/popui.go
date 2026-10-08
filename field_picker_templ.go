@@ -334,14 +334,14 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-picker') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-picker') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex }\" class=\"flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-mono font-semibold\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center gap-1 pl-2\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span class=\"size-1.5 shrink-0 rounded-full\" :class=\"entries[row.i].always ? 'bg-background-success-bold' : ''\"></span><span class=\"w-9 shrink-0 font-mono text-base text-foreground-default-tertiary\" x-text=\"typeLabel(row.i)\"></span><span aria-hidden=\"true\" class=\"shrink-0 relative left-1.5\" :class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-picker') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-picker') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex }\" class=\"flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-semibold\" :class=\"entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center gap-1 pl-2\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span class=\"size-1.5 shrink-0 rounded-full\" :class=\"entries[row.i].always ? 'bg-background-success-bold' : ''\"></span><span class=\"w-9 shrink-0 font-mono text-base text-foreground-default-tertiary\" x-text=\"typeLabel(row.i)\"></span><span aria-hidden=\"true\" class=\"shrink-0 relative left-1.5\" :class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fieldPickerCaretClass())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 269, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 270, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -404,7 +404,7 @@ type fieldPickerEntry struct {
 	Y string `json:"y,omitempty"`
 	V string `json:"v,omitempty"`
 	D string `json:"d,omitempty"`
-	// F is a bit set: 1 array, 2 always present, 4 has children.
+	// F is a bit set: 1 array, 2 always present, 4 has children, 8 group.
 	F int `json:"f,omitempty"`
 	// P is the index of the parent entry, -1 at the root.
 	P int `json:"p"`
@@ -428,6 +428,9 @@ func appendFieldPickerEntries(entries []fieldPickerEntry, fields []props.Field, 
 		}
 		if len(field.Children) > 0 {
 			flags |= 4
+		}
+		if field.Group {
+			flags |= 8
 		}
 
 		entries = append(entries, fieldPickerEntry{

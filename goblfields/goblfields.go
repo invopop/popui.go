@@ -158,6 +158,25 @@ func Nest(name string, fields []props.Field) props.Field {
 	}
 }
 
+// Group puts fields under a heading of the picker's tree: it is opened like
+// an object, but unlike Nest it leaves the fields' paths — and so what they
+// emit — as they are. Use it to offer several trees in one picker, one per
+// document schema a message might be about, say:
+//
+//	goblfields.Group("Invoice", invoiceFields)
+//
+// The heading has no Description; set one on the result when the schema's
+// name should show beside it.
+func Group(name string, fields []props.Field) props.Field {
+	return props.Field{
+		Name:     name,
+		Path:     name,
+		Type:     TypeObject,
+		Group:    true,
+		Children: fields,
+	}
+}
+
 func prefixPaths(prefix string, fields []props.Field) []props.Field {
 	out := make([]props.Field, len(fields))
 	for i, field := range fields {

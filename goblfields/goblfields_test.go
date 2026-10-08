@@ -396,3 +396,14 @@ func TestNestPutsATreeUnderOneField(t *testing.T) {
 		t.Fatalf("original tree changed: %s", got)
 	}
 }
+
+func TestGroupLeavesPathsAlone(t *testing.T) {
+	fields := build(t, invoiceSchema)
+	g := goblfields.Group("Invoice", fields)
+	if !g.Group || g.Name != "Invoice" || g.Type != goblfields.TypeObject {
+		t.Fatalf("heading = %+v", g)
+	}
+	// Unlike Nest, the fields beneath keep their paths: the heading is not
+	// part of what they emit.
+	equal(t, paths(g.Children), paths(fields))
+}

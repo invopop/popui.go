@@ -134,7 +134,7 @@ func FieldPicker() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Hybrid: an App's Variables and the Document",
-			Description: "The Slack and email apps compute a handful of ready-to-print variables in Go — a joined invoice code, a rendered fault list, the job id — which is where objects get their pretty form. Those go at the top as plain fields, and the whole document sits one row down, nested under `doc` with `goblfields.Nest` so one Format serves both: `{{.full_code}}` next to `{{.doc.totals.payable}}`.",
+			Description: "The Slack and email apps compute a handful of ready-to-print variables in Go — a joined invoice code, a rendered fault list, the job id — which is where objects get their pretty form. Those go at the top as plain fields, and the whole document sits one row down, nested under `doc` with `goblfields.Nest` so one Format serves both: `{{.full_code}}` next to `{{.doc.totals.payable}}`. When a message may be about several document types, each schema's tree goes under a `goblfields.Group`: a heading that opens like an object but is left out of what the fields beneath emit, so the same `{{.doc.code}}` comes out of every group.",
 			Code:        examples.LoadExample("field_picker_hybrid.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -245,6 +245,7 @@ func FieldPicker() templ.Component {
 					{Name: "Array", Type: "bool", Default: "false", Description: "Marks a field that is itself an array. Its children describe one item"},
 					{Name: "Required", Type: "bool", Default: "false", Description: "Marks a field its immediate parent requires"},
 					{Name: "AlwaysPresent", Type: "bool", Default: "false", Description: "Marks a field required at every step from the root, shown with a green dot. Inside an array it reads per item: `lines[].item` is marked when every line that exists carries an item"},
+					{Name: "Group", Type: "bool", Default: "false", Description: "Marks a heading over the fields beneath rather than a field of the data: opened like an object, part of the path read and filtered by, but left out of what its descendants emit. `goblfields.Group` builds one"},
 					{Name: "Children", Type: "[]props.Field", Default: "", Description: "The fields one level down, for a field that can be drilled into"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)

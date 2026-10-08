@@ -42,6 +42,13 @@ type Field struct {
 	// per item: lines[].item is marked when every line that exists carries an
 	// item. The picker shows these with a green dot.
 	AlwaysPresent bool
+	// Group marks a heading over the fields beneath it rather than a field
+	// of the data: it opens like an object and its Name is part of the path
+	// the user reads and filters by, but it is left out of what its
+	// descendants emit. It lets one tree hold several — the variables of
+	// each document schema a message might be about, say — without the
+	// grouping changing the values picked. goblfields.Group builds one.
+	Group bool
 	// Children are the fields one level down, for a field that can be drilled
 	// into.
 	Children []Field

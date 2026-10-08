@@ -1280,7 +1280,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             array: !!(e.f & 1),
             always: !!(e.f & 2),
             children: !!(e.f & 4),
+            group: !!(e.f & 8),
             path: '',
+            // The path the field emits: its path without the groups on the
+            // way, since a group is a heading over fields, not one of them.
+            key: '',
             lower: '',
             depth: 0,
             kids: [],
@@ -1288,6 +1292,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           list.forEach((entry, i) => {
             const parent = entry.parent >= 0 ? list[entry.parent] : null
             entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            const base = parent ? parent.key : ''
+            entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
             entry.lower = entry.path.toLowerCase()
             entry.depth = parent ? parent.depth + 1 : 1
             if (parent) parent.kids.push(i)
@@ -1351,21 +1357,22 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           const entry = this.entries[i]
           if (!entry) return ''
           if (entry.own) return entry.own
-          return this.format.includes('%s') ? this.format.replace('%s', entry.path) : this.format + entry.path
+          return this.format.includes('%s') ? this.format.replace('%s', entry.key) : this.format + entry.key
         },
         isSelected(i) {
           return !!this.value && this.emitted(i) === this.value
         },
-        // Whether picking the field is allowed at all: with scalarsOnly an
-        // object or array is there to be opened, not taken as a value.
+        // Whether picking the field is allowed at all: a group is only ever
+        // opened, and with scalarsOnly so is an object or array.
         pickable(i) {
           const entry = this.entries[i]
-          if (!entry) return false
+          if (!entry || entry.group) return false
           return !this.scalarsOnly || (entry.type !== 'object' && entry.type !== 'array')
         },
         typeLabel(i) {
-          const type = this.entries[i] ? this.entries[i].type : ''
-          return TYPE_ABBREVIATIONS[type] || type
+          const entry = this.entries[i]
+          if (!entry || entry.group) return ''
+          return TYPE_ABBREVIATIONS[entry.type] || entry.type
         },
         // The row's path as escaped HTML: the whole path while browsing, and
         // while filtering the runs a term did not hit dimmed, so the ones it
