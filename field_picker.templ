@@ -115,7 +115,6 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						":aria-controls": "$id('field-picker') + '-listbox'",
 					},
 				}) {
-					@icons.Brackets()
 					<span>
 						if prp.TriggerLabel != "" {
 							{ prp.TriggerLabel }
@@ -123,6 +122,7 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 							Insert field
 						}
 					</span>
+					@icons.ChevronDown()
 				}
 			}
 		</div>
