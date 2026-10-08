@@ -6,25 +6,18 @@ import (
 )
 
 templ AccordionExample() {
-	<div class="w-full space-y-2">
-		@popui.Accordion(props.Accordion{Open: true}) {
-			@popui.AccordionTrigger() {
-				Is it accessible?
-			}
-			@popui.AccordionContent() {
-				@popui.Description() {
-					Yes. It uses native HTML details/summary elements for full keyboard navigation and screen reader support.
-				}
+	<div class="w-full space-y-3">
+		@popui.Accordion(props.Accordion{Title: "I am an Accordion.", Open: true}) {
+			@popui.Description() {
+				You can put any content in here, including other components.
 			}
 		}
-		@popui.Accordion() {
-			@popui.AccordionTrigger() {
-				Is it styled?
-			}
-			@popui.AccordionContent() {
-				@popui.Description() {
-					Yes. It comes with default styles using Tailwind CSS that you can customize.
-				}
+		@popui.Accordion(props.Accordion{
+			Title:       "With a description",
+			Description: "Secondary text shown beneath the title.",
+		}) {
+			@popui.Description() {
+				Descriptions help readers decide whether to expand a section.
 			}
 		}
 	</div>
