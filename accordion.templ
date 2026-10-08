@@ -5,7 +5,8 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// Accordion provides a details element wrapper with base styles
+// Accordion provides a details element wrapper with base styles. When Title
+// is set it renders the trigger itself and wraps children as the content.
 templ Accordion(p ...props.Accordion) {
 	{{ var prp = props.First(p) }}
 	<details
@@ -17,17 +18,48 @@ templ Accordion(p ...props.Accordion) {
 		}
 		class={
 			tailwind.Merge(
-				"w-full group rounded-lg border border-border-default-secondary bg-background-default-secondary p-2 backdrop-blur-[2px] [&>:not(summary)]:block overflow-hidden",
+				"w-full group rounded-2xl border border-border bg-background overflow-hidden [&>:not(summary)]:block",
+				prp.Class,
+			),
+		}
+		{ prp.Attributes... }
+	>
+		if prp.Title != "" {
+			@AccordionTrigger(props.AccordionTrigger{Description: prp.Description}) {
+				{ prp.Title }
+			}
+			@AccordionContent() {
+				{ children... }
+			}
+		} else {
+			{ children... }
+		}
+	</details>
+}
+
+// AccordionGroup joins several Accordion children into a single bordered
+// panel with dividers between them.
+templ AccordionGroup(p ...props.AccordionGroup) {
+	{{ var prp = props.First(p) }}
+	<div
+		if prp.ID != "" {
+			id={ prp.ID }
+		}
+		class={
+			tailwind.Merge(
+				"w-full rounded-2xl border border-border bg-background overflow-hidden",
+				"[&>details]:rounded-none [&>details]:border-0 [&>details:not(:last-child)]:border-b [&>details]:border-border",
 				prp.Class,
 			),
 		}
 		{ prp.Attributes... }
 	>
 		{ children... }
-	</details>
+	</div>
 }
 
-// AccordionTrigger provides the clickable summary element
+// AccordionTrigger provides the clickable summary element. Children are the
+// title; Description renders as secondary text beneath it.
 templ AccordionTrigger(p ...props.AccordionTrigger) {
 	{{ var prp = props.First(p) }}
 	<summary
@@ -36,18 +68,35 @@ templ AccordionTrigger(p ...props.AccordionTrigger) {
 		}
 		class={
 			tailwind.Merge(
-				"cursor-pointer list-none relative pl-6 text-foreground text-base font-medium block break-words",
-				"before:content-[''] before:absolute before:left-0 before:top-[50%] before:w-4 before:h-4",
-				"before:bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYuMDAwMDUgMTJMMTAgNy45OTk5NEw2IDQiIHN0cm9rZT0iIzZCNzI4MCIvPjwvc3ZnPg==')]",
-				"before:bg-contain before:bg-no-repeat before:-translate-y-1/2 before:rotate-0 before:transition-transform before:duration-300 before:ease-in-out",
-				"group-open:before:rotate-90",
+				"flex w-full cursor-pointer list-none items-center gap-3 px-4 py-3 text-left select-none",
+				"hover:bg-background-default-secondary group-open:hover:bg-background transition-colors",
 				"[&::-webkit-details-marker]:hidden",
 				prp.Class,
 			),
 		}
 		{ prp.Attributes... }
 	>
-		{ children... }
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 16 16"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+			class="size-4 shrink-0 text-foreground-default-secondary transition-transform duration-200 ease-in-out group-open:rotate-90"
+		>
+			<path d="M6 4l4 4-4 4"></path>
+		</svg>
+		<span class="flex min-w-0 flex-col break-words">
+			<span class="text-base font-medium leading-6 text-foreground">
+				{ children... }
+			</span>
+			if prp.Description != "" {
+				<span class="text-base leading-6 text-foreground-default-secondary">{ prp.Description }</span>
+			}
+		</span>
 	</summary>
 }
 
@@ -60,7 +109,7 @@ templ AccordionContent(p ...props.AccordionContent) {
 		}
 		class={
 			tailwind.Merge(
-				"grid transition-[grid-template-rows] duration-300 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]",
+				"grid transition-[grid-template-rows] duration-200 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]",
 				prp.Class,
 			),
 		}
@@ -68,7 +117,7 @@ templ AccordionContent(p ...props.AccordionContent) {
 	>
 		// break-words keeps unbroken tokens inside the panel instead of
 		// letting the details' overflow-hidden silently clip them.
-		<div class="flex flex-col gap-4 p-2 min-h-0 break-words">
+		<div class="flex min-h-0 flex-col gap-4 overflow-hidden break-words px-4 pb-0 group-open:pb-3.5 transition-[padding] duration-200 ease-in-out">
 			{ children... }
 		</div>
 	</div>

@@ -1,0 +1,19 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ AccordionComposedExample() {
+	@popui.Accordion() {
+		@popui.AccordionTrigger(props.AccordionTrigger{Description: "Trigger and content are separate children."}) {
+			Composed manually
+		}
+		@popui.AccordionContent() {
+			@popui.Description() {
+				Leave Title empty and provide AccordionTrigger and AccordionContent yourself when the trigger needs custom markup.
+			}
+		}
+	}
+}

@@ -12,24 +12,50 @@ templ Accordion() {
 	}) {
 		@examples.AccordionExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Accordion groups",
+		Description: "Wrap related accordions in AccordionGroup to join them into a single bordered panel with dividers between items.",
+		Code:        examples.LoadExample("accordion_group.templ"),
+	}) {
+		@examples.AccordionGroupExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Composed trigger and content",
+		Description: "Leave Title empty to supply AccordionTrigger and AccordionContent as children when the trigger needs custom markup.",
+		Code:        examples.LoadExample("accordion_composed.templ"),
+	}) {
+		@examples.AccordionComposedExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Accordion",
-			Description: "The main accordion container component using HTML details element.",
+			Description: "The main accordion container component using HTML details element. When Title is set it renders its own trigger and treats children as content.",
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the accordion element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the details element"},
 				{Name: "Open", Type: "bool", Default: "false", Description: "Whether the accordion is initially expanded"},
+				{Name: "Title", Type: "string", Default: "", Description: "Title shown in the trigger. When set, children become the collapsible content"},
+				{Name: "Description", Type: "string", Default: "", Description: "Secondary text shown beneath the title (requires Title)"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "AccordionGroup",
+			Description: "Joins several Accordion children into one bordered panel with dividers between them.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the group element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the group div"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{
 			Title:       "AccordionTrigger",
-			Description: "Clickable trigger element that toggles the accordion item.",
+			Description: "Clickable trigger element that toggles the accordion item. Children are the title.",
 			Items: []modules.APITableItem{
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the trigger element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the summary element"},
+				{Name: "Description", Type: "string", Default: "", Description: "Secondary text shown beneath the title"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

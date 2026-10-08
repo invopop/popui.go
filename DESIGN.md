@@ -56,7 +56,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | User avatar | `Avatar` |
 | File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
-| Expandable section | `Accordion` > `AccordionTrigger` + `AccordionContent` |
+| Expandable section | `Accordion` with `Title` (or `AccordionTrigger` + `AccordionContent`), grouped via `AccordionGroup` |
 | Dropdown/context actions | `Menu` > `MenuItem` (+ `MenuSeparator` between groups) |
 | Floating content panel | `Popover` |
 | Key-value data display | `DescriptionList` > `DescriptionListItem` |
@@ -486,7 +486,7 @@ Breadcrumbs
 | Component | Description |
 |-----------|-------------|
 | `Avatar` | Circular user avatar; `Size: "lg"` or default (small). Accepts `Initial` text or `Image` child |
-| `Accordion` | Native `details/summary` expandable sections |
+| `Accordion` / `AccordionGroup` | Native `details/summary` expandable sections, optionally grouped into one panel |
 | `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign`. Use `MenuSeparator` to divide item groups |
 | `SplitButton` | Main action button + attached chevron toggle opening a dropdown of related actions (`MenuItem` children); supports `RightAlign` and `DropUp` |
 | `DescriptionList` | `dl`-based term/value pairs for data display |
