@@ -1,0 +1,21 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+// The value is the template itself; the editor draws each variable as a chip.
+var welcomeTemplate = "Hello {{.customer.name}},\n\nInvoice {{.code}} for {{.totals.payable}} is attached."
+
+templ TextareaTemplateExample() {
+	@popui.Contenteditable(props.Textarea{
+		ID:             "welcome-template",
+		Name:           "message",
+		Label:          "Message",
+		Rows:           3,
+		Value:          welcomeTemplate,
+		VariableFormat: "{{.%s}}",
+		ViewToggle:     true,
+	})
+}

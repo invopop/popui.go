@@ -47,7 +47,14 @@ templ Tabs(p ...props.Tabs) {
 						// icon wrappers (divs) keep their size.
 						"inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-base cursor-pointer min-w-0 [&>div]:shrink-0",
 						tabTriggerClasses(prp.Variant),
+						// An icon-only pill is a square around its glyph, the
+						// way the console's mode switch draws one.
+						classes.If(prp.Variant == "pill" && t.Label == "", "p-1 w-auto"),
 					) }
+					if t.Title != "" {
+						title={ t.Title }
+						aria-label={ t.Title }
+					}
 					@click={ model + " = '" + jsSingleQuoteEscape(t.Value) + "'" }
 					:data-state={ model + " === '" + jsSingleQuoteEscape(t.Value) + "' ? 'active' : 'inactive'" }
 					:aria-selected={ model + " === '" + jsSingleQuoteEscape(t.Value) + "'" }
@@ -55,7 +62,9 @@ templ Tabs(p ...props.Tabs) {
 					if t.Icon != nil {
 						@t.Icon
 					}
-					<span class="truncate">{ t.Label }</span>
+					if t.Label != "" {
+						<span class="truncate">{ t.Label }</span>
+					}
 					if t.Count > 0 {
 						if prp.Variant == "pill" {
 							<span class="inline-flex items-center justify-center rounded bg-background-default-tertiary px-1 text-sm tabular-nums shrink-0">{ strconv.Itoa(t.Count) }</span>
@@ -97,13 +106,13 @@ templ Tab(p ...props.Tab) {
 func tabsClasses(variant string) string {
 	return tailwind.Merge(
 		classes.If(variant != "pill", "gap-6 overflow-visible border-b border-border"),
-		classes.If(variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5"),
+		classes.If(variant == "pill", "bg-background-default-tertiary text-base text-foreground h-7 items-center justify-center rounded-md p-0.5 gap-0.5"),
 	)
 }
 
 func tabTriggerClasses(variant string) string {
 	return tailwind.Merge(
 		classes.If(variant != "pill", "relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"),
-		classes.If(variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm"),
+		classes.If(variant == "pill", "rounded px-3 py-0.5 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=inactive]:text-foreground-default-secondary"),
 	)
 }

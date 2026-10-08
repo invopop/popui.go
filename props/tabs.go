@@ -12,6 +12,9 @@ type TabItem struct {
 	// Count renders a counter after the label when greater than zero: "(n)" on
 	// the default variant, a small badge on the pill variant.
 	Count int
+	// Title is the trigger's accessible name and tooltip. Set it on an
+	// icon-only tab, where there is no Label to read out.
+	Title string
 }
 
 // Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks

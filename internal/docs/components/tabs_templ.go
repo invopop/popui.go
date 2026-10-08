@@ -205,6 +205,7 @@ func Tabs() templ.Component {
 					{Name: "Label", Type: "string", Default: "", Description: "Visible trigger text."},
 					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Optional leading icon rendered before the label."},
 					{Name: "Count", Type: "int", Default: "0", Description: "Counter rendered after the label when greater than zero: \"(n)\" on the default variant, a small badge on the pill variant."},
+					{Name: "Title", Type: "string", Default: "", Description: "Accessible name and tooltip of the trigger. Set it on an icon-only tab, where there is no Label to read out"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
