@@ -131,7 +131,7 @@ const (
 	addonsPath      = "$addons[]"
 	complementsPath = "complements[]"
 	linesPath       = "lines[]"
-	lineItemPath    = lineItemPath
+	lineItemPath    = "lines[].item"
 	lineItemName    = lineItemPath + ".name"
 	uuidPath        = "uuid"
 	// The one scalar label the tests check for; the builder passes it
