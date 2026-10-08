@@ -233,12 +233,12 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						// row. The path is semibold throughout; while
 						// filtering, the runs a term did not hit are dimmed
 						// so the ones it did still read.
-						// A browse-only row reads quieter: secondary when it
-						// can at least be opened, tertiary when it is a dead
-						// end — a non-scalar with nothing underneath.
+						// A row that can be picked or opened reads at full
+						// strength either way; only a dead end — a
+						// non-scalar with nothing underneath — is dimmed.
 						<span
 							class="min-w-0 flex-1 truncate text-base"
-							:class="pickable(row.i) ? 'text-foreground' : entries[row.i].children ? 'text-foreground-default-secondary' : 'text-foreground-default-tertiary'"
+							:class="pickable(row.i) || entries[row.i].children ? 'text-foreground' : 'text-foreground-default-tertiary'"
 						>
 							<span class="font-mono font-semibold" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
