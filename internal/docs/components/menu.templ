@@ -41,6 +41,13 @@ templ Menu() {
 	}) {
 		@examples.MenuWithSeparatorExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Nested",
+		Description: "MenuSub nests a second level of items behind a row: hover or click the row and a flyout opens beside it, flipping to the left at the viewport edge. Opening one submenu closes its siblings and Escape closes the innermost panel first. The trigger here is a labelled small button — ButtonLabel with ButtonIcon and ButtonSize replace the default kebab.",
+		Code:        examples.LoadExample("menu_nested.templ"),
+	}) {
+		@examples.MenuNestedExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Menu",
@@ -51,6 +58,8 @@ templ Menu() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
 				{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
 				{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
+				{Name: "ButtonSize", Type: "string", Default: "icon", Description: "Size of the default trigger button. Pass a Button size such as 'sm' when ButtonLabel is a real label; empty keeps the square icon size of the kebab"},
+				{Name: "ButtonIcon", Type: "templ.Component", Default: "", Description: "Icon rendered before ButtonLabel inside the default trigger button"},
 				{Name: "Trigger", Type: "templ.Component", Default: "", Description: "Replaces the default button with any component as the menu opener. ButtonLabel and ButtonVariant are ignored when set"},
 				{Name: "TriggerClass", Type: "string", Default: "", Description: "Classes for the unstyled button wrapping a custom Trigger — e.g. 'w-full' to stretch a row-shaped trigger"},
 				{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the element holding the trigger and panel; set 'block w-full' to fill the container"},
@@ -76,6 +85,18 @@ templ Menu() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the separator element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the list item"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "MenuSub",
+			Description: "A row that opens a nested flyout of further items beside it. Place inside a Menu (or another MenuSub) and pass MenuItems as children.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the row element"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the row styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the row"},
+				{Name: "Label", Type: "string", Default: "", Description: "Row text, followed by a chevron"},
+				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Icon rendered before the label"},
+				{Name: "PanelClass", Type: "string", Default: "", Description: "Additional CSS classes for the flyout panel"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

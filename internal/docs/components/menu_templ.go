@@ -177,6 +177,32 @@ func Menu() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.MenuNestedExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Nested",
+			Description: "MenuSub nests a second level of items behind a row: hover or click the row and a flyout opens beside it, flipping to the left at the viewport edge. Opening one submenu closes its siblings and Escape closes the innermost panel first. The trigger here is a labelled small button — ButtonLabel with ButtonIcon and ButtonSize replace the default kebab.",
+			Code:        examples.LoadExample("menu_nested.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Menu",
 				Description: "The main menu component that displays a menu.",
@@ -186,6 +212,8 @@ func Menu() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the menu container"},
 					{Name: "ButtonLabel", Type: "string", Default: "", Description: "Text label for the trigger button"},
 					{Name: "ButtonVariant", Type: "string", Default: "", Description: "Variant style for the trigger button (e.g., 'primary', 'secondary', 'transparent')"},
+					{Name: "ButtonSize", Type: "string", Default: "icon", Description: "Size of the default trigger button. Pass a Button size such as 'sm' when ButtonLabel is a real label; empty keeps the square icon size of the kebab"},
+					{Name: "ButtonIcon", Type: "templ.Component", Default: "", Description: "Icon rendered before ButtonLabel inside the default trigger button"},
 					{Name: "Trigger", Type: "templ.Component", Default: "", Description: "Replaces the default button with any component as the menu opener. ButtonLabel and ButtonVariant are ignored when set"},
 					{Name: "TriggerClass", Type: "string", Default: "", Description: "Classes for the unstyled button wrapping a custom Trigger — e.g. 'w-full' to stretch a row-shaped trigger"},
 					{Name: "RootClass", Type: "string", Default: "", Description: "Classes for the element holding the trigger and panel; set 'block w-full' to fill the container"},
@@ -235,6 +263,25 @@ func Menu() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "MenuSub",
+				Description: "A row that opens a nested flyout of further items beside it. Place inside a Menu (or another MenuSub) and pass MenuItems as children.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the row element"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the row styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the row"},
+					{Name: "Label", Type: "string", Default: "", Description: "Row text, followed by a chevron"},
+					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Icon rendered before the label"},
+					{Name: "PanelClass", Type: "string", Default: "", Description: "Additional CSS classes for the flyout panel"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "MenuLabel",
 				Description: "Non-interactive group heading within a menu, for splitting long menus into labelled sections.",
 				Items: []modules.APITableItem{
@@ -248,7 +295,7 @@ func Menu() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
