@@ -168,7 +168,8 @@ templ templateEditor(prp props.Textarea) {
 		></textarea>
 		// The rich view. Its content is rendered by the controller, so the
 		// element ships empty; data-template-editor is how FieldPicker
-		// recognises it.
+		// recognises it. leading-6 on both views: a chip is as tall as the
+		// 20px line the field normally sets, so wrapped lines need the room.
 		<div
 			x-ref="editor"
 			x-show="view === 'rich'"
@@ -186,7 +187,7 @@ templ templateEditor(prp props.Textarea) {
 			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
 			class={ tailwind.Merge(
 					classes.FormField(),
-					"min-h-[80px] whitespace-pre-wrap",
+					"min-h-[80px] whitespace-pre-wrap leading-6",
 					classes.FormFieldState(!prp.Error.Empty()),
 					classes.If(prp.Disabled, "bg-background-default-secondary text-foreground-default-tertiary"),
 					prp.Class,
@@ -203,7 +204,7 @@ templ templateEditor(prp props.Textarea) {
 			class={ tailwind.Merge(
 					classes.FormField(),
 					classes.FormFieldState(!prp.Error.Empty()),
-					"min-h-[80px] font-mono resize-none",
+					"min-h-[80px] font-mono resize-none leading-6",
 					prp.Class,
 				) }
 			if prp.Disabled {
