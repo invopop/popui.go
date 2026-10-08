@@ -82,6 +82,11 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 		log.Fatalf("Error: %v", err)
 	}
 	log.Printf("Caveat font published")
+	err = copyFile(path.Join(buildAssetsPath, "geist-mono.woff2"), path.Join(publicAssetPath, "geist-mono.woff2"))
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+	log.Printf("Geist Mono font published")
 
 	// Copy over the docs specific assets
 	docsAssetsOutPath := path.Join(buildOutputPath, "assets")

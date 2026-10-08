@@ -1,0 +1,38 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/goblfields"
+	"github.com/invopop/popui.go/props"
+)
+
+// The tree is built once: it only changes when the GOBL dependency does.
+// Descriptions roughly double the payload, and are what each row shows after
+// the path.
+var invoiceFields = goblfields.MustBuild("bill/invoice", goblfields.Options{Descriptions: true})
+
+// An email body is a Go template over the envelope, so a pick is wrapped as
+// {{.doc.<path>}} and dropped in at the caret — as a chip, since the body
+// is a template editor.
+var emailDraft = "Hello {{.doc.customer.name}},\n\nYour invoice {{.doc.code}} is ready. "
+
+templ FieldPickerExample() {
+	<div class="flex flex-col gap-2 w-full">
+		@popui.Contenteditable(props.Textarea{
+			ID:             "email-body",
+			Name:           "body",
+			Label:          "Email body",
+			Rows:           3,
+			Value:          emailDraft,
+			VariableFormat: "{{.%s}}",
+			ViewToggle:     true,
+		})
+		@popui.FieldPicker(props.FieldPicker{
+			Root:   "bill/invoice",
+			Fields: invoiceFields,
+			Format: "{{.doc.%s}}",
+			Target: "#email-body",
+			ScalarsOnly: true,
+		})
+	</div>
+}

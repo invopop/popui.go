@@ -1,3 +1,16 @@
+/* Geist Mono is shipped with popui (assets/geist-mono.woff2) so the mono
+   weights the system uses — 400, 500, 600 — are real faces everywhere, not
+   whatever monospace happens to be installed. One variable file covers the
+   whole weight range. The URL assumes the standard /_popui asset mount, as
+   the SignaturePad's Caveat face does. */
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/_popui/assets/geist-mono.woff2") format("woff2");
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -109,14 +122,15 @@ body {
   }
 }
 
-/* Multiselect dropdown */
+/* Multiselect and field selector dropdowns */
 
 /* The bottom inset + max-height: stretch cap the panel at the viewport edge,
    exactly like .context-menu-scroll above (the inset alone would be discarded
    because the UA's height: fit-content over-constrains the box). The panel is
    a flex column and the option list a min-h-0 overflow-y-auto item, so the
    search input, padding, and rounded corners stay put while options scroll. */
-[popover].multiselect-panel {
+[popover].multiselect-panel,
+[popover].field-picker-panel {
   position: fixed;
   inset: unset;
   overflow: visible;
@@ -127,11 +141,13 @@ body {
   max-height: -webkit-fill-available; /* Safari: no `stretch` keyword yet */
   max-height: stretch;
 }
-[popover].multiselect-panel:not(:popover-open) {
+[popover].multiselect-panel:not(:popover-open),
+[popover].field-picker-panel:not(:popover-open) {
   display: none;
 }
 @supports not (anchor-name: --test) {
-  [popover].multiselect-panel {
+  [popover].multiselect-panel,
+  [popover].field-picker-panel {
     position: absolute;
     top: auto;
     left: auto;
@@ -165,23 +181,27 @@ body {
   background-color: rgb(0 0 0 / 0.5);
 }
 
-/* Generic selectors */
+/* A variable chip inside a Contenteditable: the gray box the email and
+   Slack editors draw a template variable as. Non-editable, so it is typed
+   around and deleted as one unit; pointer-events off so a click lands the
+   caret beside it rather than inside. */
 div[contenteditable='true'] .tag {
   display: inline-flex;
-  padding: 2px 4px;
-  justify-content: center;
   align-items: center;
   gap: 4px;
+  padding: 1px 4px;
   border-radius: 4px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-default-secondary);
+  color: var(--color-foreground);
   pointer-events: none;
-  color: #030712;
-  font-family: Inter;
+  font-family: var(--font-mono);
+  font-feature-settings: var(--font-mono-features);
   font-size: 12px;
-  font-style: normal;
   font-weight: 500;
   line-height: 16px;
+  vertical-align: baseline;
+  white-space: nowrap;
 }
 mark,
 pre,

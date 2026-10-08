@@ -55,6 +55,13 @@ templ Textarea() {
 	}) {
 		@examples.TextareaContenteditableExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Template Variables",
+		Description: "Set VariableFormat and Contenteditable becomes a template editor: each variable written in that syntax is drawn as a chip, typed around and deleted as one unit, while Value — and the hidden input under Name — stays the template text. ViewToggle adds a switch to a plain, monospaced view of that text. A FieldPicker targeting the editor inserts its picks as chips.",
+		Code:        examples.LoadExample("textarea_template.templ"),
+	}) {
+		@examples.TextareaTemplateExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Textarea",
@@ -73,6 +80,10 @@ templ Textarea() {
 				{Name: "Readonly", Type: "bool", Default: "false", Description: "Makes the textarea read-only"},
 				{Name: "Required", Type: "bool", Default: "false", Description: "Marks the textarea as required for form validation"},
 				{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the textarea on page load"},
+				{Name: "Monospace", Type: "bool", Default: "false", Description: "Sets the textarea in the mono font"},
+				{Name: "VariableFormat", Type: "string", Default: "", Description: "Contenteditable only. The syntax template variables are written in, `%s` standing for the name — `{{.%s}}` for a Go template. Turns the editor into a template editor: variables are drawn as chips, and Value, Name and an Alpine x-model carry the template text. Attributes then apply to the component root"},
+				{Name: "ViewToggle", Type: "bool", Default: "false", Description: "Contenteditable with VariableFormat only. Adds a Rich text / Plain text switch above the editor"},
+				{Name: "View", Type: "string", Default: "\"rich\"", Description: "Contenteditable with VariableFormat only. The view to start in: `rich` or `plain`"},
 				{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the textarea"},
 			},
 		})
