@@ -1113,10 +1113,20 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       sync() {
         const editor = this.$refs.editor
         this.value = serializeTemplate(editor)
-        if (!this.hasTypedVariable(editor)) return
-        const offset = this.caretOffset(editor)
-        this.render()
-        if (offset !== null) this.setCaretOffset(editor, offset)
+        if (this.hasTypedVariable(editor)) {
+          const offset = this.caretOffset(editor)
+          this.render()
+          if (offset !== null) this.setCaretOffset(editor, offset)
+        }
+        this.changed()
+      },
+      // Announces a change with an input event from the component root —
+      // after Alpine has carried the new value across an x-model on it, so
+      // a handler on the root reads page state that is already current.
+      // The views' own input events stop at them for the same reason: let
+      // through, they would reach the root a tick too early.
+      changed() {
+        this.$nextTick(() => this.$root.dispatchEvent(new Event('input', { bubbles: true })))
       },
       // Reports whether any text in the editor — outside the chips — is a
       // complete variable.
@@ -1185,7 +1195,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           const end = area.selectionEnd == null ? start : area.selectionEnd
           area.setRangeText(text, start, end, 'end')
           area.focus()
-          area.dispatchEvent(new Event('input', { bubbles: true }))
+          this.value = area.value
+          this.changed()
           return
         }
         const editor = this.$refs.editor
@@ -1207,7 +1218,6 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         sel.addRange(range)
         this.savedRange = range.cloneRange()
         this.sync()
-        editor.dispatchEvent(new Event('input', { bubbles: true }))
       },
     }))
 

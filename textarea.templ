@@ -173,7 +173,7 @@ templ templateEditor(prp props.Textarea) {
 		<div
 			x-ref="editor"
 			x-show="view === 'rich'"
-			@input="sync()"
+			@input.stop="sync()"
 			data-template-editor
 			role="textbox"
 			aria-multiline="true"
@@ -199,6 +199,7 @@ templ templateEditor(prp props.Textarea) {
 			x-show="view === 'plain'"
 			x-cloak
 			x-model="value"
+			@input.stop="changed()"
 			rows="1"
 			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
 			class={ tailwind.Merge(
