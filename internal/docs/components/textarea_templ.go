@@ -229,6 +229,32 @@ func Textarea() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TextareaTemplateExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Template Variables",
+			Description: "Set VariableFormat and Contenteditable becomes a template editor: each variable written in that syntax is drawn as a chip, typed around and deleted as one unit, while Value — and the hidden input under Name — stays the template text. ViewToggle adds a switch to a plain, monospaced view of that text. A FieldPicker targeting the editor inserts its picks as chips.",
+			Code:        examples.LoadExample("textarea_template.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Textarea",
 				Description: "Multi-line text input field with support for labels and validation.",
@@ -246,6 +272,10 @@ func Textarea() templ.Component {
 					{Name: "Readonly", Type: "bool", Default: "false", Description: "Makes the textarea read-only"},
 					{Name: "Required", Type: "bool", Default: "false", Description: "Marks the textarea as required for form validation"},
 					{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the textarea on page load"},
+					{Name: "Monospace", Type: "bool", Default: "false", Description: "Sets the textarea in the mono font"},
+					{Name: "VariableFormat", Type: "string", Default: "", Description: "Contenteditable only. The syntax template variables are written in, `%s` standing for the name — `{{.%s}}` for a Go template. Turns the editor into a template editor: variables are drawn as chips, and Value, Name and an Alpine x-model carry the template text. Attributes then apply to the component root"},
+					{Name: "ViewToggle", Type: "bool", Default: "false", Description: "Contenteditable with VariableFormat only. Adds a Rich text / Plain text switch above the editor"},
+					{Name: "View", Type: "string", Default: "\"rich\"", Description: "Contenteditable with VariableFormat only. The view to start in: `rich` or `plain`"},
 					{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the textarea"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
@@ -271,7 +301,7 @@ func Textarea() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

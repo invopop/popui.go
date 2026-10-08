@@ -29,8 +29,30 @@ type Textarea struct {
 	// by adding the appropriate classes.
 	Monospace bool
 
+	// VariableFormat turns Contenteditable into a template editor. It is the
+	// syntax variables are written in, %s standing for the name: "{{.%s}}"
+	// for a Go template. Each variable in the text is shown as a chip, and
+	// the text with the variables written out — the template itself — is
+	// what Value holds, what is submitted under Name, and what an Alpine
+	// x-model on the component binds. FieldPicker inserts into such an
+	// editor as chips. Textarea ignores it.
+	VariableFormat string
+	// ViewToggle adds a Rich / Plain switch above the editor: Rich shows
+	// the chips, Plain shows the template as text, in a monospaced
+	// textarea. Only with VariableFormat.
+	ViewToggle bool
+	// View is the view the editor starts in: ContenteditableViewRich (the
+	// default) or ContenteditableViewPlain. Only with VariableFormat.
+	View string
+
 	Error Error
 }
+
+// The views a Contenteditable with a VariableFormat can show.
+const (
+	ContenteditableViewRich  = "rich"
+	ContenteditableViewPlain = "plain"
+)
 
 // GetRows returns the Rows prop as a string with a default if not present
 func (t Textarea) GetRows() string {
