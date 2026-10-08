@@ -1551,9 +1551,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           if (e.newState === 'open') {
             this.open = true
             // At least as wide as the trigger, so a full-width field gets a
-            // panel to match; the stylesheet sets the floor for a button.
+            // panel to match. The stylesheet sets the floor for a button, and
+            // an inline width would override it, so only a wider trigger sets
+            // one.
             const trigger = this.$refs.field.firstElementChild || this.$refs.field
-            this.$refs.panel.style.minWidth = trigger.offsetWidth + 'px'
+            const panel = this.$refs.panel
+            panel.style.minWidth = ''
+            const floor = parseFloat(getComputedStyle(panel).minWidth) || 0
+            if (trigger.offsetWidth > floor) panel.style.minWidth = trigger.offsetWidth + 'px'
             this.query = ''
             this.openAtValue()
             this.$nextTick(() => { if (this.$refs.search) this.$refs.search.focus() })

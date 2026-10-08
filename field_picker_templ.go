@@ -247,7 +247,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div popover x-ref=\"panel\" :id=\"$id('field-picker')\" :style=\"'position-anchor: --' + $id('field-picker')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"field-picker-panel flex flex-col min-w-[min(26rem,calc(100vw-2rem))] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\"><div class=\"p-1 shrink-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div popover x-ref=\"panel\" :id=\"$id('field-picker')\" :style=\"'position-anchor: --' + $id('field-picker')\" @toggle=\"onToggle($event)\" @keydown=\"onKeydown($event)\" class=\"field-picker-panel flex flex-col min-w-[min(20rem,calc(100vw-2rem))] min-h-[18.75rem] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg\"><div class=\"p-1 shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
