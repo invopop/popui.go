@@ -32,6 +32,17 @@ type Input struct {
 	// Prefix adds a text just before the input field inside a @Description.
 	Prefix string
 
+	// ISO turns a datetime-local input into a text field holding an RFC 3339
+	// timestamp, such as "2026-09-20T12:30:00Z", so the value can be read,
+	// copied, and pasted directly. The calendar button opens a single-date
+	// popui.Calendar seeded from the field's yyyy-mm-dd prefix; Confirm
+	// replaces only that prefix, leaving the time and zone exactly as typed
+	// (an empty field becomes midnight UTC on the chosen day). Time is edited
+	// by hand and no timezone conversion is applied. The field is validated
+	// against an RFC 3339 pattern on submit; an empty field submits an empty
+	// string. Only used when Type is "datetime-local".
+	ISO bool
+
 	Autofocus bool
 	Readonly  bool
 	Required  bool
