@@ -3,17 +3,34 @@ package components
 import (
 	_ "embed"
 
+	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/internal/docs/examples"
 	"github.com/invopop/popui.go/internal/docs/modules"
+	"github.com/invopop/popui.go/props"
 )
 
 templ Calendar() {
 	@modules.Example(modules.ExampleProps{
-		Code:    examples.LoadExample("calendar.templ"),
-		Stacked: true,
+		Description: "The preset rail is configurable. Past presets (this/last week, month, quarter) suit filters; forward-looking ones (next month, next 3 / 6 / 12 months) start today and run to the same day of the month N months ahead, which suits validity periods; props.FutureCalendarPresets() returns that rail ready made. Indefinite selects a start date with no end: every day after the start is painted as selected, clicking a day moves the start, and the value is submitted as YYYY-MM-DD.. with an empty end.",
+		Code:        examples.LoadExample("calendar.templ"),
+		Stacked:     true,
 	}) {
 		@examples.CalendarExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Date range inputs",
+		Description: "One calendar button drives a pair of text inputs holding ISO 8601 timestamps. Confirming a range replaces only the leading YYYY-MM-DD of each field and keeps the time and zone as typed; an indefinite range clears the end field.",
+		Code:          examples.LoadExample("calendar_range_inputs.templ"),
+		Stacked:       true,
+		IframeContent: calendarRangeInputsFrame(),
+	})
+	@modules.Example(modules.ExampleProps{
+		Title:         "Single date input",
+		Description:   "One calendar button drives a text input holding an ISO 8601 timestamp, using the single-date calendar. Confirming a day replaces only the leading YYYY-MM-DD of the field and keeps the time and zone as typed.",
+		Code:          examples.LoadExample("calendar_single_input.templ"),
+		Stacked:       true,
+		IframeContent: calendarSingleInputFrame(),
+	})
 	@modules.Example(modules.ExampleProps{
 		Title:       "Single date",
 		Description: "Set Single to switch the calendar to single-date selection: one month grid, no preset rail, and clicking a day selects just that day.",
@@ -41,9 +58,38 @@ templ Calendar() {
 			Title:       "CalendarPreset",
 			Description: "CalendarPreset is one shortcut in the preset rail. The date computation for each key lives in the `rangeCalendar` controller.",
 			Items: []modules.APITableItem{
-				{Name: "Key", Type: "string", Default: "", Description: "Selects the built in date range. Use one of the `CalendarPreset` constants such as `CalendarPresetThisMonth` or `CalendarPresetCustom`."},
+				{Name: "Key", Type: "string", Default: "", Description: "Selects the built in date range. Use one of the `CalendarPreset` constants: `ThisWeek`, `LastWeek`, `ThisMonth`, `LastMonth`, `ThisQuarter`, `LastQuarter`, `NextMonth`, `Next3Months`, `Next6Months`, `Next12Months`, `Indefinite` or `Custom`. `DefaultCalendarPresets()` and `FutureCalendarPresets()` return ready made rails."},
 				{Name: "Label", Type: "string", Default: "Key default", Description: "Overrides the text shown in the rail. It falls back to the standard label for the key when empty."},
 			},
 		})
+	}
+}
+
+// calendarRangeInputsFrame wraps the date range inputs example in a full
+// document so it can render in an iframe, where the floating calendar has room
+// to open without being clipped by the preview box.
+templ calendarRangeInputsFrame() {
+	@popui.HTML() {
+		@popui.Head(props.Head{Title: "Date range inputs", AlpineJS: true})
+		@popui.Body() {
+			// The docs iframe writer drops <body> attributes, so the preview
+			// padding lives on a wrapper that matches PreviewBox.
+			<div class="p-6">
+				@examples.CalendarRangeInputsExample()
+			</div>
+		}
+	}
+}
+
+// calendarSingleInputFrame is the iframe document for the single date input
+// example; see calendarRangeInputsFrame.
+templ calendarSingleInputFrame() {
+	@popui.HTML() {
+		@popui.Head(props.Head{Title: "Single date input", AlpineJS: true})
+		@popui.Body() {
+			<div class="p-6">
+				@examples.CalendarSingleInputExample()
+			</div>
+		}
 	}
 }

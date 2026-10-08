@@ -7,6 +7,10 @@ const (
 	ButtonSizeSmall string = "sm"
 	ButtonSizeLarge string = "lg"
 	ButtonSizeIcon  string = "icon"
+	// ButtonSizeIconLarge is a 34px-square icon button — the height of a
+	// default Input, so it sits flush beside form fields (a calendar trigger
+	// next to date inputs, a search button beside its field).
+	ButtonSizeIconLarge string = "icon-lg"
 	// ButtonSizeIconSmall is a 24px-square icon button — a compact step
 	// down from ButtonSizeIcon (28px). Used for inline row actions.
 	ButtonSizeIconSmall string = "icon-sm"

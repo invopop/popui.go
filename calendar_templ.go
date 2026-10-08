@@ -20,7 +20,10 @@ import (
 // console-ui DatePicker: a preset rail (this/last week, month, quarter +
 // custom) on the left, two side-by-side month grids with overlay month
 // navigation, and a Cancel / Confirm footer. Selection only applies on
-// Confirm; Cancel clears it. Setting props.Calendar.Single switches it to a
+// Confirm; Cancel clears it. Forward-looking presets (today to the same day
+// 1 / 3 / 6 / 12 months ahead) and an "Indefinite" preset — a start date with no
+// end, painted to the edge of the grid and submitted as "from.." — are
+// available via props.FutureCalendarPresets(). Setting props.Calendar.Single switches it to a
 // single-date picker: one month grid, no preset rail, and clicking a day
 // selects just that day. See props.Calendar.
 //
@@ -84,7 +87,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 46, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 49, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -103,7 +106,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(calendarScope(p))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 49, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `calendar.templ`, Line: 52, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -250,7 +253,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 		templ_7745c5c3_Err = Button(props.Button{
 			Variant:    props.ButtonVariantPrimary,
 			Size:       props.ButtonSizeLarge,
-			Attributes: templ.Attributes{"type": "button", "@click": "confirm()", ":disabled": "!to"},
+			Attributes: templ.Attributes{"type": "button", "@click": "confirm()", ":disabled": "!canConfirm"},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -312,15 +315,13 @@ func calendarPresetsJS(presets []props.CalendarPreset) string {
 }
 
 // presetLabel resolves a preset's rail text: the explicit Label, else the
-// built-in default for its Key (so callers can pass keys alone), else the Key.
+// standard label for its Key (so callers can pass keys alone), else the Key.
 func presetLabel(p props.CalendarPreset) string {
 	if p.Label != "" {
 		return p.Label
 	}
-	for _, d := range props.DefaultCalendarPresets() {
-		if d.Key == p.Key {
-			return d.Label
-		}
+	if l := props.CalendarPresetLabel(p.Key); l != "" {
+		return l
 	}
 	return p.Key
 }
