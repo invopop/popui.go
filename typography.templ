@@ -124,13 +124,14 @@ templ Info(opts ...props.Info) {
 		}
 		class={
 			tailwind.Merge(
-				"font-sans text-sm text-foreground-default-secondary flex items-center gap-1",
+				"font-sans text-sm text-foreground-default-secondary flex items-start gap-1",
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		<div>
+		// items-start + shrink-0 keep the icon on the first line when the text wraps.
+		<div class="shrink-0">
 			@InfoIcon()
 		</div>
 		<div class="flex-1">
@@ -148,13 +149,13 @@ templ Warning(opts ...props.Warning) {
 		}
 		class={
 			tailwind.Merge(
-				"font-sans text-sm text-foreground-default-secondary flex items-center gap-1",
+				"font-sans text-sm text-foreground-default-secondary flex items-start gap-1",
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		<div>
+		<div class="shrink-0">
 			@icons.Alert()
 		</div>
 		<div class="flex-1">

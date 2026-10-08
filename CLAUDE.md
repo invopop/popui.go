@@ -45,6 +45,15 @@ To make a component show up in the sidebar:
 4. Sidebar entry: append a `Page` to the appropriate group in `internal/docs/ui.go`.
 5. Run `templ generate` and `go build ./...`.
 
+## Prototypes
+
+`examples/apps/` is a backend-free, HTMX-navigable prototype of the Access
+admin "Applications" area (served at `/examples/apps`). It mirrors
+`invopop/access` templates with stand-in models so the front end can be
+designed here and ported later. Read `examples/apps/HANDOFF.md` before
+changing it, and keep access's field and template names so the port stays
+mechanical.
+
 ## Dev server
 
 `air` (config in `.air.toml`) — runs `go generate ./... && templ generate && go build ./cmd/popui` then `./popui serve -p 3000`.
