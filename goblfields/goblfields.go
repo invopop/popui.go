@@ -143,6 +143,31 @@ func Flatten(fields []props.Field, into ...props.Field) []props.Field {
 	return out
 }
 
+// Nest puts a tree under a single field, rewriting every path beneath it:
+// Nest("doc", invoice) gives one object row, doc, whose children are the
+// invoice's fields at doc.supplier.name and so on. It is for the hybrid
+// list an app offers — its own variables at the top level, the document
+// one row down — so that a single Format such as "{{.%s}}" serves both.
+func Nest(name string, fields []props.Field) props.Field {
+	return props.Field{
+		Name:          name,
+		Path:          name,
+		Type:          TypeObject,
+		AlwaysPresent: true,
+		Children:      prefixPaths(name+".", fields),
+	}
+}
+
+func prefixPaths(prefix string, fields []props.Field) []props.Field {
+	out := make([]props.Field, len(fields))
+	for i, field := range fields {
+		field.Path = prefix + field.Path
+		field.Children = prefixPaths(prefix, field.Children)
+		out[i] = field
+	}
+	return out
+}
+
 // Trail returns the chain of fields leading to a path, root first. An unknown
 // path resolves to the deepest ancestors that do exist, so a picker can still
 // open near a value it cannot place exactly.

@@ -127,6 +127,8 @@ var testOptions = goblfields.Options{Source: testSchemas}
 // Paths several tests meet: an array of schema/object, and a required field
 // three levels down inside an array.
 const (
+	invoiceSchema   = "bill/invoice"
+	addonsPath      = "$addons[]"
 	complementsPath = "complements[]"
 	linesPath       = "lines[]"
 	lineItemName    = "lines[].item.name"
@@ -191,8 +193,8 @@ func equal(t *testing.T, got, want []string) {
 }
 
 func TestBuildAcceptsShortPathOrFullID(t *testing.T) {
-	byID := build(t, "https://gobl.org/draft-0/bill/invoice")
-	equal(t, paths(byID), paths(build(t, "bill/invoice")))
+	byID := build(t, "https://gobl.org/draft-0/"+invoiceSchema)
+	equal(t, paths(byID), paths(build(t, invoiceSchema)))
 }
 
 func TestBuildFailsOnAnUnknownSchema(t *testing.T) {
@@ -202,13 +204,13 @@ func TestBuildFailsOnAnUnknownSchema(t *testing.T) {
 }
 
 func TestBuildListsTheRootProperties(t *testing.T) {
-	equal(t, paths(build(t, "bill/invoice")), []string{
-		"$addons[]", uuidPath, "currency", "supplier", linesPath, complementsPath,
+	equal(t, paths(build(t, invoiceSchema)), []string{
+		addonsPath, uuidPath, "currency", "supplier", linesPath, complementsPath,
 	})
 }
 
 func TestBuildMarksArraysInThePathAndType(t *testing.T) {
-	fields := build(t, "bill/invoice")
+	fields := build(t, invoiceSchema)
 	if lines := field(t, fields, linesPath); !lines.Array || lines.Type != goblfields.TypeArray {
 		t.Fatalf("lines[]: array=%v type=%q", lines.Array, lines.Type)
 	}
@@ -220,14 +222,14 @@ func TestBuildMarksArraysInThePathAndType(t *testing.T) {
 func TestBuildFollowsARefThatPointsAtAnArraySchema(t *testing.T) {
 	// The property is a plain $ref, so it only comes out as an array at all
 	// because the document it points at is itself one.
-	addons := field(t, build(t, "bill/invoice"), "$addons[]")
+	addons := field(t, build(t, invoiceSchema), addonsPath)
 	if !addons.Array || addons.Type != goblfields.TypeArray {
 		t.Fatalf("$addons[]: array=%v type=%q", addons.Array, addons.Type)
 	}
 }
 
 func TestBuildResolvesRefsIntoOtherDocuments(t *testing.T) {
-	fields := build(t, "bill/invoice")
+	fields := build(t, invoiceSchema)
 	if got := field(t, fields, "supplier").Type; got != "object" {
 		t.Fatalf("supplier type = %q", got)
 	}
@@ -241,7 +243,7 @@ func TestBuildResolvesRefsIntoOtherDocuments(t *testing.T) {
 }
 
 func TestBuildMarksAlwaysPresentOnlyWhenEveryStepIsRequired(t *testing.T) {
-	fields := build(t, "bill/invoice")
+	fields := build(t, invoiceSchema)
 	for path, want := range map[string]bool{
 		"currency":                     true,
 		uuidPath:                       false,
@@ -257,7 +259,7 @@ func TestBuildMarksAlwaysPresentOnlyWhenEveryStepIsRequired(t *testing.T) {
 }
 
 func TestBuildKeepsRequiredSeparateFromTheInheritedAnswer(t *testing.T) {
-	fields := build(t, "bill/invoice")
+	fields := build(t, invoiceSchema)
 	for path, want := range map[string]bool{
 		"supplier.people[].name.given": false,
 		"lines[].item.price":           false,
@@ -270,7 +272,7 @@ func TestBuildKeepsRequiredSeparateFromTheInheritedAnswer(t *testing.T) {
 }
 
 func TestBuildStopsABranchThatRepeatsASchemaItAlreadyContains(t *testing.T) {
-	fields := build(t, "bill/invoice")
+	fields := build(t, invoiceSchema)
 	if got := field(t, fields, "lines[].breakdown[]"); len(got.Children) == 0 {
 		t.Fatal("lines[].breakdown[] should expand once")
 	}
@@ -280,7 +282,7 @@ func TestBuildStopsABranchThatRepeatsASchemaItAlreadyContains(t *testing.T) {
 }
 
 func TestBuildStopsAtTheRequestedDepth(t *testing.T) {
-	shallow := build(t, "bill/invoice", goblfields.Options{Source: testSchemas, MaxDepth: 2})
+	shallow := build(t, invoiceSchema, goblfields.Options{Source: testSchemas, MaxDepth: 2})
 	if !has(shallow, "supplier.people[]") {
 		t.Fatal("supplier.people[] should be within two levels")
 	}
@@ -316,7 +318,7 @@ func TestSchemaObjectDoesNotStopTheRestOfTheSchemaExpanding(t *testing.T) {
 }
 
 func TestSchemaObjectIsALeafInsideAnArrayToo(t *testing.T) {
-	fields := build(t, "bill/invoice")
+	fields := build(t, invoiceSchema)
 	if !has(fields, complementsPath) {
 		t.Fatal("complements[] should be there")
 	}
@@ -328,17 +330,17 @@ func TestSchemaObjectIsALeafInsideAnArrayToo(t *testing.T) {
 }
 
 func TestTrailReturnsTheChainDownToTheField(t *testing.T) {
-	trail := goblfields.Trail(build(t, "bill/invoice"), lineItemName)
+	trail := goblfields.Trail(build(t, invoiceSchema), lineItemName)
 	equal(t, paths(trail), []string{linesPath, "lines[].item", lineItemName})
 }
 
 func TestTrailFallsBackToTheDeepestPartOfThePathThatExists(t *testing.T) {
-	trail := goblfields.Trail(build(t, "bill/invoice"), "lines[].item.nope")
+	trail := goblfields.Trail(build(t, invoiceSchema), "lines[].item.nope")
 	equal(t, paths(trail), []string{linesPath, "lines[].item"})
 }
 
 func TestTrailHasNothingToReturnForAnEmptyPath(t *testing.T) {
-	if trail := goblfields.Trail(build(t, "bill/invoice"), ""); len(trail) != 0 {
+	if trail := goblfields.Trail(build(t, invoiceSchema), ""); len(trail) != 0 {
 		t.Fatalf("got %v", paths(trail))
 	}
 }
@@ -348,14 +350,14 @@ func TestListReturnsTheAvailableSchemas(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	equal(t, list[:3], []string{"bill/invoice", "bill/line", "cbc/key"})
+	equal(t, list[:3], []string{invoiceSchema, "bill/line", "cbc/key"})
 }
 
 // The embedded GOBL schemas are the ones consumers actually build from, so the
 // tree is checked against them too: property order, depth and the recursion
 // guard all depend on the real documents.
 func TestBuildFromTheEmbeddedSchemas(t *testing.T) {
-	fields, err := goblfields.Build("bill/invoice")
+	fields, err := goblfields.Build(invoiceSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -376,5 +378,21 @@ func TestBuildFromTheEmbeddedSchemas(t *testing.T) {
 	}
 	if got := field(t, fields, linesPath); got.Type != goblfields.TypeArray || !got.Array {
 		t.Errorf("lines[]: type=%q array=%v", got.Type, got.Array)
+	}
+}
+
+func TestNestPutsATreeUnderOneField(t *testing.T) {
+	doc := goblfields.Nest("doc", build(t, invoiceSchema))
+	if doc.Path != "doc" || doc.Type != goblfields.TypeObject || !doc.AlwaysPresent {
+		t.Fatalf("root = %+v", doc)
+	}
+	equal(t, paths(doc.Children)[:3], []string{"doc.$addons[]", "doc.uuid", "doc.currency"})
+	// Every path beneath is rewritten, at any depth, and nothing else changes.
+	if got := field(t, []props.Field{doc}, "doc."+lineItemName); !got.AlwaysPresent || got.Name != "name" {
+		t.Fatalf("nested leaf = %+v", got)
+	}
+	// The input is left alone.
+	if got := paths(build(t, invoiceSchema))[0]; got != addonsPath {
+		t.Fatalf("original tree changed: %s", got)
 	}
 }

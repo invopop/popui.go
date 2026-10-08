@@ -126,16 +126,16 @@ func FieldPicker() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.FieldPickerCustomFieldsExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.FieldPickerHybridExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Custom Fields",
-			Description: "Fields do not have to come from a schema, and a schema tree can be added to. Give a field a Value to emit it as is, bypassing the Format — here the job's own variables sit above the document's fields and come out as `{{.job_id}}` rather than `{{.doc.job_id}}`.",
-			Code:        examples.LoadExample("field_picker_custom_fields.templ"),
+			Title:       "Hybrid: an App's Variables and the Document",
+			Description: "The Slack and email apps compute a handful of ready-to-print variables in Go — a joined invoice code, a rendered fault list, the job id — which is where objects get their pretty form. Those go at the top as plain fields, and the whole document sits one row down, nested under `doc` with `goblfields.Nest` so one Format serves both: `{{.full_code}}` next to `{{.doc.totals.payable}}`.",
+			Code:        examples.LoadExample("field_picker_hybrid.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
