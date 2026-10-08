@@ -59,7 +59,12 @@ type Field struct {
 // The component is a panel that picks one field of a tree — filtering the
 // whole tree by path, or browsing it a level at a time — hung off whichever
 // trigger suits: its own button by default, or anything placed in its
-// children slot (a Button, an Input showing the value, …). A pick is wrapped
+// children slot (a Button, an Input showing the value, …). A supplied trigger
+// is rendered as given, so give it the picker's ID when there is a Label, so
+// the label points at it, and the popup attributes the default button
+// carries — aria-haspopup="listbox", :aria-expanded="open" and
+// :aria-controls="$id('field-picker') + '-listbox'" — which resolve in the
+// picker's Alpine scope. A pick is wrapped
 // in Format, inserted at the caret of the Target element when there is one,
 // submitted under Name via a hidden input, and announced with a
 // `field-select` event.

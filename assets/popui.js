@@ -681,7 +681,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
   // Splits text into matched and unmatched runs, so a field row can highlight
   // the part of its path a query hit. Overlapping matches are merged rather
-  // than split twice.
+  // than split twice. A term that only matched as a subsequence — `supname`
+  // in supplier.name — has each of its letters lit where they fell, so the
+  // row still shows why it is there.
   function highlightParts(text, terms) {
     const lower = text.toLowerCase()
     const ranges = []
@@ -689,6 +691,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     for (const term of terms) {
       const needle = term.toLowerCase()
       let from = lower.indexOf(needle)
+      if (from === -1) {
+        for (const at of subsequencePositions(needle, lower)) ranges.push([at, at + 1])
+        continue
+      }
       while (from !== -1) {
         ranges.push([from, from + needle.length])
         from = lower.indexOf(needle, from + needle.length)
@@ -716,9 +722,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // Scores one field against the query's terms, or null when any term misses.
   // Only the path is consulted: the description is prose, and matching it
   // would surface fields for words that merely occur in their explanation.
+  // A term that is a whole segment of the path — `supplier` in
+  // supplier.name as much as `name` — outranks one that starts a segment,
+  // which outranks one found anywhere inside.
   function scoreField(entry, terms) {
     const path = entry.lower
-    const name = entry.name.toLowerCase()
+    const segments = entry.segments
 
     // Shallow fields win ties: `code` should beat `lines[].item.code`.
     let score = -entry.depth * 3
@@ -727,8 +736,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       const index = path.indexOf(term)
       if (index >= 0) {
         score += 100 - Math.min(index, 60)
-        if (name === term) score += 80
-        else if (name.startsWith(term)) score += 40
+        if (segments.includes(term)) score += 80
+        else if (segments.some((segment) => segment.startsWith(term))) score += 40
         continue
       }
       if (isSubsequence(term, path)) {
@@ -754,6 +763,21 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   // be hand-written too.
   function escapeHTML(text) {
     return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  }
+
+  // The positions in text at which the letters of needle fall when matched in
+  // order, greedily from the left — the match isSubsequence accepts. Empty
+  // when needle is not a subsequence.
+  function subsequencePositions(needle, text) {
+    const positions = []
+    let from = 0
+    for (const ch of needle) {
+      const at = text.indexOf(ch, from)
+      if (at === -1) return []
+      positions.push(at)
+      from = at + 1
+    }
+    return positions
   }
 
   // Reports whether the characters of term appear in text in order, which is
@@ -1069,6 +1093,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       value: (init && init.value) || '',
       format: (init && init.format) || '{{.%s}}',
       view: (init && init.view) || 'rich',
+      // A read-only editor shows its template and is inserted into by
+      // nothing — a picker aimed at it is a no-op.
+      readonly: !!(init && init.readonly),
       savedRange: null,
 
       init() {
@@ -1188,6 +1215,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // a variable becomes a chip and anything else plain text; the caret
       // ends up after it. This is what FieldPicker calls.
       insertText(text) {
+        if (this.readonly) return
         if (this.view === 'plain') {
           const area = this.$refs.plain
           if (!area) return
@@ -1295,6 +1323,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             const base = parent ? parent.key : ''
             entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
             entry.lower = entry.path.toLowerCase()
+            entry.segments = entry.lower.split('.').map((segment) => segment.replace(/\[\]$/, ''))
             entry.depth = parent ? parent.depth + 1 : 1
             if (parent) parent.kids.push(i)
             else this.roots.push(i)

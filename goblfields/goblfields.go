@@ -189,33 +189,34 @@ func prefixPaths(prefix string, fields []props.Field) []props.Field {
 
 // Trail returns the chain of fields leading to a path, root first. An unknown
 // path resolves to the deepest ancestors that do exist, so a picker can still
-// open near a value it cannot place exactly.
+// open near a value it cannot place exactly. A Group is looked through — its
+// name is not part of the paths beneath it — and appears in the trail when
+// the path is found under it; when several groups hold the same path, the
+// first one wins.
 func Trail(fields []props.Field, path string) []props.Field {
-	var trail []props.Field
 	if path == "" {
-		return trail
+		return nil
 	}
+	return trail(fields, path)
+}
 
-	level := fields
-	for len(level) > 0 {
-		var found *props.Field
-		for i, field := range level {
-			if field.Path == path || strings.HasPrefix(path, field.Path+".") {
-				found = &level[i]
-				break
+func trail(level []props.Field, path string) []props.Field {
+	for i := range level {
+		field := &level[i]
+		if field.Group {
+			if below := trail(field.Children, path); len(below) > 0 {
+				return append([]props.Field{*field}, below...)
 			}
+			continue
 		}
-		if found == nil {
-			return trail
+		if field.Path == path {
+			return []props.Field{*field}
 		}
-		trail = append(trail, *found)
-		if found.Path == path {
-			return trail
+		if strings.HasPrefix(path, field.Path+".") {
+			return append([]props.Field{*field}, trail(field.Children, path)...)
 		}
-		level = found.Children
 	}
-
-	return trail
+	return nil
 }
 
 type builder struct {
@@ -268,13 +269,23 @@ func (b *builder) field(owner *target, property *definition, name, parentPath st
 		field.Description = strings.TrimSpace(firstString(property.Description, node.Description))
 	}
 
-	expandable := node.Properties.len() > 0 && depth < b.maxDepth && resolved != nil && !branch[resolved.key]
+	expandable := node.Properties.len() > 0 && depth < b.maxDepth
+	if expandable && resolved == nil {
+		// An object described inline, with no $ref. It cannot recur — only a
+		// reference can point back up the tree — so it needs no cycle key.
+		resolved = &target{def: node, docID: owner.docID}
+	}
+	if expandable && resolved.key != "" && branch[resolved.key] {
+		expandable = false
+	}
 	if expandable {
 		next := make(map[string]bool, len(branch)+1)
 		for key := range branch {
 			next[key] = true
 		}
-		next[resolved.key] = true
+		if resolved.key != "" {
+			next[resolved.key] = true
+		}
 		field.Children = b.walk(resolved, path+".", depth+1, next, alwaysPresent)
 	}
 

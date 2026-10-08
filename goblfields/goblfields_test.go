@@ -407,3 +407,41 @@ func TestGroupLeavesPathsAlone(t *testing.T) {
 	// part of what they emit.
 	equal(t, paths(g.Children), paths(fields))
 }
+
+// An object described inline, with no $ref, is walked like a referenced one.
+var inlineSchemas = fstest.MapFS{
+	"bill/order.json": &fstest.MapFile{Data: []byte(`{
+		"$id": "https://gobl.org/draft-0/bill/order",
+		"$ref": "#/$defs/bill.Order",
+		"$defs": {
+			"bill.Order": {
+				"type": "object",
+				"properties": {
+					"ordering": {"type": "object", "properties": {"code": {"type": "string"}}},
+					"notes": {"type": "array", "items": {"type": "object", "properties": {"text": {"type": "string"}}}}
+				}
+			}
+		}
+	}`)},
+}
+
+func TestBuildWalksInlineObjects(t *testing.T) {
+	fields := build(t, "bill/order", goblfields.Options{Source: inlineSchemas})
+	equal(t, paths(fields), []string{"ordering", "notes[]"})
+	equal(t, paths(fields[0].Children), []string{"ordering.code"})
+	equal(t, paths(fields[1].Children), []string{"notes[].text"})
+}
+
+func TestTrailLooksThroughGroups(t *testing.T) {
+	fields := []props.Field{
+		goblfields.Group("Invoice", build(t, invoiceSchema)),
+		goblfields.Group("Order", build(t, invoiceSchema)),
+	}
+	// The group is on the trail, the path beneath it unchanged; the first
+	// group holding the path wins.
+	trail := goblfields.Trail(fields, lineItemName)
+	equal(t, paths(trail), []string{"Invoice", linesPath, "lines[].item", lineItemName})
+	if got := goblfields.Trail(fields, "nope"); len(got) != 0 {
+		t.Fatalf("unknown path = %v", paths(got))
+	}
+}

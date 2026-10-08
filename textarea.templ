@@ -170,6 +170,8 @@ templ templateEditor(prp props.Textarea) {
 		// element ships empty; data-template-editor is how FieldPicker
 		// recognises it. leading-6 on both views: a chip is as tall as the
 		// 20px line the field normally sets, so wrapped lines need the room.
+		// Read-only keeps the focus and the chips, and just takes no edits;
+		// disabled takes neither.
 		<div
 			x-ref="editor"
 			x-show="view === 'rich'"
@@ -180,6 +182,10 @@ templ templateEditor(prp props.Textarea) {
 			id={ prp.ID }
 			if prp.Disabled {
 				contenteditable="false"
+			} else if prp.Readonly {
+				contenteditable="false"
+				aria-readonly="true"
+				tabindex="0"
 			} else {
 				contenteditable="true"
 				tabindex="0"
@@ -211,6 +217,9 @@ templ templateEditor(prp props.Textarea) {
 			if prp.Disabled {
 				disabled
 			}
+			if prp.Readonly {
+				readonly
+			}
 			if prp.Placeholder != "" {
 				placeholder={ prp.Placeholder }
 			}
@@ -231,11 +240,11 @@ func templateEditorView(p props.Textarea) string {
 }
 
 // templateEditorData builds the x-data="templateEditor({...})" snippet: the
-// template text, the syntax its variables are written in, and the view to
-// start in.
+// template text, the syntax its variables are written in, the view to start
+// in, and whether the editor takes edits at all.
 func templateEditorData(p props.Textarea) string {
 	value, _ := json.Marshal(p.Value)
 	format, _ := json.Marshal(p.VariableFormat)
 	view, _ := json.Marshal(templateEditorView(p))
-	return fmt.Sprintf("templateEditor({value: %s, format: %s, view: %s})", value, format, view)
+	return fmt.Sprintf("templateEditor({value: %s, format: %s, view: %s, readonly: %t})", value, format, view, p.Readonly || p.Disabled)
 }

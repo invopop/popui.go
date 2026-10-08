@@ -19,7 +19,9 @@ var envelopeFields = goblfields.MustBuild("envelope", goblfields.Options{Descrip
 
 // Whatever is in the children slot is the trigger. A read-only Input bound
 // to the value makes the picker behave like a select: the field shows the
-// pick, and a Value set up front is where the panel opens.
+// pick, and a Value set up front is where the panel opens. The trigger is
+// rendered as given, so it takes the picker's ID — that is what the Label
+// points at — and the popup attributes the default button would carry.
 func FieldPickerCustomTriggerExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -54,12 +56,16 @@ func FieldPickerCustomTriggerExample() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = popui.Input(props.Input{
+				ID:          "envelope-field",
 				Placeholder: "Select a field",
 				Icon:        icons.Brackets(),
 				Class:       "font-mono cursor-pointer",
 				Attributes: templ.Attributes{
-					":value":   "value",
-					"readonly": true,
+					":value":         "value",
+					"readonly":       true,
+					"aria-haspopup":  "listbox",
+					":aria-expanded": "open",
+					":aria-controls": "$id('field-picker') + '-listbox'",
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -68,6 +74,7 @@ func FieldPickerCustomTriggerExample() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
+			ID:     "envelope-field",
 			Label:  "Envelope field",
 			Name:   "field",
 			Root:   "envelope",
