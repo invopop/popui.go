@@ -90,7 +90,7 @@ type FieldPicker struct {
 	// any selection, with the caret left after it.
 	Target string
 	// ScalarsOnly makes objects and arrays browse-only: they can be opened
-	// but not picked, and one with nothing underneath is shown disabled.
+	// but not picked, and one with nothing underneath is left out.
 	// For a template, where a picked object would print as a Go map dump.
 	// Off by default, since a picker may be choosing a field for its own
 	// sake rather than for its value.

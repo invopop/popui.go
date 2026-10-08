@@ -56,7 +56,7 @@ func FieldPicker() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Description: "Put the caret somewhere in the body, then pick a field: it is wrapped in the Format and inserted there. ScalarsOnly keeps objects and arrays browse-only — in a template they would print as a Go map dump — so `supplier` opens rather than picks, and `$tags[]`, with nothing underneath, is disabled. Type to filter the whole tree, or browse it a level at a time with the breadcrumb — terms are matched against the full path, so \"sup name\", \"supplier.name\" and \"supname\" all find the same field.",
+			Description: "Put the caret somewhere in the body, then pick a field: it is wrapped in the Format and inserted there. ScalarsOnly keeps objects and arrays browse-only — in a template they would print as a Go map dump — so `supplier` opens rather than picks, and `$tags[]`, with nothing underneath, is left out. Type to filter the whole tree, or browse it a level at a time with the breadcrumb — terms are matched against the full path, so \"sup name\", \"supplier.name\" and \"supname\" all find the same field.",
 			Code:        examples.LoadExample("field_picker.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -220,7 +220,7 @@ func FieldPicker() templ.Component {
 					{Name: "Fields", Type: "[]props.Field", Default: "", Description: "The tree to pick from, usually built with `goblfields.Build`"},
 					{Name: "Format", Type: "string", Default: "\"%s\"", Description: "What a picked path is wrapped in, `%s` standing for the path: `{{.doc.%s}}` turns `supplier.name` into `{{.doc.supplier.name}}`. A field with a Value of its own is emitted as is"},
 					{Name: "Target", Type: "string", Default: "", Description: "CSS selector for an input, textarea or contenteditable element. When set, a pick is inserted there at the caret, replacing any selection, with the caret left after it"},
-					{Name: "ScalarsOnly", Type: "bool", Default: "false", Description: "Makes objects and arrays browse-only: they can be opened but not picked, and one with nothing underneath is shown disabled. For templates, where a picked object would print as a Go map dump"},
+					{Name: "ScalarsOnly", Type: "bool", Default: "false", Description: "Makes objects and arrays browse-only: they can be opened but not picked, and one with nothing underneath is left out. For templates, where a picked object would print as a Go map dump"},
 					{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the default trigger and keeps the panel closed"},
 					{Name: "Required", Type: "bool", Default: "false", Description: "Marks the hidden input as required for form validation"},
 					{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the trigger"},

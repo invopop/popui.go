@@ -1314,9 +1314,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           const key = this.query + '\n' + this.trail.join(',')
           if (key !== rowsKey) {
             rowsKey = key
-            rowsCache = this.searching ? this.match(this.query) : this.level.map((i) => ({ i, parts: null }))
+            rowsCache = this.searching ? this.match(this.query) : this.level.filter((i) => this.shown(i)).map((i) => ({ i, parts: null }))
           }
           return rowsCache
+        },
+        // With scalarsOnly, a non-scalar with nothing underneath — an array
+        // of strings, a free-form map — can be neither picked nor opened, so
+        // it is left out rather than shown disabled.
+        shown(i) {
+          return this.pickable(i) || this.entries[i].kids.length > 0
         },
         get activeIndex() {
           const i = this.rows.findIndex((row) => this.entries[row.i].path === this.activePath)
@@ -1372,6 +1378,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
           const found = []
           for (let i = 0; i < list.length; i++) {
+            if (!this.shown(i)) continue
             const score = scoreField(list[i], terms)
             if (score === null) continue
             found.push({ i, score })
