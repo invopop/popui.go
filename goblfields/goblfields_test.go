@@ -131,7 +131,8 @@ const (
 	addonsPath      = "$addons[]"
 	complementsPath = "complements[]"
 	linesPath       = "lines[]"
-	lineItemName    = "lines[].item.name"
+	lineItemPath    = lineItemPath
+	lineItemName    = lineItemPath + ".name"
 	uuidPath        = "uuid"
 	// The one scalar label the tests check for; the builder passes it
 	// through from the schema rather than naming it itself.
@@ -331,12 +332,12 @@ func TestSchemaObjectIsALeafInsideAnArrayToo(t *testing.T) {
 
 func TestTrailReturnsTheChainDownToTheField(t *testing.T) {
 	trail := goblfields.Trail(build(t, invoiceSchema), lineItemName)
-	equal(t, paths(trail), []string{linesPath, "lines[].item", lineItemName})
+	equal(t, paths(trail), []string{linesPath, lineItemPath, lineItemName})
 }
 
 func TestTrailFallsBackToTheDeepestPartOfThePathThatExists(t *testing.T) {
 	trail := goblfields.Trail(build(t, invoiceSchema), "lines[].item.nope")
-	equal(t, paths(trail), []string{linesPath, "lines[].item"})
+	equal(t, paths(trail), []string{linesPath, lineItemPath})
 }
 
 func TestTrailHasNothingToReturnForAnEmptyPath(t *testing.T) {
@@ -440,7 +441,7 @@ func TestTrailLooksThroughGroups(t *testing.T) {
 	// The group is on the trail, the path beneath it unchanged; the first
 	// group holding the path wins.
 	trail := goblfields.Trail(fields, lineItemName)
-	equal(t, paths(trail), []string{"Invoice", linesPath, "lines[].item", lineItemName})
+	equal(t, paths(trail), []string{"Invoice", linesPath, lineItemPath, lineItemName})
 	if got := goblfields.Trail(fields, "nope"); len(got) != 0 {
 		t.Fatalf("unknown path = %v", paths(got))
 	}
