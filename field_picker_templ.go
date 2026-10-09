@@ -112,7 +112,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.JSONScript(fieldPickerFieldsID(prp), fieldPickerEntries(prp.Fields)).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.JSONScript(fieldPickerFieldsID(prp), fieldPickerEntries(ctx, prp.Fields)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -334,7 +334,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-picker') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-picker') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex, 'mt-2 before:absolute before:inset-x-1 before:-top-1 before:border-t before:border-border': entries[row.i].divider && !row.parts }\" class=\"relative flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span x-show=\"!entries[row.i].group\" class=\"relative shrink-0 flex items-center pl-2 text-icon-default-secondary [&_svg]:size-4\" :title=\"typeLabel(row.i)\"><span x-show=\"typeKind(row.i) === 'string'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-picker') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"flex-1 min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-picker') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex, 'mt-2 before:absolute before:inset-x-1 before:-top-1 before:border-t before:border-border': entries[row.i].divider && !row.parts }\" class=\"relative flex items-center gap-2 min-h-8 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span x-show=\"typeKind(row.i) || entries[row.i].icon\" class=\"relative shrink-0 flex items-center pl-2 text-icon-default-secondary [&_svg]:size-4\" :title=\"typeLabel(row.i)\"><span x-show=\"entries[row.i].icon\" x-html=\"entries[row.i].icon\" class=\"flex items-center\"></span> <span x-show=\"typeKind(row.i) === 'string'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -381,7 +381,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fieldPickerCaretClass())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 294, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 296, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -444,6 +444,8 @@ type fieldPickerEntry struct {
 	Y string `json:"y,omitempty"`
 	V string `json:"v,omitempty"`
 	D string `json:"d,omitempty"`
+	// I is the field's own icon, rendered to HTML.
+	I string `json:"i,omitempty"`
 	// F is a bit set: 1 array, 2 always present, 4 has children, 8 group,
 	// 16 divider.
 	F int `json:"f,omitempty"`
@@ -453,12 +455,12 @@ type fieldPickerEntry struct {
 
 // fieldPickerEntries flattens the tree depth first, which is also the order
 // the picker renders it in.
-func fieldPickerEntries(fields []props.Field) []fieldPickerEntry {
+func fieldPickerEntries(ctx context.Context, fields []props.Field) []fieldPickerEntry {
 	entries := make([]fieldPickerEntry, 0, len(fields))
-	return appendFieldPickerEntries(entries, fields, -1)
+	return appendFieldPickerEntries(ctx, entries, fields, -1)
 }
 
-func appendFieldPickerEntries(entries []fieldPickerEntry, fields []props.Field, parent int) []fieldPickerEntry {
+func appendFieldPickerEntries(ctx context.Context, entries []fieldPickerEntry, fields []props.Field, parent int) []fieldPickerEntry {
 	for _, field := range fields {
 		flags := 0
 		if field.Array {
@@ -477,17 +479,24 @@ func appendFieldPickerEntries(entries []fieldPickerEntry, fields []props.Field, 
 			flags |= 16
 		}
 
-		entries = append(entries, fieldPickerEntry{
+		entry := fieldPickerEntry{
 			N: field.Name,
 			Y: field.Type,
 			V: field.Value,
 			D: field.Description,
 			F: flags,
 			P: parent,
-		})
+		}
+		if field.Icon != nil {
+			// An icon that fails to render is simply not shown.
+			if html, err := templ.ToGoHTML(ctx, field.Icon); err == nil {
+				entry.I = string(html)
+			}
+		}
+		entries = append(entries, entry)
 
 		index := len(entries) - 1
-		entries = appendFieldPickerEntries(entries, field.Children, index)
+		entries = appendFieldPickerEntries(ctx, entries, field.Children, index)
 	}
 	return entries
 }

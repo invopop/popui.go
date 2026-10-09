@@ -53,6 +53,10 @@ type Field struct {
 	// apart from the rows before it — the document nested under doc after a
 	// run of an app's own variables, say.
 	Divider bool
+	// Icon is drawn before the name in place of the type's own icon — a
+	// schema's glyph on a Group heading, say. Any templ component, usually
+	// one of the icons package's.
+	Icon templ.Component
 	// Children are the fields one level down, for a field that can be drilled
 	// into.
 	Children []Field

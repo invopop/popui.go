@@ -1427,6 +1427,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             type: e.y || '',
             description: e.d || '',
             own: e.v || '',
+            icon: e.i || '',
             parent: typeof e.p === 'number' ? e.p : -1,
             array: !!(e.f & 1),
             always: !!(e.f & 2),
@@ -1581,10 +1582,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           return TYPE_ABBREVIATIONS[entry.type] || entry.type
         },
         // The icon a row's type is drawn with: the JSON Schema types fold to
-        // five, and a field with no type is shown as a string.
+        // five, and a field with no type is shown as a string. A field with
+        // an icon of its own draws that instead.
         typeKind(i) {
           const entry = this.entries[i]
-          if (!entry || entry.group) return ''
+          if (!entry || entry.group || entry.icon) return ''
           const type = entry.type
           if (type === 'integer' || type === 'number') return 'number'
           if (type === 'object' || type === 'array' || type === 'boolean') return type
