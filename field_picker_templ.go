@@ -325,10 +325,12 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 			Size:    props.ButtonSizeIconSmall,
 			Class:   "ml-auto shrink-0",
 			Attributes: templ.Attributes{
-				"x-show":     "trail.length > 0",
-				"@click":     "trail = []",
-				"aria-label": "Clear",
-				"title":      "Clear",
+				":class":       "trail.length > 0 ? '' : 'invisible'",
+				":tabindex":    "trail.length > 0 ? null : -1",
+				":aria-hidden": "trail.length > 0 ? null : 'true'",
+				"@click":       "trail = []",
+				"aria-label":   "Clear",
+				"title":        "Clear",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -381,7 +383,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fieldPickerCaretClass())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 296, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 300, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {

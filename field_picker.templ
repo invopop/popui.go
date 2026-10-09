@@ -185,15 +185,19 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 					</span>
 				</template>
 				// Clear drops the whole trail in one go. At the top level
-				// there is nothing to drop, so it is not offered.
+				// there is nothing to drop, so it is hidden — but kept in
+				// the layout, so the crumb row is the same height at every
+				// level and the list does not shift on a drill.
 				@Button(props.Button{
 					Type:    "button",
 					Variant: props.ButtonVariantSecondary,
 					Size:    props.ButtonSizeIconSmall,
 					Class:   "ml-auto shrink-0",
 					Attributes: templ.Attributes{
-						"x-show":     "trail.length > 0",
-						"@click":     "trail = []",
+						":class":       "trail.length > 0 ? '' : 'invisible'",
+						":tabindex":    "trail.length > 0 ? null : -1",
+						":aria-hidden": "trail.length > 0 ? null : 'true'",
+						"@click":       "trail = []",
 						"aria-label": "Clear",
 						"title":      "Clear",
 					},
