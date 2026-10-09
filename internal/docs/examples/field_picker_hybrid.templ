@@ -23,7 +23,15 @@ func slackVariables(docFields []props.Field, codeDescription string) []props.Fie
 		{Name: "job_id", Path: "job_id", Description: "Job ID", Type: "string", AlwaysPresent: true},
 		{Name: "silo_entry_id", Path: "silo_entry_id", Description: "Silo entry ID", Type: "string", AlwaysPresent: true},
 		{Name: "faults", Path: "faults", Description: "Faults", Type: "string"},
-	}, goblfields.Nest("doc", docFields))
+	}, documentRow(docFields))
+}
+
+// documentRow is the document nested under doc, with a rule above it to
+// set it apart from the variables.
+func documentRow(docFields []props.Field) props.Field {
+	doc := goblfields.Nest("doc", docFields)
+	doc.Divider = true
+	return doc
 }
 
 // A message may be about any of several document types, so the picker's
