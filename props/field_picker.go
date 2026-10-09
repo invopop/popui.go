@@ -49,6 +49,14 @@ type Field struct {
 	// each document schema a message might be about, say — without the
 	// grouping changing the values picked. goblfields.Group builds one.
 	Group bool
+	// Divider draws a rule above the field's row while browsing, setting it
+	// apart from the rows before it — the document nested under doc after a
+	// run of an app's own variables, say.
+	Divider bool
+	// Icon is drawn before the name in place of the type's own icon — a
+	// schema's glyph on a Group heading, say. Any templ component, usually
+	// one of the icons package's.
+	Icon templ.Component
 	// Children are the fields one level down, for a field that can be drilled
 	// into.
 	Children []Field
@@ -99,7 +107,10 @@ type FieldPicker struct {
 	Format string
 	// Target is a CSS selector for an input, textarea or contenteditable
 	// element. When set, a pick is inserted there at the caret, replacing
-	// any selection, with the caret left after it.
+	// any selection, with the caret left after it. When the target is a
+	// template editor (a Contenteditable with a VariableFormat), typing the
+	// format's opening characters there — {{ — opens the picker at the
+	// caret with the filter focused, and the pick replaces them.
 	Target string
 	// ScalarsOnly makes objects and arrays browse-only: they can be opened
 	// but not picked, and one with nothing underneath is left out.
