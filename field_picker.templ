@@ -210,16 +210,49 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 				class="min-h-0 overflow-y-auto overflow-x-hidden outline-none"
 			>
 				<template x-for="(row, index) in rows" :key="entries[row.i].path">
+					// A row with a Divider draws a rule in the gap above it
+					// while browsing — a filter's results are one list.
 					<li
 						role="option"
 						:id="$id('field-picker') + '-opt-' + index"
 						:aria-selected="isSelected(row.i)"
-						:class="{ 'bg-background-default-secondary': index === activeIndex }"
-						class="flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer"
+						:class="{ 'bg-background-default-secondary': index === activeIndex, 'mt-2 before:absolute before:inset-x-1 before:-top-1 before:border-t before:border-border': entries[row.i].divider && !row.parts }"
+						class="relative flex items-center gap-2 px-2.5 py-1 rounded-md cursor-pointer"
 						:title="entries[row.i].description || entries[row.i].path"
 						@click="select(row.i)"
 						@mouseenter="activePath = entries[row.i].path"
 					>
+						// The type as an icon before the name — A for a
+						// string, braces an object, brackets an array, a
+						// hash a number, a switch a boolean — with the
+						// always-present dot on its corner, the way a status
+						// badge sits on an avatar. A group is a heading and
+						// carries none.
+						<span
+							x-show="!entries[row.i].group"
+							class="relative size-4 shrink-0 text-icon-default-secondary [&_svg]:size-4"
+							:title="typeLabel(row.i)"
+						>
+							<span x-show="typeKind(row.i) === 'string'">
+								@fieldIconString()
+							</span>
+							<span x-show="typeKind(row.i) === 'object'">
+								@fieldIconObject()
+							</span>
+							<span x-show="typeKind(row.i) === 'array'">
+								@fieldIconArray()
+							</span>
+							<span x-show="typeKind(row.i) === 'number'">
+								@fieldIconNumber()
+							</span>
+							<span x-show="typeKind(row.i) === 'boolean'">
+								@fieldIconBoolean()
+							</span>
+							<span
+								x-show="entries[row.i].always"
+								class="absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-background-success-bold ring-1 ring-background"
+							></span>
+						</span>
 						// Path and description share one line box, so they
 						// sit on a common baseline. Laying them out as flex
 						// items would not: truncation makes their overflow
@@ -236,25 +269,15 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						<span class="min-w-0 flex-1 truncate text-base text-foreground">
 							<span class="font-semibold" :class="entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'" x-html="labelHTML(row)"></span><template x-if="entries[row.i].description"><span class="ml-1.5 text-foreground-default-tertiary" x-text="entries[row.i].description"></span></template>
 						</span>
-						// The trailing column is three slots, every one of
-						// them kept on every row so they line up down the
-						// list: the always-present dot, the type, and the
-						// drill caret flush against the right edge. Type and
-						// caret are one target — clicking either drills in,
-						// the keyboard does it with Right — and the caret
-						// lights up from a hover over either.
+						// The trailing column is the drill caret, flush
+						// against the right edge and kept on every row so
+						// the carets line up down the list. Clicking it
+						// drills in — the keyboard does it with Right.
 						<span
 							class="ml-auto shrink-0 group flex items-center gap-1 pl-2"
 							:class="entries[row.i].children ? 'cursor-pointer' : ''"
 							@click="if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }"
 						>
-							<span
-								class="size-1.5 shrink-0 rounded-full"
-								:class="entries[row.i].always ? 'bg-background-success-bold' : ''"
-							></span>
-							// Wide enough for the longest abbreviation, so the
-							// caret starts in the same place under obj and bool.
-							<span class="w-9 shrink-0 font-mono text-base text-foreground-default-tertiary" x-text="typeLabel(row.i)"></span>
 							// The caret carries Button's default chrome so it
 							// reads as the control it is, but stays a span: an
 							// option may not contain a focusable element.
@@ -323,7 +346,8 @@ type fieldPickerEntry struct {
 	Y string `json:"y,omitempty"`
 	V string `json:"v,omitempty"`
 	D string `json:"d,omitempty"`
-	// F is a bit set: 1 array, 2 always present, 4 has children, 8 group.
+	// F is a bit set: 1 array, 2 always present, 4 has children, 8 group,
+	// 16 divider.
 	F int `json:"f,omitempty"`
 	// P is the index of the parent entry, -1 at the root.
 	P int `json:"p"`
@@ -350,6 +374,9 @@ func appendFieldPickerEntries(entries []fieldPickerEntry, fields []props.Field, 
 		}
 		if field.Group {
 			flags |= 8
+		}
+		if field.Divider {
+			flags |= 16
 		}
 
 		entries = append(entries, fieldPickerEntry{

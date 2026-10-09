@@ -49,6 +49,10 @@ type Field struct {
 	// each document schema a message might be about, say — without the
 	// grouping changing the values picked. goblfields.Group builds one.
 	Group bool
+	// Divider draws a rule above the field's row while browsing, setting it
+	// apart from the rows before it — the document nested under doc after a
+	// run of an app's own variables, say.
+	Divider bool
 	// Children are the fields one level down, for a field that can be drilled
 	// into.
 	Children []Field

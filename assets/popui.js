@@ -1432,6 +1432,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             always: !!(e.f & 2),
             children: !!(e.f & 4),
             group: !!(e.f & 8),
+            divider: !!(e.f & 16),
             path: '',
             // The path the field emits: its path without the groups on the
             // way, since a group is a heading over fields, not one of them.
@@ -1578,6 +1579,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           const entry = this.entries[i]
           if (!entry || entry.group) return ''
           return TYPE_ABBREVIATIONS[entry.type] || entry.type
+        },
+        // The icon a row's type is drawn with: the JSON Schema types fold to
+        // five, and a field with no type is shown as a string.
+        typeKind(i) {
+          const entry = this.entries[i]
+          if (!entry || entry.group) return ''
+          const type = entry.type
+          if (type === 'integer' || type === 'number') return 'number'
+          if (type === 'object' || type === 'array' || type === 'boolean') return type
+          return 'string'
         },
         // The row's path as escaped HTML: the whole path while browsing, and
         // while filtering the runs a term did not hit dimmed, so the ones it
