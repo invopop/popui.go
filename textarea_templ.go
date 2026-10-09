@@ -237,8 +237,10 @@ func Textarea(p ...props.Textarea) templ.Component {
 // the text ("{{.code}}" for a format of "{{.%s}}") is drawn as a chip, the
 // template text is what Value holds and what is submitted under Name, and
 // ViewToggle adds a Rich / Plain switch. FieldPicker inserts into it as
-// chips. Attributes then go on the component root, the element carrying
-// x-modelable, so an Alpine x-model there binds the template text.
+// chips, and typing the format's opening characters — {{ — opens a
+// FieldPicker aimed at the editor at the caret. Attributes then go on the
+// component root, the element carrying x-modelable, so an Alpine x-model
+// there binds the template text.
 func Contenteditable(p ...props.Textarea) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -287,7 +289,7 @@ func Contenteditable(p ...props.Textarea) templ.Component {
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 82, Col: 16}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 84, Col: 16}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
@@ -317,7 +319,7 @@ func Contenteditable(p ...props.Textarea) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 89, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 91, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -330,7 +332,7 @@ func Contenteditable(p ...props.Textarea) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 90, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 92, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -418,7 +420,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(templateEditorData(prp))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 119, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 121, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -457,7 +459,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 127, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 129, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {
@@ -511,7 +513,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 160, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 162, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -556,7 +558,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 182, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 184, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -594,7 +596,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 193, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 195, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -627,14 +629,14 @@ func templateEditor(prp props.Textarea) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<textarea x-ref=\"plain\" x-show=\"view === 'plain'\" x-cloak x-model=\"value\" @input.stop=\"changed()\" rows=\"1\" style=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<textarea x-ref=\"plain\" x-show=\"view === 'plain'\" x-cloak x-model=\"value\" @input.stop=\"typed()\" rows=\"1\" style=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 210, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 212, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -677,7 +679,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 224, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `textarea.templ`, Line: 226, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
