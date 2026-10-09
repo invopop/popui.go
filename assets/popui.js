@@ -1503,16 +1503,20 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           panel.style.left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin)) + 'px'
           const below = window.innerHeight - rect.bottom - gap - margin
           const above = rect.top - gap - margin
+          panel.style.minHeight = ''
           const floor = parseFloat(getComputedStyle(panel).minHeight) || 0
-          if (below >= floor || below >= above) {
+          const room = below >= floor || below >= above ? below : above
+          if (room === below) {
             panel.style.top = rect.bottom + gap + 'px'
             panel.style.bottom = 'auto'
-            panel.style.maxHeight = below + 'px'
           } else {
             panel.style.top = 'auto'
             panel.style.bottom = window.innerHeight - rect.top + gap + 'px'
-            panel.style.maxHeight = above + 'px'
           }
+          panel.style.maxHeight = room + 'px'
+          // The stylesheet's floor would win over a smaller max-height, so
+          // when neither side has that much room the floor gives way too.
+          if (room < floor) panel.style.minHeight = room + 'px'
         },
         // Returns the panel to the trigger-anchored position the stylesheet
         // gives it.
@@ -1523,6 +1527,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           panel.style.top = ''
           panel.style.bottom = ''
           panel.style.maxHeight = ''
+          panel.style.minHeight = ''
         },
 
         get searching() {

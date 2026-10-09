@@ -229,13 +229,13 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						// The type as an icon before the name — A for a
 						// string, braces an object, brackets an array, a
 						// hash a number, a switch a boolean — with the
-						// always-present dot in a narrow gutter to its left,
-						// kept on every row so the icons line up. A field's
-						// own Icon takes the type's place. A group is a
-						// heading and carries only an Icon it was given.
+						// always-present dot in a narrow gutter to its left.
+						// A field's own Icon takes the type's place. A group
+						// is a heading and draws only an Icon it was given,
+						// but the slot is kept on every row, so names line
+						// up whatever a row carries.
 						<span
-							x-show="typeKind(row.i) || entries[row.i].icon"
-							class="relative shrink-0 flex items-center pl-2 text-icon-default-secondary [&_svg]:size-4"
+							class="relative shrink-0 flex items-center pl-2 size-4 box-content text-icon-default-secondary [&_svg]:size-4"
 							:title="typeLabel(row.i)"
 						>
 							<span x-show="entries[row.i].icon" x-html="entries[row.i].icon" class="flex items-center"></span>
