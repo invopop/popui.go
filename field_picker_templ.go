@@ -395,7 +395,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span></span></li></template><li role=\"presentation\" x-show=\"rows.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No fields found</li></ul><div class=\"flex items-center gap-3 shrink-0 px-2 pt-2 pb-1 mt-1 border-t border-border text-sm text-foreground-default-tertiary\"><span class=\"flex items-center gap-1.5\"><span class=\"size-1.5 rounded-full bg-background-success-bold\"></span> Always present</span> <span class=\"ml-auto shrink-0\" x-text=\"rows.length + (searching ? ' matches' : ' fields')\"></span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span></span></li></template><li role=\"presentation\" x-show=\"rows.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No fields found</li></ul><div class=\"flex items-center gap-3 shrink-0 px-2.5 pt-2 pb-1 mt-1 border-t border-border text-sm text-foreground-default-tertiary\"><span class=\"flex items-center gap-1.5\"><span class=\"size-1 rounded-full bg-background-success-bold\"></span> Always present</span> <span class=\"ml-auto shrink-0\" x-text=\"rows.length + (searching ? ' matches' : ' fields')\"></span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
