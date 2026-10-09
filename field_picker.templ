@@ -272,24 +272,25 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 						// The trailing column is the drill caret, flush
 						// against the right edge and kept on every row so
 						// the carets line up down the list. Clicking it
-						// drills in — the keyboard does it with Right.
+						// drills in — the keyboard does it with Right. The
+						// negative margin is the difference between the
+						// row's padding and the crumb row's, so the carets
+						// line up under the Clear button; as a margin rather
+						// than a nudge, the text keeps the room.
 						<span
-							class="ml-auto shrink-0 group flex items-center gap-1 pl-2"
+							class="ml-auto shrink-0 group flex items-center -mr-1.5"
 							:class="entries[row.i].children ? 'cursor-pointer' : ''"
 							@click="if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }"
 						>
 							// The caret carries Button's default chrome so it
 							// reads as the control it is, but stays a span: an
 							// option may not contain a focusable element.
-							// Nudged right by the difference between the row's
-							// padding and the crumb row's, so the carets line
-							// up under the Clear button.
 							// On a browse-only row the whole row is the one
 							// target, so the caret is a bare glyph there with
 							// no chrome or hover of its own.
 							<span
 								aria-hidden="true"
-								class="shrink-0 relative left-1.5"
+								class="shrink-0"
 								:class={ fieldPickerCaretClass() }
 							>
 								@icons.ChevronRight()

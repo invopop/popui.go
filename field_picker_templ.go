@@ -374,14 +374,14 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span> <span x-show=\"entries[row.i].always\" class=\"absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-background-success-bold ring-1 ring-background\"></span></span><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-semibold\" :class=\"entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center gap-1 pl-2\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span aria-hidden=\"true\" class=\"shrink-0 relative left-1.5\" :class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span> <span x-show=\"entries[row.i].always\" class=\"absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-background-success-bold ring-1 ring-background\"></span></span><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-semibold\" :class=\"entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center -mr-1.5\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span aria-hidden=\"true\" class=\"shrink-0\" :class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fieldPickerCaretClass())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 293, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 294, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
