@@ -69,8 +69,10 @@ templ Textarea(p ...props.Textarea) {
 // the text ("{{.code}}" for a format of "{{.%s}}") is drawn as a chip, the
 // template text is what Value holds and what is submitted under Name, and
 // ViewToggle adds a Rich / Plain switch. FieldPicker inserts into it as
-// chips. Attributes then go on the component root, the element carrying
-// x-modelable, so an Alpine x-model there binds the template text.
+// chips, and typing the format's opening characters — {{ — opens a
+// FieldPicker aimed at the editor at the caret. Attributes then go on the
+// component root, the element carrying x-modelable, so an Alpine x-model
+// there binds the template text.
 templ Contenteditable(p ...props.Textarea) {
 	{{ prp := props.First(p) }}
 	if prp.VariableFormat != "" {
@@ -205,7 +207,7 @@ templ templateEditor(prp props.Textarea) {
 			x-show="view === 'plain'"
 			x-cloak
 			x-model="value"
-			@input.stop="changed()"
+			@input.stop="typed()"
 			rows="1"
 			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
 			class={ tailwind.Merge(

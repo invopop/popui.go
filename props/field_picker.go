@@ -99,7 +99,10 @@ type FieldPicker struct {
 	Format string
 	// Target is a CSS selector for an input, textarea or contenteditable
 	// element. When set, a pick is inserted there at the caret, replacing
-	// any selection, with the caret left after it.
+	// any selection, with the caret left after it. When the target is a
+	// template editor (a Contenteditable with a VariableFormat), typing the
+	// format's opening characters there — {{ — opens the picker at the
+	// caret with the filter focused, and the pick replaces them.
 	Target string
 	// ScalarsOnly makes objects and arrays browse-only: they can be opened
 	// but not picked, and one with nothing underneath is left out.
