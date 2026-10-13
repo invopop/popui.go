@@ -241,7 +241,7 @@ func FieldPicker() templ.Component {
 					{Name: "Path", Type: "string", Default: "", Description: "The full dotted path from the root. Shown while filtering, and what Format wraps"},
 					{Name: "Value", Type: "string", Default: "", Description: "Emitted as is when set, bypassing Format — for a variable that is not part of the tree's document, say"},
 					{Name: "Description", Type: "string", Default: "", Description: "Long description, shown after the path and as the row's tooltip, truncating before the path does. Never searched — filtering matches the path alone. `goblfields` leaves it out unless `Options.Descriptions` is set: they roughly double the payload"},
-					{Name: "Type", Type: "string", Default: "", Description: "JSON Schema type: `string`, `object`, `array`, `integer`, `number`, `boolean`. Shown abbreviated in the row; carried in full on the event"},
+					{Name: "Type", Type: "string", Default: "", Description: "JSON Schema type: `string`, `object`, `array`, `integer`, `number`, `boolean`. Picks the icon drawn before the name — A, braces, brackets, a hash, a switch — unless `Icon` is set; named in the row's tooltip and carried on the event"},
 					{Name: "Array", Type: "bool", Default: "false", Description: "Marks a field that is itself an array. Its children describe one item"},
 					{Name: "Required", Type: "bool", Default: "false", Description: "Marks a field its immediate parent requires"},
 					{Name: "AlwaysPresent", Type: "bool", Default: "false", Description: "Marks a field required at every step from the root, shown with a green dot. Inside an array it reads per item: `lines[].item` is marked when every line that exists carries an item"},

@@ -29,8 +29,10 @@ type Field struct {
 	// leaves it out unless asked for, and a row without one shows just its
 	// path.
 	Description string
-	// Type is the JSON Schema type shown at the end of the row: string,
-	// object, array, integer, number, boolean.
+	// Type is the JSON Schema type: string, object, array, integer, number,
+	// boolean. It picks the icon drawn before the name — A, braces,
+	// brackets, a hash, a switch — unless Icon is set, names the row's
+	// tooltip, and is carried on the select event.
 	Type string
 	// Array marks a field that is itself an array. Its children describe one
 	// item, so their paths carry the [] marker of this field.
