@@ -102,7 +102,7 @@ func AccordionExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Accordions expand and collapse independently of each other.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Long titles wrap while the caret stays pinned to the right edge.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -114,7 +114,7 @@ func AccordionExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Accordion(props.Accordion{Title: "I am another Accordion."}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Accordion(props.Accordion{Title: "I am an Accordion with a much longer title that keeps going so you can see how it wraps onto a second line."}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
