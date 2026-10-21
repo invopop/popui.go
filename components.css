@@ -684,6 +684,9 @@ form {
    inert so a selection can never bleed into the neighbouring month. */
 .popui-cal { --popui-cal-cell: 2rem; }
 .popui-cal-preset {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
   white-space: nowrap;
   text-align: left;
   font-size: 0.875rem;
@@ -693,6 +696,18 @@ form {
   background-color: transparent;
   border: 0;
   cursor: pointer;
+}
+/* The active preset is rendered one weight heavier, which is wider. A hidden
+   zero-height copy of the label at that weight (from data-label) sits under
+   the visible text so every button is already as wide as its active state,
+   and the rail does not shift by a pixel when the selection changes. */
+.popui-cal-preset::after {
+  content: attr(data-label);
+  font-weight: 500;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
 }
 .popui-cal-preset:hover { background-color: var(--color-background-default-secondary); }
 .popui-cal-preset[data-active] {

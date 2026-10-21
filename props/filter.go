@@ -62,7 +62,8 @@ const (
 	// FilterTypeCalendar renders a dual-month date-range calendar with a
 	// preset rail (this/last week, month, quarter + custom). The selected
 	// range is submitted as a single "YYYY-MM-DD..YYYY-MM-DD" value under
-	// Name. Operator: "is between".
+	// Name; an indefinite range (CalendarPresetIndefinite) submits
+	// "YYYY-MM-DD.." with an empty end. Operator: "is between".
 	FilterTypeCalendar string = "calendar"
 )
 

@@ -12,6 +12,27 @@ const (
 	CalendarPresetLastMonth   string = "lastMonth"
 	CalendarPresetThisQuarter string = "thisQuarter"
 	CalendarPresetLastQuarter string = "lastQuarter"
+
+	// Forward-looking presets, for validity periods and scheduling rather than
+	// filtering history. Unlike the calendar-aligned this/last presets, they all
+	// roll from today to the same day of the month N months ahead (17 Sep →
+	// 17 Oct for a month), clamped to the last day when that month is shorter.
+	//
+	// CalendarPresetNextMonth is today to the same day next month.
+	CalendarPresetNextMonth string = "nextMonth"
+	// CalendarPresetNext3Months is today to the same day three months out.
+	CalendarPresetNext3Months string = "next3Months"
+	// CalendarPresetNext6Months is today to the same day six months out.
+	CalendarPresetNext6Months string = "next6Months"
+	// CalendarPresetNext12Months is today to the same day twelve months out.
+	CalendarPresetNext12Months string = "next12Months"
+	// CalendarPresetIndefinite is a start date with no end date. It selects
+	// from today onwards (or from a start day already clicked without an end);
+	// clicking a day moves the start. The grid paints every
+	// day after the start as selected, and the value is submitted as
+	// "YYYY-MM-DD.." (empty end). Confirm is enabled as soon as a start is set.
+	CalendarPresetIndefinite string = "indefinite"
+
 	// CalendarPresetCustom is the "no preset / pick your own dates" entry; keep
 	// it in the rail so users can always fall back to a manual range.
 	CalendarPresetCustom string = "custom"
@@ -19,25 +40,72 @@ const (
 
 // CalendarPreset is one shortcut in the calendar's preset rail. Key selects the
 // built-in range (a CalendarPreset* constant); Label is the rail text — falls
-// back to the Key when empty.
+// back to CalendarPresetLabel(Key), then to the Key itself, when empty.
 type CalendarPreset struct {
 	Key   string
 	Label string
+}
+
+// calendarPresetLabels holds the standard rail text for every built-in key.
+var calendarPresetLabels = map[string]string{
+	CalendarPresetThisWeek:     "This Week",
+	CalendarPresetLastWeek:     "Last Week",
+	CalendarPresetThisMonth:    "This month",
+	CalendarPresetLastMonth:    "Last month",
+	CalendarPresetThisQuarter:  "This quarter",
+	CalendarPresetLastQuarter:  "Last quarter",
+	CalendarPresetNextMonth:    "Next month",
+	CalendarPresetNext3Months:  "Next 3 months",
+	CalendarPresetNext6Months:  "Next 6 months",
+	CalendarPresetNext12Months: "Next 12 months",
+	CalendarPresetIndefinite:   "Indefinite",
+	CalendarPresetCustom:       "Custom",
+}
+
+// CalendarPresetLabel returns the standard rail text for a built-in preset key,
+// or "" for an unknown key.
+func CalendarPresetLabel(key string) string {
+	return calendarPresetLabels[key]
 }
 
 // DefaultCalendarPresets is the preset rail used when none is supplied:
 // this/last week, this/last month, this/last quarter, plus custom. Callers can
 // pass a subset (or reordering) to Calendar.Presets / FilterInput.Presets.
 func DefaultCalendarPresets() []CalendarPreset {
-	return []CalendarPreset{
-		{Key: CalendarPresetThisWeek, Label: "This Week"},
-		{Key: CalendarPresetLastWeek, Label: "Last Week"},
-		{Key: CalendarPresetThisMonth, Label: "This month"},
-		{Key: CalendarPresetLastMonth, Label: "Last month"},
-		{Key: CalendarPresetThisQuarter, Label: "This quarter"},
-		{Key: CalendarPresetLastQuarter, Label: "Last quarter"},
-		{Key: CalendarPresetCustom, Label: "Custom"},
+	return calendarPresets{
+		{Key: CalendarPresetThisWeek},
+		{Key: CalendarPresetLastWeek},
+		{Key: CalendarPresetThisMonth},
+		{Key: CalendarPresetLastMonth},
+		{Key: CalendarPresetThisQuarter},
+		{Key: CalendarPresetLastQuarter},
+		{Key: CalendarPresetCustom},
+	}.withLabels()
+}
+
+// FutureCalendarPresets is a forward-looking rail for validity periods and
+// scheduling: next month, next 3 / 6 / 12 months, indefinite, plus custom.
+func FutureCalendarPresets() []CalendarPreset {
+	return calendarPresets{
+		{Key: CalendarPresetNextMonth},
+		{Key: CalendarPresetNext3Months},
+		{Key: CalendarPresetNext6Months},
+		{Key: CalendarPresetNext12Months},
+		{Key: CalendarPresetIndefinite},
+		{Key: CalendarPresetCustom},
+	}.withLabels()
+}
+
+// calendarPresets is a helper type for filling in standard labels.
+type calendarPresets []CalendarPreset
+
+func (ps calendarPresets) withLabels() []CalendarPreset {
+	for i := range ps {
+		if ps[i].Label == "" {
+			ps[i].Label = CalendarPresetLabel(ps[i].Key)
+		}
 	}
+	return ps
 }
 
 // Calendar renders a dual-month, range-selection calendar grid with a
@@ -68,7 +136,8 @@ type Calendar struct {
 	// ancestor-provided scope.
 	Name string
 	// From / To seed the initially selected range (ISO yyyy-mm-dd) when Name
-	// is set. Empty means no initial selection.
+	// is set. Both empty means no initial selection; From without To seeds an
+	// indefinite range (start date, no end — see CalendarPresetIndefinite).
 	From string
 	To   string
 
