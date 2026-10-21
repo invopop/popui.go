@@ -276,6 +276,7 @@ func Textarea() templ.Component {
 					{Name: "VariableFormat", Type: "string", Default: "", Description: "Contenteditable only. The syntax template variables are written in, `%s` standing for the name — `{{.%s}}` for a Go template. Turns the editor into a template editor: variables are drawn as chips, and Value, Name and an Alpine x-model carry the template text. Attributes then apply to the component root"},
 					{Name: "ViewToggle", Type: "bool", Default: "false", Description: "Contenteditable with VariableFormat only. Adds a Rich text / Plain text switch above the editor"},
 					{Name: "View", Type: "string", Default: "\"rich\"", Description: "Contenteditable with VariableFormat only. The view to start in: `rich` or `plain`"},
+					{Name: "Picker", Type: "*props.FieldPicker", Default: "", Description: "Contenteditable with VariableFormat only. A FieldPicker placed in the header at the right of the view toggle, as an icon button, aimed at the editor; its Fields, Format and ScalarsOnly are yours to set, its Target and Align the editor's"},
 					{Name: "Error", Type: "props.Error", Default: "", Description: "Error configuration to display validation feedback below the textarea"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
