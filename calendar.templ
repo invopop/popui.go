@@ -62,6 +62,7 @@ templ Calendar(opts ...props.Calendar) {
 							type="button"
 							class="popui-cal-preset"
 							:data-active="preset === p.key ? '' : null"
+							:data-label="p.label"
 							@click="setPreset(p.key)"
 							x-text="p.label"
 						></button>

@@ -143,7 +143,7 @@ func Calendar(opts ...props.Calendar) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !p.Single {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"popui-cal-presets flex flex-col gap-2 items-start p-3 border-r border-border\"><template x-for=\"p in presets\" :key=\"p.key\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"preset === p.key ? '' : null\" :data-label=\"p.label\" @click=\"setPreset(p.key)\" x-text=\"p.label\"></button></template></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
