@@ -12,12 +12,9 @@ templ AccordionExample() {
 				You can put any content in here, including other components.
 			}
 		}
-		@popui.Accordion(props.Accordion{
-			Title:       "With a description",
-			Description: "Secondary text shown beneath the title.",
-		}) {
+		@popui.Accordion(props.Accordion{Title: "I am another Accordion."}) {
 			@popui.Description() {
-				Descriptions help readers decide whether to expand a section.
+				Accordions expand and collapse independently of each other.
 			}
 		}
 	</div>

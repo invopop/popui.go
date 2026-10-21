@@ -9,6 +9,29 @@ with the replacement and a before/after snippet.
 
 Entries are grouped by the release that removed them, newest first.
 
+## October 2026 Accordion simplification (PR #85)
+
+| Removed | Replacement |
+|---|---|
+| `popui.AccordionTrigger`, `props.AccordionTrigger` | `props.Accordion.Title` |
+| `popui.AccordionContent`, `props.AccordionContent` | children of `popui.Accordion` |
+
+### AccordionTrigger / AccordionContent → Accordion with Title
+
+`Accordion` now renders its own trigger from `Title` and treats children as
+the collapsible content. Wrap related accordions in `AccordionGroup` for a
+single bordered panel with dividers.
+
+```templ
+// before
+@popui.Accordion(props.Accordion{Open: true}) {
+	@popui.AccordionTrigger() { Is it accessible? }
+	@popui.AccordionContent() { ... }
+}
+// after
+@popui.Accordion(props.Accordion{Title: "Is it accessible?", Open: true}) { ... }
+```
+
 ## July 2026 consolidation (PR #53)
 
 | Removed | Replacement |

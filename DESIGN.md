@@ -56,7 +56,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | User avatar | `Avatar` |
 | File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
-| Expandable section | `Accordion` with `Title` (or `AccordionTrigger` + `AccordionContent`), grouped via `AccordionGroup` |
+| Expandable section | `Accordion` with `Title`, grouped via `AccordionGroup` |
 | Dropdown/context actions | `Menu` > `MenuItem` (+ `MenuSeparator` between groups) |
 | Floating content panel | `Popover` |
 | Key-value data display | `DescriptionList` > `DescriptionListItem` |
