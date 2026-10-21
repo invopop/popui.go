@@ -258,13 +258,8 @@ templ oauthSection(org *Org, app *Application, form *ApplicationForm) {
 					}
 				</div>
 			}
-			@popui.Accordion() {
-				@popui.AccordionTrigger() {
-					How the app gets a token for a workspace
-				}
-				@popui.AccordionContent() {
-					@oauthFlowInfo(form)
-				}
+			@popui.Accordion(props.Accordion{Title: "How the app gets a token for a workspace"}) {
+				@oauthFlowInfo(form)
 			}
 		}
 	</div>
