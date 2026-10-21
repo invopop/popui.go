@@ -228,14 +228,9 @@ templ Stress() {
 				// ---- Accordion ----
 				@popui.Section(props.Section{Title: "Accordion — constrained 320px", ID: "accordion"}) {
 					@stressBox() {
-						@popui.Accordion(props.Accordion{Open: true}) {
-							@popui.AccordionTrigger() {
-								{ stressName }
-							}
-							@popui.AccordionContent() {
-								<p>{ stressSentence }</p>
-								<p>{ stressToken }</p>
-							}
+						@popui.Accordion(props.Accordion{Title: stressName, Open: true}) {
+							<p>{ stressSentence }</p>
+							<p>{ stressToken }</p>
 						}
 					}
 				}
