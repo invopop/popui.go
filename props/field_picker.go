@@ -64,6 +64,9 @@ type Field struct {
 	Children []Field
 }
 
+// FieldPickerAlignEnd hangs the panel from the trigger's right edge.
+const FieldPickerAlignEnd = "end"
+
 // FieldPicker Templ component props.
 //
 // The component is a panel that picks one field of a tree — filtering the
@@ -80,6 +83,10 @@ type Field struct {
 // `field-select` event.
 type FieldPicker struct {
 	ID string
+	// Align is which edge of the trigger the panel hangs from: the left by
+	// default, the right with FieldPickerAlignEnd — for a trigger at the
+	// right of its row, so the panel stays over the content.
+	Align string
 	// Class is applied to the default trigger button.
 	Class string
 	// Attributes are applied to the component root, the element carrying

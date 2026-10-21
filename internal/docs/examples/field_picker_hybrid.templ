@@ -57,23 +57,19 @@ func schemaGroup(label, schema string, icon templ.Component, fields []props.Fiel
 var slackMessage = "Invoice {{.full_code}} from {{.supplier_name}} is ready — issued {{.issue_date}}, {{.doc.totals.payable}} {{.doc.currency}}."
 
 templ FieldPickerHybridExample() {
-	<div class="flex flex-col gap-2 w-full">
-		@popui.Contenteditable(props.Textarea{
-			ID:             "slack-message",
-			Name:           "message",
-			Label:          "Message",
-			Rows:           3,
-			Value:          slackMessage,
-			VariableFormat: "{{.%s}}",
-			ViewToggle:     true,
-		})
-		@popui.FieldPicker(props.FieldPicker{
-			TriggerLabel: "Insert variable",
-			Root:         "Schemas",
-			Fields:       slackFields,
-			Format:       "{{.%s}}",
-			Target:       "#slack-message",
-			ScalarsOnly:  true,
-		})
-	</div>
+	@popui.Contenteditable(props.Textarea{
+		ID:             "slack-message",
+		Name:           "message",
+		Label:          "Message",
+		Rows:           3,
+		Value:          slackMessage,
+		VariableFormat: "{{.%s}}",
+		ViewToggle:     true,
+		Picker: &props.FieldPicker{
+			Root:        "Schemas",
+			Fields:      slackFields,
+			Format:      "{{.%s}}",
+			ScalarsOnly: true,
+		},
+	})
 }

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
 	"github.com/invopop/popui.go/props"
 	"github.com/invopop/popui.go/tailwind"
 )
@@ -136,7 +137,10 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 			:style="'position-anchor: --' + $id('field-picker')"
 			@toggle="onToggle($event)"
 			@keydown="onKeydown($event)"
-			class="field-picker-panel flex flex-col min-w-[min(20rem,calc(100vw-2rem))] min-h-[18.75rem] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg"
+			class={ tailwind.Merge(
+				"field-picker-panel flex flex-col min-w-[min(20rem,calc(100vw-2rem))] min-h-[18.75rem] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg",
+				classes.If(prp.Align == props.FieldPickerAlignEnd, "field-picker-panel-end"),
+			) }
 		>
 			<div class="p-1 shrink-0">
 				@Input(props.Input{

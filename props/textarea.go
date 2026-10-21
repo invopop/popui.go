@@ -44,6 +44,13 @@ type Textarea struct {
 	// View is the view the editor starts in: ContenteditableViewRich (the
 	// default) or ContenteditableViewPlain. Only with VariableFormat.
 	View string
+	// Picker puts a FieldPicker in the editor's header, at the right of the
+	// view toggle, as an icon button of the editor's own height, with its
+	// panel hung from the right edge. Its Target is the editor, so a pick
+	// and a typed opening — {{ — both land at the caret. Set the picker's
+	// Fields, Format, ScalarsOnly and the rest as usual; its ID, Target and
+	// Align are the editor's to set. Only with VariableFormat.
+	Picker *FieldPicker
 
 	Error Error
 }

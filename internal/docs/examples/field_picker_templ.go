@@ -24,6 +24,8 @@ var invoiceFields = goblfields.MustBuild("bill/invoice", goblfields.Options{Desc
 // is a template editor.
 var emailDraft = "Hello {{.doc.customer.name}},\n\nYour invoice {{.doc.code}} is ready. "
 
+// The picker sits in the editor's header, at the right of the view
+// toggle, as an icon button: the editor aims it at itself.
 func FieldPickerExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -45,10 +47,6 @@ func FieldPickerExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-2 w-full\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = popui.Contenteditable(props.Textarea{
 			ID:             "email-body",
 			Name:           "body",
@@ -57,21 +55,13 @@ func FieldPickerExample() templ.Component {
 			Value:          emailDraft,
 			VariableFormat: "{{.%s}}",
 			ViewToggle:     true,
+			Picker: &props.FieldPicker{
+				Root:        "bill/invoice",
+				Fields:      invoiceFields,
+				Format:      "{{.doc.%s}}",
+				ScalarsOnly: true,
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
-			Root:        "bill/invoice",
-			Fields:      invoiceFields,
-			Format:      "{{.doc.%s}}",
-			Target:      "#email-body",
-			ScalarsOnly: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
