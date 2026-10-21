@@ -102,7 +102,7 @@ func AccordionExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Long titles wrap while the caret stays pinned to the right edge.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Long titles wrap while the caret stays pinned to the right edge. The content area wraps too, so a description this long will flow onto several lines without ever being clipped by the panel's rounded corners or overflow handling.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

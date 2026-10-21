@@ -101,7 +101,7 @@ func Accordion(p ...props.Accordion) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 = []any{"flex w-full cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-left select-none",
-			"text-base font-medium leading-6 text-foreground break-words",
+			"text-base font-medium leading-5 text-foreground break-words",
 			"hover:bg-background-default-secondary group-open:hover:bg-background transition-colors",
 			"[&::-webkit-details-marker]:hidden",
 		}
