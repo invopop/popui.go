@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/invopop/icons"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/goblfields"
 	"github.com/invopop/popui.go/props"
@@ -31,7 +32,15 @@ func slackVariables(docFields []props.Field, codeDescription string) []props.Fie
 		{Name: "job_id", Path: "job_id", Description: "Job ID", Type: "string", AlwaysPresent: true},
 		{Name: "silo_entry_id", Path: "silo_entry_id", Description: "Silo entry ID", Type: "string", AlwaysPresent: true},
 		{Name: "faults", Path: "faults", Description: "Faults", Type: "string"},
-	}, goblfields.Nest("doc", docFields))
+	}, documentRow(docFields))
+}
+
+// documentRow is the document nested under doc, with a rule above it to
+// set it apart from the variables.
+func documentRow(docFields []props.Field) props.Field {
+	doc := goblfields.Nest("doc", docFields)
+	doc.Divider = true
+	return doc
 }
 
 // A message may be about any of several document types, so the picker's
@@ -40,13 +49,16 @@ func slackVariables(docFields []props.Field, codeDescription string) []props.Fie
 // Delivery still emits {{.doc.supplier.name}} — the same template works
 // whichever document the job carries.
 var slackFields = []props.Field{
-	schemaGroup("Invoice", "bill/invoice", slackVariables(invoiceFields, "Full invoice code (series-code)")),
-	schemaGroup("Delivery", "bill/delivery", slackVariables(deliveryFields, "Full delivery code (series-code)")),
+	schemaGroup("Invoice", "bill/invoice", icons.Invoice(), slackVariables(invoiceFields, "Full invoice code (series-code)")),
+	schemaGroup("Delivery", "bill/delivery", icons.Van(), slackVariables(deliveryFields, "Full delivery code (series-code)")),
 }
 
-func schemaGroup(label, schema string, fields []props.Field) props.Field {
+// schemaGroup is a heading for one schema's tree, with the schema's id
+// beside the label and its glyph before it.
+func schemaGroup(label, schema string, icon templ.Component, fields []props.Field) props.Field {
 	g := goblfields.Group(label, fields)
 	g.Description = schema
+	g.Icon = icon
 	return g
 }
 
@@ -73,10 +85,6 @@ func FieldPickerHybridExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-2 w-full\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = popui.Contenteditable(props.Textarea{
 			ID:             "slack-message",
 			Name:           "message",
@@ -85,22 +93,13 @@ func FieldPickerHybridExample() templ.Component {
 			Value:          slackMessage,
 			VariableFormat: "{{.%s}}",
 			ViewToggle:     true,
+			Picker: &props.FieldPicker{
+				Root:        "Schemas",
+				Fields:      slackFields,
+				Format:      "{{.%s}}",
+				ScalarsOnly: true,
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = popui.FieldPicker(props.FieldPicker{
-			TriggerLabel: "Insert variable",
-			Root:         "Schemas",
-			Fields:       slackFields,
-			Format:       "{{.%s}}",
-			Target:       "#slack-message",
-			ScalarsOnly:  true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
