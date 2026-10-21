@@ -69,8 +69,10 @@ templ Textarea(p ...props.Textarea) {
 // the text ("{{.code}}" for a format of "{{.%s}}") is drawn as a chip, the
 // template text is what Value holds and what is submitted under Name, and
 // ViewToggle adds a Rich / Plain switch. FieldPicker inserts into it as
-// chips. Attributes then go on the component root, the element carrying
-// x-modelable, so an Alpine x-model there binds the template text.
+// chips, and typing the format's opening characters — {{ — opens a
+// FieldPicker aimed at the editor at the caret. Attributes then go on the
+// component root, the element carrying x-modelable, so an Alpine x-model
+// there binds the template text.
 templ Contenteditable(p ...props.Textarea) {
 	{{ prp := props.First(p) }}
 	if prp.VariableFormat != "" {
@@ -120,7 +122,7 @@ templ templateEditor(prp props.Textarea) {
 		x-modelable="value"
 		{ prp.Attributes... }
 	>
-		if prp.Label != "" || prp.ViewToggle {
+		if prp.Label != "" || prp.ViewToggle || prp.Picker != nil {
 			<div class="flex items-center gap-2">
 				if prp.Label != "" {
 					@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
@@ -146,6 +148,29 @@ templ templateEditor(prp props.Textarea) {
 							{Value: props.ContenteditableViewPlain, Icon: icons.Code(), Title: "Code"},
 						},
 					})
+				}
+				if prp.Picker != nil {
+					// The picker's trigger is an icon button the height of
+					// the toggle's pill, at the row's right; the panel hangs
+					// from its right edge. The picker is aimed at this
+					// editor, so a pick lands at the caret.
+					@FieldPicker(templateEditorPicker(prp)) {
+						@Button(props.Button{
+							Type:     "button",
+							Size:     props.ButtonSizeIcon,
+							Disabled: prp.Disabled || prp.Readonly,
+							Class:    classes.If(!prp.ViewToggle, "ml-auto"),
+							Attributes: templ.Attributes{
+								"aria-label":     "Insert field",
+								"title":          "Insert field",
+								"aria-haspopup":  "listbox",
+								":aria-expanded": "open",
+								":aria-controls": "$id('field-picker') + '-listbox'",
+							},
+						}) {
+							@icons.Brackets()
+						}
+					}
 				}
 			</div>
 		}
@@ -205,7 +230,7 @@ templ templateEditor(prp props.Textarea) {
 			x-show="view === 'plain'"
 			x-cloak
 			x-model="value"
-			@input.stop="changed()"
+			@input.stop="typed()"
 			rows="1"
 			style={ "min-height: " + fmt.Sprintf("%d", prp.Rows*34) + "px" }
 			class={ tailwind.Merge(
@@ -228,6 +253,18 @@ templ templateEditor(prp props.Textarea) {
 			@InputError(prp.Error)
 		}
 	</div>
+}
+
+// templateEditorPicker is the header picker's props: the consumer's, aimed
+// at this editor, hung from the right.
+func templateEditorPicker(p props.Textarea) props.FieldPicker {
+	picker := *p.Picker
+	picker.Target = "#" + p.ID
+	picker.Align = props.FieldPickerAlignEnd
+	if picker.Format == "" {
+		picker.Format = p.VariableFormat
+	}
+	return picker
 }
 
 // templateEditorView is the view the editor starts in, rich unless asked

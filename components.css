@@ -156,6 +156,12 @@ body {
   max-height: -webkit-fill-available; /* Safari: no `stretch` keyword yet */
   max-height: stretch;
 }
+/* Hung from the trigger's right edge instead: for a trigger at the right
+   of its row, so the panel stays over the content. */
+[popover].field-picker-panel-end {
+  left: unset;
+  right: anchor(right);
+}
 [popover].multiselect-panel:not(:popover-open),
 [popover].field-picker-panel:not(:popover-open) {
   display: none;
@@ -170,6 +176,9 @@ body {
     margin: 0.25rem 0 0;
     /* No anchor() means no viewport-relative cap — fall back to a fixed one. */
     max-height: min(24rem, 70vh);
+  }
+  [popover].field-picker-panel-end {
+    right: 0;
   }
 }
 
