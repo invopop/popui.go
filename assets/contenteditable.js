@@ -101,7 +101,7 @@ document.addEventListener('alpine:init', () => {
   })
 })
 
-// Revove format from pasted text
+// Remove format from pasted text
 document.addEventListener('paste', function (e) {
   const target = e.target
 
@@ -111,10 +111,6 @@ document.addEventListener('paste', function (e) {
     let clipboardEvent = e
 
     if (!clipboardEvent.clipboardData) return
-
-    const target = e.target
-
-    if (!target) return
 
     const pasteText = clipboardEvent.clipboardData.getData('text/plain')
     const selection = window.getSelection()

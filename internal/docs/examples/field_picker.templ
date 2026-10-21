@@ -16,23 +16,22 @@ var invoiceFields = goblfields.MustBuild("bill/invoice", goblfields.Options{Desc
 // is a template editor.
 var emailDraft = "Hello {{.doc.customer.name}},\n\nYour invoice {{.doc.code}} is ready. "
 
+// The picker sits in the editor's header, at the right of the view
+// toggle, as an icon button: the editor aims it at itself.
 templ FieldPickerExample() {
-	<div class="flex flex-col gap-2 w-full">
-		@popui.Contenteditable(props.Textarea{
-			ID:             "email-body",
-			Name:           "body",
-			Label:          "Email body",
-			Rows:           3,
-			Value:          emailDraft,
-			VariableFormat: "{{.%s}}",
-			ViewToggle:     true,
-		})
-		@popui.FieldPicker(props.FieldPicker{
-			Root:   "bill/invoice",
-			Fields: invoiceFields,
-			Format: "{{.doc.%s}}",
-			Target: "#email-body",
+	@popui.Contenteditable(props.Textarea{
+		ID:             "email-body",
+		Name:           "body",
+		Label:          "Email body",
+		Rows:           3,
+		Value:          emailDraft,
+		VariableFormat: "{{.%s}}",
+		ViewToggle:     true,
+		Picker: &props.FieldPicker{
+			Root:        "bill/invoice",
+			Fields:      invoiceFields,
+			Format:      "{{.doc.%s}}",
 			ScalarsOnly: true,
-		})
-	</div>
+		},
+	})
 }
