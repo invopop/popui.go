@@ -6,25 +6,15 @@ import (
 )
 
 templ AccordionExample() {
-	<div class="w-full space-y-2">
-		@popui.Accordion(props.Accordion{Open: true}) {
-			@popui.AccordionTrigger() {
-				Is it accessible?
-			}
-			@popui.AccordionContent() {
-				@popui.Description() {
-					Yes. It uses native HTML details/summary elements for full keyboard navigation and screen reader support.
-				}
+	<div class="w-full space-y-3">
+		@popui.Accordion(props.Accordion{Title: "I am an Accordion.", Open: true}) {
+			@popui.Description() {
+				You can put any content in here, including other components.
 			}
 		}
-		@popui.Accordion() {
-			@popui.AccordionTrigger() {
-				Is it styled?
-			}
-			@popui.AccordionContent() {
-				@popui.Description() {
-					Yes. It comes with default styles using Tailwind CSS that you can customize.
-				}
+		@popui.Accordion(props.Accordion{Title: "I am an Accordion with a much longer title that keeps going so you can see how it wraps onto a second line."}) {
+			@popui.Description() {
+				Long titles wrap while the caret stays pinned to the right edge. The content area wraps too, so a description this long will flow onto several lines without ever being clipped by the panel's rounded corners or overflow handling.
 			}
 		}
 	</div>
