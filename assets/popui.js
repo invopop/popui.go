@@ -1089,6 +1089,43 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     // Template editor: a Contenteditable that draws each variable as a chip and keeps the template text —
     // variables written out — as its value. Rich view edits the chips in place; plain view edits the text.
+    // The characters that open a variable in a format: what is left of the
+    // part before %s once the name's own lead-in is trimmed — `{{` for
+    // {{.%s}}, `${` for ${%s}. Typing them in an editor is a request for a
+    // field.
+    function templateTrigger(format) {
+      const prefix = String(format || '').split('%s')[0]
+      return prefix.replace(/[\w.$\s]+$/, '')
+    }
+
+    // Where the caret of a textarea is on screen, measured off a hidden copy
+    // of its text up to the caret in the same metrics.
+    function textareaCaretRect(area) {
+      const style = getComputedStyle(area)
+      const mirror = document.createElement('div')
+      for (const prop of ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'paddingTop', 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderTopWidth', 'boxSizing', 'tabSize']) mirror.style[prop] = style[prop]
+      mirror.style.position = 'fixed'
+      mirror.style.top = '0'
+      mirror.style.left = '0'
+      mirror.style.visibility = 'hidden'
+      mirror.style.whiteSpace = 'pre-wrap'
+      mirror.style.overflowWrap = 'break-word'
+      mirror.style.width = area.clientWidth + 'px'
+      const at = area.selectionStart == null ? area.value.length : area.selectionStart
+      mirror.textContent = area.value.slice(0, at)
+      const marker = document.createElement('span')
+      marker.textContent = '\u200b'
+      mirror.appendChild(marker)
+      document.body.appendChild(mirror)
+      const m = marker.getBoundingClientRect()
+      const box = mirror.getBoundingClientRect()
+      const a = area.getBoundingClientRect()
+      mirror.remove()
+      const left = a.left + (m.left - box.left) - area.scrollLeft
+      const top = a.top + (m.top - box.top) - area.scrollTop
+      return { left, top, right: left, bottom: top + m.height, width: 0, height: m.height }
+    }
+
     Alpine.data('templateEditor', (init) => ({
       value: (init && init.value) || '',
       format: (init && init.format) || '{{.%s}}',
@@ -1146,6 +1183,77 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           if (offset !== null) this.setCaretOffset(editor, offset)
         }
         this.changed()
+        this.prompt()
+      },
+      // Typing the format's opening characters — {{ — asks for a field: a
+      // template-prompt event goes out from the root with where the caret
+      // is, and a FieldPicker aimed at this editor opens there. The picker
+      // replaces the characters with the pick.
+      prompt() {
+        const trigger = templateTrigger(this.format)
+        if (!trigger || this.readonly) return
+        const before = this.textBeforeCaret()
+        if (before === null || !before.endsWith(trigger)) return
+        const rect = this.caretRect()
+        if (!rect) return
+        this.$root.dispatchEvent(new CustomEvent('template-prompt', {
+          bubbles: true,
+          detail: { trigger, rect },
+        }))
+      },
+      // The template text up to the caret of whichever view is showing.
+      textBeforeCaret() {
+        if (this.view === 'plain') {
+          const area = this.$refs.plain
+          if (!area) return null
+          const at = area.selectionStart == null ? area.value.length : area.selectionStart
+          return area.value.slice(0, at)
+        }
+        const editor = this.$refs.editor
+        const sel = window.getSelection()
+        if (!editor || !sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        if (!editor.contains(range.startContainer)) return null
+        const before = document.createRange()
+        before.setStart(editor, 0)
+        before.setEnd(range.startContainer, range.startOffset)
+        return serializeTemplate(before.cloneContents())
+      },
+      // Where the caret is on screen, in viewport coordinates.
+      caretRect() {
+        if (this.view === 'plain') {
+          return this.$refs.plain ? textareaCaretRect(this.$refs.plain) : null
+        }
+        const sel = window.getSelection()
+        if (!sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        // A collapsed range often has no box of its own; the character just
+        // before it does.
+        if (range.collapsed && range.startContainer.nodeType === 3 && range.startOffset > 0) {
+          const probe = range.cloneRange()
+          probe.setStart(range.startContainer, range.startOffset - 1)
+          const r = probe.getBoundingClientRect()
+          if (r.height) return { left: r.right, top: r.top, right: r.right, bottom: r.bottom, width: 0, height: r.height }
+        }
+        const r = range.getBoundingClientRect()
+        if (r.height) return r
+        const e = this.$refs.editor.getBoundingClientRect()
+        return { left: e.left, top: e.top, right: e.left, bottom: e.top, width: 0, height: 0 }
+      },
+      // Gives the showing view the focus back, with the caret where it was.
+      refocus() {
+        if (this.view === 'plain') {
+          if (this.$refs.plain) this.$refs.plain.focus()
+          return
+        }
+        const editor = this.$refs.editor
+        if (!editor) return
+        editor.focus()
+        if (this.savedRange && editor.contains(this.savedRange.commonAncestorContainer)) {
+          const sel = window.getSelection()
+          sel.removeAllRanges()
+          sel.addRange(this.savedRange)
+        }
       },
       // Announces a change with an input event from the component root —
       // after Alpine has carried the new value across an x-model on it, so
@@ -1154,6 +1262,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // through, they would reach the root a tick too early.
       changed() {
         this.$nextTick(() => this.$root.dispatchEvent(new Event('input', { bubbles: true })))
+      },
+      // Called on every edit of the plain view.
+      typed() {
+        this.changed()
+        this.prompt()
       },
       // Reports whether any text in the editor — outside the chips — is a
       // complete variable.
@@ -1213,14 +1326,17 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       // Puts text at the caret of whichever view is showing. In the rich view
       // a variable becomes a chip and anything else plain text; the caret
-      // ends up after it. This is what FieldPicker calls.
-      insertText(text) {
+      // ends up after it. This is what FieldPicker calls; replace is how
+      // many characters before the caret go first — the trigger the user
+      // typed to summon it.
+      insertText(text, replace = 0) {
         if (this.readonly) return
         if (this.view === 'plain') {
           const area = this.$refs.plain
           if (!area) return
-          const start = area.selectionStart == null ? area.value.length : area.selectionStart
+          let start = area.selectionStart == null ? area.value.length : area.selectionStart
           const end = area.selectionEnd == null ? start : area.selectionEnd
+          start = Math.max(0, start - replace)
           area.setRangeText(text, start, end, 'end')
           area.focus()
           this.value = area.value
@@ -1235,6 +1351,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           range = document.createRange()
           range.selectNodeContents(editor)
           range.collapse(false)
+        }
+        if (replace > 0 && range.startContainer.nodeType === 3) {
+          range.setStart(range.startContainer, Math.max(0, range.startOffset - replace))
         }
         range.deleteContents()
         const match = String(text).match(variablePattern(this.format, true))
@@ -1267,6 +1386,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       return {
         entries: [],
         roots: [],
+        // Set while the panel was opened by the target editor's typed
+        // trigger rather than the button: what to replace with the pick,
+        // and where the caret was.
+        prompt: null,
         value: (init && init.value) || '',
         name: (init && init.name) || '',
         // What a picked path is wrapped in: %s stands for the path. A field
@@ -1304,11 +1427,13 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             type: e.y || '',
             description: e.d || '',
             own: e.v || '',
+            icon: e.i || '',
             parent: typeof e.p === 'number' ? e.p : -1,
             array: !!(e.f & 1),
             always: !!(e.f & 2),
             children: !!(e.f & 4),
             group: !!(e.f & 8),
+            divider: !!(e.f & 16),
             path: '',
             // The path the field emits: its path without the groups on the
             // way, since a group is a heading over fields, not one of them.
@@ -1341,10 +1466,68 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
               if (target.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
             }
             document.addEventListener('selectionchange', this._onSelectionChange)
+            // A template editor that is the target announces the format's
+            // opening characters being typed; the picker opens at the caret.
+            this._onPrompt = (e) => {
+              const target = this.targetEl()
+              if (!target || !e.target || !e.target.contains(target)) return
+              this.openAt(e.detail)
+            }
+            document.addEventListener('template-prompt', this._onPrompt)
           }
         },
         destroy() {
           if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
+          if (this._onPrompt) document.removeEventListener('template-prompt', this._onPrompt)
+        },
+        // Opens the panel at a point in the viewport rather than under the
+        // trigger: where the caret was when the editor asked for a field.
+        // The characters typed to ask are remembered, so the pick replaces
+        // them.
+        openAt(prompt) {
+          if (this.disabled || this.open || !prompt) return
+          this.prompt = { replace: prompt.trigger ? prompt.trigger.length : 0, rect: prompt.rect }
+          this.show()
+        },
+        // Positions the open panel at the prompt's caret: below it when there
+        // is room for the panel's floor, above otherwise, and kept inside
+        // the viewport sideways.
+        placeAtPrompt() {
+          const panel = this.$refs.panel
+          const rect = this.prompt && this.prompt.rect
+          if (!rect) return
+          const gap = 4
+          const margin = 12
+          panel.style.position = 'fixed'
+          const width = panel.offsetWidth
+          panel.style.left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin)) + 'px'
+          const below = window.innerHeight - rect.bottom - gap - margin
+          const above = rect.top - gap - margin
+          panel.style.minHeight = ''
+          const floor = parseFloat(getComputedStyle(panel).minHeight) || 0
+          const room = below >= floor || below >= above ? below : above
+          if (room === below) {
+            panel.style.top = rect.bottom + gap + 'px'
+            panel.style.bottom = 'auto'
+          } else {
+            panel.style.top = 'auto'
+            panel.style.bottom = window.innerHeight - rect.top + gap + 'px'
+          }
+          panel.style.maxHeight = room + 'px'
+          // The stylesheet's floor would win over a smaller max-height, so
+          // when neither side has that much room the floor gives way too.
+          if (room < floor) panel.style.minHeight = room + 'px'
+        },
+        // Returns the panel to the trigger-anchored position the stylesheet
+        // gives it.
+        unplace() {
+          const panel = this.$refs.panel
+          panel.style.position = ''
+          panel.style.left = ''
+          panel.style.top = ''
+          panel.style.bottom = ''
+          panel.style.maxHeight = ''
+          panel.style.minHeight = ''
         },
 
         get searching() {
@@ -1402,6 +1585,17 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           const entry = this.entries[i]
           if (!entry || entry.group) return ''
           return TYPE_ABBREVIATIONS[entry.type] || entry.type
+        },
+        // The icon a row's type is drawn with: the JSON Schema types fold to
+        // five, and a field with no type is shown as a string. A field with
+        // an icon of its own draws that instead.
+        typeKind(i) {
+          const entry = this.entries[i]
+          if (!entry || entry.group || entry.icon) return ''
+          const type = entry.type
+          if (type === 'integer' || type === 'number') return 'number'
+          if (type === 'object' || type === 'array' || type === 'boolean') return type
+          return 'string'
         },
         // The row's path as escaped HTML: the whole path while browsing, and
         // while filtering the runs a term did not hit dimmed, so the ones it
@@ -1492,7 +1686,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
           if (target.hasAttribute('data-template-editor') && window.Alpine) {
             const editor = window.Alpine.$data(target)
             if (editor && typeof editor.insertText === 'function') {
-              editor.insertText(text)
+              editor.insertText(text, this.prompt ? this.prompt.replace : 0)
               return
             }
           }
@@ -1595,12 +1789,22 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             panel.style.minWidth = ''
             const floor = parseFloat(getComputedStyle(panel).minWidth) || 0
             if (trigger.offsetWidth > floor) panel.style.minWidth = trigger.offsetWidth + 'px'
+            if (this.prompt) this.placeAtPrompt()
             this.query = ''
             this.openAtValue()
             this.$nextTick(() => { if (this.$refs.search) this.$refs.search.focus() })
           } else {
             this.open = false
             this.query = ''
+            if (this.prompt) {
+              // Opened from the editor, so the editor gets the focus back,
+              // whether a field was picked or the panel was dismissed.
+              this.unplace()
+              this.prompt = null
+              const target = this.targetEl()
+              const editor = target && target.hasAttribute('data-template-editor') && window.Alpine ? window.Alpine.$data(target) : null
+              if (editor && typeof editor.refocus === 'function') editor.refocus()
+            }
           }
         },
       }
