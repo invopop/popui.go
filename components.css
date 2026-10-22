@@ -227,13 +227,18 @@ div[contenteditable='true'] .tag {
   vertical-align: baseline;
   white-space: nowrap;
 }
-mark,
-pre,
-p > code {
-  @apply font-sans border border-border-default-secondary bg-background-default-secondary rounded text-sm text-foreground-default-secondary px-1 py-0.5 inline-flex;
-}
-pre {
-  @apply overflow-x-auto;
+/* Layered as components so utilities can restyle these elements — the
+   Tooltip card, for one, recolours code for its dark surface via [&_code]
+   variants, which an unlayered rule would always beat. */
+@layer components {
+  mark,
+  pre,
+  p > code {
+    @apply font-sans border border-border-default-secondary bg-background-default-secondary rounded text-sm text-foreground-default-secondary px-1 py-0.5 inline-flex;
+  }
+  pre {
+    @apply overflow-x-auto;
+  }
 }
 
 /* Select arrow */
