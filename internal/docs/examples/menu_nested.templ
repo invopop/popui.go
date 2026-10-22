@@ -1,0 +1,56 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ MenuNestedExample() {
+	@popui.Menu(props.Menu{
+		ButtonLabel: "Add a product",
+		ButtonIcon:  icons.Add(),
+		ButtonSize:  props.ButtonSizeSmall,
+	}) {
+		@popui.MenuItem() {
+			@icons.Edit()
+			<span>Custom product</span>
+		}
+		@popui.MenuSeparator()
+		@popui.MenuSub(props.MenuSub{Label: "Developer plans"}) {
+			@popui.MenuItem() {
+				<span>Dev 200</span>
+				<span class="text-foreground-default-secondary">200 pops</span>
+			}
+			@popui.MenuItem() {
+				<span>Dev 500</span>
+				<span class="text-foreground-default-secondary">500 pops</span>
+			}
+			@popui.MenuItem() {
+				<span>Dev 2k</span>
+				<span class="text-foreground-default-secondary">2,000 pops</span>
+			}
+		}
+		@popui.MenuSub(props.MenuSub{Label: "Pro plans"}) {
+			@popui.MenuItem() {
+				<span>Pro 20k</span>
+				<span class="text-foreground-default-secondary">20,000 pops</span>
+			}
+			@popui.MenuItem() {
+				<span>Pro 50k</span>
+				<span class="text-foreground-default-secondary">50,000 pops</span>
+			}
+		}
+		@popui.MenuSub(props.MenuSub{Label: "Add-ons", Icon: icons.Puzzle()}) {
+			@popui.MenuItem() {
+				<span>Chargebee</span>
+			}
+			@popui.MenuItem() {
+				<span>Stripe</span>
+			}
+			@popui.MenuItem() {
+				<span>NetSuite</span>
+			}
+		}
+	}
+}

@@ -26,6 +26,16 @@ type Menu struct {
 	// ButtonVariant sets the button style, see the button component
 	// for available variants.
 	ButtonVariant string
+
+	// ButtonSize sets the size of the default trigger button. Empty keeps the
+	// square icon size the kebab trigger uses; pass a Button size such as
+	// ButtonSizeSmall when ButtonLabel is a real label. Ignored when Trigger
+	// is set.
+	ButtonSize string
+
+	// ButtonIcon renders before ButtonLabel inside the default trigger
+	// button. Ignored when Trigger is set.
+	ButtonIcon templ.Component
 	// Trigger replaces the default button with any component (an Avatar, an
 	// icon, a styled row, …) as the menu opener. It is wrapped in an
 	// unstyled <button> that carries the popover wiring, so pass
@@ -84,4 +94,30 @@ type MenuSeparator struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+}
+
+// TriggerSize returns the size of the default trigger button: ButtonSize
+// when set, otherwise the square icon size.
+func (cm Menu) TriggerSize() string {
+	if cm.ButtonSize != "" {
+		return cm.ButtonSize
+	}
+	return ButtonSizeIcon
+}
+
+// MenuSub Templ component props. A row of a Menu that opens a nested panel
+// of further items beside it.
+type MenuSub struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+
+	// Label is the row text.
+	Label string
+
+	// Icon renders before the label.
+	Icon templ.Component
+
+	// PanelClass adds classes to the flyout panel.
+	PanelClass string
 }

@@ -392,6 +392,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       const triggerRect = trigger.getBoundingClientRect()
       const isRightAlign = contextMenu.classList.contains('context-menu-right-align')
       const menuWidth = contextMenu.offsetWidth
+      if (contextMenu.classList.contains('context-menu-sub')) {
+        // Submenu: beside its row, flipping to the left when there is no room.
+        let subLeft = triggerRect.right + 6
+        if (subLeft + menuWidth > window.innerWidth - 8) subLeft = triggerRect.left - menuWidth - 6
+        contextMenu.style.position = 'fixed'
+        contextMenu.style.top = `${Math.max(triggerRect.top - 4, 8)}px`
+        contextMenu.style.left = `${Math.max(subLeft, 8)}px`
+        contextMenu.style.right = 'auto'
+        return
+      }
       let left = isRightAlign ? triggerRect.right - menuWidth : triggerRect.left
       left = Math.min(left, window.innerWidth - menuWidth - 8)
       left = Math.max(left, 8)

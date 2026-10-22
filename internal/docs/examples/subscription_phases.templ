@@ -1,0 +1,817 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+// subscriptionPrice is one row of a product's price table: a usage range and
+// the amount charged for it, either per unit of usage or as a flat fee.
+type subscriptionPrice struct {
+	From    int     `json:"from"`
+	UpTo    int     `json:"upTo"` // 0 leaves the range open-ended
+	Amount  float64 `json:"amount"`
+	PerUnit bool    `json:"perUnit"`
+}
+
+// subscriptionProduct is a catalog product. Amounts are monthly EUR; the page
+// applies the yearly and USD multipliers from the pricing spec.
+type subscriptionProduct struct {
+	ID       string              `json:"id"`
+	Name     string              `json:"name"`
+	Meta     string              `json:"meta"`
+	Feature  string              `json:"feature"`
+	Grant    int                 `json:"grant"`
+	Strategy string              `json:"strategy"`
+	Usage    bool                `json:"usage"`
+	Prices   []subscriptionPrice `json:"prices"`
+}
+
+type subscriptionGroup struct {
+	Name     string                `json:"name"`
+	Products []subscriptionProduct `json:"products"`
+}
+
+func flatPrice(amount float64) []subscriptionPrice {
+	return []subscriptionPrice{{Amount: amount}}
+}
+
+// subscriptionCatalog is the single source of truth for products: it renders
+// the nested add menu and the product selects, and is shipped to the page as
+// JSON so the Alpine controller can copy a product's details onto an item.
+var subscriptionCatalog = []subscriptionGroup{
+	{Name: "Developer plans", Products: []subscriptionProduct{
+		{ID: "dev-200", Name: "Dev 200", Meta: "200 pops", Feature: "pops", Grant: 200, Strategy: "fixed", Prices: flatPrice(30)},
+		{ID: "dev-500", Name: "Dev 500", Meta: "500 pops", Feature: "pops", Grant: 500, Strategy: "fixed", Prices: flatPrice(50)},
+		{ID: "dev-2k", Name: "Dev 2k", Meta: "2,000 pops", Feature: "pops", Grant: 2000, Strategy: "fixed", Prices: flatPrice(100)},
+		{ID: "dev-10k", Name: "Dev 10k", Meta: "10,000 pops", Feature: "pops", Grant: 10000, Strategy: "fixed", Prices: flatPrice(200)},
+	}},
+	{Name: "Pro plans", Products: []subscriptionProduct{
+		{ID: "pro-20k", Name: "Pro 20k", Meta: "20,000 pops", Feature: "pops", Grant: 20000, Strategy: "fixed", Prices: flatPrice(300)},
+		{ID: "pro-50k", Name: "Pro 50k", Meta: "50,000 pops", Feature: "pops", Grant: 50000, Strategy: "fixed", Prices: flatPrice(480)},
+		{ID: "pro-100k", Name: "Pro 100k", Meta: "100,000 pops", Feature: "pops", Grant: 100000, Strategy: "fixed", Prices: flatPrice(750)},
+		{ID: "pro-200k", Name: "Pro 200k", Meta: "200,000 pops", Feature: "pops", Grant: 200000, Strategy: "fixed", Prices: flatPrice(1200)},
+	}},
+	{Name: "Add-ons", Products: []subscriptionProduct{
+		{ID: "chargebee", Name: "Chargebee", Meta: "Billing app", Feature: "apps", Grant: 1, Strategy: "fixed", Prices: flatPrice(200)},
+		{ID: "stripe", Name: "Stripe", Meta: "Billing app", Feature: "apps", Grant: 1, Strategy: "fixed", Prices: flatPrice(100)},
+		{ID: "netsuite", Name: "NetSuite", Meta: "ERP app", Feature: "apps", Grant: 1, Strategy: "fixed", Prices: flatPrice(250)},
+	}},
+	{Name: "Enterprise", Products: []subscriptionProduct{
+		{ID: "saas-fee", Name: "SaaS access fee", Meta: "Includes one network", Feature: "access", Grant: 1, Strategy: "fixed", Prices: flatPrice(3000)},
+		{ID: "network", Name: "Additional network", Meta: "Per network or app", Feature: "networks", Grant: 1, Strategy: "fixed", Prices: flatPrice(500)},
+		{ID: "doc-fee", Name: "Document fee", Meta: "Per document issued", Feature: "documents", Strategy: "unit", Usage: true, Prices: []subscriptionPrice{{Amount: 0.01, PerUnit: true}}},
+		{ID: "einvoice", Name: "E-invoice (XML)", Meta: "Tiered per document", Feature: "einvoices", Strategy: "tiered", Usage: true, Prices: []subscriptionPrice{
+			{From: 0, UpTo: 50000, Amount: 0.020, PerUnit: true},
+			{From: 50001, UpTo: 100000, Amount: 0.015, PerUnit: true},
+			{From: 100001, UpTo: 500000, Amount: 0.010, PerUnit: true},
+			{From: 500001, UpTo: 1000000, Amount: 0.008, PerUnit: true},
+			{From: 1000001, Amount: 0.005, PerUnit: true},
+		}},
+	}},
+}
+
+var subscriptionFeatureOptions = []props.SelectOption{
+	{Value: "pops", Label: "Pops (meter)"},
+	{Value: "documents", Label: "Documents (meter)"},
+	{Value: "einvoices", Label: "E-invoices (meter)"},
+	{Value: "networks", Label: "Networks (count)"},
+	{Value: "apps", Label: "Billing & ERP apps (count)"},
+	{Value: "access", Label: "Platform access (boolean)"},
+}
+
+var subscriptionIncludedOptions = []props.SelectOption{
+	{Value: "community", Label: "Community support"},
+	{Value: "chat", Label: "Chat & email support"},
+	{Value: "slack", Label: "Slack support"},
+	{Value: "branding", Label: "Remove branding"},
+	{Value: "multi-user", Label: "Multi-user"},
+	{Value: "sla", Label: "Uptime & support SLAs"},
+}
+
+var subscriptionStrategyOptions = []props.SelectOption{
+	{Value: "fixed", Label: "Fixed (price × qty)"},
+	{Value: "unit", Label: "Per unit"},
+	{Value: "tiered", Label: "Tiered"},
+	{Value: "volume", Label: "Volume"},
+}
+
+var subscriptionIntervalOptions = []props.SelectOption{
+	{Value: "monthly", Label: "Monthly"},
+	{Value: "yearly", Label: "Yearly"},
+	{Value: "once", Label: "Once"},
+}
+
+// SubscriptionPhasesExample is a subscription editor whose phases sit side by
+// side as CardDecks on a horizontally scrolling plane. Each deck carries the
+// phase's schedule, one Card per product billed during the phase, a nested
+// menu to add catalog or custom products, and a running total. Adding a
+// phase clones the last one, starts it a month later, and scrolls the plane
+// to reveal it.
+templ SubscriptionPhasesExample() {
+	@popui.App(props.App{
+		Title:        "New subscription",
+		FillViewport: true,
+		Data:         "subscriptionPhases",
+		Head:         subscriptionPhasesHead(),
+	}) {
+		@popui.Header(props.Header{Title: subscriptionPhasesTitle()}) {
+			@popui.Button(props.Button{
+				Type:       "button",
+				Variant:    props.ButtonVariantSecondary,
+				Attributes: templ.Attributes{"@click": "addPhase()"},
+			}) {
+				@icons.Add()
+				<span>Add phase</span>
+			}
+		}
+		@popui.Main() {
+			@popui.Article(props.Article{FullWidth: true}) {
+				@popui.Block(props.Block{Class: "flex-none gap-3"}) {
+					@popui.TitleGroup(props.TitleGroup{
+						Title:       "Subscription",
+						Description: "The billing account, cadence and payment mode apply to every phase.",
+					})
+					@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+						<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+							@popui.Select(props.Select{
+								ID:    "subscription-account",
+								Label: "Billing account",
+								Options: []props.SelectOption{
+									{Value: "acme", Label: "Acme Corp · Live", Selected: true},
+									{Value: "acme-eu", Label: "Acme Europe · Live"},
+								},
+							})
+							@popui.Select(props.Select{
+								ID:         "subscription-cadence",
+								Label:      "Billing cadence",
+								Attributes: templ.Attributes{"x-model": "cadence"},
+								Options: []props.SelectOption{
+									{Value: "monthly", Label: "Monthly"},
+									{Value: "yearly", Label: "Yearly"},
+								},
+							})
+							@popui.Select(props.Select{
+								ID:         "subscription-mode",
+								Label:      "Payment mode",
+								Attributes: templ.Attributes{"x-model": "mode"},
+								Options: []props.SelectOption{
+									{Value: "prepaid", Label: "Prepaid"},
+									{Value: "postpay", Label: "Postpay"},
+								},
+							})
+							@popui.Select(props.Select{
+								ID:         "subscription-currency",
+								Label:      "Currency",
+								Attributes: templ.Attributes{"x-model": "currency"},
+								Options: []props.SelectOption{
+									{Value: "EUR", Label: "EUR"},
+									{Value: "USD", Label: "USD"},
+								},
+							})
+						</div>
+					}
+				}
+				@popui.Block(props.Block{Class: "flex-none gap-3"}) {
+					<div class="flex items-end justify-between gap-4">
+						@popui.TitleGroup(props.TitleGroup{
+							Title:       "Phases",
+							Description: "Each phase runs from its start date until the next phase begins. Upgrades start straight away; downgrades wait for the end of the current period.",
+						})
+						<span class="text-sm text-foreground-default-secondary shrink-0" x-text="phases.length + (phases.length === 1 ? ' phase' : ' phases')"></span>
+					</div>
+					// The plane: decks sit in a row and the row scrolls sideways
+					// once it outgrows the article. The negative margin lets the
+					// scroll area run edge to edge under the article padding.
+					<div class="flex gap-3 overflow-x-auto snap-x scroll-pl-4 -mx-4 px-4 pb-2" x-ref="plane">
+						<template x-for="(phase, index) in phases" :key="phase.id">
+							@popui.CardDeck(props.CardDeck{Class: "w-140 shrink-0 snap-start self-start"}) {
+								@popui.CardDeckHead() {
+									<span x-text="'Phase ' + (index + 1)"></span>
+									<div class="flex items-center gap-2">
+										@popui.TagStatus(props.TagStatus{
+											Label:      "Current",
+											Status:     "green",
+											Dot:        true,
+											Attributes: templ.Attributes{"x-show": "status(index) === 'current'"},
+										})
+										@popui.TagStatus(props.TagStatus{
+											Label:      "Scheduled",
+											Status:     "blue",
+											Dot:        true,
+											Attributes: templ.Attributes{"x-show": "status(index) === 'scheduled'"},
+										})
+										@popui.TagStatus(props.TagStatus{
+											Label:      "Ended",
+											Status:     "grey",
+											Dot:        true,
+											Attributes: templ.Attributes{"x-show": "status(index) === 'ended'"},
+										})
+										@popui.Menu(props.Menu{RightAlign: true}) {
+											@popui.MenuItem(props.MenuItem{
+												Attributes: templ.Attributes{"@click": "duplicatePhase(index); closeMenu($el)"},
+											}) {
+												@icons.Duplicate()
+												<span>Duplicate</span>
+											}
+											@popui.MenuItem(props.MenuItem{
+												Variant:    props.MenuItemVariantDanger,
+												Attributes: templ.Attributes{"@click": "removePhase(index); closeMenu($el)"},
+											}) {
+												@icons.Delete()
+												<span>Remove phase</span>
+											}
+										}
+									</div>
+								}
+								// Schedule: the start is editable, the end is implied
+								// by the next phase's start.
+								@popui.Card(props.Card{Class: "gap-1.5 p-3"}) {
+									@popui.Input(props.Input{
+										Type:       "date",
+										Label:      "Starts",
+										Attributes: templ.Attributes{"x-model": "phase.start", ":id": "'phase-start-' + phase.id"},
+									})
+									<p class="text-sm text-foreground-default-secondary" x-text="endsLabel(index)"></p>
+								}
+								// One card per product billed in this phase.
+								<template x-for="(item, j) in phase.items" :key="item.id">
+									@subscriptionProductCard()
+								</template>
+								@popui.CardDeckHead(props.CardDeckHead{Class: "font-normal"}) {
+									@subscriptionAddMenu()
+									<span class="flex items-center gap-1.5">
+										<span x-text="'Total ' + periodLabel()"></span>
+										<span x-show="phaseHasUsage(index)">+ usage</span>
+										<span class="font-medium text-foreground tabular-nums lining-nums" x-text="phaseTotal(index)"></span>
+									</span>
+								}
+							}
+						</template>
+						<div class="w-140 shrink-0 snap-start min-h-48 flex items-center justify-center rounded-2xl border border-dashed border-border-default-secondary bg-background-default-secondary">
+							@popui.Button(props.Button{
+								Type:       "button",
+								Attributes: templ.Attributes{"@click": "addPhase()"},
+							}) {
+								@icons.Add()
+								<span>Add phase</span>
+							}
+						</div>
+					</div>
+				}
+			}
+		}
+		@popui.Footer() {
+			@popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantSecondary}) {
+				Cancel
+			}
+			@popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary}) {
+				Create subscription
+			}
+		}
+	}
+}
+
+templ subscriptionPhasesTitle() {
+	@popui.Button(props.Button{
+		Variant: props.ButtonVariantTransparent,
+		Class:   "p-2",
+	}) {
+		@icons.Close()
+	}
+	<span>New subscription</span>
+}
+
+// subscriptionAddMenu is the nested menu that adds a product to the phase in
+// scope: a custom product at the top level, then one submenu per catalog
+// group. It sits at the bottom of the deck, so it opens upwards.
+templ subscriptionAddMenu() {
+	@popui.Menu(props.Menu{
+		ButtonLabel: "Add a product",
+		ButtonIcon:  icons.Add(),
+		ButtonSize:  props.ButtonSizeSmall,
+		DropUp:      true,
+	}) {
+		@popui.MenuItem(props.MenuItem{
+			Attributes: templ.Attributes{"@click": "addCustom(index); closeMenu($el)"},
+		}) {
+			@icons.Edit()
+			<span>Custom product</span>
+		}
+		@popui.MenuSeparator()
+		for _, group := range subscriptionCatalog {
+			@popui.MenuSub(props.MenuSub{Label: group.Name}) {
+				for _, product := range group.Products {
+					@popui.MenuItem(props.MenuItem{
+						Attributes: templ.Attributes{"@click": "addItem(index, '" + product.ID + "'); closeMenu($el)"},
+					}) {
+						<span>{ product.Name }</span>
+						<span class="text-foreground-default-secondary">{ product.Meta }</span>
+					}
+				}
+			}
+		}
+	}
+}
+
+// subscriptionProductCard is one product line of a phase, rendered inside the
+// items x-for so it reads `item`, `index` and `j` from Alpine scope. The
+// header rows hold the quantity, product, discount and actions; the pencil
+// toggles the details editor below them: feature, included features, pricing
+// strategy, grant and the price table. Custom products open expanded with a
+// free-text name in place of the catalog select.
+templ subscriptionProductCard() {
+	@popui.Card(props.Card{Class: "gap-3 p-3"}) {
+		<div class="flex items-end gap-3">
+			<span class="pb-1.5 text-sm text-foreground-default-secondary tabular-nums" x-text="j + 1"></span>
+			<div class="w-20 shrink-0">
+				@popui.Input(props.Input{
+					Type:  "number",
+					Label: "Quantity",
+					Attributes: templ.Attributes{
+						"x-model.number": "item.quantity",
+						"min":            "1",
+						":id":            "'item-qty-' + item.id",
+						":disabled":      "item.usage",
+					},
+				})
+			</div>
+			<div class="min-w-0 grow">
+				<template x-if="item.custom">
+					@popui.Input(props.Input{
+						Label:       "Product name",
+						Placeholder: "Product name",
+						Attributes:  templ.Attributes{"x-model": "item.name", ":id": "'item-name-' + item.id"},
+					})
+				</template>
+				<template x-if="!item.custom">
+					@popui.Select(props.Select{
+						Label: "Product",
+						Attributes: templ.Attributes{
+							"@change": "changeProduct(index, j, $event.target.value)",
+							":id":     "'item-product-' + item.id",
+						},
+					}) {
+						for _, group := range subscriptionCatalog {
+							<optgroup label={ group.Name }>
+								for _, product := range group.Products {
+									<option
+										value={ product.ID }
+										{ templ.Attributes{":selected": "item.productID === '" + product.ID + "'"}... }
+									>{ product.Name }</option>
+								}
+							</optgroup>
+						}
+					}
+				</template>
+			</div>
+			@popui.ButtonGroup(props.ButtonGroup{Class: "shrink-0 flex-nowrap pb-0.5"}) {
+				@popui.Button(props.Button{
+					Type: "button",
+					Size: props.ButtonSizeIcon,
+					Attributes: templ.Attributes{
+						"@click":        "item.expanded = !item.expanded",
+						":aria-pressed": "item.expanded ? 'true' : 'false'",
+						":class":        "item.expanded ? 'bg-background-default-secondary' : ''",
+						"aria-label":    "Edit product",
+					},
+				}) {
+					@icons.Edit()
+				}
+				@popui.Button(props.Button{
+					Type:       "button",
+					Size:       props.ButtonSizeIcon,
+					Variant:    props.ButtonVariantDanger,
+					Attributes: templ.Attributes{"@click": "removeItem(index, j)", "aria-label": "Remove product"},
+				}) {
+					@icons.Delete()
+				}
+			}
+		</div>
+		<div class="flex items-end gap-3">
+			<div class="flex flex-col gap-2 shrink-0">
+				@popui.Label(props.Label{Attributes: templ.Attributes{":for": "'item-discount-' + item.id"}}) {
+					Discount
+				}
+				<div class="flex gap-1">
+					<div class="w-24">
+						@popui.Input(props.Input{
+							Type:        "number",
+							Placeholder: "0.00",
+							Attributes: templ.Attributes{
+								"x-model": "item.discount",
+								"min":     "0",
+								"step":    "0.01",
+								":id":     "'item-discount-' + item.id",
+							},
+						})
+					</div>
+					<div class="w-18">
+						@popui.Select(props.Select{
+							Attributes: templ.Attributes{
+								"x-model":    "item.discountType",
+								"aria-label": "Discount type",
+								":id":        "'item-discount-type-' + item.id",
+							},
+						}) {
+							<option value="amount" x-text="currencySymbol()"></option>
+							<option value="percent">%</option>
+						}
+					</div>
+				</div>
+			</div>
+			<div class="min-w-0 grow">
+				@popui.Input(props.Input{
+					Label:       "Discount reason",
+					Placeholder: "Optional discount reason",
+					Attributes:  templ.Attributes{"x-model": "item.reason", ":id": "'item-reason-' + item.id"},
+				})
+			</div>
+		</div>
+		<div class="flex flex-col gap-4" x-show="item.expanded">
+			@popui.Separator(props.Separator{Class: "my-0"})
+			<div class="grid grid-cols-2 gap-4">
+				@popui.Select(props.Select{
+					Label:      "Feature",
+					Attributes: templ.Attributes{"x-model": "item.feature", ":id": "'item-feature-' + item.id"},
+					Options:    subscriptionFeatureOptions,
+				})
+				@popui.Select(props.Select{
+					Multiple:    true,
+					Label:       "Included features",
+					Placeholder: "Add bundled features…",
+					Attributes:  templ.Attributes{"x-model": "item.included"},
+					Options:     subscriptionIncludedOptions,
+				})
+			</div>
+			<div class="grid grid-cols-2 gap-4">
+				@popui.Select(props.Select{
+					Label:      "Strategy",
+					Tooltip:    props.Tooltip{Description: "How the price table turns usage into a charge."},
+					Attributes: templ.Attributes{"x-model": "item.strategy", ":id": "'item-strategy-' + item.id"},
+					Options:    subscriptionStrategyOptions,
+				})
+				<div class="self-end rounded-lg bg-background-default-secondary px-3 py-1.5 text-base text-foreground-default-secondary" x-text="strategyHelp(item.strategy)"></div>
+			</div>
+			<div class="grid grid-cols-2 gap-4">
+				@popui.Input(props.Input{
+					Type:       "number",
+					Label:      "Grant",
+					Tooltip:    props.Tooltip{Description: "Units of the feature credited to the account each interval."},
+					Attributes: templ.Attributes{"x-model.number": "item.grant", "min": "0", ":id": "'item-grant-' + item.id"},
+				})
+				@popui.Select(props.Select{
+					Label:      "Grant interval",
+					Tooltip:    props.Tooltip{Description: "How often the grant is renewed."},
+					Attributes: templ.Attributes{"x-model": "item.interval", ":id": "'item-interval-' + item.id"},
+					Options:    subscriptionIntervalOptions,
+				})
+			</div>
+			<div class="flex flex-col gap-2">
+				@popui.Label() {
+					Prices
+				}
+				@popui.Table(props.Table{Variant: "card"}) {
+					<thead>
+						<tr class="whitespace-nowrap">
+							<th>From</th>
+							<th>Up to</th>
+							<th>Amount</th>
+							<th>Per unit?</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<template x-for="(price, k) in item.prices" :key="k">
+							<tr>
+								<td>
+									<div>
+										@popui.Input(props.Input{
+											Type:        "number",
+											Size:        props.InputSizeSmall,
+											Placeholder: "0",
+											Attributes:  templ.Attributes{"x-model.number": "price.from", "min": "0", "aria-label": "From"},
+										})
+									</div>
+								</td>
+								<td>
+									<div>
+										@popui.Input(props.Input{
+											Type:        "number",
+											Size:        props.InputSizeSmall,
+											Placeholder: "∞",
+											Attributes:  templ.Attributes{"x-model": "price.upTo", "min": "0", "aria-label": "Up to"},
+										})
+									</div>
+								</td>
+								<td>
+									<div>
+										@popui.Input(props.Input{
+											Type:        "number",
+											Size:        props.InputSizeSmall,
+											Placeholder: "0.00",
+											Attributes:  templ.Attributes{"x-model": "price.amount", "min": "0", "step": "0.001", "aria-label": "Amount"},
+										})
+									</div>
+								</td>
+								<td>
+									<div>
+										@popui.Checkbox(props.Checkbox{
+											Name:       "per_unit",
+											Attributes: templ.Attributes{"x-model": "price.perUnit", "aria-label": "Per unit"},
+										})
+									</div>
+								</td>
+								<td>
+									<div>
+										@popui.Button(props.Button{
+											Type:       "button",
+											Size:       props.ButtonSizeIconSmall,
+											Variant:    props.ButtonVariantDanger,
+											Attributes: templ.Attributes{"@click": "removePrice(item, k)", "aria-label": "Remove price"},
+										}) {
+											@icons.Delete()
+										}
+									</div>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				}
+				@popui.ButtonGroup(props.ButtonGroup{Align: props.ButtonGroupAlignRight}) {
+					@popui.Button(props.Button{
+						Type:       "button",
+						Size:       props.ButtonSizeSmall,
+						Attributes: templ.Attributes{"@click": "addPrice(item)"},
+					}) {
+						@icons.Add()
+						<span>Add price</span>
+					}
+				}
+			</div>
+		</div>
+	}
+}
+
+// subscriptionPhasesHead ships the catalog as JSON and holds the page's
+// Alpine controller: the list of phases and the handlers the template calls.
+templ subscriptionPhasesHead() {
+	@templ.JSONScript("subscription-catalog", subscriptionCatalog)
+	<script>
+		document.addEventListener('alpine:init', () => {
+			Alpine.data('subscriptionPhases', () => ({
+				currency: 'EUR',
+				cadence: 'monthly',
+				mode: 'prepaid',
+				nextID: 1,
+				phases: [],
+				catalog: JSON.parse(document.getElementById('subscription-catalog').textContent),
+
+				init() {
+					const today = new Date();
+					const first = this.iso(new Date(today.getFullYear(), today.getMonth(), 1));
+					this.phases = [
+						this.phase(first, ['dev-2k', 'stripe']),
+						this.phase(this.addMonths(first, 1), ['pro-20k', 'stripe', 'chargebee']),
+					];
+				},
+
+				// --- Phases -------------------------------------------------
+
+				phase(start, productIDs) {
+					return { id: this.nextID++, start, items: productIDs.map((id) => this.item(this.product(id))) };
+				},
+				addPhase() {
+					const last = this.phases[this.phases.length - 1];
+					this.phases.push({
+						id: this.nextID++,
+						start: last ? this.addMonths(last.start, 1) : this.iso(new Date()),
+						items: last ? last.items.map((i) => this.cloneItem(i)) : [],
+					});
+					this.revealLast();
+				},
+				duplicatePhase(index) {
+					const source = this.phases[index];
+					this.phases.splice(index + 1, 0, {
+						id: this.nextID++,
+						start: this.addMonths(source.start, 1),
+						items: source.items.map((i) => this.cloneItem(i)),
+					});
+				},
+				removePhase(index) {
+					if (this.phases.length > 1) this.phases.splice(index, 1);
+				},
+				revealLast() {
+					this.$nextTick(() => {
+						const plane = this.$refs.plane;
+						plane.scrollTo({ left: plane.scrollWidth, behavior: 'smooth' });
+					});
+				},
+				status(index) {
+					const today = this.iso(new Date());
+					const phase = this.phases[index];
+					const next = this.phases[index + 1];
+					if (phase.start > today) return 'scheduled';
+					if (next && next.start <= today) return 'ended';
+					return 'current';
+				},
+				endsLabel(index) {
+					const next = this.phases[index + 1];
+					if (!next || !next.start) return 'Open-ended';
+					return 'Runs until ' + this.formatDate(next.start);
+				},
+
+				// --- Products -----------------------------------------------
+
+				product(id) {
+					for (const group of this.catalog) {
+						const found = group.products.find((p) => p.id === id);
+						if (found) return found;
+					}
+					return null;
+				},
+				// An item snapshots the catalog product so later catalog changes
+				// leave existing subscriptions alone.
+				item(product) {
+					return {
+						id: this.nextID++,
+						custom: false,
+						productID: product.id,
+						name: product.name,
+						quantity: 1,
+						discount: '',
+						discountType: 'amount',
+						reason: '',
+						feature: product.feature,
+						included: [],
+						strategy: product.strategy,
+						grant: product.grant,
+						interval: 'monthly',
+						usage: product.usage,
+						prices: product.prices.map((p) => ({ ...p, upTo: p.upTo || '' })),
+						expanded: false,
+					};
+				},
+				customItem() {
+					return {
+						id: this.nextID++,
+						custom: true,
+						productID: '',
+						name: '',
+						quantity: 1,
+						discount: '',
+						discountType: 'amount',
+						reason: '',
+						feature: 'pops',
+						included: [],
+						strategy: 'fixed',
+						grant: 200,
+						interval: 'monthly',
+						usage: false,
+						prices: [{ from: 0, upTo: '', amount: '', perUnit: false }],
+						expanded: true,
+					};
+				},
+				cloneItem(source) {
+					return {
+						...source,
+						id: this.nextID++,
+						included: [...source.included],
+						prices: source.prices.map((p) => ({ ...p })),
+						expanded: false,
+					};
+				},
+				addItem(index, productID) {
+					const product = this.product(productID);
+					if (!product) return;
+					const phase = this.phases[index];
+					const existing = phase.items.find((i) => i.productID === productID);
+					if (existing && !existing.usage) {
+						existing.quantity++;
+					} else if (!existing) {
+						phase.items.push(this.item(product));
+					}
+				},
+				addCustom(index) {
+					this.phases[index].items.push(this.customItem());
+				},
+				changeProduct(index, j, productID) {
+					const product = this.product(productID);
+					if (!product) return;
+					const current = this.phases[index].items[j];
+					this.phases[index].items.splice(j, 1, {
+						...this.item(product),
+						id: current.id,
+						quantity: current.quantity,
+						discount: current.discount,
+						discountType: current.discountType,
+						reason: current.reason,
+						expanded: current.expanded,
+					});
+				},
+				removeItem(index, j) {
+					this.phases[index].items.splice(j, 1);
+				},
+				addPrice(item) {
+					const last = item.prices[item.prices.length - 1];
+					item.prices.push({
+						from: last && last.upTo !== '' ? Number(last.upTo) + 1 : 0,
+						upTo: '',
+						amount: '',
+						perUnit: Boolean(last && last.perUnit),
+					});
+				},
+				removePrice(item, k) {
+					item.prices.splice(k, 1);
+				},
+				strategyHelp(strategy) {
+					const help = {
+						fixed: 'Price × quantity. Only the first price row is used.',
+						unit: 'Every unit of usage is charged the amount of the row it falls in.',
+						tiered: 'Usage fills each range in turn and is charged that range at its amount.',
+						volume: 'The range the total usage lands in prices every unit.',
+					};
+					return help[strategy] || '';
+				},
+				// Menu items do not close their panel on their own; hide the
+				// outermost one so a choice inside a submenu closes everything.
+				closeMenu(el) {
+					let panel = el.closest('[popover]');
+					let top = panel;
+					while (panel) {
+						top = panel;
+						panel = panel.parentElement && panel.parentElement.closest('[popover]');
+					}
+					if (top && top.matches(':popover-open')) top.hidePopover();
+				},
+
+				// --- Money --------------------------------------------------
+
+				rate() {
+					return this.currency === 'USD' ? 1.2 : 1;
+				},
+				periods() {
+					return this.cadence === 'yearly' ? 10.2 : 1;
+				},
+				periodLabel() {
+					return this.cadence === 'yearly' ? 'per year' : 'per month';
+				},
+				currencySymbol() {
+					return this.currency === 'USD' ? '$' : '€';
+				},
+				money(amount, digits = 0) {
+					return new Intl.NumberFormat('en', {
+						style: 'currency',
+						currency: this.currency,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: digits,
+					}).format(amount);
+				},
+				// Catalog amounts are monthly EUR and take the cadence and
+				// currency multipliers; custom amounts are used as typed.
+				itemTotal(item) {
+					if (item.usage) return 0;
+					const row = item.prices[0];
+					let unit = row ? Number(row.amount) || 0 : 0;
+					if (!item.custom) unit = unit * this.rate() * this.periods();
+					let total = unit * (Number(item.quantity) || 0);
+					const discount = Number(item.discount) || 0;
+					total -= item.discountType === 'percent' ? (total * discount) / 100 : discount;
+					return Math.max(total, 0);
+				},
+				phaseTotal(index) {
+					return this.money(this.phases[index].items.reduce((sum, i) => sum + this.itemTotal(i), 0));
+				},
+				phaseHasUsage(index) {
+					return this.phases[index].items.some((i) => i.usage);
+				},
+
+				// --- Dates --------------------------------------------------
+
+				iso(date) {
+					const pad = (n) => String(n).padStart(2, '0');
+					return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+				},
+				parse(iso) {
+					const [y, m, d] = iso.split('-').map(Number);
+					return new Date(y, m - 1, d);
+				},
+				// Same day the following month, clamped to shorter months so a
+				// phase starting on the 31st still renews every calendar month.
+				addMonths(iso, n) {
+					const date = this.parse(iso);
+					const day = date.getDate();
+					date.setDate(1);
+					date.setMonth(date.getMonth() + n);
+					const last = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+					date.setDate(Math.min(day, last));
+					return this.iso(date);
+				},
+				formatDate(iso) {
+					return this.parse(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+				},
+			}));
+		});
+	</script>
+}
