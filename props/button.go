@@ -92,6 +92,13 @@ type Button struct {
 	CopyPrefixLength int
 	CopySuffixLength int
 
+	/* Async action fields */
+
+	// OnClickAsync is a JavaScript expression run on click; the button shows a
+	// spinner and stays disabled until the returned value (typically a Promise)
+	// settles. A function reference is also accepted and called with the button.
+	OnClickAsync string
+
 	/* Anchor button fields */
 
 	// Href enables anchor button behavior as opposed to a form button.

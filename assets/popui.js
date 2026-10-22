@@ -124,6 +124,37 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     }
   };
 
+  // Toggles an async Button's spinner overlay, hiding its label and blocking further clicks.
+  function setButtonAsyncLoading(button, loading) {
+    const label = button.querySelector('[data-button-label]')
+    const spinner = button.querySelector('[data-button-spinner]')
+    if (label) label.style.visibility = loading ? 'hidden' : ''
+    if (spinner) spinner.style.display = loading ? 'flex' : ''
+    button.disabled = loading
+    if (loading) {
+      button.dataset.loading = 'true'
+      button.setAttribute('aria-busy', 'true')
+    } else {
+      delete button.dataset.loading
+      button.removeAttribute('aria-busy')
+    }
+  }
+
+  // Runs a Button's OnClickAsync action and keeps the spinner up until its result settles.
+  popui.runButtonAsync = async function (button, action) {
+    if (button.dataset.loading === 'true') return
+    setButtonAsyncLoading(button, true)
+    try {
+      let result = action()
+      if (typeof result === 'function') result = result.call(button, button)
+      await result
+    } catch (err) {
+      console.error('Button action failed: ', err)
+    } finally {
+      setButtonAsyncLoading(button, false)
+    }
+  };
+
   // Copies a ButtonCopy's value to the clipboard and briefly shows the success icon.
   popui.copyButtonValue = function (button) {
     const container = button.closest(QUERY_SELECTORS.buttonCopy)
@@ -379,6 +410,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     if (document.visibilityState !== 'visible') return
     document.querySelectorAll(`.${LOADING_CLASS}`).forEach((button) => {
       button.classList.remove(LOADING_CLASS)
+    })
+  })
+
+  // Resets async Buttons restored mid-action from the back/forward cache, which would otherwise stay disabled and spinning.
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return
+    document.querySelectorAll('[data-button-async][data-loading]').forEach((button) => {
+      setButtonAsyncLoading(button, false)
     })
   })
 

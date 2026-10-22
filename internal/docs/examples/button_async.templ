@@ -1,0 +1,22 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ButtonAsyncExample() {
+	<div class="flex items-center gap-4">
+		@popui.Button(props.Button{
+			Variant:      props.ButtonVariantPrimary,
+			OnClickAsync: "new Promise((resolve) => setTimeout(resolve, 3000))",
+		}) {
+			Submit
+		}
+		@popui.Button(props.Button{
+			OnClickAsync: "new Promise((resolve) => setTimeout(resolve, 3000))",
+		}) {
+			Save draft
+		}
+	</div>
+}

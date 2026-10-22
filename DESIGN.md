@@ -25,6 +25,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Group of buttons | `ButtonGroup` |
 | Action with related alternatives | `SplitButton` (main action + dropdown of `MenuItem`s) |
 | Copy-to-clipboard | `Button` with `Copy` |
+| Button with spinner while an async action runs | `Button` with `OnClickAsync` |
 | Page/app shell | `App` |
 | Top bar with actions | `Header` |
 | Bottom bar with actions | `Footer` |
