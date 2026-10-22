@@ -19,9 +19,10 @@ import (
 // mark icon that reveals a Tooltip card on hover.
 //
 // The label itself is the tooltip's trigger and anchor, not just the icon:
-// hovering anywhere on the label reveals the card, and the card aligns to the
+// hovering the text or the icon reveals the card, and the card aligns to the
 // label's leading edge rather than to the middle of a 16px icon sitting at the
-// end of the text.
+// end of the text. The label shrinks to its content so the empty space to the
+// right of the text does not act as a trigger.
 func Label(opts ...props.Label) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -48,8 +49,10 @@ func Label(opts ...props.Label) templ.Component {
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
 			"font-sans text-sm font-medium text-foreground-default-secondary flex items-center gap-0.5",
 			// The label hosts the card, so it carries the group and the
-			// positioning context the card is placed against.
-			classes.If(!tip.Empty(), "group/tooltip relative"),
+			// positioning context the card is placed against. It is also
+			// sized to its content (and kept from stretching in flex
+			// columns) so only the text and icon trigger the card.
+			classes.If(!tip.Empty(), "group/tooltip relative w-fit self-start"),
 			p.Class,
 		),
 		}
@@ -69,7 +72,7 @@ func Label(opts ...props.Label) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `label.templ`, Line: 22, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `label.templ`, Line: 23, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
