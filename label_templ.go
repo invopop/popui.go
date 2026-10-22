@@ -50,9 +50,10 @@ func Label(opts ...props.Label) templ.Component {
 			"font-sans text-sm font-medium text-foreground-default-secondary flex items-center gap-0.5",
 			// The label hosts the card, so it carries the group and the
 			// positioning context the card is placed against. It is also
-			// sized to its content (and kept from stretching in flex
-			// columns) so only the text and icon trigger the card.
-			classes.If(!tip.Empty(), "group/tooltip relative w-fit self-start"),
+			// sized to its content so only the text and icon trigger the
+			// card; an explicit width also keeps a flex column from
+			// stretching it, so no self-start that would misalign it in rows.
+			classes.If(!tip.Empty(), "group/tooltip relative w-fit"),
 			p.Class,
 		),
 		}
