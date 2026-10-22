@@ -551,7 +551,7 @@ func Info(opts ...props.Info) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var25 = []any{tailwind.Merge(
-			"font-sans text-sm text-foreground-default-secondary flex items-center gap-1",
+			"font-sans text-sm text-foreground-default-secondary flex items-start gap-1",
 			p.Class,
 		),
 		}
@@ -603,7 +603,7 @@ func Info(opts ...props.Info) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "><div class=\"shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -651,7 +651,7 @@ func Warning(opts ...props.Warning) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var29 = []any{tailwind.Merge(
-			"font-sans text-sm text-foreground-default-secondary flex items-center gap-1",
+			"font-sans text-sm text-foreground-default-secondary flex items-start gap-1",
 			p.Class,
 		),
 		}
@@ -671,7 +671,7 @@ func Warning(opts ...props.Warning) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `typography.templ`, Line: 147, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `typography.templ`, Line: 148, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -703,7 +703,7 @@ func Warning(opts ...props.Warning) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "><div class=\"shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -767,7 +767,7 @@ func Mark(opts ...props.Mark) templ.Component {
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `typography.templ`, Line: 171, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `typography.templ`, Line: 172, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 			if templ_7745c5c3_Err != nil {
@@ -859,7 +859,7 @@ func Prose(opts ...props.Prose) templ.Component {
 			var templ_7745c5c3_Var38 string
 			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `typography.templ`, Line: 185, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `typography.templ`, Line: 186, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 			if templ_7745c5c3_Err != nil {

@@ -1,0 +1,324 @@
+package apps
+
+import (
+	"fmt"
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/flash"
+	"github.com/invopop/popui.go/props"
+)
+
+// appWorkflowFormID lets the header Save button submit the workflow form via
+// the HTML form= attribute.
+const appWorkflowFormID = "app-workflow-form"
+
+// AppWorkflows lists the example workflows published in the app's docs: one
+// titled section per channel, and inside it one reorderable deck per schema.
+templ AppWorkflows(org *Org, app *Application, wc *WorkflowCollection, err error) {
+	@appsLayout(org) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{Label: app.Name},
+			},
+		}) {
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			@popui.Button(props.Button{
+				Variant:    "primary",
+				Attributes: navAttrs(baseURL(org, "apps", app.ID, "workflows", "new")),
+			}) {
+				@icons.Add()
+				New workflow
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:              app.Name,
+				HideTitleSeparator: true,
+			}) {
+				@appTabs(org, ApplicationModelToForm(app), "workflows")
+				if err != nil {
+					@popui.InputError(props.Error{Text: err.Error()})
+				}
+				if wc.Count() == 0 {
+					@popui.Info() {
+						No workflows yet. Create one and it will appear under its channel and schema.
+					}
+				}
+				// Named channels in the app's order, then the default channel.
+				for _, ch := range app.Channels {
+					@workflowChannelSection(org, app, ch.Key, ch.Label, wc.ForChannel(ch.Key))
+				}
+				@workflowChannelSection(org, app, "", "Default channel", wc.ForChannel(""))
+			}
+		}
+	}
+}
+
+// workflowChannelSection is the titled block for one channel; it is skipped
+// when the channel has no workflows so the page shows only what exists.
+templ workflowChannelSection(org *Org, app *Application, channel, label string, groups []*WorkflowGroup) {
+	if len(groups) > 0 {
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:      label,
+				Horizontal: true,
+			})
+			for _, g := range groups {
+				@workflowDeck(org, app, g)
+			}
+		</div>
+	}
+}
+
+// workflowDeck is one reorderable deck: the workflows of a channel that run
+// on one schema. Reorder mode is entered from the kebab menu and left with
+// the Done button; each move posts the order without swapping.
+templ workflowDeck(org *Org, app *Application, g *WorkflowGroup) {
+	{{
+		channelSeg := g.Channel
+		if channelSeg == "" {
+			channelSeg = "default"
+		}
+		addURL := baseURL(org, "apps", app.ID, "workflows", "new") + "?channel=" + g.Channel + "&schema=" + g.Schema
+	}}
+	// hx-disinherit keeps the form's trigger and swap="none" off the cards,
+	// which carry their own hx-get and would otherwise never navigate.
+	<form
+		hx-post={ baseURL(org, "apps", app.ID, "workflows", "groups", channelSeg, slugify(g.Schema), "reorder") }
+		hx-trigger="popui-card-deck-reorder"
+		hx-swap="none"
+		hx-disinherit="*"
+		class="w-full"
+	>
+		@popui.CardDeck(props.CardDeck{Reorderable: true, Name: "order"}) {
+			@popui.CardDeckHead() {
+				<span class="flex items-center gap-2 min-w-0">
+					<span class="text-foreground text-base font-medium truncate">{ schemaLabel(g.Schema, "workflows") }</span>
+					<code class="text-sm text-foreground-default-tertiary">{ g.Schema }</code>
+				</span>
+				<div class="flex items-center gap-1 shrink-0">
+					@popui.Button(props.Button{Size: props.ButtonSizeSmall, Attributes: navAttrs(addURL)}) {
+						@icons.Add()
+						Add
+					}
+					@popui.CardDeckReorderButton(props.CardDeckReorderButton{
+						Attributes: templ.Attributes{"x-show": "reordering", "x-cloak": ""},
+					})
+					if len(g.Workflows) > 1 {
+						@popui.Menu(props.Menu{RightAlign: true}) {
+							@popui.MenuItem(props.MenuItem{Attributes: templ.Attributes{
+								"@click": "toggleReorder(); $el.closest('[popover]').hidePopover()",
+							}}) {
+								@icons.Drag()
+								<span>Reorder</span>
+							}
+						}
+					}
+				</div>
+			}
+			for _, w := range g.Workflows {
+				@workflowCard(org, app, w)
+			}
+		}
+	</form>
+	for _, w := range g.Workflows {
+		@deleteWorkflowPopover(org, app, w)
+	}
+}
+
+templ workflowCard(org *Org, app *Application, w *Workflow) {
+	{{
+		attrs := navAttrs(baseURL(org, "apps", app.ID, "workflows", w.ID))
+		attrs["data-card-id"] = w.ID
+	}}
+	@popui.Card(props.Card{
+		Class:      "flex-row items-center gap-3 p-3 cursor-pointer hover:bg-background-default-secondary",
+		Attributes: attrs,
+	}) {
+		<span class="grow min-w-0 text-base font-medium text-foreground truncate">{ w.Name }</span>
+		<div class="flex items-center gap-2 shrink-0">
+			<span class="text-sm text-foreground-default-secondary tabular-nums">{ fmt.Sprint(len(w.Steps)) } steps</span>
+			if len(w.Rescue) > 0 {
+				@popui.TagStatus(props.TagStatus{Status: "grey", Label: "rescue"})
+			}
+			// Stop the click so the row's hx-get does not fire when using the menu.
+			<div @click.stop>
+				@popui.Menu(props.Menu{RightAlign: true}) {
+					@popui.MenuItem(props.MenuItem{Attributes: navAttrs(baseURL(org, "apps", app.ID, "workflows", w.ID))}) {
+						@icons.Edit()
+						<span>Edit</span>
+					}
+					@popui.MenuItem(props.MenuItem{Variant: props.MenuItemVariantDanger, Attributes: templ.Attributes{
+						"@click": props.ShowPopover("delete-workflow-"+w.ID) + "; $el.closest('[popover]').hidePopover()",
+					}}) {
+						@icons.Delete()
+						<span>Delete</span>
+					}
+				}
+			</div>
+		</div>
+	}
+}
+
+// deleteWorkflowPopover asks for confirmation before a workflow is removed.
+templ deleteWorkflowPopover(org *Org, app *Application, w *Workflow) {
+	{{ id := "delete-workflow-" + w.ID }}
+	@popui.Popover(props.Popover{ID: id, Backdrop: true, Class: "w-[28rem] max-w-full"}) {
+		<form class="flex flex-col gap-4" hx-post={ baseURL(org, "apps", app.ID, "workflows", w.ID, "delete") } hx-target={ popui.AppTarget }>
+			@popui.Title() {
+				Delete workflow
+			}
+			@popui.P() {
+				This removes <strong>{ w.Name }</strong> from the documentation. Workflows already
+				created from it in workspaces are not affected. This cannot be undone.
+			}
+			@popui.ButtonGroup(props.ButtonGroup{Align: "right"}) {
+				@popui.Button(props.Button{
+					Size:                props.ButtonSizeLarge,
+					Variant:             "secondary",
+					Type:                "button",
+					PopoverTarget:       id,
+					PopoverTargetAction: "hide",
+				}) {
+					Cancel
+				}
+				@popui.Button(props.Button{Size: props.ButtonSizeLarge, Variant: "danger", Type: "submit"}) {
+					Delete workflow
+				}
+			}
+		</form>
+	}
+}
+
+// AppWorkflowEdit is the editor for one example workflow.
+templ AppWorkflowEdit(org *Org, app *Application, form *WorkflowForm, err error) {
+	@appsLayout(org) {
+		{{
+			title := form.Name
+			if title == "" {
+				title = "New workflow"
+			}
+		}}
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{
+					Label:      app.Name,
+					Href:       templ.SafeURL(baseURL(org, "apps", app.ID, "workflows")),
+					Attributes: navAttrs(baseURL(org, "apps", app.ID, "workflows")),
+				},
+				{Label: title},
+			},
+		}) {
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			@popui.Button(props.Button{
+				ID:      "apps-workflow-save",
+				Type:    "submit",
+				Variant: "primary",
+				Form:    appWorkflowFormID,
+			}) {
+				Save
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:       "Example workflow",
+				Description: "A workflow definition readers can import into their workspace as a starting point.",
+			}) {
+				<form id={ appWorkflowFormID } class="flex flex-col gap-4" hx-post={ baseURL(org, "apps", app.ID, "workflows") } hx-target={ popui.AppTarget } hx-indicator="#apps-workflow-save">
+					<input type="hidden" name="id" value={ form.ID }/>
+					@popui.Fieldset() {
+						if err != nil {
+							@popui.InputError(props.Error{Text: err.Error()})
+						}
+						@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div class="md:col-span-2">
+									@popui.Input(props.Input{
+										Label:       "Name",
+										Name:        "name",
+										Value:       form.Name,
+										Required:    true,
+										Placeholder: "e.g. SII issue invoice",
+										Tooltip: props.Tooltip{
+											Delay:       tooltipDelay,
+											Title:       "Name",
+											Description: "Shown as the accordion heading in the docs and as the workflow's name when imported.",
+										},
+									})
+								</div>
+								@popui.Select(props.Select{
+									Label: "Channel",
+									Name:  "channel",
+									Tooltip: props.Tooltip{
+										Delay:       tooltipDelay,
+										Title:       "Channel",
+										Description: "The app channel whose section this workflow appears under.",
+									},
+								}) {
+									<option value="" selected?={ form.Channel == "" }>Default</option>
+									for _, ch := range app.Channels {
+										<option value={ ch.Key } selected?={ form.Channel == ch.Key }>{ ch.Label }</option>
+									}
+								}
+								@popui.Select(props.Select{
+									Label: "Schema",
+									Name:  "schema",
+									Tooltip: props.Tooltip{
+										Delay:       tooltipDelay,
+										Title:       "Schema",
+										Description: "The GOBL schema the workflow runs on. Workflows are grouped by schema within a channel.",
+									},
+								}) {
+									for _, schema := range append([]string{"org/party"}, actionSchemas...) {
+										<option value={ schema } selected?={ form.Schema == schema }>{ schema }</option>
+									}
+								}
+							</div>
+							@popui.Textarea(props.Textarea{
+								Label:       "Description (optional)",
+								Name:        "description",
+								Value:       form.Description,
+								Rows:        3,
+								Placeholder: "What the workflow achieves, in one line",
+							})
+						}
+						<div class="w-full flex flex-col gap-3">
+							@popui.Separator()
+							@popui.TitleGroup(props.TitleGroup{
+								Title:       "Definition",
+								Description: "Workflow JSON with its steps and rescue steps, as exported from the Console",
+								Horizontal:  true,
+							})
+							@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+								@popui.Textarea(props.Textarea{
+									Name:        "content",
+									Value:       form.Content,
+									Rows:        20,
+									Monospace:   true,
+									Placeholder: `{ "steps": [ { "name": "Set state", "provider": "silo.state", "config": { "state": "processing" } } ], "rescue": [] }`,
+								})
+							}
+						</div>
+					}
+				</form>
+			}
+		}
+	}
+}
