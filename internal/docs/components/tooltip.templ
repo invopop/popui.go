@@ -22,10 +22,17 @@ templ Tooltip() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Markdown",
-		Description: "The description is parsed as Markdown, so emphasis, code, links and lists are available, and a single newline is a line break — multi-line copy reads as written. Raw HTML is escaped rather than passed through. Widen the card with Class when the content needs it.",
+		Description: "The description is parsed as Markdown, so emphasis, code, links, lists, headings and quotes are available, and a single newline is a line break — multi-line copy reads as written. Raw HTML is escaped rather than passed through. Widen the card with Class when the content needs it.",
 		Code:        examples.LoadExample("tooltip_markdown.templ"),
 	}) {
 		@examples.TooltipMarkdownExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Code",
+		Description: "Inline code and fenced code blocks render in the mono face on a slightly lighter chip than the card, so identifiers and snippets stand out from the surrounding copy.",
+		Code:        examples.LoadExample("tooltip_code.templ"),
+	}) {
+		@examples.TooltipCodeExample()
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Position",
