@@ -1376,6 +1376,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // so the scorer reads them without going through Alpine's proxies —
       // two thousand fields times a few properties per keystroke adds up.
       const list = []
+      // The tree as received, before scoping: build() draws the entries on
+      // show from it, so a change of scope starts from the whole tree.
+      const raw = []
       // rows is a getter, and the template asks for it once per row (every
       // row's highlight compares against activeIndex, which reads rows), so
       // without a cache one keystroke would rank the whole tree eighty times.
@@ -1400,6 +1403,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         disabled: !!(init && init.disabled),
         // Browse-only objects and arrays: they open but are not picked.
         scalarsOnly: !!(init && init.scalarsOnly),
+        // What the root crumb says of the whole tree.
+        root: (init && init.root) || '',
+        // The path of the group the panel is narrowed to, if any: its
+        // fields stand at the root and their paths read from there. The
+        // consumer may set it at any time — an x-effect among the root's
+        // attributes, say — and the panel rebuilds.
+        scope: (init && init.scope) || '',
+        // The index in raw of the group scope names, -1 when it names none.
+        scoped: -1,
         query: '',
         open: false,
         // The objects drilled into, root first, as entry indices.
@@ -1415,14 +1427,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
         init() {
           const el = init && init.source ? document.getElementById(init.source) : null
-          let raw = []
+          let received = []
           if (el) {
-            try { raw = JSON.parse(el.textContent) || [] } catch (e) { raw = [] }
+            try { received = JSON.parse(el.textContent) || [] } catch (e) { received = [] }
           } else if (init && Array.isArray(init.fields)) {
-            raw = init.fields
+            received = init.fields
           }
-          list.length = 0
-          raw.forEach((e) => list.push({
+          raw.length = 0
+          received.forEach((e) => raw.push({
             name: e.n || '',
             type: e.y || '',
             description: e.d || '',
@@ -1434,27 +1446,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             children: !!(e.f & 4),
             group: !!(e.f & 8),
             divider: !!(e.f & 16),
-            path: '',
-            // The path the field emits: its path without the groups on the
-            // way, since a group is a heading over fields, not one of them.
-            key: '',
-            lower: '',
-            depth: 0,
-            kids: [],
           }))
-          list.forEach((entry, i) => {
-            const parent = entry.parent >= 0 ? list[entry.parent] : null
-            entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
-            const base = parent ? parent.key : ''
-            entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
-            entry.lower = entry.path.toLowerCase()
-            entry.segments = entry.lower.split('.').map((segment) => segment.replace(/\[\]$/, ''))
-            entry.depth = parent ? parent.depth + 1 : 1
-            if (parent) parent.kids.push(i)
-            else this.roots.push(i)
+          this.build()
+          // A new scope is a new tree: the level browsed and the filter
+          // belong to the old one.
+          this.$watch('scope', () => {
+            this.build()
+            this.trail = []
+            this.query = ''
+            this.activePath = ''
           })
-          this.entries = list
-          rowsKey = null
 
           if (this.target) {
             this._onSelectionChange = () => {
@@ -1475,6 +1476,69 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             }
             document.addEventListener('template-prompt', this._onPrompt)
           }
+        },
+        // Draws the entries on show from the raw tree: the whole of it, or,
+        // with a scope naming one of its groups, that group's descendants
+        // alone, re-rooted so their paths read from the group. The scope
+        // is the group's full path, groups above it included, as the user
+        // reads it while browsing the whole tree.
+        build() {
+          const paths = []
+          raw.forEach((e, i) => { paths.push((e.parent >= 0 ? paths[e.parent] + '.' : '') + e.name) })
+          const top = this.scope ? raw.findIndex((e, i) => e.group && paths[i] === this.scope) : -1
+          this.scoped = top
+          // The entries kept, each with its new index: every one without a
+          // scope, and with one the group's descendants, found in one pass
+          // since a parent always precedes its children.
+          const index = new Map()
+          raw.forEach((e, i) => {
+            if (top === -1 || e.parent === top || index.has(e.parent)) index.set(i, index.size)
+          })
+          list.length = 0
+          this.roots = []
+          index.forEach((at, i) => {
+            const e = raw[i]
+            const parent = e.parent === top ? -1 : index.get(e.parent)
+            list.push({
+              name: e.name,
+              type: e.type,
+              description: e.description,
+              own: e.own,
+              icon: e.icon,
+              parent: typeof parent === 'number' ? parent : -1,
+              array: e.array,
+              always: e.always,
+              children: e.children,
+              group: e.group,
+              divider: e.divider,
+              path: '',
+              // The path the field emits: its path without the groups on the
+              // way, since a group is a heading over fields, not one of them.
+              key: '',
+              lower: '',
+              depth: 0,
+              kids: [],
+            })
+          })
+          list.forEach((entry, i) => {
+            const parent = entry.parent >= 0 ? list[entry.parent] : null
+            entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            const base = parent ? parent.key : ''
+            entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            entry.lower = entry.path.toLowerCase()
+            entry.segments = entry.lower.split('.').map((segment) => segment.replace(/\[\]$/, ''))
+            entry.depth = parent ? parent.depth + 1 : 1
+            if (parent) parent.kids.push(i)
+            else this.roots.push(i)
+          })
+          this.entries = list
+          rowsKey = null
+        },
+        // What the root crumb says: the scoped group's name, or the name the
+        // consumer gave the whole tree.
+        get rootLabel() {
+          if (this.scoped >= 0) return raw[this.scoped].name
+          return this.root || 'root'
         },
         destroy() {
           if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
