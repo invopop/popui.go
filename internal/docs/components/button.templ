@@ -83,6 +83,13 @@ templ Button() {
 	}) {
 		@examples.ButtonCopyToClipboardExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Async Action",
+		Description: "OnClickAsync takes a JavaScript expression run on click. The button shows a spinner over its label and stays disabled until the returned Promise settles, then returns to rest. This example waits 3 seconds.",
+		Code:        examples.LoadExample("button_async.templ"),
+	}) {
+		@examples.ButtonAsyncExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "ButtonGroup",
@@ -109,6 +116,7 @@ templ Button() {
 				{Name: "Copy", Type: "string", Default: "", Description: "Turns the button into a copy-to-clipboard control for this value (form buttons only)"},
 				{Name: "CopyPrefixLength", Type: "int", Default: "0", Description: "Characters of the Copy value shown before the ellipsis; 0 with CopySuffixLength 0 shows it untruncated"},
 				{Name: "CopySuffixLength", Type: "int", Default: "0", Description: "Characters of the Copy value shown after the ellipsis"},
+				{Name: "OnClickAsync", Type: "string", Default: "", Description: "JavaScript expression run on click; shows a spinner and disables the button until the returned Promise settles (form buttons only)"},
 				{Name: "Form", Type: "string", Default: "", Description: "Associates button with a form by ID (form buttons only)"},
 				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the button (form buttons only)"},
 				{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the button on page load (form buttons only)"},

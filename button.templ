@@ -87,8 +87,12 @@ templ Button(p ...props.Button) {
 			if btn.Type != "" {
 				type={ btn.Type }
 			}
-			if btn.Type == "" && btn.Copy != "" {
+			if btn.Type == "" && (btn.Copy != "" || btn.OnClickAsync != "") {
 				type="button"
+			}
+			if btn.OnClickAsync != "" {
+				data-button-async
+				onclick={ buttonAsyncOnClick(btn.OnClickAsync) }
 			}
 			if btn.Name != "" {
 				name={ btn.Name }
@@ -136,9 +140,25 @@ templ Button(p ...props.Button) {
 					@icons.Tick()
 				</span>
 			}
-			{ children... }
+			if btn.OnClickAsync != "" {
+				<span data-button-label class="contents">
+					{ children... }
+				</span>
+				// Overlaid rather than swapped in: the label keeps its space so the
+				// button stays exactly the size it is at rest.
+				<span data-button-spinner class="absolute inset-0 hidden items-center justify-center">
+					@LoadingIcon()
+				</span>
+			} else {
+				{ children... }
+			}
 		</button>
 	}
+}
+
+// buttonAsyncOnClick wraps an OnClickAsync expression so popui.js can await it.
+func buttonAsyncOnClick(expr string) templ.ComponentScript {
+	return templ.ComponentScript{Call: "popui.runButtonAsync(this, () => (" + expr + "))"}
 }
 
 func buttonBaseClasses() string {
