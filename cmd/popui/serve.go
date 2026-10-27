@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/a-h/templ"
@@ -11,6 +12,7 @@ import (
 	"github.com/invopop/popui.go/examples"
 	"github.com/invopop/popui.go/internal/docs"
 	"github.com/invopop/popui.go/internal/docs/assets"
+	"github.com/invopop/popui.go/internal/docs/playground"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 )
@@ -48,6 +50,12 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 
 	// Documentation routes (now at root)
 	e.GET("/", s.index)
+
+	// Experimental jsonui playground
+	e.GET(strings.TrimSuffix(playground.Path, "/"), func(c echo.Context) error {
+		return c.Redirect(http.StatusMovedPermanently, playground.Path)
+	})
+	e.Any(playground.Path+"*", echo.WrapHandler(playground.Handler()))
 
 	// Older examples are provided here for testing
 	e.GET("/examples/admin", renderComponent(examples.Admin()))

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>PopUI JSON Playground</title>
+	<link rel="stylesheet" href="/_popui/assets/popui.css"/>
+	<script src="/_popui/assets/popui.js"></script>
+	<!-- jsonui.js runs the actions documents reference; the page can add its own. -->
+	<script src="jsonui.js"></script>
+	<script>
+		// Host-defined action. Documents may only use actions the host both
+		// registers here and allows when rendering (see ACTIONS below).
+		popui.actions.register("save", ({ snapshot }) =>
+			alert(`Host action "save" received:\n${JSON.stringify(snapshot(), null, 2)}`));
+		const ACTIONS = ["alert", "set", "reset", "dispatch", "save"];
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js" defer></script>
+	<script src="wasm_exec.js"></script>
+	<script src="samples.js"></script>
+	<style>
+		/* Playground chrome only; everything inside #preview is PopUI output. */
+		body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+		.bar { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--color-border); }
+		.stats { display: flex; flex-wrap: wrap; gap: 4px 20px; font-family: var(--font-mono, monospace); font-size: 12px; color: var(--color-foreground-default-secondary); }
+		.stats b { font-weight: 500; color: var(--color-foreground); }
+		.panes { display: grid; grid-template-columns: minmax(320px, 2fr) 3fr; min-height: 0; }
+		.editor { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-right: 1px solid var(--color-border); min-height: 0; }
+		.editor textarea, #monaco { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
+		.editor textarea { resize: none; font: 12px/1.5 var(--font-mono, monospace); padding: 8px; background: var(--color-background-default-secondary); color: var(--color-foreground); }
+		#monaco { display: none; }
+		.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+		.controls select, .controls button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); cursor: pointer; }
+		.controls button.primary { background: var(--color-background-accent); color: var(--color-foreground-inverse, #fff); border-color: transparent; }
+		.error { color: var(--color-foreground-critical); font-size: 12px; white-space: pre-wrap; }
+		.preview { overflow: auto; padding: 24px; background: var(--color-background-default-secondary); }
+		.preview > div { max-width: 640px; margin: 0 auto; }
+		@media (max-width: 800px) { .panes { grid-template-columns: 1fr; grid-template-rows: 45vh 1fr; } .editor { border-right: 0; border-bottom: 1px solid var(--color-border); } }
+	</style>
+</head>
+<body class="bg-background text-foreground font-sans">
+	<div class="bar">
+		<a href="/" class="text-sm text-foreground-default-secondary">← PopUI docs</a>
+		<strong class="font-semibold">JSON UI playground</strong>
+		<div class="stats">
+			<span>wasm <b id="s-size">…</b></span>
+			<span>load <b id="s-load">…</b></span>
+			<span>render <b id="s-render">–</b></span>
+			<span>DOM <b id="s-dom">–</b></span>
+			<span id="server-stat" hidden>server round-trip <b id="s-server">–</b></span>
+			<span>html <b id="s-html">–</b></span>
+		</div>
+	</div>
+	<div class="panes">
+		<div class="editor">
+			<div class="controls">
+				<select id="sample">
+					<option value="details">Invoice details (data-driven)</option>
+					<option value="interactive">Interactive: customer form</option>
+					<option value="form">Customer form</option>
+					<option value="stress">Stress: 200 cards</option>
+					<option value="stress1000">Stress: 1000 cards</option>
+					<option value="blocked">Strict mode: blocked script</option>
+				</select>
+				<button id="render" class="primary" disabled>Render</button>
+				<button id="bench" disabled>Benchmark ×50</button>
+				<label><input type="checkbox" id="live" checked/> live</label>
+				<label title="Reject script in props and allow only the listed actions"><input type="checkbox" id="strict" checked/> strict</label>
+				<a href="schema.json" target="_blank">schema</a>
+			</div>
+			<textarea id="json" spellcheck="false"></textarea>
+			<div id="monaco"></div>
+			<div id="error" class="error"></div>
+		</div>
+		<div class="preview"><div id="preview"></div></div>
+	</div>
+
+	<script>
+		const $ = (id) => document.getElementById(id);
+		const fmtMs = (ms) => `${ms.toFixed(ms < 10 ? 2 : 1)}ms`;
+		const fmtKB = (b) => (b > 1048576 ? `${(b / 1048576).toFixed(2)}MB` : `${(b / 1024).toFixed(1)}KB`);
+
+		// The editor is a plain textarea until Monaco loads, then Monaco.
+		let editor = null;
+		const getJSON = () => (editor ? editor.getValue() : $("json").value);
+		const setJSON = (s) => (editor ? editor.setValue(s) : ($("json").value = s));
+
+		function loadSample(name) {
+			const doc = name === "stress" ? SAMPLES.stress(200) : name === "stress1000" ? SAMPLES.stress(1000) : SAMPLES[name];
+			setJSON(JSON.stringify(doc, null, 2));
+		}
+
+		function render() {
+			const json = getJSON();
+			let t = performance.now();
+			const res = popuiRender(json, options());
+			const renderMs = performance.now() - t;
+			$("error").textContent = res.error || "";
+			if (res.error) return;
+			t = performance.now();
+			$("preview").innerHTML = res.html;
+			const domMs = performance.now() - t;
+			$("s-render").textContent = fmtMs(renderMs);
+			$("s-dom").textContent = fmtMs(domMs);
+			$("s-html").textContent = fmtKB(res.html.length);
+		}
+
+		// options passed to the renderer; strict is the default.
+		const options = () => ({ actions: ACTIONS, trusted: !$("strict").checked });
+
+		let timer;
+		function scheduleRender() {
+			if (!$("live").checked || $("render").disabled) return;
+			clearTimeout(timer);
+			timer = setTimeout(render, 150);
+		}
+
+		// serverRender times a server-side render of the same document. Only
+		// `popui serve` offers it; the published static site resolves to null.
+		async function serverRender(json) {
+			const t = performance.now();
+			try {
+				const r = await fetch(`render${$("strict").checked ? "" : "?trusted=1"}`, { method: "POST", body: json });
+				await r.text();
+				if (r.status === 404 || r.status === 405) return null;
+			} catch {
+				return null;
+			}
+			return performance.now() - t;
+		}
+
+		async function bench() {
+			const json = getJSON();
+			const n = 50;
+			let t = performance.now();
+			for (let i = 0; i < n; i++) popuiRender(json, options());
+			const wasm = (performance.now() - t) / n;
+			$("s-render").textContent = `${fmtMs(wasm)} avg`;
+			if ($("server-stat").hidden) return;
+			let server = 0;
+			for (let i = 0; i < n; i++) server += await serverRender(json);
+			$("s-server").textContent = `${fmtMs(server / n)} avg`;
+		}
+
+		async function boot() {
+			const go = new Go();
+			const t = performance.now();
+			const ready = new Promise((r) => addEventListener("popui:ready", r, { once: true }));
+			const { instance } = await WebAssembly.instantiateStreaming(fetch("popui.wasm"), go.importObject);
+			go.run(instance);
+			await ready;
+			$("s-load").textContent = fmtMs(performance.now() - t);
+			const entry = performance.getEntriesByName(new URL("popui.wasm", location).href)[0];
+			if (entry) $("s-size").textContent = `${fmtKB(entry.decodedBodySize)} (${fmtKB(entry.encodedBodySize)} gz)`;
+			$("render").disabled = $("bench").disabled = false;
+			render();
+			serverRender(getJSON()).then((ms) => {
+				if (ms === null) return;
+				$("server-stat").hidden = false;
+				$("s-server").textContent = fmtMs(ms);
+			});
+		}
+
+		// Monaco, with the generated schema registered under the "$schema" id
+		// the documents use, so completion, hovers and validation all work.
+		function loadMonaco() {
+			const base = "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min";
+			window.MonacoEnvironment = {
+				getWorkerUrl: () =>
+					`data:text/javascript;charset=utf-8,${encodeURIComponent(`self.MonacoEnvironment={baseUrl:'${base}/'};importScripts('${base}/vs/base/worker/workerMain.js');`)}`,
+			};
+			const s = document.createElement("script");
+			s.src = `${base}/vs/loader.js`;
+			s.onload = () => {
+				require.config({ paths: { vs: `${base}/vs` } });
+				require(["vs/editor/editor.main"], async () => {
+					const schema = await (await fetch("schema.json")).json();
+					monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+						validate: true,
+						enableSchemaRequest: false,
+						schemas: [{ uri: SCHEMA_ID, fileMatch: ["*"], schema }],
+					});
+					const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+					const model = monaco.editor.createModel(getJSON(), "json", monaco.Uri.parse("inmemory://playground/document.json"));
+					$("json").style.display = "none";
+					$("monaco").style.display = "block";
+					editor = monaco.editor.create($("monaco"), {
+						model,
+						theme: dark ? "vs-dark" : "vs",
+						minimap: { enabled: false },
+						fontSize: 12,
+						tabSize: 2,
+						automaticLayout: true,
+						scrollBeyondLastLine: false,
+					});
+					editor.onDidChangeModelContent(scheduleRender);
+					window.playgroundEditor = editor;
+				});
+			};
+			document.head.appendChild(s);
+		}
+
+		$("sample").addEventListener("change", (e) => { loadSample(e.target.value); render(); });
+		$("render").addEventListener("click", render);
+		$("strict").addEventListener("change", render);
+		$("bench").addEventListener("click", bench);
+		$("json").addEventListener("input", scheduleRender);
+
+		loadSample("details");
+		boot().catch((e) => ($("error").textContent = `Failed to load WASM: ${e}`));
+		loadMonaco();
+	</script>
+</body>
+</html>
