@@ -1,6 +1,8 @@
 // Sample JSON documents for the jsonui playground.
-const SCHEMA = "https://raw.githubusercontent.com/invopop/popui.go/main/jsonui/schema/document.json";
-window.SCHEMA_ID = SCHEMA;
+// Relative, so it resolves to the schema published next to the playground
+// wherever it's hosted: popui serve, a deploy preview or production.
+const SCHEMA = "schema.json";
+window.SCHEMA_PATH = SCHEMA;
 
 const text = (t) => ({ type: "text", text: t });
 

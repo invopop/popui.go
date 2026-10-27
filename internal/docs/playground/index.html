@@ -161,8 +161,9 @@
 			});
 		}
 
-		// Monaco, with the generated schema registered under the "$schema" id
-		// the documents use, so completion, hovers and validation all work.
+		// Monaco, with the generated schema registered under the URL the
+		// documents' relative "$schema" resolves to, so completion, hovers and
+		// validation all work.
 		function loadMonaco() {
 			const base = "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min";
 			window.MonacoEnvironment = {
@@ -174,14 +175,18 @@
 			s.onload = () => {
 				require.config({ paths: { vs: `${base}/vs` } });
 				require(["vs/editor/editor.main"], async () => {
-					const schema = await (await fetch("schema.json")).json();
+					const schemaURL = new URL(SCHEMA_PATH, location.href).href;
+					const schema = await (await fetch(schemaURL)).json();
 					monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
 						validate: true,
 						enableSchemaRequest: false,
-						schemas: [{ uri: SCHEMA_ID, fileMatch: ["*"], schema }],
+						schemas: [{ uri: schemaURL, fileMatch: ["*"], schema }],
 					});
 					const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-					const model = monaco.editor.createModel(getJSON(), "json", monaco.Uri.parse("inmemory://playground/document.json"));
+					// The model lives next to the page so the documents' relative
+					// "$schema" resolves to schemaURL.
+					const docURL = new URL("document.json", location.href).href;
+					const model = monaco.editor.createModel(getJSON(), "json", monaco.Uri.parse(docURL));
 					$("json").style.display = "none";
 					$("monaco").style.display = "block";
 					editor = monaco.editor.create($("monaco"), {
