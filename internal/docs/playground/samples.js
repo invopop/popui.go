@@ -226,12 +226,12 @@
   // (internal/interfaces/web/components/provider.templ), which the console
   // shows in an iframe and drives through the console SDK. Here:
   //
-  //   - the console would supply the step's config as "data" (no fetchStep);
+  //   - "data" is the step's config, which the console would supply (no
+  //     fetchStep); the template defines the fields and their options;
   //   - every change is sent with the host's "step.update" action, from one
   //     handler on the tabs container instead of one per field;
   //   - the logo uses the host's "asset.choose" action, writing the result
-  //     into config.logo_url and flagging ui.uploading while it runs;
-  //   - locale options come from data through "bind".
+  //     into config.logo_url and flagging ui.uploading while it runs.
   const stepUpdate = { action: "step.update", summary: "{{config.locale}} · {{config.layout}}" };
   const options = (pairs) => pairs.map(([value, label]) => ({ value, label }));
   const currencyDefault = ["", "Currency default"];
@@ -258,20 +258,6 @@
         decimal_mark: "",
         duplicate: false,
       },
-      locales: options([
-        ["ar", "ar - Arabic"],
-        ["ca", "ca - Catalan"],
-        ["de", "de - German"],
-        ["el", "el - Greek"],
-        ["en", "en - English"],
-        ["es", "es - Spanish"],
-        ["eu", "eu - Basque"],
-        ["fr", "fr - French"],
-        ["gl", "gl - Galician"],
-        ["it", "it - Italian"],
-        ["pl", "pl - Polish"],
-        ["pt", "pt - Portuguese"],
-      ]),
       ui: { uploading: false },
     },
     template: [
@@ -309,7 +295,28 @@
                     props: { name: "logo_height", label: "Logo height", type: "number", attributes: { min: "10", max: "50" } },
                     model: "config.logo_height",
                   },
-                  { type: "select", props: { name: "locale", label: "Locale" }, bind: { options: "locales" }, model: "config.locale" },
+                  {
+                  type: "select",
+                  props: {
+                    name: "locale",
+                    label: "Locale",
+                    options: options([
+                      ["ar", "ar - Arabic"],
+                      ["ca", "ca - Catalan"],
+                      ["de", "de - German"],
+                      ["el", "el - Greek"],
+                      ["en", "en - English"],
+                      ["es", "es - Spanish"],
+                      ["eu", "eu - Basque"],
+                      ["fr", "fr - French"],
+                      ["gl", "gl - Galician"],
+                      ["it", "it - Italian"],
+                      ["pl", "pl - Polish"],
+                      ["pt", "pt - Portuguese"],
+                    ]),
+                  },
+                  model: "config.locale",
+                },
                   {
                     type: "select",
                     props: {
