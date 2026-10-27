@@ -4,39 +4,83 @@
   "$ref": "#/$defs/Document",
   "$defs": {
     "Action": {
-      "anyOf": [
+      "allOf": [
         {
-          "$ref": "#/$defs/action.alert"
-        },
-        {
-          "$ref": "#/$defs/action.set"
-        },
-        {
-          "$ref": "#/$defs/action.reset"
-        },
-        {
-          "$ref": "#/$defs/action.dispatch"
-        },
-        {
-          "properties": {
-            "action": {
-              "not": {
-                "enum": [
-                  "alert",
-                  "set",
-                  "reset",
-                  "dispatch"
-                ]
-              },
-              "type": "string"
-            }
+          "if": {
+            "properties": {
+              "action": {
+                "const": "alert"
+              }
+            },
+            "required": [
+              "action"
+            ]
           },
-          "type": "object",
-          "required": [
-            "action"
-          ],
-          "description": "An action registered by the host page with popui.actions.register(name, fn). Other properties are passed to it as params."
+          "then": {
+            "$ref": "#/$defs/action.alert"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "set"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.set"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "reset"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.reset"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "dispatch"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.dispatch"
+          }
         }
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "A built-in action, or one the host page registered with popui.actions.register(name, fn) and allows.",
+          "examples": [
+            "alert",
+            "set",
+            "reset",
+            "dispatch"
+          ]
+        }
+      },
+      "type": "object",
+      "required": [
+        "action"
       ],
       "description": "An action to run in response to an event."
     },
@@ -847,97 +891,498 @@
       "description": "Input defines the properties that can be used with input fields."
     },
     "Node": {
-      "oneOf": [
+      "allOf": [
         {
-          "$ref": "#/$defs/node.text"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.text"
+          }
         },
         {
-          "$ref": "#/$defs/node.avatar"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "avatar"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.avatar"
+          }
         },
         {
-          "$ref": "#/$defs/node.button"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "button"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.button"
+          }
         },
         {
-          "$ref": "#/$defs/node.button_group"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "button_group"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.button_group"
+          }
         },
         {
-          "$ref": "#/$defs/node.card"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "card"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card"
+          }
         },
         {
-          "$ref": "#/$defs/node.card_content"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "card_content"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card_content"
+          }
         },
         {
-          "$ref": "#/$defs/node.card_header"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "card_header"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card_header"
+          }
         },
         {
-          "$ref": "#/$defs/node.card_progress_bar"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "card_progress_bar"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card_progress_bar"
+          }
         },
         {
-          "$ref": "#/$defs/node.checkbox"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "checkbox"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.checkbox"
+          }
         },
         {
-          "$ref": "#/$defs/node.dd"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dd"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.dd"
+          }
         },
         {
-          "$ref": "#/$defs/node.description"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "description"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.description"
+          }
         },
         {
-          "$ref": "#/$defs/node.description_list"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "description_list"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.description_list"
+          }
         },
         {
-          "$ref": "#/$defs/node.description_list_item"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "description_list_item"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.description_list_item"
+          }
         },
         {
-          "$ref": "#/$defs/node.dt"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dt"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.dt"
+          }
         },
         {
-          "$ref": "#/$defs/node.fieldset"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "fieldset"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.fieldset"
+          }
         },
         {
-          "$ref": "#/$defs/node.form"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "form"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.form"
+          }
         },
         {
-          "$ref": "#/$defs/node.input"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "input"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.input"
+          }
         },
         {
-          "$ref": "#/$defs/node.option_group"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "option_group"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.option_group"
+          }
         },
         {
-          "$ref": "#/$defs/node.p"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "p"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.p"
+          }
         },
         {
-          "$ref": "#/$defs/node.select"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "select"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.select"
+          }
         },
         {
-          "$ref": "#/$defs/node.separator"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "separator"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.separator"
+          }
         },
         {
-          "$ref": "#/$defs/node.status_badge"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "status_badge"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.status_badge"
+          }
         },
         {
-          "$ref": "#/$defs/node.subtitle"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "subtitle"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.subtitle"
+          }
         },
         {
-          "$ref": "#/$defs/node.tab"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tab"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tab"
+          }
         },
         {
-          "$ref": "#/$defs/node.tabs"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tabs"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tabs"
+          }
         },
         {
-          "$ref": "#/$defs/node.tag_status"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tag_status"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tag_status"
+          }
         },
         {
-          "$ref": "#/$defs/node.textarea"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "textarea"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.textarea"
+          }
         },
         {
-          "$ref": "#/$defs/node.title"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "title"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.title"
+          }
         },
         {
-          "$ref": "#/$defs/node.title_group"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "title_group"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.title_group"
+          }
         },
         {
-          "$ref": "#/$defs/node.upload_file"
+          "if": {
+            "properties": {
+              "type": {
+                "const": "upload_file"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.upload_file"
+          }
         }
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "text",
+            "avatar",
+            "button",
+            "button_group",
+            "card",
+            "card_content",
+            "card_header",
+            "card_progress_bar",
+            "checkbox",
+            "dd",
+            "description",
+            "description_list",
+            "description_list_item",
+            "dt",
+            "fieldset",
+            "form",
+            "input",
+            "option_group",
+            "p",
+            "select",
+            "separator",
+            "status_badge",
+            "subtitle",
+            "tab",
+            "tabs",
+            "tag_status",
+            "textarea",
+            "title",
+            "title_group",
+            "upload_file"
+          ],
+          "description": "The component to render."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type"
       ],
       "description": "A component in the template, identified by its type."
     },

@@ -87,7 +87,7 @@ func generate() error {
 	if p, ok := docDef.Properties.Get("handlers"); ok {
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
 	}
-	delete(defs, "Node") // replaced by the per-type union below
+	delete(defs, "Node") // replaced by the per-type definitions below
 
 	children := &jsonschema.Schema{
 		Type:        typeArray,
@@ -100,7 +100,7 @@ func generate() error {
 	text.Properties.Set("text", &jsonschema.Schema{Type: typeString, Description: nodeComment("Text")})
 	text.Properties.Set("bind", &jsonschema.Schema{Type: typeString, Description: "Alpine expression shown with x-text. A plain data path such as \"customer.name\" is also resolved from object data at render time."})
 	defs["node.text"] = text
-	union := []*jsonschema.Schema{{Ref: "#/$defs/node.text"}}
+	types := []string{"text"}
 
 	for _, c := range jsonui.Components() {
 		ps := r.ReflectFromType(c.Props)
@@ -122,13 +122,10 @@ func generate() error {
 			AdditionalProperties: &jsonschema.Schema{Ref: "#/$defs/Handler"},
 		})
 		defs["node."+c.Type] = n
-		union = append(union, &jsonschema.Schema{Ref: "#/$defs/node." + c.Type})
+		types = append(types, c.Type)
 	}
 	addActions(defs)
-	defs["Node"] = &jsonschema.Schema{
-		Description: "A component in the template, identified by its type.",
-		OneOf:       union,
-	}
+	defs["Node"] = nodeSchema(types)
 
 	for _, d := range defs {
 		dropUnsupported(d)
@@ -215,23 +212,27 @@ var builtinActions = []struct {
 	}},
 }
 
-// actionRef refers to the Action definition.
-const actionRef = "#/$defs/Action"
+// actionRef refers to the Action definition, and actionKey is the property
+// naming an action.
+const (
+	actionRef = "#/$defs/Action"
+	actionKey = "action"
+)
 
 // addActions defines Action (one built-in or host-registered action) and
 // Handler (an action or a list of actions).
 func addActions(defs jsonschema.Definitions) {
-	var options []*jsonschema.Schema
+	var branches []*jsonschema.Schema
 	var names []any
 	for _, a := range builtinActions {
 		s := &jsonschema.Schema{
 			Type:                 typeObject,
 			Description:          a.desc,
 			Properties:           jsonschema.NewProperties(),
-			Required:             []string{"action"},
+			Required:             []string{actionKey},
 			AdditionalProperties: jsonschema.FalseSchema,
 		}
-		s.Properties.Set("action", &jsonschema.Schema{Const: a.name})
+		s.Properties.Set(actionKey, &jsonschema.Schema{Const: a.name})
 		for _, p := range append(a.params, commonParams...) {
 			s.Properties.Set(p.name, p.schema)
 			if p.required {
@@ -239,18 +240,27 @@ func addActions(defs jsonschema.Definitions) {
 			}
 		}
 		defs["action."+a.name] = s
-		options = append(options, &jsonschema.Schema{Ref: "#/$defs/action." + a.name})
+		is := &jsonschema.Schema{Properties: jsonschema.NewProperties(), Required: []string{actionKey}}
+		is.Properties.Set(actionKey, &jsonschema.Schema{Const: a.name})
+		branches = append(branches, &jsonschema.Schema{If: is, Then: &jsonschema.Schema{Ref: "#/$defs/action." + a.name}})
 		names = append(names, a.name)
 	}
-	custom := &jsonschema.Schema{
+	// Built-in actions are checked against their own definitions, selected
+	// with if/then like nodes; any other name is an action registered by the
+	// host page, whose params are passed through unchecked.
+	action := &jsonschema.Schema{
+		Description: "An action to run in response to an event.",
 		Type:        typeObject,
-		Description: "An action registered by the host page with popui.actions.register(name, fn). Other properties are passed to it as params.",
 		Properties:  jsonschema.NewProperties(),
-		Required:    []string{"action"},
+		Required:    []string{actionKey},
+		AllOf:       branches,
 	}
-	custom.Properties.Set("action", &jsonschema.Schema{Type: typeString, Not: &jsonschema.Schema{Enum: names}})
-	options = append(options, custom)
-	defs["Action"] = &jsonschema.Schema{Description: "An action to run in response to an event.", AnyOf: options}
+	action.Properties.Set(actionKey, &jsonschema.Schema{
+		Type:        typeString,
+		Description: "A built-in action, or one the host page registered with popui.actions.register(name, fn) and allows.",
+		Examples:    names,
+	})
+	defs["Action"] = action
 	// Handlers defined on the document hold actions only; "on" values can
 	// also name one of them.
 	defs["HandlerDefinition"] = &jsonschema.Schema{
@@ -283,6 +293,32 @@ func bindSchema(props *jsonschema.Schema) *jsonschema.Schema {
 		PropertyNames:        &jsonschema.Schema{Enum: names},
 		AdditionalProperties: &jsonschema.Schema{Type: typeString},
 	}
+}
+
+// nodeSchema selects each node's definition by its "type" with if/then,
+// rather than a oneOf of every definition. Nodes nest through "children",
+// and validators that evaluate every oneOf branch in full (as editors'
+// schema libraries do) multiply their work by the number of types at each
+// level; if/then only checks the type of each branch before applying the
+// one that matches.
+func nodeSchema(types []string) *jsonschema.Schema {
+	names := make([]any, len(types))
+	branches := make([]*jsonschema.Schema, len(types))
+	for i, t := range types {
+		names[i] = t
+		is := &jsonschema.Schema{Properties: jsonschema.NewProperties(), Required: []string{"type"}}
+		is.Properties.Set("type", &jsonschema.Schema{Const: t})
+		branches[i] = &jsonschema.Schema{If: is, Then: &jsonschema.Schema{Ref: "#/$defs/node." + t}}
+	}
+	s := &jsonschema.Schema{
+		Description: "A component in the template, identified by its type.",
+		Type:        typeObject,
+		Properties:  jsonschema.NewProperties(),
+		Required:    []string{"type"},
+		AllOf:       branches,
+	}
+	s.Properties.Set("type", &jsonschema.Schema{Enum: names, Description: "The component to render."})
+	return s
 }
 
 // node returns the base schema for a node of the given type.
