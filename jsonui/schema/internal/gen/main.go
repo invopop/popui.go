@@ -115,10 +115,17 @@ func generate() error {
 		if c.Model {
 			n.Properties.Set("model", &jsonschema.Schema{Type: typeString, Description: nodeComment("Model")})
 		}
+		events := &jsonschema.Schema{Pattern: `^[a-z][a-z0-9-]*(\.[a-z0-9-]+)*$`}
+		if c.Events != nil {
+			events = &jsonschema.Schema{}
+			for _, e := range c.Events {
+				events.Enum = append(events.Enum, e)
+			}
+		}
 		n.Properties.Set("on", &jsonschema.Schema{
 			Type:                 typeObject,
 			Description:          nodeComment("On"),
-			PropertyNames:        &jsonschema.Schema{Pattern: `^[a-z][a-z0-9-]*(\.[a-z0-9-]+)*$`},
+			PropertyNames:        events,
 			AdditionalProperties: &jsonschema.Schema{Ref: "#/$defs/Handler"},
 		})
 		defs["node."+c.Type] = n

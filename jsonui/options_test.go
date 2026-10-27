@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+const errUnsafeURL = "unsafe URL"
+
 func render(t *testing.T, opts Options, doc string) (string, error) {
 	t.Helper()
 	var buf bytes.Buffer
@@ -39,7 +41,7 @@ func TestStrictRejectsScript(t *testing.T) {
 		},
 		"javascript href": {
 			`{"template":[{"type":"button","props":{"href":" JavaScript:alert(1)"}}]}`,
-			`unsafe URL`,
+			errUnsafeURL,
 		},
 		"javascript URL nested in actions": {
 			`{"template":[{"type":"description_list_item","props":{"actions":[{"url":"javascript:alert(1)"}]}}]}`,
@@ -47,7 +49,7 @@ func TestStrictRejectsScript(t *testing.T) {
 		},
 		"javascript URL in attributes": {
 			`{"template":[{"type":"form","props":{"attributes":{"formaction":"javascript:alert(1)"}}}]}`,
-			`unsafe URL`,
+			errUnsafeURL,
 		},
 		"text bind expression": {
 			`{"data":{"a":1},"template":[{"type":"text","bind":"alert(1)"}]}`,
@@ -56,6 +58,22 @@ func TestStrictRejectsScript(t *testing.T) {
 		"action not allowed": {
 			`{"template":[{"type":"button","on":{"click":{"action":"steal"}}}]}`,
 			`action "steal" is not allowed`,
+		},
+		"htmx event handler": {
+			`{"template":[{"type":"button","props":{"attributes":{"hx-on:click":"alert(1)"}}}]}`,
+			`attribute "hx-on:click" is not allowed`,
+		},
+		"htmx script values": {
+			`{"template":[{"type":"button","props":{"attributes":{"data-hx-vals":"js:{a: alert(1)}"}}}]}`,
+			`attribute "data-hx-vals" is not allowed`,
+		},
+		"bound javascript href": {
+			`{"data":{"url":"javascript:alert(1)"},"template":[{"type":"button","bind":{"href":"url"}}]}`,
+			errUnsafeURL,
+		},
+		"bound attributes": {
+			`{"data":{"attrs":{"x-on:click":"alert(1)"}},"template":[{"type":"button","bind":{"attributes":"attrs"}}]}`,
+			`attribute "x-on:click" is not allowed`,
 		},
 	}
 	for name, c := range cases {
@@ -72,10 +90,17 @@ func TestStrictRejectsScript(t *testing.T) {
 // "model" and "on" keys end up inside generated Alpine attributes.
 func TestAlwaysRejected(t *testing.T) {
 	cases := map[string]string{
-		`{"data":{"a":1},"template":[{"type":"input","model":"a; alert(1)"}]}`:         `not a data path`,
-		`{"template":[{"type":"button","on":{"click=\"x\" y":{"action":"alert"}}}]}`:   `invalid event name`,
-		`{"data":{"a":1},"template":[{"type":"button","model":"a"}]}`:                  `only supported on form controls`,
-		`{"template":[{"type":"button","on":{"click":{"message":"no action name"}}}]}`: `needs an "action" name`,
+		`{"data":{"a":1},"template":[{"type":"input","model":"a; alert(1)"}]}`:                              `not a data path`,
+		`{"template":[{"type":"button","on":{"click=\"x\" y":{"action":"alert"}}}]}`:                        `invalid event name`,
+		`{"data":{"a":1},"template":[{"type":"button","model":"a"}]}`:                                       `only supported on form controls`,
+		`{"template":[{"type":"button","on":{"click":{"message":"no action name"}}}]}`:                      `needs an "action" name`,
+		`{"data":{"a":{}},"template":[{"type":"input","model":"a.__proto__.x"}]}`:                           `not a data path`,
+		`{"template":[{"type":"button","on":{"click":{"action":"set","path":"constructor.prototype.x"}}}]}`: `path "constructor.prototype.x" is not a data path`,
+		`{"template":[{"type":"button","on":{"click":{"action":"alert","into":"__proto__.x"}}}]}`:           `into "__proto__.x" is not a data path`,
+		`{"template":[{"type":"button","on":{"click":{"action":"alert","busy":1}}}]}`:                       `busy 1 is not a data path`,
+		`{"template":[{"type":"button","on":{"click":null}}]}`:                                              `expected an action`,
+		`{"handlers":{"h":null},"template":[]}`:                                                             `expected an action`,
+		`{"template":[]} {"template":[]}`:                                                                   `unexpected data after the JSON value`,
 	}
 	for doc, want := range cases {
 		_, err := render(t, Options{Trusted: true}, doc)
@@ -223,5 +248,54 @@ func TestHandlers(t *testing.T) {
 		if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), want) {
 			t.Errorf("%s: want error containing %q, got %v", doc, want, err)
 		}
+	}
+}
+
+// TestNullProps checks that null props and attributes are treated as empty
+// when generated bindings are added to them.
+func TestNullProps(t *testing.T) {
+	for _, doc := range []string{
+		`{"data":{"a":"x"},"template":[{"type":"input","props":null,"model":"a"}]}`,
+		`{"template":[{"type":"button","props":{"attributes":null},"on":{"click":{"action":"alert"}}}]}`,
+	} {
+		html, err := render(t, Options{}, doc)
+		if err != nil {
+			t.Errorf("%s: %v", doc, err)
+		} else if !strings.Contains(html, "x-model") && !strings.Contains(html, "x-on:click") {
+			t.Errorf("%s: missing binding in:\n%s", doc, html)
+		}
+	}
+}
+
+// TestBoundAttributesKeepHandlers checks that attributes taken from the data
+// are combined with the ones generated for "on".
+func TestBoundAttributesKeepHandlers(t *testing.T) {
+	doc := `{"data":{"attrs":{"aria-label":"Save"}},"template":[
+		{"type":"button","bind":{"attributes":"attrs"},"on":{"click":{"action":"alert"}}}
+	]}`
+	html, err := render(t, Options{}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(html, `aria-label="Save"`) || !strings.Contains(html, `x-on:click=`) {
+		t.Errorf("want bound and generated attributes in:\n%s", html)
+	}
+}
+
+func TestMultipleSelectModel(t *testing.T) {
+	doc := `{"data":{"tags":["es","pt"]},"template":[{"type":"select","model":"tags","props":{"multiple":true,"options":[
+		{"value":"es","label":"Spanish"},{"value":"fr","label":"French"},{"value":"pt","label":"Portuguese"}
+	]}}]}`
+	html, err := render(t, Options{}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, v := range []string{"es", "pt"} {
+		if !strings.Contains(html, `value="`+v+`" selected`) {
+			t.Errorf("option %s not selected in:\n%s", v, html)
+		}
+	}
+	if strings.Contains(html, `value="fr" selected`) {
+		t.Errorf("option fr selected in:\n%s", html)
 	}
 }

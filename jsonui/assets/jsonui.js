@@ -21,8 +21,13 @@
 
   const get = (obj, path) => path.split(".").reduce((v, k) => (v == null ? undefined : v[k]), obj);
 
+  // Paths through these keys would reach Object.prototype and pollute the
+  // host page, so set refuses them.
+  const unsafeKeys = new Set(["__proto__", "prototype", "constructor"]);
+
   const set = (obj, path, value) => {
-    const keys = path.split(".");
+    const keys = String(path).split(".");
+    if (keys.some((k) => unsafeKeys.has(k))) throw new Error(`[jsonui] unsafe data path "${path}"`);
     const last = keys.pop();
     const target = keys.reduce((v, k) => v[k], obj);
     target[last] = value;
@@ -76,16 +81,26 @@
   popui.actions.register("alert", ({ params }) => window.alert(params.message ?? ""));
   popui.actions.register("set", ({ params, data }) => set(data, params.path, params.value));
   popui.actions.register("reset", ({ el, data }) => {
-    // The document root's x-data is the original JSON object.
-    const root = el.closest("[data-popui-document]");
-    Object.assign(data, JSON.parse(root.getAttribute("x-data")));
+    // The document root's x-data is the original JSON object. Keys added
+    // since are removed.
+    const initial = JSON.parse(el.closest("[data-popui-document]").getAttribute("x-data"));
+    for (const key of Object.keys(data)) if (!(key in initial)) delete data[key];
+    Object.assign(data, initial);
   });
   popui.actions.register("dispatch", ({ params, el, snapshot }) => {
     el.dispatchEvent(new CustomEvent(params.event, { bubbles: true, detail: params.detail ?? snapshot() }));
   });
 
+  // Actions work on the document's own data, the x-data of its root, rather
+  // than the merged scope at the element: components such as tabs add scopes
+  // inside the document, and the host page may have scopes around it.
+  // Documents without data have no root and use the element's scope.
   const install = (Alpine) =>
-    Alpine.magic("actions", (el) => (list, event) => popui.actions.run(list, { el, event, data: Alpine.$data(el) }));
+    Alpine.magic("actions", (el) => (list, event) => {
+      const root = el.closest("[data-popui-document]");
+      const data = root ? Alpine.closestDataStack(root)[0] : Alpine.$data(el);
+      return popui.actions.run(list, { el, event, data });
+    });
 
   if (window.Alpine) install(window.Alpine);
   else document.addEventListener("alpine:init", () => install(window.Alpine));

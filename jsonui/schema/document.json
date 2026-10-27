@@ -3429,7 +3429,10 @@
             "$ref": "#/$defs/Handler"
           },
           "propertyNames": {
-            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+            "enum": [
+              "remove",
+              "select"
+            ]
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."

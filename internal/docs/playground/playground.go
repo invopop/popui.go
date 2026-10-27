@@ -94,6 +94,10 @@ func goEnv(key string) (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
+// maxRenderBody limits the documents POST render accepts. The playground's
+// largest sample, 1000 stress cards, is about 2MB.
+const maxRenderBody = 4 << 20
+
 // Handler serves the playground for local development. The WebAssembly
 // module is compiled from the current source on first request. It also
 // offers POST render, a server-side render of the same document for
@@ -126,7 +130,7 @@ func Handler() http.Handler {
 		w.Write(wasm) //nolint:errcheck
 	})
 	mux.HandleFunc("POST /render", func(w http.ResponseWriter, r *http.Request) {
-		body, err := io.ReadAll(r.Body)
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRenderBody))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return

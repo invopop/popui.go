@@ -36,6 +36,7 @@ import (
 	"io"
 	"reflect"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -95,6 +96,10 @@ type Node struct {
 // valueProp is the prop holding a text control's value.
 const valueProp = "value"
 
+// nodeEvents lists the "on" events accepted by nodes that don't take every
+// DOM event.
+var nodeEvents = map[string][]string{}
+
 // modelProps lists the components that accept "model" and the prop holding
 // their rendered value.
 var modelProps = map[string]string{
@@ -114,6 +119,9 @@ type Component struct {
 	Model bool
 	// Leaf is true for nodes that take no "children" or "bind".
 	Leaf bool
+	// Events lists the events the node accepts in "on", or nil for any DOM
+	// event.
+	Events []string
 }
 
 // builder converts raw props into a component, children are attached later.
@@ -192,7 +200,7 @@ func Components() []Component {
 	for k, e := range registry {
 		_, model := modelProps[k]
 		// Entries without a props builder are custom leaf nodes (upload_file).
-		out = append(out, Component{Type: k, Props: e.props, Model: model, Leaf: e.build == nil})
+		out = append(out, Component{Type: k, Props: e.props, Model: model, Leaf: e.build == nil, Events: nodeEvents[k]})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Type < out[j].Type })
 	return out
@@ -344,13 +352,31 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 	if len(n.Bind) == 0 && n.Model == "" && len(n.On) == 0 {
 		return n.Props, nil
 	}
-	props := map[string]json.RawMessage{}
+	var props map[string]json.RawMessage
 	if len(n.Props) > 0 {
 		if err := json.Unmarshal(n.Props, &props); err != nil {
 			return nil, fmt.Errorf("%s props: %w", n.Type, err)
 		}
 	}
-	attrs := map[string]any{}
+	if props == nil { // missing or null
+		props = map[string]json.RawMessage{}
+	}
+	if len(n.Bind) > 0 {
+		if err := b.bindProps(n.Type, props, n.Bind); err != nil {
+			return nil, err
+		}
+		if !b.opts.Trusted {
+			// Bound values come from the data, so check them like props.
+			raw, err := json.Marshal(props)
+			if err != nil {
+				return nil, err
+			}
+			if err := checkProps(n.Type, raw); err != nil {
+				return nil, err
+			}
+		}
+	}
+	var attrs map[string]any
 	attrsKey := "attributes"
 	for k, v := range props {
 		if strings.EqualFold(k, attrsKey) {
@@ -360,10 +386,8 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 			}
 		}
 	}
-	if len(n.Bind) > 0 {
-		if err := b.bindProps(n.Type, props, n.Bind); err != nil {
-			return nil, err
-		}
+	if attrs == nil { // missing or null
+		attrs = map[string]any{}
 	}
 	if n.Model != "" {
 		if err := b.model(n.Type, props, attrs, n.Model); err != nil {
@@ -417,7 +441,7 @@ func (b *docBuilder) model(typ string, props map[string]json.RawMessage, attrs m
 	if b.data == nil {
 		return fmt.Errorf("%s model: document data must be set", typ)
 	}
-	if !dataPath.MatchString(path) {
+	if !safePath(path) {
 		return fmt.Errorf("%s model: %q is not a data path", typ, path)
 	}
 	v, err := lookup(b.data, path)
@@ -436,13 +460,22 @@ func (b *docBuilder) model(typ string, props map[string]json.RawMessage, attrs m
 		on, _ := v.(bool)
 		props[prop], err = json.Marshal(on)
 	case "options":
-		err = selectOption(props, display(v))
+		err = selectOptions(props, v)
 	}
 	return err
 }
 
-// selectOption marks the select option with the given value as selected.
-func selectOption(props map[string]json.RawMessage, value string) error {
+// selectOptions marks the select options with the given value as selected,
+// or with any of the values when it is a list, as for a multiple select.
+func selectOptions(props map[string]json.RawMessage, value any) error {
+	var values []string
+	if list, ok := value.([]any); ok {
+		for _, v := range list {
+			values = append(values, display(v))
+		}
+	} else {
+		values = []string{display(value)}
+	}
 	for k, raw := range props {
 		if !strings.EqualFold(k, "options") {
 			continue
@@ -457,7 +490,7 @@ func selectOption(props map[string]json.RawMessage, value string) error {
 					delete(o, ok)
 				}
 			}
-			o["selected"] = fmt.Sprint(o["value"]) == value
+			o["selected"] = slices.Contains(values, fmt.Sprint(o["value"]))
 		}
 		var err error
 		props[k], err = json.Marshal(opts)
@@ -515,6 +548,9 @@ func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, 
 			if !b.opts.allowsAction(name) {
 				return nil, fmt.Errorf("action %q is not allowed", name)
 			}
+			if err := checkActionPaths(name, item); err != nil {
+				return nil, err
+			}
 			list = append(list, item)
 		default:
 			return nil, errors.New("expected an action, a handler name or a list of them")
@@ -526,6 +562,43 @@ func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, 
 // dataPath matches the plain dotted paths that can be resolved in Go, as
 // opposed to arbitrary Alpine expressions.
 var dataPath = regexp.MustCompile(`^[A-Za-z_$][\w$]*(\.[\w$]+)*$`)
+
+// unsafeKeys are path segments that reach JavaScript object prototypes.
+var unsafeKeys = []string{"__proto__", "prototype", "constructor"}
+
+// safePath reports whether path is a plain data path that doesn't reach an
+// object prototype, so writing to it can't pollute the host page.
+func safePath(path string) bool {
+	if !dataPath.MatchString(path) {
+		return false
+	}
+	for _, key := range strings.Split(path, ".") {
+		if slices.Contains(unsafeKeys, key) {
+			return false
+		}
+	}
+	return true
+}
+
+// checkActionPaths checks the action params that jsonui.js writes to as
+// data paths: into and busy, and the path of the built-in set action.
+func checkActionPaths(name string, action map[string]any) error {
+	keys := []string{"into", "busy"}
+	if name == "set" {
+		keys = append(keys, "path")
+	}
+	for _, key := range keys {
+		v, ok := action[key]
+		if !ok {
+			continue
+		}
+		if path, _ := v.(string); !safePath(path) {
+			raw, _ := json.Marshal(v)
+			return fmt.Errorf("action %q: %s %s is not a data path", name, key, raw)
+		}
+	}
+	return nil
+}
 
 // lookup resolves a dotted path such as "invoice.lines.0.total" in data.
 func lookup(data map[string]any, path string) (any, error) {
@@ -571,9 +644,15 @@ func withChildren(c, children templ.Component) templ.Component {
 }
 
 // decodeStrict rejects unknown fields so typos in props surface as errors
-// instead of being silently ignored.
+// instead of being silently ignored, and anything after the JSON value.
 func decodeStrict(data []byte, v any) error {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()
-	return dec.Decode(v)
+	if err := dec.Decode(v); err != nil {
+		return err
+	}
+	if _, err := dec.Token(); err != io.EOF {
+		return errors.New("unexpected data after the JSON value")
+	}
+	return nil
 }

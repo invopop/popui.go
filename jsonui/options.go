@@ -23,9 +23,12 @@ var BuiltinActions = []string{"alert", "set", "reset", "dispatch"}
 // can embed documents from another source and decide exactly what they may
 // trigger. Strict mode rejects:
 //
-//   - attributes in props that Alpine or the browser would run as script:
-//     x-*, @*, :* and on* (use "model" and "on" instead);
+//   - attributes in props that Alpine, htmx or the browser would run as
+//     script: x-*, @*, :*, on*, hx-* and data-hx-* (use "model" and "on"
+//     instead), including props set with "bind";
 //   - text "bind" values other than plain data paths such as "customer.name";
+//   - data paths in "model", and in the path, into and busy action params,
+//     that reach __proto__, prototype or constructor;
 //   - props that components use as Alpine variable names (such as the tabs
 //     "model") unless they are plain identifiers;
 //   - href, src, action, formaction and url values with a scheme other than
@@ -169,7 +172,8 @@ func checkAttributes(at string, v any) error {
 	for k := range attrs {
 		name := strings.ToLower(k)
 		if strings.HasPrefix(name, "x-") || strings.HasPrefix(name, "@") ||
-			strings.HasPrefix(name, ":") || strings.HasPrefix(name, "on") {
+			strings.HasPrefix(name, ":") || strings.HasPrefix(name, "on") ||
+			strings.HasPrefix(name, "hx-") || strings.HasPrefix(name, "data-hx-") {
 			return fmt.Errorf("%s: attribute %q is not allowed in strict mode; use \"model\" or \"on\"", at, k)
 		}
 	}

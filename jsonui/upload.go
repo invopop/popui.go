@@ -3,6 +3,7 @@ package jsonui
 import (
 	"fmt"
 	"reflect"
+	"slices"
 
 	"github.com/a-h/templ"
 	"github.com/invopop/popui.go/alpine"
@@ -31,14 +32,12 @@ type UploadFile struct {
 	Loading string `json:"loading,omitempty"`
 }
 
-// uploadEvents are the "on" handlers an upload_file node accepts.
-var uploadEvents = map[string]bool{"select": true, "remove": true}
-
 func init() {
 	// Built by docBuilder.uploadFile; the entry provides the props type for
 	// Components and the schema.
 	registry[uploadFileType] = entry{props: reflect.TypeFor[UploadFile]()}
 	modelProps[uploadFileType] = ""
+	nodeEvents[uploadFileType] = []string{"remove", "select"}
 }
 
 // uploadFile builds alpine.UploadFile, whose props are Alpine expressions,
@@ -59,7 +58,7 @@ func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
 	if b.data == nil {
 		return nil, fmt.Errorf("%s model: document data must be set", n.Type)
 	}
-	if !dataPath.MatchString(n.Model) {
+	if !safePath(n.Model) {
 		return nil, fmt.Errorf("%s model: %q is not a data path", n.Type, n.Model)
 	}
 	if _, err := lookup(b.data, n.Model); err != nil {
@@ -67,14 +66,14 @@ func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
 	}
 	loading := "false"
 	if p.Loading != "" {
-		if !dataPath.MatchString(p.Loading) {
+		if !safePath(p.Loading) {
 			return nil, fmt.Errorf("%s loading: %q is not a data path", n.Type, p.Loading)
 		}
 		loading = p.Loading
 	}
 	handlers := map[string]string{}
 	for event, raw := range n.On {
-		if !uploadEvents[event] {
+		if !slices.Contains(nodeEvents[uploadFileType], event) {
 			return nil, fmt.Errorf("%s on: unknown event %q, expected select or remove", n.Type, event)
 		}
 		h, err := b.actions(event, raw)
