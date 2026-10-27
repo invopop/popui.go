@@ -228,11 +228,11 @@
   //
   //   - "data" is the step's config, which the console would supply (no
   //     fetchStep); the template defines the fields and their options;
-  //   - every change is sent with the host's "step.update" action, from one
-  //     handler on the tabs container instead of one per field;
+  //   - every change is sent with the host's "step.update" action, defined
+  //     once as the "update" handler and used from one "on" on the tabs
+  //     container instead of one per field;
   //   - the logo uses the host's "asset.choose" action, writing the result
   //     into config.logo_url and flagging ui.uploading while it runs.
-  const stepUpdate = { action: "step.update", summary: "{{config.locale}} · {{config.layout}}" };
   const options = (pairs) => pairs.map(([value, label]) => ({ value, label }));
   const currencyDefault = ["", "Currency default"];
 
@@ -260,6 +260,9 @@
       },
       ui: { uploading: false },
     },
+    handlers: {
+      update: { action: "step.update", summary: "{{config.locale}} · {{config.layout}}" },
+    },
     template: [
       {
         type: "tabs",
@@ -272,7 +275,7 @@
         },
         // Field events bubble up to here: selects and switches fire "change",
         // text and number inputs fire "input" (debounced while typing).
-        on: { change: stepUpdate, "input.debounce.300ms": stepUpdate },
+        on: { change: "update", "input.debounce.300ms": "update" },
         children: [
           {
             type: "tab",
@@ -286,8 +289,8 @@
                     model: "config.logo_url",
                     props: { loading: "ui.uploading" },
                     on: {
-                      select: [{ action: "asset.choose", accept: "image/*", into: "config.logo_url", busy: "ui.uploading" }, stepUpdate],
-                      remove: [{ action: "set", path: "config.logo_url", value: "" }, stepUpdate],
+                      select: [{ action: "asset.choose", accept: "image/*", into: "config.logo_url", busy: "ui.uploading" }, "update"],
+                      remove: [{ action: "set", path: "config.logo_url", value: "" }, "update"],
                     },
                   },
                   {

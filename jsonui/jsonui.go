@@ -57,6 +57,11 @@ type Document struct {
 	Data json.RawMessage `json:"data,omitempty"`
 	// Template is the list of nodes to render.
 	Template []Node `json:"template"`
+	// Handlers are named actions, or lists of actions, that "on" handlers
+	// can refer to by name so a handler used in several places is defined
+	// once, e.g. {"update": {"action": "step.update", "summary": "…"}} and
+	// then {"on": {"change": "update"}}. Handlers can't refer to each other.
+	Handlers map[string]json.RawMessage `json:"handlers,omitempty"`
 }
 
 // Node is a single element in the JSON component tree.
@@ -80,8 +85,10 @@ type Node struct {
 	// rendered from the data.
 	Model string `json:"model,omitempty"`
 	// On maps DOM events, with optional Alpine modifiers such as
-	// "submit.prevent", to an action or a list of actions to run in order,
-	// e.g. {"click": {"action": "alert", "message": "Hi {{customer.name}}"}}.
+	// "submit.prevent", to an action, the name of one of the document's
+	// handlers, or a list of either to run in order, e.g.
+	// {"click": {"action": "alert", "message": "Hi {{customer.name}}"}} or
+	// {"change": "update"}.
 	On map[string]json.RawMessage `json:"on,omitempty"`
 }
 
@@ -215,6 +222,16 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 			return nil, err
 		}
 	}
+	// Resolve every handler up front so mistakes are reported even when a
+	// handler isn't used.
+	b.handlers = make(map[string][]map[string]any, len(d.Handlers))
+	for name, raw := range d.Handlers {
+		list, err := b.resolve(raw, false)
+		if err != nil {
+			return nil, fmt.Errorf("handler %q: %w", name, err)
+		}
+		b.handlers[name] = list
+	}
 	body, err := b.buildAll(d.Template)
 	if err != nil {
 		return nil, err
@@ -250,6 +267,8 @@ type docBuilder struct {
 	opts Options
 	// data is the document data when it is a JSON object, or nil.
 	data map[string]any
+	// handlers are the document's named handlers, resolved to their actions.
+	handlers map[string][]map[string]any
 }
 
 func (b *docBuilder) buildAll(nodes []Node) (templ.Component, error) {
@@ -447,33 +466,61 @@ func selectOption(props map[string]json.RawMessage, value string) error {
 	return nil
 }
 
-// actions converts an "on" handler (an action object or a list of them) to
-// the Alpine expression that runs them through the jsonui.js runtime.
+// actions converts an "on" handler to the Alpine expression that runs its
+// actions through the jsonui.js runtime.
 func (b *docBuilder) actions(event string, raw json.RawMessage) (string, error) {
 	if !eventName.MatchString(event) {
 		return "", fmt.Errorf("invalid event name %q", event)
 	}
-	var list []map[string]any
-	if bytes.HasPrefix(bytes.TrimSpace(raw), []byte("{")) {
-		raw = append(append([]byte("["), raw...), ']')
-	}
-	if err := json.Unmarshal(raw, &list); err != nil {
-		return "", fmt.Errorf("%s: expected an action or list of actions: %w", event, err)
-	}
-	for _, a := range list {
-		name, _ := a["action"].(string)
-		if name == "" {
-			return "", fmt.Errorf("%s: every action needs an \"action\" name", event)
-		}
-		if !b.opts.allowsAction(name) {
-			return "", fmt.Errorf("%s: action %q is not allowed", event, name)
-		}
+	list, err := b.resolve(raw, true)
+	if err != nil {
+		return "", fmt.Errorf("%s: %w", event, err)
 	}
 	out, err := json.Marshal(list)
 	if err != nil {
 		return "", err
 	}
 	return "$actions(" + string(out) + ", $event)", nil
+}
+
+// resolve converts a handler (an action, a handler name when refs is true,
+// or a list of either) to the list of actions it runs, checking that each
+// action is allowed.
+func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, error) {
+	var v any
+	if err := json.Unmarshal(raw, &v); err != nil {
+		return nil, err
+	}
+	items, ok := v.([]any)
+	if !ok {
+		items = []any{v}
+	}
+	var list []map[string]any
+	for _, item := range items {
+		switch item := item.(type) {
+		case string:
+			if !refs {
+				return nil, fmt.Errorf("handlers can't refer to other handlers (%q)", item)
+			}
+			h, ok := b.handlers[item]
+			if !ok {
+				return nil, fmt.Errorf("unknown handler %q", item)
+			}
+			list = append(list, h...)
+		case map[string]any:
+			name, _ := item["action"].(string)
+			if name == "" {
+				return nil, errors.New("every action needs an \"action\" name")
+			}
+			if !b.opts.allowsAction(name) {
+				return nil, fmt.Errorf("action %q is not allowed", name)
+			}
+			list = append(list, item)
+		default:
+			return nil, errors.New("expected an action, a handler name or a list of them")
+		}
+	}
+	return list, nil
 }
 
 // dataPath matches the plain dotted paths that can be resolved in Go, as

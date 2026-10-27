@@ -84,6 +84,9 @@ func generate() error {
 		Items:       &jsonschema.Schema{Ref: "#/$defs/Node"},
 	})
 	docDef.Required = []string{"template"}
+	if p, ok := docDef.Properties.Get("handlers"); ok {
+		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
+	}
 	delete(defs, "Node") // replaced by the per-type union below
 
 	children := &jsonschema.Schema{
@@ -245,11 +248,20 @@ func addActions(defs jsonschema.Definitions) {
 	custom.Properties.Set("action", &jsonschema.Schema{Type: typeString, Not: &jsonschema.Schema{Enum: names}})
 	options = append(options, custom)
 	defs["Action"] = &jsonschema.Schema{Description: "An action to run in response to an event.", AnyOf: options}
-	defs["Handler"] = &jsonschema.Schema{
+	// Handlers defined on the document hold actions only; "on" values can
+	// also name one of them.
+	defs["HandlerDefinition"] = &jsonschema.Schema{
 		AnyOf: []*jsonschema.Schema{
 			{Ref: "#/$defs/Action"},
 			{Type: typeArray, Items: &jsonschema.Schema{Ref: "#/$defs/Action"}},
 		},
+	}
+	actionOrName := &jsonschema.Schema{AnyOf: []*jsonschema.Schema{
+		{Ref: "#/$defs/Action"},
+		{Type: typeString, Description: "The name of one of the document's handlers."},
+	}}
+	defs["Handler"] = &jsonschema.Schema{
+		AnyOf: append(actionOrName.AnyOf, &jsonschema.Schema{Type: typeArray, Items: actionOrName}),
 	}
 }
 

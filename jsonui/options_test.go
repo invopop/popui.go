@@ -189,3 +189,39 @@ func TestUploadFile(t *testing.T) {
 		}
 	}
 }
+
+func TestHandlers(t *testing.T) {
+	doc := `{
+		"data": {"a": ""},
+		"handlers": {"update": {"action": "dispatch", "event": "changed"}},
+		"template": [
+			{"type": "input", "model": "a", "on": {"change": "update", "blur": [{"action": "set", "path": "a", "value": ""}, "update"]}}
+		]
+	}`
+	html, err := render(t, Options{}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	update := `{&#34;action&#34;:&#34;dispatch&#34;,&#34;event&#34;:&#34;changed&#34;}`
+	for _, want := range []string{
+		`x-on:change="$actions([` + update + `], $event)"`,
+		`x-on:blur="$actions([{&#34;action&#34;:&#34;set&#34;,&#34;path&#34;:&#34;a&#34;,&#34;value&#34;:&#34;&#34;},` + update + `], $event)"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Errorf("missing %s in:\n%s", want, html)
+		}
+	}
+
+	bad := map[string]string{
+		`{"template":[{"type":"button","on":{"click":"missing"}}]}`:                             `unknown handler "missing"`,
+		`{"handlers":{"a":{"action":"alert"},"b":["a"]},"template":[]}`:                         `can't refer to other handlers`,
+		`{"handlers":{"unused":{"action":"steal"}},"template":[]}`:                              `handler "unused": action "steal" is not allowed`,
+		`{"handlers":{"n":42},"template":[]}`:                                                   `expected an action, a handler name or a list`,
+		`{"handlers":{"x":{"message":"hi"}},"template":[{"type":"button","on":{"click":"x"}}]}`: `needs an "action" name`,
+	}
+	for doc, want := range bad {
+		if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("%s: want error containing %q, got %v", doc, want, err)
+		}
+	}
+}

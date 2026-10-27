@@ -506,6 +506,13 @@
           },
           "type": "array",
           "description": "Template is the list of nodes to render."
+        },
+        "handlers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/HandlerDefinition"
+          },
+          "type": "object",
+          "description": "Handlers are named actions, or lists of actions, that \"on\" handlers\ncan refer to by name so a handler used in several places is defined\nonce, e.g. {\"update\": {\"action\": \"step.update\", \"summary\": \"…\"}} and\nthen {\"on\": {\"change\": \"update\"}}. Handlers can't refer to each other."
         }
       },
       "additionalProperties": false,
@@ -739,6 +746,31 @@
       "description": "Form properties to configure a form element with standard HTML form attributes."
     },
     "Handler": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Action"
+        },
+        {
+          "type": "string",
+          "description": "The name of one of the document's handlers."
+        },
+        {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Action"
+              },
+              {
+                "type": "string",
+                "description": "The name of one of the document's handlers."
+              }
+            ]
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "HandlerDefinition": {
       "anyOf": [
         {
           "$ref": "#/$defs/Action"
@@ -1509,7 +1541,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1574,7 +1606,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1622,7 +1654,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1672,7 +1704,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1719,7 +1751,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1768,7 +1800,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1820,7 +1852,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1879,7 +1911,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1926,7 +1958,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -1973,7 +2005,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2020,7 +2052,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2074,7 +2106,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2121,7 +2153,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2170,7 +2202,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2226,7 +2258,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2290,7 +2322,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2338,7 +2370,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2385,7 +2417,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2447,7 +2479,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2494,7 +2526,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2543,7 +2575,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2590,7 +2622,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2639,7 +2671,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2690,7 +2722,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2740,7 +2772,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2828,7 +2860,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2875,7 +2907,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2925,7 +2957,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
@@ -2955,7 +2987,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         }
       },
       "additionalProperties": false,
