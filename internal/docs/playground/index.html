@@ -75,6 +75,8 @@
 		.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
 		.controls select, .controls button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); cursor: pointer; }
 		.controls button.primary { background: var(--color-background-accent); color: var(--color-foreground-inverse, #fff); border-color: transparent; }
+		.note { font-size: 12px; color: var(--color-foreground-default-secondary); }
+		.note[hidden] { display: none; }
 		.error { color: var(--color-foreground-critical); font-size: 12px; white-space: pre-wrap; }
 		.preview { overflow: auto; padding: 24px; background: var(--color-background-default-secondary); }
 		.preview > div { max-width: 640px; margin: 0 auto; }
@@ -118,6 +120,7 @@
 			</div>
 			<textarea id="json" spellcheck="false"></textarea>
 			<div id="code"></div>
+			<div id="editor-note" class="note" hidden></div>
 			<div id="error" class="error"></div>
 		</div>
 		<div class="preview">
