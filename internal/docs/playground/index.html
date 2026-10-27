@@ -9,11 +9,38 @@
 	<!-- jsonui.js runs the actions documents reference; the page can add its own. -->
 	<script src="jsonui.js"></script>
 	<script>
-		// Host-defined action. Documents may only use actions the host both
+		// Host-defined actions. Documents may only use actions the host both
 		// registers here and allows when rendering (see ACTIONS below).
 		popui.actions.register("save", ({ snapshot }) =>
 			alert(`Host action "save" received:\n${JSON.stringify(snapshot(), null, 2)}`));
-		const ACTIONS = ["alert", "set", "reset", "dispatch", "save"];
+
+		// Console-style actions, named after the console SDK topics. Embedded
+		// in the console these would call its handlers; here they log what
+		// the console would receive in the "Host messages" panel.
+		popui.actions.register("step.update", ({ params, snapshot }) =>
+			hostLog("step.update", { config: snapshot().config, summary: params.summary }));
+		popui.actions.register("asset.choose", ({ params }) =>
+			new Promise((resolve) => {
+				// Resolves with the chosen file's URL, or undefined if cancelled.
+				const input = Object.assign(document.createElement("input"), { type: "file", accept: params.accept || "" });
+				input.addEventListener("change", () => {
+					const file = input.files[0];
+					hostLog("asset.choose", file ? { name: file.name, type: file.type } : { cancelled: true });
+					resolve(file ? URL.createObjectURL(file) : undefined);
+				});
+				input.addEventListener("cancel", () => resolve(undefined));
+				input.click();
+			}));
+		const ACTIONS = ["alert", "set", "reset", "dispatch", "save", "step.update", "asset.choose"];
+
+		function hostLog(topic, body) {
+			const log = document.getElementById("host-log");
+			const entry = document.createElement("div");
+			entry.textContent = `${new Date().toLocaleTimeString()} ${topic} ${JSON.stringify(body)}`;
+			log.prepend(entry);
+			while (log.children.length > 20) log.lastChild.remove();
+			document.getElementById("host").hidden = false;
+		}
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js" defer></script>
 	<script src="wasm_exec.js"></script>
@@ -35,6 +62,10 @@
 		.error { color: var(--color-foreground-critical); font-size: 12px; white-space: pre-wrap; }
 		.preview { overflow: auto; padding: 24px; background: var(--color-background-default-secondary); }
 		.preview > div { max-width: 640px; margin: 0 auto; }
+		.host { margin-top: 24px; border-top: 1px solid var(--color-border); padding-top: 12px; font-size: 12px; }
+		.host strong { font-weight: 500; }
+		#host-log { margin-top: 8px; max-height: 200px; overflow: auto; font-family: var(--font-mono, monospace); color: var(--color-foreground-default-secondary); word-break: break-all; }
+		#host-log > div { padding: 2px 0; }
 		@media (max-width: 800px) { .panes { grid-template-columns: 1fr; grid-template-rows: 45vh 1fr; } .editor { border-right: 0; border-bottom: 1px solid var(--color-border); } }
 	</style>
 </head>
@@ -57,6 +88,7 @@
 				<select id="sample">
 					<option value="details">Invoice details (data-driven)</option>
 					<option value="interactive">Interactive: customer form</option>
+					<option value="pdf">PDF step config (from pdf.go)</option>
 					<option value="form">Customer form</option>
 					<option value="stress">Stress: 200 cards</option>
 					<option value="stress1000">Stress: 1000 cards</option>
@@ -72,7 +104,13 @@
 			<div id="monaco"></div>
 			<div id="error" class="error"></div>
 		</div>
-		<div class="preview"><div id="preview"></div></div>
+		<div class="preview">
+			<div id="preview"></div>
+			<div id="host" class="host" hidden>
+				<strong>Host messages</strong> (what the console would receive)
+				<div id="host-log"></div>
+			</div>
+		</div>
 	</div>
 
 	<script>

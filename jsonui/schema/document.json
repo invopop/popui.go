@@ -886,6 +886,12 @@
           "$ref": "#/$defs/node.subtitle"
         },
         {
+          "$ref": "#/$defs/node.tab"
+        },
+        {
+          "$ref": "#/$defs/node.tabs"
+        },
+        {
           "$ref": "#/$defs/node.tag_status"
         },
         {
@@ -896,6 +902,9 @@
         },
         {
           "$ref": "#/$defs/node.title_group"
+        },
+        {
+          "$ref": "#/$defs/node.upload_file"
         }
       ],
       "description": "A component in the template, identified by its type."
@@ -1075,6 +1084,86 @@
       "additionalProperties": false,
       "type": "object",
       "description": "Subtitle defines the props for the Subtitle component."
+    },
+    "Tab": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "value": {
+          "type": "string",
+          "description": "Value is the tab this panel belongs to (matches a TabItem.Value)."
+        },
+        "model": {
+          "type": "string",
+          "description": "Model is the Alpine variable to test. Defaults to \"tab\"; set it only when\nthe parent Tabs uses a custom Model."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Tab is one tab's content panel inside a popui.Tabs."
+    },
+    "TabItem": {
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Count renders a counter after the label when greater than zero: \"(n)\" on\nthe default variant, a small badge on the pill variant."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title is the trigger's accessible name and tooltip. Set it on an\nicon-only tab, where there is no Label to read out."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TabItem is one entry in a popui.Tabs trigger row: a Value that identifies the tab (assigned to the Alpine Model on click and matched by the content Tab), a visible Label, an optional leading Icon, and an optional Count."
+    },
+    "Tabs": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "variant": {
+          "type": "string",
+          "description": "\"default\" (underline) or \"pill\""
+        },
+        "model": {
+          "type": "string",
+          "description": "Model is the Alpine variable holding the active tab Value. Defaults to\n\"tab\" — match it on the child Tabs (their default is also \"tab\", so\nusually neither needs setting)."
+        },
+        "active": {
+          "type": "string",
+          "description": "Active is the tab Value selected on first render. Defaults to the first\ntab's Value."
+        },
+        "tabs": {
+          "items": {
+            "$ref": "#/$defs/TabItem"
+          },
+          "type": "array",
+          "description": "Tabs is the ordered trigger row."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks the active tab, renders the trigger row from Tabs, and hosts one popui.Tab content panel per tab in its children."
     },
     "TagStatus": {
       "properties": {
@@ -1264,6 +1353,17 @@
       "type": "object",
       "description": "Tooltip Templ component props."
     },
+    "UploadFile": {
+      "properties": {
+        "loading": {
+          "type": "string",
+          "description": "Loading is the data path that is true while a file is being chosen or\nuploaded, e.g. the \"busy\" path of the select action."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "UploadFile are the props of the \"upload_file\" node, a file picker row with a preview image and Upload/Remove buttons."
+    },
     "action.alert": {
       "properties": {
         "action": {
@@ -1272,6 +1372,14 @@
         "message": {
           "type": "string",
           "description": "Text to show; {{path}} placeholders are replaced with data values."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
         }
       },
       "additionalProperties": false,
@@ -1293,6 +1401,14 @@
         },
         "detail": {
           "description": "Event detail; defaults to a copy of the document data."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
         }
       },
       "additionalProperties": false,
@@ -1307,6 +1423,14 @@
       "properties": {
         "action": {
           "const": "reset"
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
         }
       },
       "additionalProperties": false,
@@ -1327,6 +1451,14 @@
         },
         "value": {
           "description": "New value; strings may use {{path}} placeholders."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
         }
       },
       "additionalProperties": false,
@@ -2468,6 +2600,106 @@
       ],
       "description": "PopUI Subtitle component."
     },
+    "node.tab": {
+      "properties": {
+        "type": {
+          "const": "tab"
+        },
+        "props": {
+          "$ref": "#/$defs/Tab"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "value",
+              "model"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "description": "PopUI Tab component."
+    },
+    "node.tabs": {
+      "properties": {
+        "type": {
+          "const": "tabs"
+        },
+        "props": {
+          "$ref": "#/$defs/Tabs"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "variant",
+              "model",
+              "active",
+              "tabs"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "description": "PopUI Tabs component."
+    },
     "node.tag_status": {
       "properties": {
         "type": {
@@ -2702,6 +2934,36 @@
         "type"
       ],
       "description": "PopUI TitleGroup component."
+    },
+    "node.upload_file": {
+      "properties": {
+        "type": {
+          "const": "upload_file"
+        },
+        "props": {
+          "$ref": "#/$defs/UploadFile"
+        },
+        "model": {
+          "type": "string",
+          "description": "Model two-way binds a form control (input, textarea, select, checkbox)\nto a data path, e.g. \"customer.email\". The initial value is also\nrendered from the data."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action or a list of actions to run in order,\ne.g. {\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "description": "PopUI UploadFile component."
     }
   },
   "title": "PopUI JSON document"

@@ -105,6 +105,8 @@ type Component struct {
 	Props reflect.Type
 	// Model is true for form controls that accept a "model" binding.
 	Model bool
+	// Leaf is true for nodes that take no "children" or "bind".
+	Leaf bool
 }
 
 // builder converts raw props into a component, children are attached later.
@@ -170,6 +172,10 @@ func init() {
 	register("select", popui.Select)
 	register("checkbox", popui.Checkbox)
 	register("option_group", popui.OptionGroup)
+
+	// Navigation
+	register("tabs", popui.Tabs)
+	register("tab", popui.Tab)
 }
 
 // Components returns the registered component types sorted by name. The
@@ -178,7 +184,8 @@ func Components() []Component {
 	out := make([]Component, 0, len(registry))
 	for k, e := range registry {
 		_, model := modelProps[k]
-		out = append(out, Component{Type: k, Props: e.props, Model: model})
+		// Entries without a props builder are custom leaf nodes (upload_file).
+		out = append(out, Component{Type: k, Props: e.props, Model: model, Leaf: e.build == nil})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Type < out[j].Type })
 	return out
@@ -261,14 +268,17 @@ func (b *docBuilder) build(n *Node) (templ.Component, error) {
 	if n.Type == "text" {
 		return b.text(n)
 	}
-	e, ok := registry[n.Type]
-	if !ok {
-		return nil, fmt.Errorf("unknown component type %q", n.Type)
-	}
 	if !b.opts.Trusted {
 		if err := checkProps(n.Type, n.Props); err != nil {
 			return nil, err
 		}
+	}
+	if n.Type == uploadFileType {
+		return b.uploadFile(n)
+	}
+	e, ok := registry[n.Type]
+	if !ok {
+		return nil, fmt.Errorf("unknown component type %q", n.Type)
 	}
 	raw, err := b.props(n)
 	if err != nil {

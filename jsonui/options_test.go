@@ -137,3 +137,55 @@ func TestTrustedAllowsScript(t *testing.T) {
 		t.Errorf("trusted output missing script:\n%s", html)
 	}
 }
+
+func TestTabsModelMustBeIdentifier(t *testing.T) {
+	doc := `{"template":[{"type":"tabs","props":{"model":"x = alert(1), y","tabs":[{"value":"a","label":"A"}]}}]}`
+	if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), "must be a plain identifier") {
+		t.Fatalf("want identifier error, got %v", err)
+	}
+	doc = `{"template":[{"type":"tabs","props":{"model":"view","tabs":[{"value":"a","label":"A"}]},"children":[{"type":"tab","props":{"model":"view","value":"a"}}]}]}`
+	if _, err := render(t, Options{}, doc); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUploadFile(t *testing.T) {
+	doc := `{
+		"data": {"config": {"logo_url": ""}, "ui": {"uploading": false}},
+		"template": [{
+			"type": "upload_file",
+			"model": "config.logo_url",
+			"props": {"loading": "ui.uploading"},
+			"on": {
+				"select": {"action": "asset.choose", "into": "config.logo_url", "busy": "ui.uploading"},
+				"remove": {"action": "set", "path": "config.logo_url", "value": ""}
+			}
+		}]
+	}`
+	html, err := render(t, Options{Actions: append(BuiltinActions, "asset.choose")}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{
+		`:src="config.logo_url"`,
+		`x-text="ui.uploading ? &#39;Uploading...&#39; : &#39;Select logo&#39;"`,
+		`@click="$actions([{&#34;action&#34;:&#34;asset.choose&#34;`,
+		`:disabled="ui.uploading || !config.logo_url"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Errorf("missing %s in:\n%s", want, html)
+		}
+	}
+
+	bad := map[string]string{
+		`{"data":{"a":""},"template":[{"type":"upload_file","model":"a","props":{"loading":"x; alert(1)"}}]}`:  `is not a data path`,
+		`{"data":{"a":""},"template":[{"type":"upload_file","model":"a","on":{"click":{"action":"alert"}}}]}`:  `unknown event "click"`,
+		`{"data":{"a":""},"template":[{"type":"upload_file","model":"a","on":{"select":{"action":"steal"}}}]}`: `action "steal" is not allowed`,
+		`{"data":{"a":""},"template":[{"type":"upload_file"}]}`:                                                `model is required`,
+	}
+	for doc, want := range bad {
+		if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("%s: want error containing %q, got %v", doc, want, err)
+		}
+	}
+}

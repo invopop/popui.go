@@ -26,6 +26,8 @@ var BuiltinActions = []string{"alert", "set", "reset", "dispatch"}
 //   - attributes in props that Alpine or the browser would run as script:
 //     x-*, @*, :* and on* (use "model" and "on" instead);
 //   - text "bind" values other than plain data paths such as "customer.name";
+//   - props that components use as Alpine variable names (such as the tabs
+//     "model") unless they are plain identifiers;
 //   - href, src, action, formaction and url values with a scheme other than
 //     http, https, mailto or tel (e.g. javascript:);
 //   - actions not listed in Actions.
@@ -99,7 +101,37 @@ func checkProps(typ string, raw json.RawMessage) error {
 	if err := json.Unmarshal(raw, &v); err != nil {
 		return fmt.Errorf("%s props: %w", typ, err)
 	}
+	if err := checkIdentifiers(typ, v); err != nil {
+		return err
+	}
 	return checkValue(typ+" props", v)
+}
+
+// identifierProps lists props that components paste into Alpine expressions
+// as variable names, which must therefore be plain identifiers.
+var identifierProps = map[string][]string{
+	"tabs": {"model"},
+	"tab":  {"model"},
+}
+
+var identifier = regexp.MustCompile(`^[A-Za-z_$][\w$]*$`)
+
+func checkIdentifiers(typ string, v any) error {
+	props, ok := v.(map[string]any)
+	if !ok {
+		return nil
+	}
+	for _, name := range identifierProps[typ] {
+		for k, val := range props {
+			if !strings.EqualFold(k, name) {
+				continue
+			}
+			if s, _ := val.(string); s != "" && !identifier.MatchString(s) {
+				return fmt.Errorf("%s props.%s: %q must be a plain identifier", typ, k, s)
+			}
+		}
+	}
+	return nil
 }
 
 func checkValue(at string, v any) error {

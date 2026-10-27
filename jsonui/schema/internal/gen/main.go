@@ -105,8 +105,10 @@ func generate() error {
 		n := node(c.Type)
 		n.Description = fmt.Sprintf("PopUI %s component.", c.Props.Name())
 		n.Properties.Set("props", &jsonschema.Schema{Ref: "#/$defs/" + c.Props.Name()})
-		n.Properties.Set("children", children)
-		n.Properties.Set("bind", bindSchema(defs[c.Props.Name()]))
+		if !c.Leaf {
+			n.Properties.Set("children", children)
+			n.Properties.Set("bind", bindSchema(defs[c.Props.Name()]))
+		}
 		if c.Model {
 			n.Properties.Set("model", &jsonschema.Schema{Type: typeString, Description: nodeComment("Model")})
 		}
@@ -185,6 +187,12 @@ type param struct {
 	schema   *jsonschema.Schema
 }
 
+// commonParams are handled by assets/jsonui.js for every action.
+var commonParams = []param{
+	{"into", false, &jsonschema.Schema{Type: typeString, Description: "Data path to store the action's result in."}},
+	{"busy", false, &jsonschema.Schema{Type: typeString, Description: "Data path set to true while the action runs."}},
+}
+
 // builtinActions are implemented by assets/jsonui.js.
 var builtinActions = []struct {
 	name, desc string
@@ -218,7 +226,7 @@ func addActions(defs jsonschema.Definitions) {
 			AdditionalProperties: jsonschema.FalseSchema,
 		}
 		s.Properties.Set("action", &jsonschema.Schema{Const: a.name})
-		for _, p := range a.params {
+		for _, p := range append(a.params, commonParams...) {
 			s.Properties.Set(p.name, p.schema)
 			if p.required {
 				s.Required = append(s.Required, p.name)

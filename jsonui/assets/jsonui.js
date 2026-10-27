@@ -7,7 +7,12 @@
 //   popui.actions.register("save", ({ params, data, event, el }) => { ... });
 //
 // String params may reference the document data with {{path}} placeholders,
-// e.g. "Hello {{customer.name}}", resolved when the action runs.
+// e.g. "Hello {{customer.name}}", resolved when the action runs. Two params
+// work with every action:
+//
+//   into: data path to store the action's result in (skipped when the
+//         action returns undefined, e.g. a cancelled file picker);
+//   busy: data path set to true while the action runs.
 (function () {
   "use strict";
 
@@ -50,13 +55,19 @@
     },
     // run executes a list of actions in order, awaiting async ones.
     async run(list, ctx) {
-      for (const { action, ...params } of list) {
+      for (const { action, into, busy, ...params } of list) {
         const fn = registry.get(action);
         if (!fn) {
           console.error(`[jsonui] unknown action "${action}"`);
           return;
         }
-        await fn({ ...ctx, params: interpolate(params, ctx.data), snapshot: () => snapshot(ctx.data) });
+        if (busy) set(ctx.data, busy, true);
+        try {
+          const result = await fn({ ...ctx, params: interpolate(params, ctx.data), snapshot: () => snapshot(ctx.data) });
+          if (into && result !== undefined) set(ctx.data, into, result);
+        } finally {
+          if (busy) set(ctx.data, busy, false);
+        }
       }
     },
   };
