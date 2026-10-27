@@ -215,6 +215,9 @@ var builtinActions = []struct {
 	}},
 }
 
+// actionRef refers to the Action definition.
+const actionRef = "#/$defs/Action"
+
 // addActions defines Action (one built-in or host-registered action) and
 // Handler (an action or a list of actions).
 func addActions(defs jsonschema.Definitions) {
@@ -252,12 +255,12 @@ func addActions(defs jsonschema.Definitions) {
 	// also name one of them.
 	defs["HandlerDefinition"] = &jsonschema.Schema{
 		AnyOf: []*jsonschema.Schema{
-			{Ref: "#/$defs/Action"},
-			{Type: typeArray, Items: &jsonschema.Schema{Ref: "#/$defs/Action"}},
+			{Ref: actionRef},
+			{Type: typeArray, Items: &jsonschema.Schema{Ref: actionRef}},
 		},
 	}
 	actionOrName := &jsonschema.Schema{AnyOf: []*jsonschema.Schema{
-		{Ref: "#/$defs/Action"},
+		{Ref: actionRef},
 		{Type: typeString, Description: "The name of one of the document's handlers."},
 	}}
 	defs["Handler"] = &jsonschema.Schema{
