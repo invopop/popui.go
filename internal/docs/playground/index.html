@@ -43,6 +43,19 @@
 		}
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js" defer></script>
+	<!-- CodeMirror with JSON Schema support, as used by gobl.dev's editor. -->
+	<script type="importmap">
+		{
+			"imports": {
+				"codemirror": "https://esm.sh/codemirror@6.0.1",
+				"@codemirror/state": "https://esm.sh/@codemirror/state@6",
+				"codemirror-json-schema": "https://esm.sh/@invopop/codemirror-json-schema@0.9.3",
+				"@fsegurai/codemirror-theme-vscode-light": "https://esm.sh/@fsegurai/codemirror-theme-vscode-light@6",
+				"@fsegurai/codemirror-theme-vscode-dark": "https://esm.sh/@fsegurai/codemirror-theme-vscode-dark@6"
+			}
+		}
+	</script>
+	<script type="module" src="editor.js"></script>
 	<script src="wasm_exec.js"></script>
 	<script src="samples.js"></script>
 	<style>
@@ -53,9 +66,12 @@
 		.stats b { font-weight: 500; color: var(--color-foreground); }
 		.panes { display: grid; grid-template-columns: minmax(320px, 2fr) 3fr; min-height: 0; }
 		.editor { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-right: 1px solid var(--color-border); min-height: 0; }
-		.editor textarea, #monaco { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
+		.editor textarea, #code { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
 		.editor textarea { resize: none; font: 12px/1.5 var(--font-mono, monospace); padding: 8px; background: var(--color-background-default-secondary); color: var(--color-foreground); }
-		#monaco { display: none; }
+		.editor textarea[hidden] { display: none; }
+		#code:empty { display: none; }
+		#code .cm-editor { height: 100%; font-size: 12px; }
+		#code .cm-scroller { overflow: auto; }
 		.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
 		.controls select, .controls button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); cursor: pointer; }
 		.controls button.primary { background: var(--color-background-accent); color: var(--color-foreground-inverse, #fff); border-color: transparent; }
@@ -101,7 +117,7 @@
 				<a href="schema.json" target="_blank">schema</a>
 			</div>
 			<textarea id="json" spellcheck="false"></textarea>
-			<div id="monaco"></div>
+			<div id="code"></div>
 			<div id="error" class="error"></div>
 		</div>
 		<div class="preview">
@@ -118,7 +134,7 @@
 		const fmtMs = (ms) => `${ms.toFixed(ms < 10 ? 2 : 1)}ms`;
 		const fmtKB = (b) => (b > 1048576 ? `${(b / 1048576).toFixed(2)}MB` : `${(b / 1024).toFixed(1)}KB`);
 
-		// The editor is a plain textarea until Monaco loads, then Monaco.
+		// The editor is a plain textarea until CodeMirror loads (editor.js).
 		let editor = null;
 		const getJSON = () => (editor ? editor.getValue() : $("json").value);
 		const setJSON = (s) => (editor ? editor.setValue(s) : ($("json").value = s));
@@ -199,49 +215,14 @@
 			});
 		}
 
-		// Monaco, with the generated schema registered under the URL the
-		// documents' relative "$schema" resolves to, so completion, hovers and
-		// validation all work.
-		function loadMonaco() {
-			const base = "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min";
-			window.MonacoEnvironment = {
-				getWorkerUrl: () =>
-					`data:text/javascript;charset=utf-8,${encodeURIComponent(`self.MonacoEnvironment={baseUrl:'${base}/'};importScripts('${base}/vs/base/worker/workerMain.js');`)}`,
-			};
-			const s = document.createElement("script");
-			s.src = `${base}/vs/loader.js`;
-			s.onload = () => {
-				require.config({ paths: { vs: `${base}/vs` } });
-				require(["vs/editor/editor.main"], async () => {
-					const schemaURL = new URL(SCHEMA_PATH, location.href).href;
-					const schema = await (await fetch(schemaURL)).json();
-					monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-						validate: true,
-						enableSchemaRequest: false,
-						schemas: [{ uri: schemaURL, fileMatch: ["*"], schema }],
-					});
-					const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-					// The model lives next to the page so the documents' relative
-					// "$schema" resolves to schemaURL.
-					const docURL = new URL("document.json", location.href).href;
-					const model = monaco.editor.createModel(getJSON(), "json", monaco.Uri.parse(docURL));
-					$("json").style.display = "none";
-					$("monaco").style.display = "block";
-					editor = monaco.editor.create($("monaco"), {
-						model,
-						theme: dark ? "vs-dark" : "vs",
-						minimap: { enabled: false },
-						fontSize: 12,
-						tabSize: 2,
-						automaticLayout: true,
-						scrollBeyondLastLine: false,
-					});
-					editor.onDidChangeModelContent(scheduleRender);
-					window.playgroundEditor = editor;
-				});
-			};
-			document.head.appendChild(s);
-		}
+		// attachEditor swaps the textarea for the CodeMirror editor once
+		// editor.js has loaded. If it fails to load, the textarea keeps working.
+		window.attachEditor = (api) => {
+			api.setValue($("json").value);
+			api.onChange(scheduleRender);
+			$("json").hidden = true;
+			editor = api;
+		};
 
 		$("sample").addEventListener("change", (e) => { loadSample(e.target.value); render(); });
 		$("render").addEventListener("click", render);
@@ -251,7 +232,6 @@
 
 		loadSample("details");
 		boot().catch((e) => ($("error").textContent = `Failed to load WASM: ${e}`));
-		loadMonaco();
 	</script>
 </body>
 </html>

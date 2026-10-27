@@ -28,13 +28,13 @@ const Path = "/jsonui/"
 // ones plus "save", which the playground page registers itself.
 var actions = append(append([]string{}, jsonui.BuiltinActions...), "save")
 
-//go:embed index.html samples.js
+//go:embed index.html samples.js editor.js
 var static embed.FS
 
 // files returns the published files that don't need compiling.
 func files() (map[string][]byte, error) {
 	out := map[string][]byte{"schema.json": schema.Document}
-	for _, name := range []string{"index.html", "samples.js"} {
+	for _, name := range []string{"index.html", "samples.js", "editor.js"} {
 		data, err := static.ReadFile(name)
 		if err != nil {
 			return nil, err
