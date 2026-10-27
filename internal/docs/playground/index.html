@@ -131,7 +131,7 @@
 		function render() {
 			const json = getJSON();
 			let t = performance.now();
-			const res = popuiRender(json, options());
+			const res = popuiRender(json, renderOptions());
 			const renderMs = performance.now() - t;
 			$("error").textContent = res.error || "";
 			if (res.error) return;
@@ -143,8 +143,8 @@
 			$("s-html").textContent = fmtKB(res.html.length);
 		}
 
-		// options passed to the renderer; strict is the default.
-		const options = () => ({ actions: ACTIONS, trusted: !$("strict").checked });
+		// renderOptions are passed to the renderer; strict is the default.
+		const renderOptions = () => ({ actions: ACTIONS, trusted: !$("strict").checked });
 
 		let timer;
 		function scheduleRender() {
@@ -171,7 +171,7 @@
 			const json = getJSON();
 			const n = 50;
 			let t = performance.now();
-			for (let i = 0; i < n; i++) popuiRender(json, options());
+			for (let i = 0; i < n; i++) popuiRender(json, renderOptions());
 			const wasm = (performance.now() - t) / n;
 			$("s-render").textContent = `${fmtMs(wasm)} avg`;
 			if ($("server-stat").hidden) return;
