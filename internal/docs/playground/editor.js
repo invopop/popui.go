@@ -17,11 +17,10 @@ import { vsCodeDark } from "@fsegurai/codemirror-theme-vscode-dark";
 const log = (...args) => console.info("[playground]", ...args);
 
 // SCHEMA_LIMIT is the document size above which schema checks are switched
-// off. Validation in json-schema-library (10.x and 11.x) copies the whole
-// evaluation path for every "if", so it slows down with the square of the
-// document size: the 200 card stress sample takes ~30s and 1000 cards
-// crashes the tab. Real documents are far below this.
-const SCHEMA_LIMIT = 64 * 1024;
+// off. Validation takes time in proportion to the document, about a second
+// at this size (the 200 card stress sample, ~380KB, takes ~1.4s), and runs
+// again after each edit. Real documents are far below this.
+const SCHEMA_LIMIT = 256 * 1024;
 
 let schemaURL = null; // resolved from the document's "$schema"
 let schema; // fetched from schemaURL
