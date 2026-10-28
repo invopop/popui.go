@@ -33,12 +33,12 @@ func main() {
 		}
 		return map[string]any{"html": buf.String()}
 	}))
-	types := jsonui.Types()
-	list := make([]any, len(types))
-	for i, t := range types {
-		list[i] = t
+	names := jsonui.Names()
+	list := make([]any, len(names))
+	for i, name := range names {
+		list[i] = name
 	}
-	js.Global().Set("popuiTypes", js.ValueOf(list))
+	js.Global().Set("popuiComponents", js.ValueOf(list))
 	js.Global().Call("dispatchEvent", js.Global().Get("Event").New("popui:ready"))
 
 	select {} // keep the Go runtime alive for callbacks

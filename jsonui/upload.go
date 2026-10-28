@@ -18,7 +18,7 @@ const uploadFileType = "upload_file"
 // "remove" actions, e.g.
 //
 //	{
-//	  "type": "upload_file",
+//	  "is": "upload_file",
 //	  "model": "config.logo_url",
 //	  "props": {"loading": "ui.uploading"},
 //	  "on": {
@@ -46,39 +46,39 @@ func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
 	var p UploadFile
 	if len(n.Props) > 0 {
 		if err := decodeStrict(n.Props, &p); err != nil {
-			return nil, fmt.Errorf("%s props: %w", n.Type, err)
+			return nil, fmt.Errorf("%s props: %w", n.Component, err)
 		}
 	}
 	if len(n.Bind) > 0 || len(n.Children) > 0 {
-		return nil, fmt.Errorf("%s: bind and children are not supported", n.Type)
+		return nil, fmt.Errorf("%s: bind and children are not supported", n.Component)
 	}
 	if n.Model == "" {
-		return nil, fmt.Errorf("%s: model is required", n.Type)
+		return nil, fmt.Errorf("%s: model is required", n.Component)
 	}
 	if b.data == nil {
-		return nil, fmt.Errorf("%s model: document data must be set", n.Type)
+		return nil, fmt.Errorf("%s model: document data must be set", n.Component)
 	}
 	if !safePath(n.Model) {
-		return nil, fmt.Errorf("%s model: %q is not a data path", n.Type, n.Model)
+		return nil, fmt.Errorf("%s model: %q is not a data path", n.Component, n.Model)
 	}
 	if _, err := lookup(b.data, n.Model); err != nil {
-		return nil, fmt.Errorf("%s model: %w", n.Type, err)
+		return nil, fmt.Errorf("%s model: %w", n.Component, err)
 	}
 	loading := "false"
 	if p.Loading != "" {
 		if !safePath(p.Loading) {
-			return nil, fmt.Errorf("%s loading: %q is not a data path", n.Type, p.Loading)
+			return nil, fmt.Errorf("%s loading: %q is not a data path", n.Component, p.Loading)
 		}
 		loading = p.Loading
 	}
 	handlers := map[string]string{}
 	for event, raw := range n.On {
 		if !slices.Contains(nodeEvents[uploadFileType], event) {
-			return nil, fmt.Errorf("%s on: unknown event %q, expected select or remove", n.Type, event)
+			return nil, fmt.Errorf("%s on: unknown event %q, expected select or remove", n.Component, event)
 		}
 		h, err := b.actions(event, raw)
 		if err != nil {
-			return nil, fmt.Errorf("%s on: %w", n.Type, err)
+			return nil, fmt.Errorf("%s on: %w", n.Component, err)
 		}
 		handlers[event] = h
 	}

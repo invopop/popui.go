@@ -11,10 +11,10 @@
 //	  "data": {"customer": {"name": "Acme S.L."}},
 //	  "template": [
 //	    {
-//	      "type": "card",
+//	      "is": "card",
 //	      "children": [
-//	        {"type": "card_header", "bind": {"title": "customer.name"}},
-//	        {"type": "text", "bind": "customer.name"}
+//	        {"is": "card_header", "bind": {"title": "customer.name"}},
+//	        {"is": "text", "bind": "customer.name"}
 //	      ]
 //	    }
 //	  ]
@@ -67,8 +67,11 @@ type Document struct {
 
 // Node is a single element in the JSON component tree.
 type Node struct {
-	// Type is the registered component name, e.g. "button" or "card_header".
-	Type string `json:"type"`
+	// Component is the registered component name, e.g. "button" or
+	// "card_header", or "text" for plain text. In JSON it is "is", after
+	// HTML's global "is" attribute, which names the custom element to use;
+	// "type" is left to the props, where inputs and buttons use it.
+	Component string `json:"is"`
 	// Props is decoded into the component's props struct.
 	Props json.RawMessage `json:"props,omitempty"`
 	// Children are rendered as the component's `{ children... }`.
@@ -109,10 +112,10 @@ var modelProps = map[string]string{
 	"checkbox": "checked",
 }
 
-// Component describes a registered node type.
+// Component describes a registered component.
 type Component struct {
-	// Type is the node type name used in JSON.
-	Type string
+	// Name is the component name used in JSON.
+	Name string
 	// Props is the props struct the node's "props" object decodes into.
 	Props reflect.Type
 	// Model is true for form controls that accept a "model" binding.
@@ -193,24 +196,25 @@ func init() {
 	register("tab", popui.Tab)
 }
 
-// Components returns the registered component types sorted by name. The
+// Components returns the registered components sorted by name. The
 // built-in "text" node is not included as it has no props.
 func Components() []Component {
 	out := make([]Component, 0, len(registry))
 	for k, e := range registry {
 		_, model := modelProps[k]
 		// Entries without a props builder are custom leaf nodes (upload_file).
-		out = append(out, Component{Type: k, Props: e.props, Model: model, Leaf: e.build == nil, Events: nodeEvents[k]})
+		out = append(out, Component{Name: k, Props: e.props, Model: model, Leaf: e.build == nil, Events: nodeEvents[k]})
 	}
-	sort.Slice(out, func(i, j int) bool { return out[i].Type < out[j].Type })
+	sort.Slice(out, func(i, j int) bool { return out[i].Name < out[j].Name })
 	return out
 }
 
-// Types returns the sorted list of supported node types.
-func Types() []string {
+// Names returns the sorted names of the supported components, including
+// "text".
+func Names() []string {
 	out := []string{"text"}
 	for _, c := range Components() {
-		out = append(out, c.Type)
+		out = append(out, c.Name)
 	}
 	sort.Strings(out)
 	return out
@@ -292,20 +296,20 @@ func (b *docBuilder) buildAll(nodes []Node) (templ.Component, error) {
 }
 
 func (b *docBuilder) build(n *Node) (templ.Component, error) {
-	if n.Type == "text" {
+	if n.Component == "text" {
 		return b.text(n)
 	}
 	if !b.opts.Trusted {
-		if err := checkProps(n.Type, n.Props); err != nil {
+		if err := checkProps(n.Component, n.Props); err != nil {
 			return nil, err
 		}
 	}
-	if n.Type == uploadFileType {
+	if n.Component == uploadFileType {
 		return b.uploadFile(n)
 	}
-	e, ok := registry[n.Type]
+	e, ok := registry[n.Component]
 	if !ok {
-		return nil, fmt.Errorf("unknown component type %q", n.Type)
+		return nil, fmt.Errorf("unknown component %q", n.Component)
 	}
 	raw, err := b.props(n)
 	if err != nil {
@@ -355,14 +359,14 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 	var props map[string]json.RawMessage
 	if len(n.Props) > 0 {
 		if err := json.Unmarshal(n.Props, &props); err != nil {
-			return nil, fmt.Errorf("%s props: %w", n.Type, err)
+			return nil, fmt.Errorf("%s props: %w", n.Component, err)
 		}
 	}
 	if props == nil { // missing or null
 		props = map[string]json.RawMessage{}
 	}
 	if len(n.Bind) > 0 {
-		if err := b.bindProps(n.Type, props, n.Bind); err != nil {
+		if err := b.bindProps(n.Component, props, n.Bind); err != nil {
 			return nil, err
 		}
 		if !b.opts.Trusted {
@@ -371,7 +375,7 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := checkProps(n.Type, raw); err != nil {
+			if err := checkProps(n.Component, raw); err != nil {
 				return nil, err
 			}
 		}
@@ -382,7 +386,7 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 		if strings.EqualFold(k, attrsKey) {
 			attrsKey = k
 			if err := json.Unmarshal(v, &attrs); err != nil {
-				return nil, fmt.Errorf("%s attributes: %w", n.Type, err)
+				return nil, fmt.Errorf("%s attributes: %w", n.Component, err)
 			}
 		}
 	}
@@ -390,14 +394,14 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 		attrs = map[string]any{}
 	}
 	if n.Model != "" {
-		if err := b.model(n.Type, props, attrs, n.Model); err != nil {
+		if err := b.model(n.Component, props, attrs, n.Model); err != nil {
 			return nil, err
 		}
 	}
 	for event, raw := range n.On {
 		handler, err := b.actions(event, raw)
 		if err != nil {
-			return nil, fmt.Errorf("%s on: %w", n.Type, err)
+			return nil, fmt.Errorf("%s on: %w", n.Component, err)
 		}
 		attrs["x-on:"+event] = handler
 	}

@@ -895,12 +895,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "text"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -910,12 +910,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "avatar"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -925,12 +925,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "button"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -940,12 +940,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "button_group"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -955,12 +955,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "card"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -970,12 +970,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "card_content"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -985,12 +985,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "card_header"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1000,12 +1000,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "card_progress_bar"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1015,12 +1015,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "checkbox"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1030,12 +1030,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "dd"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1045,12 +1045,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "description"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1060,12 +1060,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "description_list"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1075,12 +1075,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "description_list_item"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1090,12 +1090,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "dt"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1105,12 +1105,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "fieldset"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1120,12 +1120,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "form"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1135,12 +1135,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "input"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1150,12 +1150,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "option_group"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1165,12 +1165,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "p"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1180,12 +1180,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "select"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1195,12 +1195,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "separator"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1210,12 +1210,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "status_badge"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1225,12 +1225,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "subtitle"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1240,12 +1240,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "tab"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1255,12 +1255,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "tabs"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1270,12 +1270,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "tag_status"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1285,12 +1285,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "textarea"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1300,12 +1300,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "title"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1315,12 +1315,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "title_group"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1330,12 +1330,12 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "is": {
                 "const": "upload_file"
               }
             },
             "required": [
-              "type"
+              "is"
             ]
           },
           "then": {
@@ -1344,7 +1344,7 @@
         }
       ],
       "properties": {
-        "type": {
+        "is": {
           "enum": [
             "text",
             "avatar",
@@ -1382,9 +1382,9 @@
       },
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
-      "description": "A component in the template, identified by its type."
+      "description": "A node in the template, identified by its component."
     },
     "OptionGroup": {
       "properties": {
@@ -1948,7 +1948,7 @@
     },
     "node.avatar": {
       "properties": {
-        "type": {
+        "is": {
           "const": "avatar"
         },
         "props": {
@@ -1992,13 +1992,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Avatar component."
     },
     "node.button": {
       "properties": {
-        "type": {
+        "is": {
           "const": "button"
         },
         "props": {
@@ -2057,13 +2057,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Button component."
     },
     "node.button_group": {
       "properties": {
-        "type": {
+        "is": {
           "const": "button_group"
         },
         "props": {
@@ -2105,13 +2105,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI ButtonGroup component."
     },
     "node.card": {
       "properties": {
-        "type": {
+        "is": {
           "const": "card"
         },
         "props": {
@@ -2155,13 +2155,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Card component."
     },
     "node.card_content": {
       "properties": {
-        "type": {
+        "is": {
           "const": "card_content"
         },
         "props": {
@@ -2202,13 +2202,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI CardContent component."
     },
     "node.card_header": {
       "properties": {
-        "type": {
+        "is": {
           "const": "card_header"
         },
         "props": {
@@ -2251,13 +2251,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI CardHeader component."
     },
     "node.card_progress_bar": {
       "properties": {
-        "type": {
+        "is": {
           "const": "card_progress_bar"
         },
         "props": {
@@ -2303,13 +2303,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI CardProgressBar component."
     },
     "node.checkbox": {
       "properties": {
-        "type": {
+        "is": {
           "const": "checkbox"
         },
         "props": {
@@ -2362,13 +2362,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Checkbox component."
     },
     "node.dd": {
       "properties": {
-        "type": {
+        "is": {
           "const": "dd"
         },
         "props": {
@@ -2409,13 +2409,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI DD component."
     },
     "node.description": {
       "properties": {
-        "type": {
+        "is": {
           "const": "description"
         },
         "props": {
@@ -2456,13 +2456,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Description component."
     },
     "node.description_list": {
       "properties": {
-        "type": {
+        "is": {
           "const": "description_list"
         },
         "props": {
@@ -2503,13 +2503,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI DescriptionList component."
     },
     "node.description_list_item": {
       "properties": {
-        "type": {
+        "is": {
           "const": "description_list_item"
         },
         "props": {
@@ -2557,13 +2557,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI DescriptionListItem component."
     },
     "node.dt": {
       "properties": {
-        "type": {
+        "is": {
           "const": "dt"
         },
         "props": {
@@ -2604,13 +2604,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI DT component."
     },
     "node.fieldset": {
       "properties": {
-        "type": {
+        "is": {
           "const": "fieldset"
         },
         "props": {
@@ -2653,13 +2653,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Fieldset component."
     },
     "node.form": {
       "properties": {
-        "type": {
+        "is": {
           "const": "form"
         },
         "props": {
@@ -2709,13 +2709,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Form component."
     },
     "node.input": {
       "properties": {
-        "type": {
+        "is": {
           "const": "input"
         },
         "props": {
@@ -2773,13 +2773,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Input component."
     },
     "node.option_group": {
       "properties": {
-        "type": {
+        "is": {
           "const": "option_group"
         },
         "props": {
@@ -2821,13 +2821,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI OptionGroup component."
     },
     "node.p": {
       "properties": {
-        "type": {
+        "is": {
           "const": "p"
         },
         "props": {
@@ -2868,13 +2868,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI P component."
     },
     "node.select": {
       "properties": {
-        "type": {
+        "is": {
           "const": "select"
         },
         "props": {
@@ -2930,13 +2930,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Select component."
     },
     "node.separator": {
       "properties": {
-        "type": {
+        "is": {
           "const": "separator"
         },
         "props": {
@@ -2977,13 +2977,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Separator component."
     },
     "node.status_badge": {
       "properties": {
-        "type": {
+        "is": {
           "const": "status_badge"
         },
         "props": {
@@ -3026,13 +3026,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI StatusBadge component."
     },
     "node.subtitle": {
       "properties": {
-        "type": {
+        "is": {
           "const": "subtitle"
         },
         "props": {
@@ -3073,13 +3073,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Subtitle component."
     },
     "node.tab": {
       "properties": {
-        "type": {
+        "is": {
           "const": "tab"
         },
         "props": {
@@ -3122,13 +3122,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Tab component."
     },
     "node.tabs": {
       "properties": {
-        "type": {
+        "is": {
           "const": "tabs"
         },
         "props": {
@@ -3173,13 +3173,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Tabs component."
     },
     "node.tag_status": {
       "properties": {
-        "type": {
+        "is": {
           "const": "tag_status"
         },
         "props": {
@@ -3223,13 +3223,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI TagStatus component."
     },
     "node.text": {
       "properties": {
-        "type": {
+        "is": {
           "const": "text"
         },
         "text": {
@@ -3244,13 +3244,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "Plain text, optionally bound to an Alpine expression."
     },
     "node.textarea": {
       "properties": {
-        "type": {
+        "is": {
           "const": "textarea"
         },
         "props": {
@@ -3311,13 +3311,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Textarea component."
     },
     "node.title": {
       "properties": {
-        "type": {
+        "is": {
           "const": "title"
         },
         "props": {
@@ -3358,13 +3358,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI Title component."
     },
     "node.title_group": {
       "properties": {
-        "type": {
+        "is": {
           "const": "title_group"
         },
         "props": {
@@ -3408,13 +3408,13 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI TitleGroup component."
     },
     "node.upload_file": {
       "properties": {
-        "type": {
+        "is": {
           "const": "upload_file"
         },
         "props": {
@@ -3441,7 +3441,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type"
+        "is"
       ],
       "description": "PopUI UploadFile component."
     }

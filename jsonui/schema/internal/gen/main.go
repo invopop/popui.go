@@ -19,6 +19,9 @@ import (
 
 const outPath = "jsonui/schema/document.json"
 
+// componentKey is the node property that names its component.
+const componentKey = "is"
+
 // JSON Schema type names.
 const (
 	typeObject = "object"
@@ -87,7 +90,7 @@ func generate() error {
 	if p, ok := docDef.Properties.Get("handlers"); ok {
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
 	}
-	delete(defs, "Node") // replaced by the per-type definitions below
+	delete(defs, "Node") // replaced by the per-component definitions below
 
 	children := &jsonschema.Schema{
 		Type:        typeArray,
@@ -100,12 +103,12 @@ func generate() error {
 	text.Properties.Set("text", &jsonschema.Schema{Type: typeString, Description: nodeComment("Text")})
 	text.Properties.Set("bind", &jsonschema.Schema{Type: typeString, Description: "Alpine expression shown with x-text. A plain data path such as \"customer.name\" is also resolved from object data at render time."})
 	defs["node.text"] = text
-	types := []string{"text"}
+	names := []string{"text"}
 
 	for _, c := range jsonui.Components() {
 		ps := r.ReflectFromType(c.Props)
 		merge(ps)
-		n := node(c.Type)
+		n := node(c.Name)
 		n.Description = fmt.Sprintf("PopUI %s component.", c.Props.Name())
 		n.Properties.Set("props", &jsonschema.Schema{Ref: "#/$defs/" + c.Props.Name()})
 		if !c.Leaf {
@@ -128,11 +131,11 @@ func generate() error {
 			PropertyNames:        events,
 			AdditionalProperties: &jsonschema.Schema{Ref: "#/$defs/Handler"},
 		})
-		defs["node."+c.Type] = n
-		types = append(types, c.Type)
+		defs["node."+c.Name] = n
+		names = append(names, c.Name)
 	}
 	addActions(defs)
-	defs["Node"] = nodeSchema(types)
+	defs["Node"] = nodeSchema(names)
 
 	for _, d := range defs {
 		dropUnsupported(d)
@@ -247,9 +250,9 @@ func addActions(defs jsonschema.Definitions) {
 			}
 		}
 		defs["action."+a.name] = s
-		is := &jsonschema.Schema{Properties: jsonschema.NewProperties(), Required: []string{actionKey}}
-		is.Properties.Set(actionKey, &jsonschema.Schema{Const: a.name})
-		branches = append(branches, &jsonschema.Schema{If: is, Then: &jsonschema.Schema{Ref: "#/$defs/action." + a.name}})
+		match := &jsonschema.Schema{Properties: jsonschema.NewProperties(), Required: []string{actionKey}}
+		match.Properties.Set(actionKey, &jsonschema.Schema{Const: a.name})
+		branches = append(branches, &jsonschema.Schema{If: match, Then: &jsonschema.Schema{Ref: "#/$defs/action." + a.name}})
 		names = append(names, a.name)
 	}
 	// Built-in actions are checked against their own definitions, selected
@@ -302,41 +305,41 @@ func bindSchema(props *jsonschema.Schema) *jsonschema.Schema {
 	}
 }
 
-// nodeSchema selects each node's definition by its "type" with if/then,
-// rather than a oneOf of every definition. Nodes nest through "children",
-// and validators that evaluate every oneOf branch in full (as editors'
-// schema libraries do) multiply their work by the number of types at each
-// level; if/then only checks the type of each branch before applying the
-// one that matches.
-func nodeSchema(types []string) *jsonschema.Schema {
-	names := make([]any, len(types))
-	branches := make([]*jsonschema.Schema, len(types))
-	for i, t := range types {
-		names[i] = t
-		is := &jsonschema.Schema{Properties: jsonschema.NewProperties(), Required: []string{"type"}}
-		is.Properties.Set("type", &jsonschema.Schema{Const: t})
-		branches[i] = &jsonschema.Schema{If: is, Then: &jsonschema.Schema{Ref: "#/$defs/node." + t}}
+// nodeSchema selects each node's definition by its component ("is") with
+// if/then, rather than a oneOf of every definition. Nodes nest through
+// "children", and validators that evaluate every oneOf branch in full (as
+// editors' schema libraries do) multiply their work by the number of
+// components at each level; if/then only checks the component of each
+// branch before applying the one that matches.
+func nodeSchema(names []string) *jsonschema.Schema {
+	enum := make([]any, len(names))
+	branches := make([]*jsonschema.Schema, len(names))
+	for i, name := range names {
+		enum[i] = name
+		match := &jsonschema.Schema{Properties: jsonschema.NewProperties(), Required: []string{componentKey}}
+		match.Properties.Set(componentKey, &jsonschema.Schema{Const: name})
+		branches[i] = &jsonschema.Schema{If: match, Then: &jsonschema.Schema{Ref: "#/$defs/node." + name}}
 	}
 	s := &jsonschema.Schema{
-		Description: "A component in the template, identified by its type.",
+		Description: "A node in the template, identified by its component.",
 		Type:        typeObject,
 		Properties:  jsonschema.NewProperties(),
-		Required:    []string{"type"},
+		Required:    []string{componentKey},
 		AllOf:       branches,
 	}
-	s.Properties.Set("type", &jsonschema.Schema{Enum: names, Description: "The component to render."})
+	s.Properties.Set(componentKey, &jsonschema.Schema{Enum: enum, Description: "The component to render."})
 	return s
 }
 
-// node returns the base schema for a node of the given type.
-func node(typ string) *jsonschema.Schema {
+// node returns the base schema for a node of the named component.
+func node(name string) *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Type:                 typeObject,
 		Properties:           jsonschema.NewProperties(),
-		Required:             []string{"type"},
+		Required:             []string{componentKey},
 		AdditionalProperties: jsonschema.FalseSchema,
 	}
-	s.Properties.Set("type", &jsonschema.Schema{Const: typ})
+	s.Properties.Set(componentKey, &jsonschema.Schema{Const: name})
 	return s
 }
 
