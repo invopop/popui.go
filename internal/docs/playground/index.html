@@ -80,6 +80,8 @@
 		.error { color: var(--color-foreground-critical); font-size: 12px; white-space: pre-wrap; }
 		.preview { overflow: auto; padding: 24px; background: var(--color-background-default-secondary); }
 		.preview > div { max-width: 640px; margin: 0 auto; }
+		/* The host lays out a document's top-level nodes; its root is display: contents. */
+		#preview { display: flex; flex-direction: column; gap: 16px; }
 		.host { margin-top: 24px; border-top: 1px solid var(--color-border); padding-top: 12px; font-size: 12px; }
 		.host strong { font-weight: 500; }
 		#host-log { margin-top: 8px; max-height: 200px; overflow: auto; font-family: var(--font-mono, monospace); color: var(--color-foreground-default-secondary); word-break: break-all; }
