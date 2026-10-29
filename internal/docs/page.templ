@@ -24,6 +24,8 @@ templ Index() {
 		FillViewport: true,
 		Scripts: []props.Script{
 			{Src: "/assets/" + assets.Versioned("scripts", "docs.js")},
+			// Runs the actions in the JSON UI examples.
+			{Src: playground.Path + "jsonui.js"},
 		},
 		Head: headers(),
 		Data: "docs",
@@ -34,6 +36,7 @@ templ Index() {
 		}
 		@popui.Main(props.Main{Cloak: true}) {
 			@getStarted()
+			@jsonUI()
 			for _, group := range groups {
 				for _, page := range group.Pages {
 					@article(group.Path+"-"+page.Path, page.Title, page.Desc) {
@@ -63,6 +66,7 @@ templ headers() {
 	<link href={ "/assets/" + assets.Versioned("prism-popui.css") } rel="stylesheet"/>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
 }
 
 templ getStarted() {
@@ -187,6 +191,7 @@ templ sidebar() {
 				}
 			}
 			@popui.SidebarSection(props.SidebarSection{Title: "Experiments"}) {
+				@sidebarItem("json-ui", "JSON UI")
 				@popui.SidebarItem(props.SidebarItem{Href: templ.URL(playground.Path)}) {
 					JSON UI playground
 				}

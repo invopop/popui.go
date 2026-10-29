@@ -102,6 +102,14 @@ func Index() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = jsonUI().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 				for _, group := range groups {
 					for _, page := range group.Pages {
 						templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -148,6 +156,8 @@ func Index() templ.Component {
 			FillViewport: true,
 			Scripts: []props.Script{
 				{Src: "/assets/" + assets.Versioned("scripts", "docs.js")},
+				// Runs the actions in the JSON UI examples.
+				{Src: playground.Path + "jsonui.js"},
 			},
 			Head: headers(),
 			Data: "docs",
@@ -204,7 +214,7 @@ func title() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span>Documentation</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span>Documentation</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -245,20 +255,20 @@ func headers() templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<script>\n\t\tif (localStorage.getItem(\"dark-mode\") === \"true\") {\n\t\t\tdocument.documentElement.classList.add(\"dark\");\n\t\t}\n\t</script><!-- Prism.js for syntax highlighting --><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<script>\n\t\tif (localStorage.getItem(\"dark-mode\") === \"true\") {\n\t\t\tdocument.documentElement.classList.add(\"dark\");\n\t\t}\n\t</script><!-- Prism.js for syntax highlighting --><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 templ.SafeURL
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs("/assets/" + assets.Versioned("prism-popui.css"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 63, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 66, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" rel=\"stylesheet\"><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -299,7 +309,7 @@ func getStarted() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"text-foreground-default-secondary\">PopUI Go uses <a href=\"https://templ.guide/\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Templ</a> to create template wrappers that define PopUI components, sharing styles with the base PopUI Svelte components.</p><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Installation</h2><p class=\"text-foreground-default-secondary\">Install the PopUI Go package:</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<p class=\"text-foreground-default-secondary\">PopUI Go uses <a href=\"https://templ.guide/\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Templ</a> to create template wrappers that define PopUI components, sharing styles with the base PopUI Svelte components.</p><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Installation</h2><p class=\"text-foreground-default-secondary\">Install the PopUI Go package:</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -325,7 +335,7 @@ func getStarted() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Building</h2><p class=\"text-foreground-default-secondary\">In order to generate the CSS, the <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">tailwindcss</code> application must be installed in your system. We recommend using brew:</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Building</h2><p class=\"text-foreground-default-secondary\">In order to generate the CSS, the <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">tailwindcss</code> application must be installed in your system. We recommend using brew:</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -351,7 +361,7 @@ func getStarted() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"text-foreground-default-secondary\">To generate all the resources, run:</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p class=\"text-foreground-default-secondary\">To generate all the resources, run:</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -377,7 +387,7 @@ func getStarted() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Documentation Site</h2><p class=\"text-foreground-default-secondary\">Compile the project into the <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">public</code> directory with a single <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">index.html</code>:</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Documentation Site</h2><p class=\"text-foreground-default-secondary\">Compile the project into the <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">public</code> directory with a single <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">index.html</code>:</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -403,7 +413,7 @@ func getStarted() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p class=\"text-foreground-default-secondary\">Run a development server to quickly test template changes using the <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">air</code> utility. This ensures Tailwind classes, generated code, and the binary are correctly prepared:</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p class=\"text-foreground-default-secondary\">Run a development server to quickly test template changes using the <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">air</code> utility. This ensures Tailwind classes, generated code, and the binary are correctly prepared:</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -429,7 +439,7 @@ func getStarted() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Examples</h2><p class=\"text-foreground-default-secondary\">The <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">examples</code> directory contains standalone projects that demonstrate how to use PopUI components in different scenarios. Run the development server and visit the links below:</p><ul class=\"flex flex-col gap-2 text-foreground-default-secondary\"><li><a href=\"/examples/admin\" class=\"underline\" target=\"_blank\">Admin</a> — An admin panel with sidebar navigation, tables, and action buttons.</li><li><a href=\"/examples/app\" class=\"underline\" target=\"_blank\">App</a> — A simple app layout with a header, main content area, and footer.</li><li><a href=\"/examples/console\" class=\"underline\" target=\"_blank\">Console</a> — A minimal console layout with basic content.</li><li><a href=\"/examples/prose\" class=\"underline\" target=\"_blank\">Prose</a> — A prose-styled article page showcasing typography and rich text formatting.</li><li><a href=\"/examples/wizard\" class=\"underline\" target=\"_blank\">Wizard</a> — A multi-step wizard flow with forms, file uploads, and confirmation screens.</li></ul></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><div class=\"flex flex-col gap-3 w-full\"><h2 class=\"text-xl font-semibold tracking-[-0.16px] text-foreground\">Examples</h2><p class=\"text-foreground-default-secondary\">The <code class=\"font-mono text-sm bg-background-default-secondary px-1.5 py-0.5 rounded\">examples</code> directory contains standalone projects that demonstrate how to use PopUI components in different scenarios. Run the development server and visit the links below:</p><ul class=\"flex flex-col gap-2 text-foreground-default-secondary\"><li><a href=\"/examples/admin\" class=\"underline\" target=\"_blank\">Admin</a> — An admin panel with sidebar navigation, tables, and action buttons.</li><li><a href=\"/examples/app\" class=\"underline\" target=\"_blank\">App</a> — A simple app layout with a header, main content area, and footer.</li><li><a href=\"/examples/console\" class=\"underline\" target=\"_blank\">Console</a> — A minimal console layout with basic content.</li><li><a href=\"/examples/prose\" class=\"underline\" target=\"_blank\">Prose</a> — A prose-styled article page showcasing typography and rich text formatting.</li><li><a href=\"/examples/wizard\" class=\"underline\" target=\"_blank\">Wizard</a> — A multi-step wizard flow with forms, file uploads, and confirmation screens.</li></ul></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -476,7 +486,7 @@ func article(id, title, description string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"w-full max-w-[1200px] mx-auto pt-2 pb-16\"><div class=\"space-y-8\"><div class=\"space-y-1.5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"w-full max-w-[1200px] mx-auto pt-2 pb-16\"><div class=\"space-y-8\"><div class=\"space-y-1.5\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -495,7 +505,7 @@ func article(id, title, description string) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 149, Col: 12}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 153, Col: 12}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -522,7 +532,7 @@ func article(id, title, description string) templ.Component {
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 152, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 156, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -534,7 +544,7 @@ func article(id, title, description string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -542,7 +552,7 @@ func article(id, title, description string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -608,7 +618,7 @@ func sidebar() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<a href=\"/\" class=\"flex-1\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<a href=\"/\" class=\"flex-1\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -616,7 +626,7 @@ func sidebar() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -655,7 +665,7 @@ func sidebar() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -719,7 +729,7 @@ func sidebar() templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -735,6 +745,14 @@ func sidebar() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = sidebarItem("json-ui", "JSON UI").Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 					templ_7745c5c3_Var32 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -747,7 +765,7 @@ func sidebar() templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "JSON UI playground")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "JSON UI playground")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -845,7 +863,7 @@ func sidebarItem(href, title string) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 211, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/page.templ`, Line: 216, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -891,7 +909,7 @@ func darkModeToggle() templ.Component {
 			templ_7745c5c3_Var37 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<button x-data=\"darkModeToggle\" @click=\"toggle\" class=\"flex items-center justify-center size-8 -mr-2 rounded-lg text-icon-default-secondary hover:text-icon hover:bg-background-default-secondary transition-colors cursor-pointer\" title=\"Toggle dark mode\"><div class=\"transition-transform duration-300\" :class=\"{ 'rotate-180': dark }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<button x-data=\"darkModeToggle\" @click=\"toggle\" class=\"flex items-center justify-center size-8 -mr-2 rounded-lg text-icon-default-secondary hover:text-icon hover:bg-background-default-secondary transition-colors cursor-pointer\" title=\"Toggle dark mode\"><div class=\"transition-transform duration-300\" :class=\"{ 'rotate-180': dark }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -899,7 +917,7 @@ func darkModeToggle() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
