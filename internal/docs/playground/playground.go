@@ -25,8 +25,8 @@ import (
 const Path = "/jsonui/"
 
 // actions are the actions documents may use in the playground: the built-in
-// ones plus "save", which the playground page registers itself.
-var actions = append(append([]string{}, jsonui.BuiltinActions...), "save")
+// ones plus those the playground page registers itself, as in its ACTIONS.
+var actions = append(append([]string{}, jsonui.BuiltinActions...), "save", "step.update", "asset.choose", "app.request")
 
 //go:embed index.html samples.js editor.js
 var static embed.FS
