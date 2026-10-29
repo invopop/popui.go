@@ -141,8 +141,8 @@ func jsonuiComponentItems() []modules.APITableItem {
 		if c.Model {
 			notes = append(notes, "Form control: accepts `model`.")
 		}
-		if !c.Leaf {
-			notes = append(notes, "Takes `children` and `bind`.")
+		if c.Children {
+			notes = append(notes, "Takes `children`.")
 		}
 		if c.Events != nil {
 			notes = append(notes, "Events: `"+strings.Join(c.Events, "`, `")+"`.")

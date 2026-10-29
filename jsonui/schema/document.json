@@ -2273,13 +2273,6 @@
         "props": {
           "$ref": "#/$defs/CardProgressBar"
         },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
-        },
         "bind": {
           "additionalProperties": {
             "type": "string"
@@ -2731,13 +2724,6 @@
         "props": {
           "$ref": "#/$defs/Input"
         },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
-        },
         "bind": {
           "additionalProperties": {
             "type": "string"
@@ -2999,13 +2985,6 @@
         "props": {
           "$ref": "#/$defs/StatusBadge"
         },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
-        },
         "bind": {
           "additionalProperties": {
             "type": "string"
@@ -3195,13 +3174,6 @@
         "props": {
           "$ref": "#/$defs/TagStatus"
         },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
-        },
         "bind": {
           "additionalProperties": {
             "type": "string"
@@ -3265,13 +3237,6 @@
         },
         "props": {
           "$ref": "#/$defs/Textarea"
-        },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
         },
         "bind": {
           "additionalProperties": {
@@ -3379,13 +3344,6 @@
         },
         "props": {
           "$ref": "#/$defs/TitleGroup"
-        },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
         },
         "bind": {
           "additionalProperties": {

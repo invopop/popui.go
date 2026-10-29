@@ -69,7 +69,7 @@ func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
 		if !safePath(p.Loading) {
 			return nil, fmt.Errorf("%s loading: %q is not a data path", n.Component, p.Loading)
 		}
-		loading = p.Loading
+		loading = alpinePath(p.Loading)
 	}
 	handlers := map[string]string{}
 	for event, raw := range n.On {
@@ -83,7 +83,7 @@ func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
 		handlers[event] = h
 	}
 	return alpine.UploadFile(props.UploadFile{
-		XModel:   n.Model,
+		XModel:   alpinePath(n.Model),
 		Loading:  loading,
 		OnSelect: handlers["select"],
 		OnRemove: handlers["remove"],

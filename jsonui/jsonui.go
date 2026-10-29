@@ -120,8 +120,10 @@ type Component struct {
 	Props reflect.Type
 	// Model is true for form controls that accept a "model" binding.
 	Model bool
-	// Leaf is true for nodes that take no "children" or "bind".
-	Leaf bool
+	// Children is true for nodes that render their "children".
+	Children bool
+	// Bind is true for nodes whose props can be set with "bind".
+	Bind bool
 	// Events lists the events the node accepts in "on", or nil for any DOM
 	// event.
 	Events []string
@@ -133,6 +135,8 @@ type builder func(raw json.RawMessage) (templ.Component, error)
 type entry struct {
 	props reflect.Type
 	build builder
+	// children is true when the component renders its children.
+	children bool
 }
 
 var registry = map[string]entry{}
@@ -140,6 +144,7 @@ var registry = map[string]entry{}
 // register adds a PopUI component whose signature follows the standard
 // `templ Name(p ...props.X)` convention.
 func register[P any](name string, fn func(...P) templ.Component) {
+	var zero P
 	registry[name] = entry{
 		props: reflect.TypeFor[P](),
 		build: func(raw json.RawMessage) (templ.Component, error) {
@@ -151,7 +156,24 @@ func register[P any](name string, fn func(...P) templ.Component) {
 			}
 			return fn(p), nil
 		},
+		children: rendersChildren(fn(zero)),
 	}
+}
+
+// childMarker is rendered as the children of a component to find out
+// whether it renders them.
+const childMarker = "\x00jsonui-children\x00"
+
+// rendersChildren reports whether c renders its children, by rendering it
+// with its default props and a marker child, so that documents can't supply
+// children a component would silently drop.
+func rendersChildren(c templ.Component) bool {
+	marker := templ.Raw(childMarker)
+	var buf bytes.Buffer
+	if err := c.Render(templ.WithChildren(context.Background(), marker), &buf); err != nil {
+		return false
+	}
+	return bytes.Contains(buf.Bytes(), []byte(childMarker))
 }
 
 func init() {
@@ -202,8 +224,9 @@ func Components() []Component {
 	out := make([]Component, 0, len(registry))
 	for k, e := range registry {
 		_, model := modelProps[k]
-		// Entries without a props builder are custom leaf nodes (upload_file).
-		out = append(out, Component{Name: k, Props: e.props, Model: model, Leaf: e.build == nil, Events: nodeEvents[k]})
+		// Entries without a props builder are custom nodes (upload_file),
+		// which build their props themselves.
+		out = append(out, Component{Name: k, Props: e.props, Model: model, Children: e.children, Bind: e.build != nil, Events: nodeEvents[k]})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Name < out[j].Name })
 	return out
@@ -322,6 +345,9 @@ func (b *docBuilder) build(n *Node) (templ.Component, error) {
 	if len(n.Children) == 0 {
 		return c, nil
 	}
+	if !e.children {
+		return nil, fmt.Errorf("%s: children are not supported", n.Component)
+	}
 	children, err := b.buildAll(n.Children)
 	if err != nil {
 		return nil, err
@@ -358,7 +384,7 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 			text = display(v)
 		}
 	}
-	return boundText(text, expr), nil
+	return boundText(text, alpinePath(expr)), nil
 }
 
 // props returns the node's props with any bind, model and on values from
@@ -467,7 +493,7 @@ func (b *docBuilder) model(typ string, props map[string]json.RawMessage, attrs m
 	if _, isNum := v.(json.Number); isNum {
 		directive = "x-model.number" // keep numbers as numbers in the data
 	}
-	attrs[directive] = path
+	attrs[directive] = alpinePath(path)
 	switch prop {
 	case valueProp:
 		props[prop], err = json.Marshal(display(v))
@@ -543,7 +569,7 @@ func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, 
 	if !ok {
 		items = []any{v}
 	}
-	var list []map[string]any
+	list := []map[string]any{} // an empty list renders as [], not null
 	for _, item := range items {
 		switch item := item.(type) {
 		case string:
@@ -563,6 +589,13 @@ func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, 
 			if !b.opts.allowsAction(name) {
 				return nil, fmt.Errorf("action %q is not allowed", name)
 			}
+			if slices.Contains(BuiltinActions, name) {
+				for _, param := range RequiredParams[name] {
+					if v, _ := item[param].(string); v == "" {
+						return nil, fmt.Errorf("action %q: %s is required", name, param)
+					}
+				}
+			}
 			if err := checkActionPaths(name, item); err != nil {
 				return nil, err
 			}
@@ -577,6 +610,32 @@ func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, 
 // dataPath matches the plain dotted paths that can be resolved in Go, as
 // opposed to arbitrary Alpine expressions.
 var dataPath = regexp.MustCompile(`^[A-Za-z_$][\w$]*(\.[\w$]+)*$`)
+
+// alpinePath writes a data path as an Alpine expression. Segments that
+// aren't identifiers, such as array indexes, use brackets, so
+// "invoice.lines.0.total" becomes "invoice.lines[0].total". Anything other
+// than a data path, such as an expression in a trusted document, is
+// returned unchanged.
+func alpinePath(path string) string {
+	if !dataPath.MatchString(path) {
+		return path
+	}
+	var out strings.Builder
+	for i, key := range strings.Split(path, ".") {
+		switch {
+		case identifier.MatchString(key):
+			if i > 0 {
+				out.WriteByte('.')
+			}
+			out.WriteString(key)
+		case strings.Trim(key, "0123456789") == "":
+			out.WriteString("[" + key + "]")
+		default:
+			out.WriteString("['" + key + "']")
+		}
+	}
+	return out.String()
+}
 
 // unsafeKeys are path segments that reach JavaScript object prototypes.
 var unsafeKeys = []string{"__proto__", "prototype", "constructor"}
@@ -599,7 +658,7 @@ func safePath(path string) bool {
 // data paths: into and busy, and the path of the built-in set action.
 func checkActionPaths(name string, action map[string]any) error {
 	keys := []string{"into", "busy"}
-	if name == "set" {
+	if name == actionSet {
 		keys = append(keys, "path")
 	}
 	for _, key := range keys {

@@ -15,8 +15,24 @@ import (
 	"github.com/a-h/templ"
 )
 
+// Names of the built-in actions.
+const (
+	actionAlert    = "alert"
+	actionSet      = "set"
+	actionReset    = "reset"
+	actionDispatch = "dispatch"
+)
+
 // BuiltinActions are the actions implemented by assets/jsonui.js.
-var BuiltinActions = []string{"alert", "set", "reset", "dispatch"}
+var BuiltinActions = []string{actionAlert, actionSet, actionReset, actionDispatch}
+
+// RequiredParams lists the string params each built-in action needs.
+// Actions registered by the host have their params passed through unchecked.
+var RequiredParams = map[string][]string{
+	actionAlert:    {"message"},
+	actionSet:      {"path"},
+	actionDispatch: {"event"},
+}
 
 // Options control how documents are checked when they are built.
 //

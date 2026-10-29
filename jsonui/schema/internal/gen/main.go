@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -123,8 +124,10 @@ func render() ([]byte, error) {
 		n := node(c.Name)
 		n.Description = fmt.Sprintf("PopUI %s component.", c.Props.Name())
 		n.Properties.Set("props", &jsonschema.Schema{Ref: "#/$defs/" + c.Props.Name()})
-		if !c.Leaf {
+		if c.Children {
 			n.Properties.Set("children", children)
+		}
+		if c.Bind {
 			n.Properties.Set("bind", bindSchema(defs[c.Props.Name()]))
 		}
 		if c.Model {
@@ -166,17 +169,17 @@ func render() ([]byte, error) {
 	return append(data, '\n'), nil
 }
 
-// param is an extra property accepted by a built-in action.
+// param is an extra property accepted by a built-in action. The ones in
+// jsonui.RequiredParams are required.
 type param struct {
-	name     string
-	required bool
-	schema   *jsonschema.Schema
+	name   string
+	schema *jsonschema.Schema
 }
 
 // commonParams are handled by assets/jsonui.js for every action.
 var commonParams = []param{
-	{"into", false, &jsonschema.Schema{Type: typeString, Description: "Data path to store the action's result in."}},
-	{"busy", false, &jsonschema.Schema{Type: typeString, Description: "Data path set to true while the action runs."}},
+	{"into", &jsonschema.Schema{Type: typeString, Description: "Data path to store the action's result in."}},
+	{"busy", &jsonschema.Schema{Type: typeString, Description: "Data path set to true while the action runs."}},
 }
 
 // builtinActions are implemented by assets/jsonui.js.
@@ -185,16 +188,16 @@ var builtinActions = []struct {
 	params     []param
 }{
 	{"alert", "Show a browser alert.", []param{
-		{"message", true, &jsonschema.Schema{Type: typeString, Description: "Text to show; {{path}} placeholders are replaced with data values."}},
+		{"message", &jsonschema.Schema{Type: typeString, Description: "Text to show; {{path}} placeholders are replaced with data values."}},
 	}},
 	{"set", "Set a data path to a value.", []param{
-		{"path", true, &jsonschema.Schema{Type: typeString, Description: "Data path to change, e.g. \"customer.name\"."}},
-		{"value", false, &jsonschema.Schema{Description: "New value; strings may use {{path}} placeholders."}},
+		{"path", &jsonschema.Schema{Type: typeString, Description: "Data path to change, e.g. \"customer.name\"."}},
+		{"value", &jsonschema.Schema{Description: "New value; strings may use {{path}} placeholders."}},
 	}},
 	{"reset", "Restore the document data to its initial values.", nil},
 	{"dispatch", "Dispatch a bubbling DOM CustomEvent for the host page to handle.", []param{
-		{"event", true, &jsonschema.Schema{Type: typeString, Description: "Event name, e.g. \"customer:save\"."}},
-		{"detail", false, &jsonschema.Schema{Description: "Event detail; defaults to a copy of the document data."}},
+		{"event", &jsonschema.Schema{Type: typeString, Description: "Event name, e.g. \"customer:save\"."}},
+		{"detail", &jsonschema.Schema{Description: "Event detail; defaults to a copy of the document data."}},
 	}},
 }
 
@@ -221,7 +224,7 @@ func addActions(defs jsonschema.Definitions) {
 		s.Properties.Set(actionKey, &jsonschema.Schema{Const: a.name})
 		for _, p := range append(a.params, commonParams...) {
 			s.Properties.Set(p.name, p.schema)
-			if p.required {
+			if slices.Contains(jsonui.RequiredParams[a.name], p.name) {
 				s.Required = append(s.Required, p.name)
 			}
 		}

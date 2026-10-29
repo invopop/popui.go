@@ -110,17 +110,21 @@ func TestStrictRejectsScript(t *testing.T) {
 // "model" and "on" keys end up inside generated Alpine attributes.
 func TestAlwaysRejected(t *testing.T) {
 	cases := map[string]string{
-		`{"data":{"a":1},"components":[{"is":"input","model":"a; alert(1)"}]}`:                              `not a data path`,
-		`{"components":[{"is":"button","on":{"click=\"x\" y":{"action":"alert"}}}]}`:                        `invalid event name`,
-		`{"data":{"a":1},"components":[{"is":"button","model":"a"}]}`:                                       `only supported on form controls`,
-		`{"components":[{"is":"button","on":{"click":{"message":"no action name"}}}]}`:                      `needs an "action" name`,
-		`{"data":{"a":{}},"components":[{"is":"input","model":"a.__proto__.x"}]}`:                           `not a data path`,
-		`{"components":[{"is":"button","on":{"click":{"action":"set","path":"constructor.prototype.x"}}}]}`: `path "constructor.prototype.x" is not a data path`,
-		`{"components":[{"is":"button","on":{"click":{"action":"alert","into":"__proto__.x"}}}]}`:           `into "__proto__.x" is not a data path`,
-		`{"components":[{"is":"button","on":{"click":{"action":"alert","busy":1}}}]}`:                       `busy 1 is not a data path`,
-		`{"components":[{"is":"button","on":{"click":null}}]}`:                                              `expected an action`,
-		`{"handlers":{"h":null},"components":[]}`:                                                           `expected an action`,
-		`{"components":[]} {"components":[]}`:                                                               `unexpected data after the JSON value`,
+		`{"data":{"a":1},"components":[{"is":"input","model":"a; alert(1)"}]}`:                                   `not a data path`,
+		`{"components":[{"is":"button","on":{"click=\"x\" y":{"action":"alert"}}}]}`:                             `invalid event name`,
+		`{"data":{"a":1},"components":[{"is":"button","model":"a"}]}`:                                            `only supported on form controls`,
+		`{"components":[{"is":"button","on":{"click":{"message":"no action name"}}}]}`:                           `needs an "action" name`,
+		`{"data":{"a":{}},"components":[{"is":"input","model":"a.__proto__.x"}]}`:                                `not a data path`,
+		`{"components":[{"is":"button","on":{"click":{"action":"set","path":"constructor.prototype.x"}}}]}`:      `path "constructor.prototype.x" is not a data path`,
+		`{"components":[{"is":"button","on":{"click":{"action":"alert","message":"Hi","into":"__proto__.x"}}}]}`: `into "__proto__.x" is not a data path`,
+		`{"components":[{"is":"button","on":{"click":{"action":"alert","message":"Hi","busy":1}}}]}`:             `busy 1 is not a data path`,
+		`{"components":[{"is":"button","on":{"click":null}}]}`:                                                   `expected an action`,
+		`{"handlers":{"h":null},"components":[]}`:                                                                `expected an action`,
+		`{"components":[]} {"components":[]}`:                                                                    `unexpected data after the JSON value`,
+		`{"components":[{"is":"button","on":{"click":{"action":"set","value":1}}}]}`:                             `action "set": path is required`,
+		`{"components":[{"is":"button","on":{"click":{"action":"alert","message":2}}}]}`:                         `action "alert": message is required`,
+		`{"components":[{"is":"button","on":{"click":{"action":"dispatch"}}}]}`:                                  `action "dispatch": event is required`,
+		`{"components":[{"is":"status_badge","children":[{"is":"text","text":"Lost"}]}]}`:                        `status_badge: children are not supported`,
 	}
 	for doc, want := range cases {
 		_, err := render(t, Options{Trusted: true}, doc)
@@ -157,8 +161,13 @@ func TestStrictAllows(t *testing.T) {
 }
 
 func TestDefaultActionsAreBuiltins(t *testing.T) {
+	params := map[string]string{actionAlert: `"message":"Hi"`, actionSet: `"path":"a"`, actionDispatch: `"event":"saved"`}
 	for _, a := range BuiltinActions {
-		doc := `{"components":[{"is":"button","on":{"click":{"action":"` + a + `"}}}]}`
+		action := `{"action":"` + a + `"}`
+		if p := params[a]; p != "" {
+			action = `{"action":"` + a + `",` + p + `}`
+		}
+		doc := `{"components":[{"is":"button","on":{"click":` + action + `}}]}`
 		if _, err := render(t, Options{}, doc); err != nil {
 			t.Errorf("%s: %v", a, err)
 		}
@@ -259,7 +268,7 @@ func TestHandlers(t *testing.T) {
 
 	bad := map[string]string{
 		`{"components":[{"is":"button","on":{"click":"missing"}}]}`:                             `unknown handler "missing"`,
-		`{"handlers":{"a":{"action":"alert"},"b":["a"]},"components":[]}`:                       `can't refer to other handlers`,
+		`{"handlers":{"a":{"action":"alert","message":"Hi"},"b":["a"]},"components":[]}`:        `can't refer to other handlers`,
 		`{"handlers":{"unused":{"action":"steal"}},"components":[]}`:                            `handler "unused": action "steal" is not allowed`,
 		`{"handlers":{"n":42},"components":[]}`:                                                 `expected an action, a handler name or a list`,
 		`{"handlers":{"x":{"message":"hi"}},"components":[{"is":"button","on":{"click":"x"}}]}`: `needs an "action" name`,
@@ -276,7 +285,7 @@ func TestHandlers(t *testing.T) {
 func TestNullProps(t *testing.T) {
 	for _, doc := range []string{
 		`{"data":{"a":"x"},"components":[{"is":"input","props":null,"model":"a"}]}`,
-		`{"components":[{"is":"button","props":{"attributes":null},"on":{"click":{"action":"alert"}}}]}`,
+		`{"components":[{"is":"button","props":{"attributes":null},"on":{"click":{"action":"alert","message":"Hi"}}}]}`,
 	} {
 		html, err := render(t, Options{}, doc)
 		if err != nil {
@@ -291,7 +300,7 @@ func TestNullProps(t *testing.T) {
 // are combined with the ones generated for "on".
 func TestBoundAttributesKeepHandlers(t *testing.T) {
 	doc := `{"data":{"attrs":{"aria-label":"Save"}},"components":[
-		{"is":"button","bind":{"attributes":"attrs"},"on":{"click":{"action":"alert"}}}
+		{"is":"button","bind":{"attributes":"attrs"},"on":{"click":{"action":"alert","message":"Hi"}}}
 	]}`
 	html, err := render(t, Options{}, doc)
 	if err != nil {
@@ -317,5 +326,58 @@ func TestMultipleSelectModel(t *testing.T) {
 	}
 	if strings.Contains(html, `value="fr" selected`) {
 		t.Errorf("option fr selected in:\n%s", html)
+	}
+}
+
+// TestEmptyActionList checks that an empty list of actions is a no-op the
+// runtime can iterate rather than null.
+func TestEmptyActionList(t *testing.T) {
+	html, err := render(t, Options{}, `{"components":[{"is":"button","on":{"click":[]}}]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(html, `$actions([], $event)`) {
+		t.Errorf("want an empty action list in:\n%s", html)
+	}
+}
+
+// TestHostActionParamsPassThrough checks that host actions aren't held to
+// the built-in actions' params.
+func TestHostActionParamsPassThrough(t *testing.T) {
+	doc := `{"components":[{"is":"button","on":{"click":{"action":"ui.notify"}}}]}`
+	if _, err := render(t, Options{Actions: []string{"ui.notify"}}, doc); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestArrayPaths checks that data paths through arrays become valid Alpine
+// expressions.
+func TestArrayPaths(t *testing.T) {
+	doc := `{"data":{"lines":[{"name":"Widget","qty":2}]},"components":[
+		{"is":"input","model":"lines.0.name"},
+		{"is":"text","bind":"lines.0.qty"}
+	]}`
+	html, err := render(t, Options{}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`x-model="lines[0].name"`, `value="Widget"`, `<span x-text="lines[0].qty">2</span>`} {
+		if !strings.Contains(html, want) {
+			t.Errorf("missing %s in:\n%s", want, html)
+		}
+	}
+}
+
+func TestAlpinePath(t *testing.T) {
+	for path, want := range map[string]string{
+		"customer.name":         "customer.name",
+		"invoice.lines.0.total": "invoice.lines[0].total",
+		"rows.10":               "rows[10]",
+		"a.0b":                  "a['0b']",
+		"a + b":                 "a + b",
+	} {
+		if got := alpinePath(path); got != want {
+			t.Errorf("alpinePath(%q) = %q, want %q", path, got, want)
+		}
 	}
 }

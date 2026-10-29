@@ -80,7 +80,7 @@
     },
     // run executes a list of actions in order, awaiting async ones.
     async run(list, ctx) {
-      for (const { action, into, busy: busyPath, ...params } of list) {
+      for (const { action, into, busy: busyPath, ...params } of list ?? []) {
         const fn = registry.get(action);
         if (!fn) {
           console.error(`[jsonui] unknown action "${action}"`);
