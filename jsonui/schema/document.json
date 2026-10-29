@@ -362,6 +362,24 @@
       "type": "object",
       "description": "CardProgressBar Templ component props"
     },
+    "Cell": {
+      "properties": {
+        "class": {
+          "type": "string"
+        },
+        "colspan": {
+          "type": "integer",
+          "description": "Colspan is the number of columns the cell spans, e.g. for a row that\nsays the table is empty."
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are added to the cell."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Cell are the props of a table's \"th\" and \"td\" cells."
+    },
     "Checkbox": {
       "properties": {
         "id": {
@@ -572,6 +590,20 @@
         "components"
       ],
       "description": "Document is the root of a JSON UI description."
+    },
+    "Element": {
+      "properties": {
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are added to the element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Element are the props of the plain HTML elements that structure a table or a list, which popui styles from the component around them, such as \"table\"."
     },
     "Error": {
       "properties": {
@@ -1159,6 +1191,36 @@
           "if": {
             "properties": {
               "is": {
+                "const": "li"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.li"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "ol"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.ol"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
                 "const": "option"
               }
             },
@@ -1279,6 +1341,21 @@
           "if": {
             "properties": {
               "is": {
+                "const": "table"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.table"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
                 "const": "tabs"
               }
             },
@@ -1309,6 +1386,36 @@
           "if": {
             "properties": {
               "is": {
+                "const": "tbody"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tbody"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "td"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.td"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
                 "const": "textarea"
               }
             },
@@ -1318,6 +1425,36 @@
           },
           "then": {
             "$ref": "#/$defs/node.textarea"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "th"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.th"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "thead"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.thead"
           }
         },
         {
@@ -1348,6 +1485,36 @@
           },
           "then": {
             "$ref": "#/$defs/node.title_group"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "tr"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tr"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "ul"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.ul"
           }
         },
         {
@@ -1386,6 +1553,8 @@
             "fieldset",
             "form",
             "input",
+            "li",
+            "ol",
             "option",
             "option_group",
             "p",
@@ -1394,11 +1563,18 @@
             "status_badge",
             "subtitle",
             "tab",
+            "table",
             "tabs",
             "tag_status",
+            "tbody",
+            "td",
             "textarea",
+            "th",
+            "thead",
             "title",
             "title_group",
+            "tr",
+            "ul",
             "upload_file"
           ],
           "description": "The component to render."
@@ -1653,6 +1829,45 @@
       "additionalProperties": false,
       "type": "object",
       "description": "TabItem is one entry in a popui.Tabs trigger row: a Value that identifies the tab (assigned to the Alpine Model on click and matched by the content Tab), a visible Label, an optional leading Icon, and an optional Count."
+    },
+    "Table": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "rootClass": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "variant": {
+          "type": "string",
+          "description": "\"card\" adds outer border"
+        },
+        "scrollHorizontal": {
+          "type": "boolean",
+          "description": "ScrollHorizontal turns the table into a wide, horizontally-scrolling\ntable: the body scrolls sideways. Pair it with StickyColumn to keep the\nfirst column pinned during the scroll."
+        },
+        "stickyColumn": {
+          "type": "boolean",
+          "description": "StickyColumn pins the first column to the left — a full-height divider\nstays put during a horizontal scroll so the identity column never\ndetaches from the rows. Only has a visible effect alongside\nScrollHorizontal (there's nothing to scroll past otherwise)."
+        },
+        "stickyHeader": {
+          "type": "boolean",
+          "description": "StickyHeader pins the \u003cthead\u003e row to the top while the body scrolls.\nThe RootClass must make the wrapper a vertical scroll container with a\nbounded height (e.g. \"flex-1 min-h-0 overflow-y-auto\")."
+        },
+        "resizable": {
+          "type": "boolean",
+          "description": "Resizable lets the user drag the right edge of each header cell to\nresize that column. The drag handles and behavior are provided by\npopui (CSS + popui.js); no consumer script is needed."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Table Templ component props."
     },
     "Tabs": {
       "properties": {
@@ -3392,6 +3607,170 @@
       ],
       "description": "PopUI Input component."
     },
+    "node.li": {
+      "properties": {
+        "is": {
+          "const": "li"
+        },
+        "props": {
+          "$ref": "#/$defs/Element"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Element component."
+    },
+    "node.ol": {
+      "properties": {
+        "is": {
+          "const": "ol"
+        },
+        "props": {
+          "$ref": "#/$defs/Element"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Element component."
+    },
     "node.option": {
       "properties": {
         "is": {
@@ -4064,6 +4443,95 @@
       ],
       "description": "PopUI Tab component."
     },
+    "node.table": {
+      "properties": {
+        "is": {
+          "const": "table"
+        },
+        "props": {
+          "$ref": "#/$defs/Table"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "rootClass",
+              "attributes",
+              "variant",
+              "scrollHorizontal",
+              "stickyColumn",
+              "stickyHeader",
+              "resizable"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Table component."
+    },
     "node.tabs": {
       "properties": {
         "is": {
@@ -4230,6 +4698,171 @@
       ],
       "description": "PopUI TagStatus component."
     },
+    "node.tbody": {
+      "properties": {
+        "is": {
+          "const": "tbody"
+        },
+        "props": {
+          "$ref": "#/$defs/Element"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Element component."
+    },
+    "node.td": {
+      "properties": {
+        "is": {
+          "const": "td"
+        },
+        "props": {
+          "$ref": "#/$defs/Cell"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "colspan",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Cell component."
+    },
     "node.text": {
       "properties": {
         "is": {
@@ -4382,6 +5015,171 @@
         "is"
       ],
       "description": "PopUI Textarea component."
+    },
+    "node.th": {
+      "properties": {
+        "is": {
+          "const": "th"
+        },
+        "props": {
+          "$ref": "#/$defs/Cell"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "colspan",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Cell component."
+    },
+    "node.thead": {
+      "properties": {
+        "is": {
+          "const": "thead"
+        },
+        "props": {
+          "$ref": "#/$defs/Element"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Element component."
     },
     "node.title": {
       "properties": {
@@ -4544,6 +5342,170 @@
         "is"
       ],
       "description": "PopUI TitleGroup component."
+    },
+    "node.tr": {
+      "properties": {
+        "is": {
+          "const": "tr"
+        },
+        "props": {
+          "$ref": "#/$defs/Element"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Element component."
+    },
+    "node.ul": {
+      "properties": {
+        "is": {
+          "const": "ul"
+        },
+        "props": {
+          "$ref": "#/$defs/Element"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Element component."
     },
     "node.upload_file": {
       "properties": {

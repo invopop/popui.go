@@ -53,7 +53,7 @@ templ jsonUI() {
 					{Name: "props", Type: "object", Description: "The component's props, as in the props package. Field names match case-insensitively and unknown fields are errors."},
 					{Name: "children", Type: "[]node", Description: "Nodes rendered inside the component."},
 					{Name: "bind", Type: "object", Description: "Prop names mapped to data paths, e.g. `{\"title\": \"invoice.code\"}`, resolved when rendering. Some props also follow the data as it changes, such as `disabled` on form controls and buttons, and an option's `value`, `label` and `disabled`. On a `text` node, a single data path whose value is shown and kept up to date."},
-					{Name: "each", Type: "string", Description: "Data path of a list to repeat the node for, following the list as it changes, e.g. when an action stores a fetched list with `into`. The node and its children refer to the current item as `item` and its position as `index`, in `bind`, `model` and `show`. The node must render a single element."},
+					{Name: "each", Type: "string", Description: "Data path of a list to repeat the node for, following the list as it changes, e.g. when an action stores a fetched list with `into`. The node and its children refer to the current item as `item` and its position as `index`, in `bind`, `model` and `show`. The node must render a single element, such as a table row or list item. A list's `length` is also a data path, e.g. `\"show\": \"!rows.length\"` for a row saying the list is empty."},
 					{Name: "show", Type: "string | object", Description: "Renders the node only while a condition holds: a data path, true when its value is, optionally negated with `!`, e.g. `\"!config.sandbox\"`, or data paths mapped to the values each may have, all of which must match, e.g. `{\"workflow.schema\": [\"bill/invoice\"]}`. The node must render a single element."},
 					{Name: "model", Type: "string", Description: "Data path a form control reads and writes, e.g. `customer.email`. Its initial value is rendered on the server."},
 					{Name: "on", Type: "object", Description: "DOM events, with optional Alpine modifiers such as `submit.prevent` or `input.debounce.300ms`, mapped to an action, a handler name or a list of them."},
@@ -69,7 +69,7 @@ templ jsonUI() {
 		}
 		@modules.Section("Components", "json-ui-components") {
 			@popui.Description() {
-				Each component maps to the PopUI component of the same name, so its props are documented on that component's page.
+				Each component maps to the PopUI component of the same name, so its props are documented on that component's page. The exceptions are upload_file, option, and the elements that structure tables and lists (thead, tbody, tr, th, td, ul, ol and li), whose props are in the jsonui package.
 			}
 			@modules.APITable(modules.APITableProps{Items: jsonuiComponentItems()})
 		}
@@ -158,7 +158,7 @@ func jsonuiComponentItems() []modules.APITableItem {
 		}
 		items = append(items, modules.APITableItem{
 			Name:        c.Name,
-			Type:        "props." + c.Props.Name(),
+			Type:        c.Props.String(), // props.X, or jsonui.X for nodes of its own
 			Description: strings.Join(notes, " "),
 		})
 	}

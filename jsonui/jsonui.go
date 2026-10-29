@@ -819,7 +819,8 @@ func checkActionPaths(name string, action map[string]any) error {
 	return nil
 }
 
-// lookup resolves a dotted path such as "invoice.lines.0.total" in data.
+// lookup resolves a dotted path such as "invoice.lines.0.total" in data. A
+// list's "length" is its number of items.
 func lookup(data map[string]any, path string) (any, error) {
 	var cur any = data
 	for _, key := range strings.Split(path, ".") {
@@ -831,6 +832,12 @@ func lookup(data map[string]any, path string) (any, error) {
 			}
 			cur = next
 		case []any:
+			if key == "length" {
+				// A list's length, as JavaScript reads it, e.g. for a
+				// condition that the list is empty.
+				cur = json.Number(strconv.Itoa(len(v)))
+				continue
+			}
 			i, err := strconv.Atoi(key)
 			if err != nil || i < 0 || i >= len(v) {
 				return nil, fmt.Errorf("data has no %q", path)

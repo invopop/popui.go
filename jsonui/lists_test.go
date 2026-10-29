@@ -137,3 +137,33 @@ func TestEachModel(t *testing.T) {
 	]}`)
 	assertContains(t, html, `x-model="item.email"`)
 }
+
+// TestEachRows checks that table rows and list items repeat, with an empty
+// state from the list's length.
+func TestEachRows(t *testing.T) {
+	html := mustRender(t, `{"data": {"rows": []}, "components": [
+		{"is": "table", "children": [{"is": "tbody", "children": [
+			{"is": "tr", "each": "rows", "children": [{"is": "td", "children": [{"is": "text", "bind": "item.name"}]}]},
+			{"is": "tr", "show": "!rows.length", "children": [{"is": "td", "props": {"colspan": 2}, "children": [{"is": "text", "text": "None"}]}]}
+		]}]},
+		{"is": "ul", "children": [{"is": "li", "each": "rows", "props": {"class": "py-1"}, "children": [{"is": "text", "bind": "item.name"}]}]}
+	]}`)
+	assertContains(t, html,
+		`<tbody><template x-for="(item, index) in rows"><tr><td><span x-text="item.name"></span></td></tr></template>`,
+		`<template x-if="!rows.length"><tr><td colspan="2">None</td></tr></template></tbody>`,
+		`<ul><template x-for="(item, index) in rows"><li class="py-1"><span x-text="item.name"></span></li></template></ul>`,
+	)
+
+	// A list's length can be shown too.
+	html = mustRender(t, `{"data": {"rows": [1, 2]}, "components": [{"is": "text", "bind": "rows.length"}]}`)
+	assertContains(t, html, `<span x-text="rows.length">2</span>`)
+}
+
+// TestElementsStrict checks that the elements' attributes are held to the
+// same rules as components'.
+func TestElementsStrict(t *testing.T) {
+	doc := `{"components": [{"is": "tr", "props": {"attributes": {"x-on:click": "alert(1)"}}}]}`
+	if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), "not allowed in strict mode") {
+		t.Errorf("want strict mode error, got %v", err)
+	}
+}
