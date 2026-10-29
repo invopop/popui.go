@@ -3,7 +3,7 @@ package props
 // SignaturePad defines the properties for the signature dialog component.
 type SignaturePad struct {
 	// Action is the form POST action URL.
-	Action string
+	Action string `jsonschema:"format=uri-reference"`
 	// Signer is the full name shown in the typed-signature preview.
 	Signer string
 	// Title is the dialog heading.

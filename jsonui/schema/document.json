@@ -208,6 +208,7 @@
         },
         "href": {
           "type": "string",
+          "format": "uri-reference",
           "description": "Href enables anchor button behavior as opposed to a form button."
         },
         "target": {
@@ -277,7 +278,8 @@
           "$ref": "#/$defs/Attributes"
         },
         "href": {
-          "type": "string"
+          "type": "string",
+          "format": "uri-reference"
         },
         "disabled": {
           "type": "boolean"
@@ -479,6 +481,7 @@
         },
         "url": {
           "type": "string",
+          "format": "uri-reference",
           "description": "URL, when set, renders the button as an anchor that opens the URL in a new\ntab (target=_blank, rel=noopener noreferrer)."
         },
         "attributes": {
@@ -750,6 +753,7 @@
         },
         "action": {
           "type": "string",
+          "format": "uri-reference",
           "description": "Action specifies where to send the form data when submitted."
         },
         "method": {
@@ -1539,7 +1543,7 @@
             "warning",
             "running"
           ],
-          "description": "success, failed, warning, running"
+          "description": "Status is the state the badge shows."
         }
       },
       "additionalProperties": false,
@@ -1677,7 +1681,7 @@
             "steelBlue",
             "empty"
           ],
-          "description": "grey, green, yellow, red, orange, blue, purple, olive, teal, crimson, steelBlue, empty"
+          "description": "Status is the colour of the tag."
         },
         "dot": {
           "type": "boolean"
@@ -1820,6 +1824,7 @@
         },
         "image": {
           "type": "string",
+          "format": "uri-reference",
           "description": "Image is the URL of an optional illustration shown above the title.\nThe component applies the rounded corners and border to it."
         },
         "delay": {

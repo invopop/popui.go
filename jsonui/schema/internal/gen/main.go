@@ -1,6 +1,6 @@
 // Command gen generates document.json from the jsonui registry, using the props structs'
-// Go doc comments as descriptions. Run with
-// `go generate ./jsonui/schema`.
+// Go doc comments as descriptions and their jsonschema tags for allowed
+// values and URL formats. Run with `go generate ./jsonui/schema`.
 package main
 
 import (
@@ -45,23 +45,35 @@ func generate() error {
 	if err := os.Chdir("../.."); err != nil {
 		return err
 	}
+	data, err := render()
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(outPath, data, 0o644)
+}
 
+// render returns the schema, run from the module root.
+func render() ([]byte, error) {
 	componentType := reflect.TypeFor[templ.Component]()
+	urlType := reflect.TypeFor[templ.SafeURL]()
 	r := &jsonschema.Reflector{
 		KeyNamer:                   lowerCamel,
 		RequiredFromJSONSchemaTags: true,
 		Mapper: func(t reflect.Type) *jsonschema.Schema {
-			if t == componentType {
+			switch t {
+			case componentType:
 				return unsupported
+			case urlType:
+				return &jsonschema.Schema{Type: typeString, Format: jsonui.URLFormat}
 			}
 			return nil
 		},
 	}
 	if err := r.AddGoComments("github.com/invopop/popui.go", "./props"); err != nil {
-		return fmt.Errorf("reading comments: %w", err)
+		return nil, fmt.Errorf("reading comments: %w", err)
 	}
 	if err := r.AddGoComments("github.com/invopop/popui.go", "./jsonui"); err != nil {
-		return fmt.Errorf("reading comments: %w", err)
+		return nil, fmt.Errorf("reading comments: %w", err)
 	}
 	nodeComment := func(field string) string {
 		return r.CommentMap["github.com/invopop/popui.go/jsonui.Node."+field]
@@ -140,18 +152,6 @@ func generate() error {
 	for _, d := range defs {
 		dropUnsupported(d)
 	}
-	for name, fields := range enums {
-		for field, values := range fields {
-			p, ok := defs[name].Properties.Get(field)
-			if !ok {
-				return fmt.Errorf("enum for unknown property %s.%s", name, field)
-			}
-			for _, v := range values {
-				p.Enum = append(p.Enum, v)
-			}
-		}
-	}
-
 	out := &jsonschema.Schema{
 		Version:     jsonschema.Version,
 		ID:          schema.ID,
@@ -161,34 +161,9 @@ func generate() error {
 	}
 	data, err := json.MarshalIndent(out, "", "  ")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if err := os.WriteFile(outPath, append(data, '\n'), 0o644); err != nil {
-		return err
-	}
-	fmt.Printf("wrote %s (%d definitions)\n", outPath, len(defs))
-	return nil
-}
-
-// enums lists the accepted values of string props, keyed by props type and
-// property, mirroring the constants and comments in the props package. These
-// could move onto the props types as JSONSchemaExtend methods.
-//
-//nolint:goconst // prop names read more clearly inline than as constants
-var enums = map[string]map[string][]string{
-	"Button": {
-		"variant": {"", "primary", "secondary", "danger", "transparent", "inverse"},
-		"size":    {"", "sm", "lg", "icon", "icon-lg", "icon-sm", "icon-xs"},
-		"type":    {"", "button", "submit", "reset"},
-	},
-	"ButtonGroup": {"align": {"", "left", "center", "right"}},
-	"StatusBadge": {"status": {"success", "failed", "warning", "running"}},
-	"TagStatus":   {"status": {"grey", "green", "yellow", "red", "orange", "blue", "purple", "olive", "teal", "crimson", "steelBlue", "empty"}},
-	"Avatar":      {"color": {"", "accent", "success", "warning", "critical", "info", "document-xml", "document-pdf", "document-png"}, "size": {"", "lg"}},
-	"Input":       {"size": {"", "sm", "lg"}},
-	"Checkbox":    {"variant": {"", "switch"}},
-	"Fieldset":    {"variant": {"", "card"}},
-	"Tabs":        {"variant": {"", "default", "pill"}},
+	return append(data, '\n'), nil
 }
 
 // param is an extra property accepted by a built-in action.

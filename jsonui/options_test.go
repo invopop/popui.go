@@ -31,6 +31,10 @@ func TestStrictRejectsScript(t *testing.T) {
 			`{"components":[{"is":"input","props":{"label":"Name","tooltip":{"image":"javascript:alert(1)"}}}]}`,
 			`input props.tooltip.image: unsafe URL`,
 		},
+		"description list action URL": {
+			`{"components":[{"is":"description_list_item","props":{"label":"Site","actions":[{"url":"javascript:alert(1)"}]}}]}`,
+			`description_list_item props.actions[0].url: unsafe URL`,
+		},
 		"text bind to a global": {
 			`{"data":{"a":1},"components":[{"is":"text","bind":"document.cookie"}]}`,
 			`text bind: data has no "document.cookie"`,

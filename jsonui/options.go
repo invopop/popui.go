@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"reflect"
 	"regexp"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/a-h/templ"
 )
@@ -31,8 +33,9 @@ var BuiltinActions = []string{"alert", "set", "reset", "dispatch"}
 //     that reach __proto__, prototype or constructor;
 //   - props that components use as Alpine variable names (such as the tabs
 //     "model") unless they are plain identifiers;
-//   - href, src, action, formaction and url values with a scheme other than
-//     http, https, mailto or tel (e.g. javascript:);
+//   - URLs with a scheme other than http, https, mailto or tel (e.g.
+//     javascript:), in the href, src, action and formaction attributes and
+//     in URL props (see URLFormat);
 //   - actions not listed in Actions.
 type Options struct {
 	// Actions lists the action names documents may use in "on" handlers.
@@ -90,10 +93,46 @@ func (o Options) allowsAction(name string) bool {
 // "click", "submit.prevent" or "keydown.enter".
 var eventName = regexp.MustCompile(`^[a-z][a-z0-9-]*(\.[a-z0-9-]+)*$`)
 
-// urlKeys are the props and attribute names whose values are URLs, in
-// lower case. Besides the HTML ones, these cover the URL props in the props
-// package: Tooltip.Image, File.AvatarURL and Filter.BaseURL.
-var urlKeys = []string{"href", "src", "action", "formaction", "url", "image", "avatarurl", "baseurl"}
+// URLFormat is the JSON Schema format of URL props. String props in the
+// props package that hold URLs are tagged `jsonschema:"format=uri-reference"`
+// and templ.SafeURL props are URLs by type; strict mode checks both.
+const URLFormat = "uri-reference"
+
+// urlAttributes are the HTML attributes whose values are URLs, in lower case.
+var urlAttributes = []string{"href", "src", "action", "formaction"}
+
+// urlKeys returns the lower case names of the URL attributes and of every
+// URL prop in the registered components' props, including nested structs
+// such as Input.Tooltip.
+var urlKeys = sync.OnceValue(func() []string {
+	keys := slices.Clone(urlAttributes)
+	seen := map[reflect.Type]bool{}
+	var walk func(t reflect.Type)
+	walk = func(t reflect.Type) {
+		for t.Kind() == reflect.Pointer || t.Kind() == reflect.Slice || t.Kind() == reflect.Array || t.Kind() == reflect.Map {
+			t = t.Elem()
+		}
+		if t.Kind() != reflect.Struct || seen[t] {
+			return
+		}
+		seen[t] = true
+		for i := range t.NumField() {
+			f := t.Field(i)
+			if f.Type == safeURLType || slices.Contains(strings.Split(f.Tag.Get("jsonschema"), ","), "format="+URLFormat) {
+				if name := strings.ToLower(f.Name); !slices.Contains(keys, name) {
+					keys = append(keys, name)
+				}
+			}
+			walk(f.Type)
+		}
+	}
+	for _, e := range registry {
+		walk(e.props)
+	}
+	return keys
+})
+
+var safeURLType = reflect.TypeFor[templ.SafeURL]()
 
 // checkProps applies the strict checks to a node's own props, before the
 // renderer adds the x-model and x-on attributes generated from "model" and
@@ -149,7 +188,7 @@ func checkValue(at string, v any) error {
 					return err
 				}
 			}
-			if s, ok := val.(string); ok && slices.Contains(urlKeys, key) && !safeURL(s) {
+			if s, ok := val.(string); ok && slices.Contains(urlKeys(), key) && !safeURL(s) {
 				return fmt.Errorf("%s.%s: unsafe URL %q", at, k, s)
 			}
 			if err := checkValue(at+"."+k, val); err != nil {
