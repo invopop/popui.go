@@ -63,6 +63,10 @@ type Document struct {
 	// once, e.g. {"update": {"action": "step.update", "summary": "…"}} and
 	// then {"on": {"change": "update"}}. Handlers can't refer to each other.
 	Handlers map[string]json.RawMessage `json:"handlers,omitempty"`
+	// Init is run once when the document starts, like an "on" handler: an
+	// action, the name of one of the document's handlers, or a list of
+	// either, e.g. "update" so the host receives the initial data.
+	Init json.RawMessage `json:"init,omitempty"`
 }
 
 // Node is a single element in the JSON component tree.
@@ -271,10 +275,22 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 	if err != nil {
 		return nil, err
 	}
+	xinit := ""
+	if len(d.Init) > 0 {
+		list, err := b.actionList(d.Init)
+		if err != nil {
+			return nil, fmt.Errorf("init: %w", err)
+		}
+		// There's no event when the document starts.
+		xinit = "$actions(" + list + ")"
+		if xdata == "" {
+			xdata = "{}" // init runs on the document root
+		}
+	}
 	if xdata == "" {
 		return body, nil
 	}
-	return withChildren(documentRoot(xdata), body), nil
+	return withChildren(documentRoot(xdata, xinit), body), nil
 }
 
 // parseData returns the compact x-data JSON for the document along with
@@ -546,15 +562,24 @@ func (b *docBuilder) actions(event string, raw json.RawMessage) (string, error) 
 	if !eventName.MatchString(event) {
 		return "", fmt.Errorf("invalid event name %q", event)
 	}
-	list, err := b.resolve(raw, true)
+	list, err := b.actionList(raw)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", event, err)
+	}
+	return "$actions(" + list + ", $event)", nil
+}
+
+// actionList resolves a handler to the JSON list of actions it runs.
+func (b *docBuilder) actionList(raw json.RawMessage) (string, error) {
+	list, err := b.resolve(raw, true)
+	if err != nil {
+		return "", err
 	}
 	out, err := json.Marshal(list)
 	if err != nil {
 		return "", err
 	}
-	return "$actions(" + string(out) + ", $event)", nil
+	return string(out), nil
 }
 
 // resolve converts a handler (an action, a handler name when refs is true,

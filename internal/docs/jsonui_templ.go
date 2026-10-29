@@ -199,6 +199,7 @@ func jsonUI() templ.Component {
 						{Name: "components", Type: "[]node", Required: true, Description: "The components to render, in order."},
 						{Name: "data", Type: "object", Description: "The document's state. It becomes the Alpine.js `x-data` of the document, is where `bind` and `model` read from, and is what actions change."},
 						{Name: "handlers", Type: "object", Description: "Named actions, or lists of actions, that `on` can refer to by name, so a handler used in several places is defined once."},
+						{Name: "init", Type: "handler", Description: "Runs once when the document starts, like an `on` handler: an action, a handler name or a list of them, e.g. `\"update\"` so the host receives the initial data."},
 						{Name: "$schema", Type: "string", Description: "The JSON Schema of the format, for editors. Ignored when rendering."},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -334,7 +335,7 @@ func jsonUI() templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(`"Hello {{customer.name}}"`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 69, Col: 189}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 70, Col: 189}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
@@ -573,7 +574,7 @@ func jsonUI() templ.Component {
 					var templ_7745c5c3_Var22 string
 					templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs("https://assets.invopop.com/popui/<version>/")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 120, Col: 132}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 121, Col: 132}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 					if templ_7745c5c3_Err != nil {

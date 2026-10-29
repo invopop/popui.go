@@ -232,6 +232,8 @@
   //   - every change is sent with the host's "step.update" action, defined
   //     once as the "update" handler and used from one "on" on the tabs
   //     container instead of one per field;
+  //   - "init" runs the same handler when the form starts, so the host
+  //     saves the defaults and the summary straight away;
   //   - the logo uses the host's "asset.choose" action, writing the result
   //     into config.logo_url and flagging ui.uploading while it runs.
   const options = (pairs) => pairs.map(([value, label]) => ({ value, label }));
@@ -264,6 +266,7 @@
     handlers: {
       update: { action: "step.update", summary: "{{config.locale}} · {{config.layout}}" },
     },
+    init: "update",
     components: [
       {
         is: "tabs",

@@ -103,6 +103,10 @@ func render() ([]byte, error) {
 	if p, ok := docDef.Properties.Get("handlers"); ok {
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
 	}
+	// Init is a json.RawMessage holding a handler, as in "on".
+	if p, ok := docDef.Properties.Get("init"); ok {
+		docDef.Properties.Set("init", &jsonschema.Schema{Ref: "#/$defs/Handler", Description: p.Description})
+	}
 	delete(defs, "Node") // replaced by the per-component definitions below
 
 	children := &jsonschema.Schema{

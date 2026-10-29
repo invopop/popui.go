@@ -381,3 +381,40 @@ func TestAlpinePath(t *testing.T) {
 		}
 	}
 }
+
+func TestInit(t *testing.T) {
+	doc := `{
+		"data": {"a": "x"},
+		"handlers": {"update": {"action": "dispatch", "event": "changed"}},
+		"init": ["update", {"action": "set", "path": "a", "value": "y"}],
+		"components": []
+	}`
+	html, err := render(t, Options{}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `x-init="$actions([{&#34;action&#34;:&#34;dispatch&#34;,&#34;event&#34;:&#34;changed&#34;},{&#34;action&#34;:&#34;set&#34;,&#34;path&#34;:&#34;a&#34;,&#34;value&#34;:&#34;y&#34;}])"`
+	if !strings.Contains(html, want) {
+		t.Errorf("missing %s in:\n%s", want, html)
+	}
+
+	// Without data, init still gets a document root to run on.
+	html, err = render(t, Options{}, `{"init": {"action": "alert", "message": "Hi"}, "components": []}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(html, `data-popui-document`) || !strings.Contains(html, `x-init=`) {
+		t.Errorf("missing document root with x-init in:\n%s", html)
+	}
+
+	bad := map[string]string{
+		`{"init": "missing", "components": []}`:                `init: unknown handler "missing"`,
+		`{"init": {"action": "exfiltrate"}, "components": []}`: `action "exfiltrate" is not allowed`,
+		`{"init": 42, "components": []}`:                       `expected an action, a handler name or a list`,
+	}
+	for doc, want := range bad {
+		if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("%s: want error containing %q, got %v", doc, want, err)
+		}
+	}
+}
