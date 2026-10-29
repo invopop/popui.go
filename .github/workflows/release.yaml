@@ -57,15 +57,18 @@ jobs:
           ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
           PREFIX: popui/${{ steps.bump.outputs.new_tag }}
         run: |
+          # popui.wasm is uploaded last, so its presence means the version is
+          # complete. A retry after a failed upload repeats the whole set.
           if aws s3api head-object --endpoint-url "$ENDPOINT" --bucket assets --key "$PREFIX/popui.wasm" >/dev/null 2>&1; then
             echo "$PREFIX is already published."
             exit 0
           fi
-          for file in dist/*; do
+          for file in $(ls dist/* | grep -v '/popui\.wasm$') dist/popui.wasm; do
             case "$file" in
               *.wasm) type=application/wasm ;;
               *.js) type="text/javascript; charset=utf-8" ;;
               *.css) type="text/css; charset=utf-8" ;;
+              *.json) type="application/schema+json" ;;
               *.woff2) type=font/woff2 ;;
               *.txt) type="text/plain; charset=utf-8" ;;
               *) echo "No content type for $file" >&2; exit 1 ;;
