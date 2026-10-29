@@ -28,7 +28,7 @@
         },
         quota: { used: 342, limit: 500 },
       },
-      template: [
+      components: [
         {
           is: "card",
           children: [
@@ -102,7 +102,7 @@
       data: {
         customer: { name: "Acme S.L.", email: "billing@acme.com", country: "es", einvoice: true, notes: "" },
       },
-      template: [
+      components: [
         {
           is: "form",
           on: {
@@ -167,7 +167,7 @@
 
     form: {
       $schema: SCHEMA,
-      template: [
+      components: [
         {
           is: "form",
           props: { id: "party-form", action: "#" },
@@ -228,7 +228,7 @@
   // shows in an iframe and drives through the console SDK. Here:
   //
   //   - "data" is the step's config, which the console would supply (no
-  //     fetchStep); the template defines the fields and their options;
+  //     fetchStep); the components define the fields and their options;
   //   - every change is sent with the host's "step.update" action, defined
   //     once as the "update" handler and used from one "on" on the tabs
   //     container instead of one per field;
@@ -264,7 +264,7 @@
     handlers: {
       update: { action: "step.update", summary: "{{config.locale}} · {{config.layout}}" },
     },
-    template: [
+    components: [
       {
         is: "tabs",
         props: {
@@ -460,7 +460,7 @@
   window.SAMPLES.blocked = {
     $schema: SCHEMA,
     data: { name: "Acme" },
-    template: [
+    components: [
       {
         is: "card",
         children: [
@@ -483,7 +483,7 @@
   // stress builds n invoice cards, each with a header, badge and five rows.
   window.SAMPLES.stress = (n = 200) => ({
     $schema: SCHEMA,
-    template: Array.from({ length: n }, (_, i) => ({
+    components: Array.from({ length: n }, (_, i) => ({
       is: "card",
       children: [
         { is: "card_header", props: { title: `Invoice INV-${String(i + 1).padStart(5, "0")}`, subtitle: "Issued 27 Oct 2026" } },

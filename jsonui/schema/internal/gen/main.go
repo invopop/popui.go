@@ -81,12 +81,12 @@ func generate() error {
 	if p, ok := docDef.Properties.Get("data"); ok {
 		p.Type = typeObject
 	}
-	docDef.Properties.Set("template", &jsonschema.Schema{
+	docDef.Properties.Set("components", &jsonschema.Schema{
 		Type:        typeArray,
-		Description: r.CommentMap["github.com/invopop/popui.go/jsonui.Document.Template"],
+		Description: r.CommentMap["github.com/invopop/popui.go/jsonui.Document.Components"],
 		Items:       &jsonschema.Schema{Ref: "#/$defs/Node"},
 	})
-	docDef.Required = []string{"template"}
+	docDef.Required = []string{"components"}
 	if p, ok := docDef.Properties.Get("handlers"); ok {
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
 	}
@@ -321,7 +321,7 @@ func nodeSchema(names []string) *jsonschema.Schema {
 		branches[i] = &jsonschema.Schema{If: match, Then: &jsonschema.Schema{Ref: "#/$defs/node." + name}}
 	}
 	s := &jsonschema.Schema{
-		Description: "A node in the template, identified by its component.",
+		Description: "A node in the document, identified by its component.",
 		Type:        typeObject,
 		Properties:  jsonschema.NewProperties(),
 		Required:    []string{componentKey},

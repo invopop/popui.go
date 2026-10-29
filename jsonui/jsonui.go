@@ -3,13 +3,13 @@
 // server-side rendering and to WebAssembly (see ./wasm) so a browser can turn
 // JSON straight into PopUI HTML without a Go server round-trip.
 //
-// A document is an object with a template of nodes and optional Alpine.js
+// A document is an object with a list of components and optional Alpine.js
 // data, which is also the source for bound values:
 //
 //	{
 //	  "$schema": "https://…/jsonui/schema/document.json",
 //	  "data": {"customer": {"name": "Acme S.L."}},
-//	  "template": [
+//	  "components": [
 //	    {
 //	      "is": "card",
 //	      "children": [
@@ -56,8 +56,8 @@ type Document struct {
 	// Behaviour is never embedded here: actions are implemented in JS (see
 	// assets/jsonui.js) and only referenced by name.
 	Data json.RawMessage `json:"data,omitempty"`
-	// Template is the list of nodes to render.
-	Template []Node `json:"template"`
+	// Components is the list of nodes to render.
+	Components []Node `json:"components"`
 	// Handlers are named actions, or lists of actions, that "on" handlers
 	// can refer to by name so a handler used in several places is defined
 	// once, e.g. {"update": {"action": "step.update", "summary": "…"}} and
@@ -220,11 +220,11 @@ func Names() []string {
 	return out
 }
 
-// Component builds the document's template. When the document has data,
-// the template is wrapped in an Alpine.js component root.
+// Component builds the document's components. When the document has data,
+// they are wrapped in an Alpine.js component root.
 func (d *Document) Component(opts Options) (templ.Component, error) {
-	if d.Template == nil {
-		return nil, errors.New("document: missing template")
+	if d.Components == nil {
+		return nil, errors.New("document: missing components")
 	}
 	b := &docBuilder{opts: opts}
 	xdata := ""
@@ -244,7 +244,7 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 		}
 		b.handlers[name] = list
 	}
-	body, err := b.buildAll(d.Template)
+	body, err := b.buildAll(d.Components)
 	if err != nil {
 		return nil, err
 	}

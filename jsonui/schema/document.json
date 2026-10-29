@@ -544,12 +544,12 @@
           "type": "object",
           "description": "Data is a JSON object with the document's state. It becomes the\nAlpine.js `x-data` of the document, is the source for node \"bind\" and\n\"model\" values, and is what actions in \"on\" handlers read and change.\nBehaviour is never embedded here: actions are implemented in JS (see\nassets/jsonui.js) and only referenced by name."
         },
-        "template": {
+        "components": {
           "items": {
             "$ref": "#/$defs/Node"
           },
           "type": "array",
-          "description": "Template is the list of nodes to render."
+          "description": "Components is the list of nodes to render."
         },
         "handlers": {
           "additionalProperties": {
@@ -562,7 +562,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "template"
+        "components"
       ],
       "description": "Document is the root of a JSON UI description."
     },
@@ -1384,7 +1384,7 @@
       "required": [
         "is"
       ],
-      "description": "A node in the template, identified by its component."
+      "description": "A node in the document, identified by its component."
     },
     "OptionGroup": {
       "properties": {
