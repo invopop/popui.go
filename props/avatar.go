@@ -19,8 +19,8 @@ type Avatar struct {
 	// accent, success, warning, critical, info, document-xml,
 	// document-pdf or document-png. Empty uses the default secondary
 	// foreground.
-	Color string
-	Size  string
+	Color string `jsonschema:"enum=,enum=accent,enum=success,enum=warning,enum=critical,enum=info,enum=document-xml,enum=document-pdf,enum=document-png"`
+	Size  string `jsonschema:"enum=,enum=lg"`
 }
 
 // Initials returns Initial truncated to at most three characters.

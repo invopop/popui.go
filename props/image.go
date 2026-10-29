@@ -7,6 +7,6 @@ type Image struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	Src        string
+	Src        string `jsonschema:"format=uri-reference"`
 	Alt        string
 }

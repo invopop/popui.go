@@ -14,7 +14,7 @@ type Form struct {
 	Attributes templ.Attributes
 
 	// Action specifies where to send the form data when submitted.
-	Action string
+	Action string `jsonschema:"format=uri-reference"`
 	// Method specifies the HTTP method to use when submitting the form (GET, POST, etc.).
 	Method string
 	// Enctype specifies how the form data should be encoded when submitting (e.g., "multipart/form-data").

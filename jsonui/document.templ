@@ -1,0 +1,16 @@
+package jsonui
+
+// documentRoot wraps a document's template in an Alpine.js component using
+// the document data as its x-data. `display: contents` keeps the wrapper out
+// of the layout.
+templ documentRoot(xdata string) {
+	<div data-popui-document class="contents" x-data={ xdata }>
+		{ children... }
+	</div>
+}
+
+// boundText renders text whose content is kept in sync with an Alpine
+// expression.
+templ boundText(text, bind string) {
+	<span x-text={ bind }>{ text }</span>
+}

@@ -25,7 +25,7 @@ type Checkbox struct {
 
 	// Variant specifies the style of the checkbox, e.g.,
 	// `CheckboxVariantSwitch` for toggle switch style.
-	Variant string
+	Variant string `jsonschema:"enum=,enum=switch"`
 
 	// Label is the text label associated with the checkbox.
 	Label string

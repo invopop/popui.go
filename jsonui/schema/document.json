@@ -1,0 +1,3418 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/invopop/popui.go/main/jsonui/schema/document.json",
+  "$ref": "#/$defs/Document",
+  "$defs": {
+    "Action": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "alert"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.alert"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "set"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.set"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "reset"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.reset"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "dispatch"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.dispatch"
+          }
+        }
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "A built-in action, or one the host page registered with popui.actions.register(name, fn) and allows.",
+          "examples": [
+            "alert",
+            "set",
+            "reset",
+            "dispatch"
+          ]
+        }
+      },
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "description": "An action to run in response to an event."
+    },
+    "Attributes": {
+      "type": "object"
+    },
+    "Avatar": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "initial": {
+          "type": "string",
+          "description": "Initial is the text shown when no image child is provided. Up to\nthree characters are rendered; anything longer is truncated."
+        },
+        "color": {
+          "type": "string",
+          "enum": [
+            "",
+            "accent",
+            "success",
+            "warning",
+            "critical",
+            "info",
+            "document-xml",
+            "document-pdf",
+            "document-png"
+          ],
+          "description": "Color is a foreground color token name applied to the initials:\naccent, success, warning, critical, info, document-xml,\ndocument-pdf or document-png. Empty uses the default secondary\nforeground."
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "lg"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Avatar provides props for the avatar component"
+    },
+    "Button": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "",
+            "primary",
+            "secondary",
+            "danger",
+            "transparent",
+            "inverse"
+          ],
+          "description": "Variant defines the button style variant, see the ButtonVariant constants.\nDefault is \"primary\"."
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "sm",
+            "lg",
+            "icon",
+            "icon-lg",
+            "icon-sm",
+            "icon-xs"
+          ],
+          "description": "Size defines the button size, see the ButtonSize constants."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "",
+            "button",
+            "submit",
+            "reset"
+          ],
+          "description": "Type determines the type of button, e.g., \"button\", \"submit\", \"reset\"."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name sets the name attribute of the button for the form."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value sets the value attribute of the button for the form."
+        },
+        "form": {
+          "type": "string",
+          "description": "Form associates the button with a form element by its ID."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disabled when true disables the button."
+        },
+        "autofocus": {
+          "type": "boolean",
+          "description": "Autofocus when true sets the autofocus attribute on the button."
+        },
+        "copy": {
+          "type": "string",
+          "description": "Copy, when set, turns the button into a copy-to-clipboard control:\nthe (truncated) value renders in mono next to a duplicate icon that\nflips to a tick on success, and clicking copies the full value.\nChildren render after the copy content. Ignored on anchor buttons."
+        },
+        "copyPrefixLength": {
+          "type": "integer",
+          "description": "CopyPrefixLength / CopySuffixLength truncate the DISPLAYED value to\n\"prefix…suffix\"; the full Copy value is what lands on the clipboard.\nBoth 0 show the value untruncated."
+        },
+        "copySuffixLength": {
+          "type": "integer"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Href enables anchor button behavior as opposed to a form button."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target determines where to open the linked document."
+        },
+        "rel": {
+          "type": "string",
+          "description": "Rel specifies the relationship between the current document and the\nlinked document."
+        },
+        "download": {
+          "type": "boolean",
+          "description": "Download when true indicates that the linked resource is intended to be\ndownloaded rather than displayed in the browser."
+        },
+        "showSpinnerOnClick": {
+          "type": "boolean",
+          "description": "ShowSpinnerOnClick when true shows a loading spinner on the button when clicked."
+        },
+        "popoverTarget": {
+          "type": "string",
+          "description": "PopoverTarget specifies the ID of a popover element to control.\nWhen set, clicking the button will show/hide the associated popover."
+        },
+        "popoverTargetAction": {
+          "type": "string",
+          "description": "PopoverTargetAction specifies the action to perform on the popover.\nValid values are \"toggle\" (default), \"show\", or \"hide\"."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Button defines the properties for a button component."
+    },
+    "ButtonGroup": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "",
+            "left",
+            "center",
+            "right"
+          ],
+          "description": "Align defines the horizontal alignment of buttons within the group.\nValid values are \"left\" (default), \"center\", or \"right\"."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "ButtonGroup is used with buttons components that usually contain multiple buttons in a row."
+    },
+    "Card": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "order": {
+          "type": "integer",
+          "description": "Order positions the card inside a reorderable CardDeck, 1-based, and\nrenders as `data-order`. The deck sorts its cards by it on load and\nrenumbers every card to 1..n after each move, so the attribute, the\nDOM sequence and the visible sequence are always the same list — read\nit back to persist an order. Cards without one sink to the end of the\ndeck, keeping the sequence they were rendered in. Ignored outside a\nreorderable deck, where the rendered sequence is already the order."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Card Templ component props"
+    },
+    "CardContent": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "CardContent Templ component props"
+    },
+    "CardHeader": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "CardHeader Templ component props"
+    },
+    "CardProgressBar": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "current": {
+          "type": "integer"
+        },
+        "hideCounter": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "CardProgressBar Templ component props"
+    },
+    "Checkbox": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "checked": {
+          "type": "boolean"
+        },
+        "autofocus": {
+          "type": "boolean"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "",
+            "switch"
+          ],
+          "description": "Variant specifies the style of the checkbox, e.g.,\n`CheckboxVariantSwitch` for toggle switch style."
+        },
+        "label": {
+          "type": "string",
+          "description": "Label is the text label associated with the checkbox."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description is additional descriptive text for the checkbox that will\nbe shown below the label."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Checkbox defines the properties for checkbox inputs."
+    },
+    "DD": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DD defines the props for the DD component (definition description)."
+    },
+    "DT": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DT defines the props for the DT component (definition term)."
+    },
+    "Description": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Description defines the props for the Description component."
+    },
+    "DescriptionList": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DescriptionList defines the props for the DescriptionList component."
+    },
+    "DescriptionListAction": {
+      "properties": {
+        "copy": {
+          "type": "string",
+          "description": "Copy, when set, wires the button to copy this text to the clipboard."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "URL, when set, renders the button as an anchor that opens the URL in a new\ntab (target=_blank, rel=noopener noreferrer)."
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes wire extra behavior/extras on the button (aria-label, onclick,\n…) and override the defaults a Copy / URL action sets."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DescriptionListAction is one hover-revealed action button on a DescriptionListItem's value."
+    },
+    "DescriptionListItem": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "inline": {
+          "type": "boolean",
+          "description": "Inline lays the item out as label-left / value-right instead of the\ndefault stacked (label above value)."
+        },
+        "mono": {
+          "type": "boolean",
+          "description": "Mono renders the value in the monospace face (ids, hashes)."
+        },
+        "prefixLength": {
+          "type": "integer",
+          "description": "PrefixLength / SuffixLength truncate the DISPLAYED value to\n\"prefix…suffix\" (or \"prefix…\" when SuffixLength is 0); the full value is\nwhat Actions like copy act on. Both 0 shows it untruncated."
+        },
+        "suffixLength": {
+          "type": "integer"
+        },
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/DescriptionListAction"
+          },
+          "type": "array",
+          "description": "Actions are hover-revealed buttons rendered next to the value (copy,\nexternal-link, …), in order of placement."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DescriptionListItem defines the props for the DescriptionListItem component."
+    },
+    "Document": {
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Schema identifies the JSON Schema of the document so editors can offer\ncompletion and validation. It is ignored when rendering."
+        },
+        "data": {
+          "type": "object",
+          "description": "Data is a JSON object with the document's state. It becomes the\nAlpine.js `x-data` of the document, is the source for node \"bind\" and\n\"model\" values, and is what actions in \"on\" handlers read and change.\nBehaviour is never embedded here: actions are implemented in JS (see\nassets/jsonui.js) and only referenced by name."
+        },
+        "components": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Components is the list of nodes to render."
+        },
+        "handlers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/HandlerDefinition"
+          },
+          "type": "object",
+          "description": "Handlers are named actions, or lists of actions, that \"on\" handlers\ncan refer to by name so a handler used in several places is defined\nonce, e.g. {\"update\": {\"action\": \"step.update\", \"summary\": \"…\"}} and\nthen {\"on\": {\"change\": \"update\"}}. Handlers can't refer to each other."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "components"
+      ],
+      "description": "Document is the root of a JSON UI description."
+    },
+    "Error": {
+      "properties": {
+        "error": true,
+        "text": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Error Templ component props"
+    },
+    "Field": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name is the last segment of the path, without the array marker."
+        },
+        "path": {
+          "type": "string",
+          "description": "Path is the full dotted path from the root, with [] marking each array\ncrossed on the way: lines[].item.name. It is what the picker emits\nunless Value overrides it."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value overrides what selecting the field writes into the hidden input\nand reports on the select event. Use it when the path the user reads is\nnot the string the consumer needs — a Go template variable, say."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description is the schema's long description, shown after the path and\nas the row's tooltip. It truncates before the path does, and is never\nsearched: filtering matches the path alone. Optional — goblfields\nleaves it out unless asked for, and a row without one shows just its\npath."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type is the JSON Schema type: string, object, array, integer, number,\nboolean. It picks the icon drawn before the name — A, braces,\nbrackets, a hash, a switch — unless Icon is set, names the row's\ntooltip, and is carried on the select event."
+        },
+        "array": {
+          "type": "boolean",
+          "description": "Array marks a field that is itself an array. Its children describe one\nitem, so their paths carry the [] marker of this field."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Required marks a field its immediate parent requires."
+        },
+        "alwaysPresent": {
+          "type": "boolean",
+          "description": "AlwaysPresent marks a field required at every step from the root, and\nso present on every document of the schema. Inside an array it reads\nper item: lines[].item is marked when every line that exists carries an\nitem. The picker shows these with a green dot."
+        },
+        "group": {
+          "type": "boolean",
+          "description": "Group marks a heading over the fields beneath it rather than a field\nof the data: it opens like an object and its Name is part of the path\nthe user reads and filters by, but it is left out of what its\ndescendants emit. It lets one tree hold several — the variables of\neach document schema a message might be about, say — without the\ngrouping changing the values picked. goblfields.Group builds one."
+        },
+        "divider": {
+          "type": "boolean",
+          "description": "Divider draws a rule above the field's row while browsing, setting it\napart from the rows before it — the document nested under doc after a\nrun of an app's own variables, say."
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array",
+          "description": "Children are the fields one level down, for a field that can be drilled\ninto."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Field is one entry in a FieldPicker's tree."
+    },
+    "FieldPicker": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "align": {
+          "type": "string",
+          "description": "Align is which edge of the trigger the panel hangs from: the left by\ndefault, the right with FieldPickerAlignEnd — for a trigger at the\nright of its row, so the panel stays over the content."
+        },
+        "class": {
+          "type": "string",
+          "description": "Class is applied to the default trigger button."
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are applied to the component root, the element carrying\nx-modelable, so an Alpine x-model there two-way binds the value."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name is the hidden input's name, for form submission."
+        },
+        "label": {
+          "type": "string",
+          "description": "Label renders above the trigger."
+        },
+        "tooltip": {
+          "$ref": "#/$defs/Tooltip",
+          "description": "Tooltip shows a question mark icon after the label that reveals a\nTooltip card on hover. Only used when Label is set."
+        },
+        "triggerLabel": {
+          "type": "string",
+          "description": "TriggerLabel is the default trigger button's text. Defaults to\n\"Insert field\". Ignored when the children slot supplies the trigger."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value is the initial value. The panel opens where it lives rather\nthan at the root."
+        },
+        "root": {
+          "type": "string",
+          "description": "Root labels the first breadcrumb in the panel, naming what the tree\ndescribes: \"bill/invoice\", \"envelope\"."
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array",
+          "description": "Fields is the tree to pick from."
+        },
+        "format": {
+          "type": "string",
+          "description": "Format wraps a picked path, %s standing for the path: \"{{.doc.%s}}\"\nturns supplier.name into {{.doc.supplier.name}}. Defaults to \"%s\". A\nfield with a Value of its own is emitted as is."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target is a CSS selector for an input, textarea or contenteditable\nelement. When set, a pick is inserted there at the caret, replacing\nany selection, with the caret left after it. When the target is a\ntemplate editor (a Contenteditable with a VariableFormat), typing the\nformat's opening characters there — {{ — opens the picker at the\ncaret with the filter focused, and the pick replaces them."
+        },
+        "scalarsOnly": {
+          "type": "boolean",
+          "description": "ScalarsOnly makes objects and arrays browse-only: they can be opened\nbut not picked, and one with nothing underneath is left out.\nFor a template, where a picked object would print as a Go map dump.\nOff by default, since a picker may be choosing a field for its own\nsake rather than for its value."
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "error": {
+          "$ref": "#/$defs/Error"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "FieldPicker Templ component props."
+    },
+    "Fieldset": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "legend": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "",
+            "card"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Fieldset properties to configure a simple fieldset."
+    },
+    "Form": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "action": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Action specifies where to send the form data when submitted."
+        },
+        "method": {
+          "type": "string",
+          "description": "Method specifies the HTTP method to use when submitting the form (GET, POST, etc.)."
+        },
+        "enctype": {
+          "type": "string",
+          "description": "Enctype specifies how the form data should be encoded when submitting (e.g., \"multipart/form-data\")."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target specifies where to display the response after submitting the form (_self, _blank, etc.)."
+        },
+        "autocomplete": {
+          "type": "string",
+          "description": "Autocomplete specifies whether the form should have autocomplete on or off."
+        },
+        "novalidate": {
+          "type": "boolean",
+          "description": "Novalidate when true, the form will not be validated when submitted."
+        },
+        "acceptCharset": {
+          "type": "string",
+          "description": "AcceptCharset specifies the character encodings used for form submission."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name sets the name of the form."
+        },
+        "rel": {
+          "type": "string",
+          "description": "Rel specifies the relationship between the current document and the linked document."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Form properties to configure a form element with standard HTML form attributes."
+    },
+    "Handler": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Action"
+        },
+        {
+          "type": "string",
+          "description": "The name of one of the document's handlers."
+        },
+        {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Action"
+              },
+              {
+                "type": "string",
+                "description": "The name of one of the document's handlers."
+              }
+            ]
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "HandlerDefinition": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Action"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "Input": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "type": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "tooltip": {
+          "$ref": "#/$defs/Tooltip",
+          "description": "Tooltip shows a question mark icon after the label that reveals a\nTooltip card on hover. Only used when Label is set."
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "sm",
+            "lg"
+          ],
+          "description": "Set the height of the input field, see the InputSize constants."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Prefix adds a text just before the input field inside a @Description."
+        },
+        "autofocus": {
+          "type": "boolean"
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "error": {
+          "$ref": "#/$defs/Error"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Input defines the properties that can be used with input fields."
+    },
+    "Node": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "text"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.text"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "avatar"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.avatar"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "button"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.button"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "button_group"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.button_group"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "card"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "card_content"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card_content"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "card_header"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card_header"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "card_progress_bar"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.card_progress_bar"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "checkbox"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.checkbox"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "dd"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.dd"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "description"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.description"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "description_list"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.description_list"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "description_list_item"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.description_list_item"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "dt"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.dt"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "fieldset"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.fieldset"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "form"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.form"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "input"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.input"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "option_group"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.option_group"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "p"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.p"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "select"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.select"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "separator"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.separator"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "status_badge"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.status_badge"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "subtitle"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.subtitle"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "tab"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tab"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "tabs"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tabs"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "tag_status"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.tag_status"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "textarea"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.textarea"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "title"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.title"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "title_group"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.title_group"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "upload_file"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.upload_file"
+          }
+        }
+      ],
+      "properties": {
+        "is": {
+          "enum": [
+            "text",
+            "avatar",
+            "button",
+            "button_group",
+            "card",
+            "card_content",
+            "card_header",
+            "card_progress_bar",
+            "checkbox",
+            "dd",
+            "description",
+            "description_list",
+            "description_list_item",
+            "dt",
+            "fieldset",
+            "form",
+            "input",
+            "option_group",
+            "p",
+            "select",
+            "separator",
+            "status_badge",
+            "subtitle",
+            "tab",
+            "tabs",
+            "tag_status",
+            "textarea",
+            "title",
+            "title_group",
+            "upload_file"
+          ],
+          "description": "The component to render."
+        }
+      },
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "A node in the document, identified by its component."
+    },
+    "OptionGroup": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "OptionGroup properties for grouping form elements like checkboxes and radio buttons."
+    },
+    "P": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "P defines the props for the P component."
+    },
+    "Select": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are applied to the value-carrying element so a consumer can\nattach framework bindings without popui knowing the framework: the\nnative \u003cselect\u003e in the single variant, and the component root in the\nMultiple variant (the element exposed via x-modelable, so an Alpine\nx-model there two-way binds the selection — e.g.\nAttributes: templ.Attributes{\"x-model\": \"line.tags\"})."
+        },
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "autofocus": {
+          "type": "boolean"
+        },
+        "tooltip": {
+          "$ref": "#/$defs/Tooltip",
+          "description": "Tooltip shows a question mark icon after the label that reveals a\nTooltip card on hover. Only used when Label is set."
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Multiple switches to the tag-chip combobox variant."
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder is shown inside the field when nothing is selected\n(Multiple variant only)."
+        },
+        "searchable": {
+          "type": "boolean",
+          "description": "Searchable adds a search box inside the dropdown to filter options\n(Multiple variant only)."
+        },
+        "error": {
+          "$ref": "#/$defs/Error"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/SelectOption"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Select Templ component props."
+    },
+    "SelectOption": {
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description renders next to the label in a dimmed color, giving extra\ncontext for the option. Only shown by the Multiple variant's dropdown."
+        },
+        "selected": {
+          "type": "boolean"
+        },
+        "disabled": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "SelectOption defines an option for a Select component"
+    },
+    "Separator": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Separator defines the props for the Separator component."
+    },
+    "StatusBadge": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "label": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "failed",
+            "warning",
+            "running"
+          ],
+          "description": "Status is the state the badge shows."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "StatusBadge Templ component props"
+    },
+    "Subtitle": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Subtitle defines the props for the Subtitle component."
+    },
+    "Tab": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "value": {
+          "type": "string",
+          "description": "Value is the tab this panel belongs to (matches a TabItem.Value)."
+        },
+        "model": {
+          "type": "string",
+          "description": "Model is the Alpine variable to test. Defaults to \"tab\"; set it only when\nthe parent Tabs uses a custom Model."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Tab is one tab's content panel inside a popui.Tabs."
+    },
+    "TabItem": {
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Count renders a counter after the label when greater than zero: \"(n)\" on\nthe default variant, a small badge on the pill variant."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title is the trigger's accessible name and tooltip. Set it on an\nicon-only tab, where there is no Label to read out."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TabItem is one entry in a popui.Tabs trigger row: a Value that identifies the tab (assigned to the Alpine Model on click and matched by the content Tab), a visible Label, an optional leading Icon, and an optional Count."
+    },
+    "Tabs": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "",
+            "default",
+            "pill"
+          ],
+          "description": "\"default\" (underline) or \"pill\""
+        },
+        "model": {
+          "type": "string",
+          "description": "Model is the Alpine variable holding the active tab Value. Defaults to\n\"tab\" — match it on the child Tabs (their default is also \"tab\", so\nusually neither needs setting)."
+        },
+        "active": {
+          "type": "string",
+          "description": "Active is the tab Value selected on first render. Defaults to the first\ntab's Value."
+        },
+        "tabs": {
+          "items": {
+            "$ref": "#/$defs/TabItem"
+          },
+          "type": "array",
+          "description": "Tabs is the ordered trigger row."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks the active tab, renders the trigger row from Tabs, and hosts one popui.Tab content panel per tab in its children."
+    },
+    "TagStatus": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "label": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "grey",
+            "green",
+            "yellow",
+            "red",
+            "orange",
+            "blue",
+            "purple",
+            "olive",
+            "teal",
+            "crimson",
+            "steelBlue",
+            "empty"
+          ],
+          "description": "Status is the colour of the tag."
+        },
+        "dot": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TagStatus Templ component props"
+    },
+    "Textarea": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "name": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "tooltip": {
+          "$ref": "#/$defs/Tooltip",
+          "description": "Tooltip shows a question mark icon after the label that reveals a\nTooltip card on hover. Only used when Label is set."
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "autofocus": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "integer"
+        },
+        "monospace": {
+          "type": "boolean",
+          "description": "Monospace indicates whether to use a monospace font for the textarea\nby adding the appropriate classes."
+        },
+        "variableFormat": {
+          "type": "string",
+          "description": "VariableFormat turns Contenteditable into a template editor. It is the\nsyntax variables are written in, %s standing for the name: \"{{.%s}}\"\nfor a Go template. Each variable in the text is shown as a chip, and\nthe text with the variables written out — the template itself — is\nwhat Value holds, what is submitted under Name, and what an Alpine\nx-model on the component binds. FieldPicker inserts into such an\neditor as chips. Textarea ignores it."
+        },
+        "viewToggle": {
+          "type": "boolean",
+          "description": "ViewToggle adds a Rich / Plain switch above the editor: Rich shows\nthe chips, Plain shows the template as text, in a monospaced\ntextarea. Only with VariableFormat."
+        },
+        "view": {
+          "type": "string",
+          "description": "View is the view the editor starts in: ContenteditableViewRich (the\ndefault) or ContenteditableViewPlain. Only with VariableFormat."
+        },
+        "picker": {
+          "$ref": "#/$defs/FieldPicker",
+          "description": "Picker puts a FieldPicker in the editor's header, at the right of the\nview toggle, as an icon button of the editor's own height, with its\npanel hung from the right edge. Its Target is the editor, so a pick\nand a typed opening — {{ — both land at the caret. Set the picker's\nFields, Format, ScalarsOnly and the rest as usual; its ID, Target and\nAlign are the editor's to set. Only with VariableFormat."
+        },
+        "error": {
+          "$ref": "#/$defs/Error"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Textarea Templ component props"
+    },
+    "Title": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Title defines the props for the Title component."
+    },
+    "TitleGroup": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "horizontal": {
+          "type": "boolean",
+          "description": "Horizontal places the description next to the title on the same\nbaseline, separated by a middot, instead of stacking it below."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TitleGroup defines the props for the TitleGroup component: a title with an optional secondary description, stacked by default or arranged on one baseline with Horizontal."
+    },
+    "Tooltip": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title is the card heading. Optional, but at least one of Title,\nDescription or Image must be set for the card to render."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description renders below the title in a muted color, parsed as Markdown:\nemphasis, code, links and bullet or numbered lists all work, and a single\nnewline is a line break, so multi-line text reads as written. Raw HTML is\nescaped rather than passed through. Optional, but at least one of Title,\nDescription or Image must be set for the card to render."
+        },
+        "image": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Image is the URL of an optional illustration shown above the title.\nThe component applies the rounded corners and border to it."
+        },
+        "delay": {
+          "type": "integer",
+          "description": "Delay is how long the pointer must rest on the trigger, in\nmilliseconds, before the card appears. Zero (the default) shows it\nimmediately; set a few hundred for dense surfaces where a card on\nevery casual hover would be noise. Hiding is never delayed, and\nkeyboard focus reveals the card immediately regardless."
+        },
+        "position": {
+          "type": "string",
+          "description": "Position places the card relative to the trigger: one of the\nTooltipPosition constants. Defaults to top.\n\nThe card has no collision detection, so a wide one centered on a trigger\nnear the edge of its container can overflow. The -start and -end variants\nalign the card with the trigger's leading or trailing edge instead of\ncentering it, which keeps it inside the container."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Tooltip Templ component props."
+    },
+    "UploadFile": {
+      "properties": {
+        "loading": {
+          "type": "string",
+          "description": "Loading is the data path that is true while a file is being chosen or\nuploaded, e.g. the \"busy\" path of the select action."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "UploadFile are the props of the \"upload_file\" node, a file picker row with a preview image and Upload/Remove buttons."
+    },
+    "action.alert": {
+      "properties": {
+        "action": {
+          "const": "alert"
+        },
+        "message": {
+          "type": "string",
+          "description": "Text to show; {{path}} placeholders are replaced with data values."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "action",
+        "message"
+      ],
+      "description": "Show a browser alert."
+    },
+    "action.dispatch": {
+      "properties": {
+        "action": {
+          "const": "dispatch"
+        },
+        "event": {
+          "type": "string",
+          "description": "Event name, e.g. \"customer:save\"."
+        },
+        "detail": {
+          "description": "Event detail; defaults to a copy of the document data."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "action",
+        "event"
+      ],
+      "description": "Dispatch a bubbling DOM CustomEvent for the host page to handle."
+    },
+    "action.reset": {
+      "properties": {
+        "action": {
+          "const": "reset"
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "description": "Restore the document data to its initial values."
+    },
+    "action.set": {
+      "properties": {
+        "action": {
+          "const": "set"
+        },
+        "path": {
+          "type": "string",
+          "description": "Data path to change, e.g. \"customer.name\"."
+        },
+        "value": {
+          "description": "New value; strings may use {{path}} placeholders."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "action",
+        "path"
+      ],
+      "description": "Set a data path to a value."
+    },
+    "node.avatar": {
+      "properties": {
+        "is": {
+          "const": "avatar"
+        },
+        "props": {
+          "$ref": "#/$defs/Avatar"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "initial",
+              "color",
+              "size"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Avatar component."
+    },
+    "node.button": {
+      "properties": {
+        "is": {
+          "const": "button"
+        },
+        "props": {
+          "$ref": "#/$defs/Button"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "variant",
+              "size",
+              "type",
+              "name",
+              "value",
+              "form",
+              "disabled",
+              "autofocus",
+              "copy",
+              "copyPrefixLength",
+              "copySuffixLength",
+              "href",
+              "target",
+              "rel",
+              "download",
+              "showSpinnerOnClick",
+              "popoverTarget",
+              "popoverTargetAction"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Button component."
+    },
+    "node.button_group": {
+      "properties": {
+        "is": {
+          "const": "button_group"
+        },
+        "props": {
+          "$ref": "#/$defs/ButtonGroup"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "align"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI ButtonGroup component."
+    },
+    "node.card": {
+      "properties": {
+        "is": {
+          "const": "card"
+        },
+        "props": {
+          "$ref": "#/$defs/Card"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "href",
+              "disabled",
+              "order"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Card component."
+    },
+    "node.card_content": {
+      "properties": {
+        "is": {
+          "const": "card_content"
+        },
+        "props": {
+          "$ref": "#/$defs/CardContent"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI CardContent component."
+    },
+    "node.card_header": {
+      "properties": {
+        "is": {
+          "const": "card_header"
+        },
+        "props": {
+          "$ref": "#/$defs/CardHeader"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "title",
+              "subtitle"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI CardHeader component."
+    },
+    "node.card_progress_bar": {
+      "properties": {
+        "is": {
+          "const": "card_progress_bar"
+        },
+        "props": {
+          "$ref": "#/$defs/CardProgressBar"
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "title",
+              "subtitle",
+              "total",
+              "current",
+              "hideCounter"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI CardProgressBar component."
+    },
+    "node.checkbox": {
+      "properties": {
+        "is": {
+          "const": "checkbox"
+        },
+        "props": {
+          "$ref": "#/$defs/Checkbox"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "name",
+              "value",
+              "checked",
+              "autofocus",
+              "disabled",
+              "attributes",
+              "variant",
+              "label",
+              "description"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "model": {
+          "type": "string",
+          "description": "Model two-way binds a form control (input, textarea, select, checkbox)\nto a data path, e.g. \"customer.email\". The initial value is also\nrendered from the data."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Checkbox component."
+    },
+    "node.dd": {
+      "properties": {
+        "is": {
+          "const": "dd"
+        },
+        "props": {
+          "$ref": "#/$defs/DD"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI DD component."
+    },
+    "node.description": {
+      "properties": {
+        "is": {
+          "const": "description"
+        },
+        "props": {
+          "$ref": "#/$defs/Description"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Description component."
+    },
+    "node.description_list": {
+      "properties": {
+        "is": {
+          "const": "description_list"
+        },
+        "props": {
+          "$ref": "#/$defs/DescriptionList"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI DescriptionList component."
+    },
+    "node.description_list_item": {
+      "properties": {
+        "is": {
+          "const": "description_list_item"
+        },
+        "props": {
+          "$ref": "#/$defs/DescriptionListItem"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "label",
+              "value",
+              "inline",
+              "mono",
+              "prefixLength",
+              "suffixLength",
+              "actions"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI DescriptionListItem component."
+    },
+    "node.dt": {
+      "properties": {
+        "is": {
+          "const": "dt"
+        },
+        "props": {
+          "$ref": "#/$defs/DT"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI DT component."
+    },
+    "node.fieldset": {
+      "properties": {
+        "is": {
+          "const": "fieldset"
+        },
+        "props": {
+          "$ref": "#/$defs/Fieldset"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "legend",
+              "variant"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Fieldset component."
+    },
+    "node.form": {
+      "properties": {
+        "is": {
+          "const": "form"
+        },
+        "props": {
+          "$ref": "#/$defs/Form"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "action",
+              "method",
+              "enctype",
+              "target",
+              "autocomplete",
+              "novalidate",
+              "acceptCharset",
+              "name",
+              "rel"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Form component."
+    },
+    "node.input": {
+      "properties": {
+        "is": {
+          "const": "input"
+        },
+        "props": {
+          "$ref": "#/$defs/Input"
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "type",
+              "placeholder",
+              "value",
+              "name",
+              "label",
+              "tooltip",
+              "size",
+              "prefix",
+              "autofocus",
+              "readonly",
+              "required",
+              "disabled",
+              "error"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "model": {
+          "type": "string",
+          "description": "Model two-way binds a form control (input, textarea, select, checkbox)\nto a data path, e.g. \"customer.email\". The initial value is also\nrendered from the data."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Input component."
+    },
+    "node.option_group": {
+      "properties": {
+        "is": {
+          "const": "option_group"
+        },
+        "props": {
+          "$ref": "#/$defs/OptionGroup"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "label"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI OptionGroup component."
+    },
+    "node.p": {
+      "properties": {
+        "is": {
+          "const": "p"
+        },
+        "props": {
+          "$ref": "#/$defs/P"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI P component."
+    },
+    "node.select": {
+      "properties": {
+        "is": {
+          "const": "select"
+        },
+        "props": {
+          "$ref": "#/$defs/Select"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "name",
+              "label",
+              "disabled",
+              "autofocus",
+              "tooltip",
+              "multiple",
+              "required",
+              "placeholder",
+              "searchable",
+              "error",
+              "options"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "model": {
+          "type": "string",
+          "description": "Model two-way binds a form control (input, textarea, select, checkbox)\nto a data path, e.g. \"customer.email\". The initial value is also\nrendered from the data."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Select component."
+    },
+    "node.separator": {
+      "properties": {
+        "is": {
+          "const": "separator"
+        },
+        "props": {
+          "$ref": "#/$defs/Separator"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Separator component."
+    },
+    "node.status_badge": {
+      "properties": {
+        "is": {
+          "const": "status_badge"
+        },
+        "props": {
+          "$ref": "#/$defs/StatusBadge"
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "label",
+              "status"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI StatusBadge component."
+    },
+    "node.subtitle": {
+      "properties": {
+        "is": {
+          "const": "subtitle"
+        },
+        "props": {
+          "$ref": "#/$defs/Subtitle"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Subtitle component."
+    },
+    "node.tab": {
+      "properties": {
+        "is": {
+          "const": "tab"
+        },
+        "props": {
+          "$ref": "#/$defs/Tab"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "value",
+              "model"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Tab component."
+    },
+    "node.tabs": {
+      "properties": {
+        "is": {
+          "const": "tabs"
+        },
+        "props": {
+          "$ref": "#/$defs/Tabs"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "variant",
+              "model",
+              "active",
+              "tabs"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Tabs component."
+    },
+    "node.tag_status": {
+      "properties": {
+        "is": {
+          "const": "tag_status"
+        },
+        "props": {
+          "$ref": "#/$defs/TagStatus"
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "label",
+              "status",
+              "dot"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI TagStatus component."
+    },
+    "node.text": {
+      "properties": {
+        "is": {
+          "const": "text"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text is only used by the \"text\" node type."
+        },
+        "bind": {
+          "type": "string",
+          "description": "Alpine expression shown with x-text. A plain data path such as \"customer.name\" is also resolved from object data at render time."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "Plain text, optionally bound to an Alpine expression."
+    },
+    "node.textarea": {
+      "properties": {
+        "is": {
+          "const": "textarea"
+        },
+        "props": {
+          "$ref": "#/$defs/Textarea"
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "name",
+              "placeholder",
+              "value",
+              "label",
+              "disabled",
+              "tooltip",
+              "readonly",
+              "required",
+              "autofocus",
+              "rows",
+              "monospace",
+              "variableFormat",
+              "viewToggle",
+              "view",
+              "picker",
+              "error"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "model": {
+          "type": "string",
+          "description": "Model two-way binds a form control (input, textarea, select, checkbox)\nto a data path, e.g. \"customer.email\". The initial value is also\nrendered from the data."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Textarea component."
+    },
+    "node.title": {
+      "properties": {
+        "is": {
+          "const": "title"
+        },
+        "props": {
+          "$ref": "#/$defs/Title"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Title component."
+    },
+    "node.title_group": {
+      "properties": {
+        "is": {
+          "const": "title_group"
+        },
+        "props": {
+          "$ref": "#/$defs/TitleGroup"
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "title",
+              "description",
+              "horizontal"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI TitleGroup component."
+    },
+    "node.upload_file": {
+      "properties": {
+        "is": {
+          "const": "upload_file"
+        },
+        "props": {
+          "$ref": "#/$defs/UploadFile"
+        },
+        "model": {
+          "type": "string",
+          "description": "Model two-way binds a form control (input, textarea, select, checkbox)\nto a data path, e.g. \"customer.email\". The initial value is also\nrendered from the data."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "enum": [
+              "remove",
+              "select"
+            ]
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI UploadFile component."
+    }
+  },
+  "title": "PopUI JSON document"
+}
