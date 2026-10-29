@@ -560,6 +560,10 @@
           },
           "type": "object",
           "description": "Handlers are named actions, or lists of actions, that \"on\" handlers\ncan refer to by name so a handler used in several places is defined\nonce, e.g. {\"update\": {\"action\": \"step.update\", \"summary\": \"…\"}} and\nthen {\"on\": {\"change\": \"update\"}}. Handlers can't refer to each other."
+        },
+        "init": {
+          "$ref": "#/$defs/Handler",
+          "description": "Init is run once when the document starts, like an \"on\" handler: an\naction, the name of one of the document's handlers, or a list of\neither, e.g. \"update\" so the host receives the initial data."
         }
       },
       "additionalProperties": false,
