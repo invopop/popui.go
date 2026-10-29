@@ -115,10 +115,36 @@ func render() ([]byte, error) {
 		Items:       &jsonschema.Schema{Ref: "#/$defs/Node"},
 	}
 
+	// Every node can be repeated with "each" and shown with "show".
+	each := &jsonschema.Schema{Type: typeString, Description: nodeComment("Each")}
+	one := uint64(1)
+	show := &jsonschema.Schema{
+		Description: nodeComment("Show"),
+		OneOf: []*jsonschema.Schema{
+			{Type: typeString},
+			{
+				Type:          typeObject,
+				MinProperties: &one,
+				AdditionalProperties: &jsonschema.Schema{
+					Type:     typeArray,
+					MinItems: &one,
+					Items: &jsonschema.Schema{AnyOf: []*jsonschema.Schema{
+						{Type: typeString}, {Type: "number"}, {Type: "boolean"}, {Type: "null"},
+					}},
+				},
+			},
+		},
+	}
+	listing := func(n *jsonschema.Schema) {
+		n.Properties.Set("each", each)
+		n.Properties.Set("show", show)
+	}
+
 	text := node("text")
 	text.Description = "Plain text, optionally bound to an Alpine expression."
 	text.Properties.Set("text", &jsonschema.Schema{Type: typeString, Description: nodeComment("Text")})
 	text.Properties.Set("bind", &jsonschema.Schema{Type: typeString, Description: "Alpine expression shown with x-text. A plain data path such as \"customer.name\" is also resolved from object data at render time."})
+	listing(text)
 	defs["node.text"] = text
 	names := []string{"text"}
 
@@ -150,6 +176,7 @@ func render() ([]byte, error) {
 			PropertyNames:        events,
 			AdditionalProperties: &jsonschema.Schema{Ref: "#/$defs/Handler"},
 		})
+		listing(n)
 		defs["node."+c.Name] = n
 		names = append(names, c.Name)
 	}

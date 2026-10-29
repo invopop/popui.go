@@ -21,3 +21,43 @@ templ documentRoot(xdata, init string) {
 templ boundText(text, bind string) {
 	<span x-text={ bind }>{ text }</span>
 }
+
+// loopTemplate repeats its children for every item of an Alpine x-for
+// expression.
+templ loopTemplate(expr string) {
+	<template x-for={ expr }>
+		{ children... }
+	</template>
+}
+
+// ifTemplate renders its children while an Alpine expression is true.
+templ ifTemplate(cond string) {
+	<template x-if={ cond }>
+		{ children... }
+	</template>
+}
+
+// option renders a select option.
+templ option(o Option) {
+	<option
+		value={ o.Value }
+		if o.Disabled {
+			disabled
+		}
+		if o.Selected {
+			selected
+		}
+		{ o.Attributes... }
+	>{ o.Label }</option>
+}
+
+// unavailable renders the option showing a select's model when none of the
+// options has its value.
+templ unavailable(model, label string) {
+	<option :value={ model } x-text={ label } :selected="true" selected disabled></option>
+}
+
+// plainText renders text as an element, for templates that need one.
+templ plainText(text string) {
+	<span>{ text }</span>
+}

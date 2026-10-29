@@ -52,12 +52,20 @@ templ jsonUI() {
 					{Name: "is", Type: "string", Required: true, Description: "The component to render, from the list below, or `text` for plain text."},
 					{Name: "props", Type: "object", Description: "The component's props, as in the props package. Field names match case-insensitively and unknown fields are errors."},
 					{Name: "children", Type: "[]node", Description: "Nodes rendered inside the component."},
-					{Name: "bind", Type: "object", Description: "Prop names mapped to data paths, e.g. `{\"title\": \"invoice.code\"}`. On a `text` node, a single data path whose value is shown and kept up to date."},
+					{Name: "bind", Type: "object", Description: "Prop names mapped to data paths, e.g. `{\"title\": \"invoice.code\"}`, resolved when rendering. Some props also follow the data as it changes, such as `disabled` on form controls and buttons, and an option's `value`, `label` and `disabled`. On a `text` node, a single data path whose value is shown and kept up to date."},
+					{Name: "each", Type: "string", Description: "Data path of a list to repeat the node for, following the list as it changes, e.g. when an action stores a fetched list with `into`. The node and its children refer to the current item as `item` and its position as `index`, in `bind`, `model` and `show`. The node must render a single element."},
+					{Name: "show", Type: "string | object", Description: "Renders the node only while a condition holds: a data path, true when its value is, optionally negated with `!`, e.g. `\"!config.sandbox\"`, or data paths mapped to the values each may have, all of which must match, e.g. `{\"workflow.schema\": [\"bill/invoice\"]}`. The node must render a single element."},
 					{Name: "model", Type: "string", Description: "Data path a form control reads and writes, e.g. `customer.email`. Its initial value is rendered on the server."},
 					{Name: "on", Type: "object", Description: "DOM events, with optional Alpine modifiers such as `submit.prevent` or `input.debounce.300ms`, mapped to an action, a handler name or a list of them."},
 					{Name: "text", Type: "string", Description: "The text of a `text` node."},
 				},
 			})
+		}
+		@modules.Section("Lists from the host", "json-ui-lists") {
+			@popui.Description() {
+				A list the host provides, such as one fetched by a host action in init, is stored in the data with `into` and rendered with `each`. A select's options rendered this way keep its model selected however the list and the model change. A saved value missing from the list is kept and shown as unavailable rather than cleared, so nothing changes until the user picks another.
+			}
+			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiListsExample, Language: "json"})
 		}
 		@modules.Section("Components", "json-ui-components") {
 			@popui.Description() {
@@ -97,7 +105,7 @@ templ jsonUI() {
 			<ul class="list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary">
 				<li>Alpine directives, event handler attributes or htmx attributes in props or bound values</li>
 				<li>URLs that can run script, such as javascript:, in props or bound values</li>
-				<li>text binds that aren't paths in the document's data</li>
+				<li>text binds, "each" lists and "show" conditions that aren't paths in the document's data</li>
 				<li>data paths through __proto__, prototype or constructor</li>
 				<li>actions the host hasn't allowed, or unknown handlers</li>
 			</ul>

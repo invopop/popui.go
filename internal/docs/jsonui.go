@@ -92,6 +92,31 @@ const jsonuiAssetsExample = `// jsonui.js runs the actions documents reference, 
 e.StaticFS("/_jsonui", echo.MustSubFS(jsonui.Assets, "assets"))
 // <script src="/_jsonui/jsonui.js"></script>`
 
+const jsonuiListsExample = `{
+  "data": {
+    "config": { "connection_id": "" },
+    "connections": [],
+    "loading": { "connections": false }
+  },
+  "handlers": {
+    "load": { "action": "app.request", "path": "/connections", "into": "connections", "busy": "loading.connections" }
+  },
+  "init": "load",
+  "components": [
+    {
+      "is": "select",
+      "props": { "label": "Connection" },
+      "model": "config.connection_id",
+      "bind": { "disabled": "loading.connections" },
+      "children": [
+        { "is": "option", "props": { "value": "", "label": "Default" } },
+        { "is": "option", "each": "connections", "bind": { "value": "item.id", "label": "item.name" } }
+      ]
+    },
+    { "is": "p", "show": "loading.connections", "children": [{ "is": "text", "text": "Loading…" }] }
+  ]
+}`
+
 const jsonuiActionsExample = `<script src="/_jsonui/jsonui.js"></script>
 <script>
   // Host actions receive the interpolated params, the document's reactive

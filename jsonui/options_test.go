@@ -7,7 +7,10 @@ import (
 	"testing"
 )
 
-const errUnsafeURL = "unsafe URL"
+const (
+	errUnsafeURL   = "unsafe URL"
+	errNotDataPath = "is not a data path"
+)
 
 func render(t *testing.T, opts Options, doc string) (string, error) {
 	t.Helper()
@@ -232,7 +235,7 @@ func TestUploadFile(t *testing.T) {
 	}
 
 	bad := map[string]string{
-		`{"data":{"a":""},"components":[{"is":"upload_file","model":"a","props":{"loading":"x; alert(1)"}}]}`:  `is not a data path`,
+		`{"data":{"a":""},"components":[{"is":"upload_file","model":"a","props":{"loading":"x; alert(1)"}}]}`:  errNotDataPath,
 		`{"data":{"a":""},"components":[{"is":"upload_file","model":"a","on":{"click":{"action":"alert"}}}]}`:  `unknown event "click"`,
 		`{"data":{"a":""},"components":[{"is":"upload_file","model":"a","on":{"select":{"action":"steal"}}}]}`: `action "steal" is not allowed`,
 		`{"data":{"a":""},"components":[{"is":"upload_file"}]}`:                                                `model is required`,
