@@ -188,6 +188,7 @@ var enums = map[string]map[string][]string{
 	"Input":       {"size": {"", "sm", "lg"}},
 	"Checkbox":    {"variant": {"", "switch"}},
 	"Fieldset":    {"variant": {"", "card"}},
+	"Tabs":        {"variant": {"", "default", "pill"}},
 }
 
 // param is an extra property accepted by a built-in action.

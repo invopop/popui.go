@@ -1620,6 +1620,11 @@
         },
         "variant": {
           "type": "string",
+          "enum": [
+            "",
+            "default",
+            "pill"
+          ],
           "description": "\"default\" (underline) or \"pill\""
         },
         "model": {

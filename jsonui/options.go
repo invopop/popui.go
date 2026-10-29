@@ -90,8 +90,10 @@ func (o Options) allowsAction(name string) bool {
 // "click", "submit.prevent" or "keydown.enter".
 var eventName = regexp.MustCompile(`^[a-z][a-z0-9-]*(\.[a-z0-9-]+)*$`)
 
-// urlKeys are the props and attribute names whose values are URLs.
-var urlKeys = []string{"href", "src", "action", "formaction", "url"}
+// urlKeys are the props and attribute names whose values are URLs, in
+// lower case. Besides the HTML ones, these cover the URL props in the props
+// package: Tooltip.Image, File.AvatarURL and Filter.BaseURL.
+var urlKeys = []string{"href", "src", "action", "formaction", "url", "image", "avatarurl", "baseurl"}
 
 // checkProps applies the strict checks to a node's own props, before the
 // renderer adds the x-model and x-on attributes generated from "model" and

@@ -27,6 +27,22 @@ func TestStrictRejectsScript(t *testing.T) {
 			`{"components":[{"is":"button","props":{"attributes":{"x-on:click":"alert(1)"}}}]}`,
 			`attribute "x-on:click" is not allowed`,
 		},
+		"tooltip image URL": {
+			`{"components":[{"is":"input","props":{"label":"Name","tooltip":{"image":"javascript:alert(1)"}}}]}`,
+			`input props.tooltip.image: unsafe URL`,
+		},
+		"text bind to a global": {
+			`{"data":{"a":1},"components":[{"is":"text","bind":"document.cookie"}]}`,
+			`text bind: data has no "document.cookie"`,
+		},
+		"text bind without data": {
+			`{"components":[{"is":"text","bind":"document.cookie"}]}`,
+			`text bind: document data must be set`,
+		},
+		"text bind through a prototype": {
+			`{"data":{"a":{}},"components":[{"is":"text","bind":"a.constructor.name"}]}`,
+			`must be a data path in strict mode`,
+		},
 		"alpine shorthand": {
 			`{"components":[{"is":"button","props":{"attributes":{"@click":"alert(1)"}}}]}`,
 			`attribute "@click" is not allowed`,

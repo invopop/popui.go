@@ -19,18 +19,38 @@
   const popui = (window.popui = window.popui || {});
   const registry = new Map();
 
-  const get = (obj, path) => path.split(".").reduce((v, k) => (v == null ? undefined : v[k]), obj);
+  // Paths only follow the data's own properties: through inherited ones
+  // such as "toString" or "__proto__" they would reach objects shared with
+  // the host page, like Object.prototype.
+  const own = (v, k) => v != null && typeof v === "object" && Object.hasOwn(v, k);
 
-  // Paths through these keys would reach Object.prototype and pollute the
-  // host page, so set refuses them.
+  const get = (obj, path) => path.split(".").reduce((v, k) => (own(v, k) ? v[k] : undefined), obj);
+
   const unsafeKeys = new Set(["__proto__", "prototype", "constructor"]);
 
   const set = (obj, path, value) => {
     const keys = String(path).split(".");
     if (keys.some((k) => unsafeKeys.has(k))) throw new Error(`[jsonui] unsafe data path "${path}"`);
     const last = keys.pop();
-    const target = keys.reduce((v, k) => v[k], obj);
+    const target = keys.reduce((v, k) => {
+      if (!own(v, k)) throw new Error(`[jsonui] data has no "${path}"`);
+      return v[k];
+    }, obj);
+    if (target == null || typeof target !== "object") throw new Error(`[jsonui] data has no "${path}"`);
     target[last] = value;
+  };
+
+  // busy flags stay true while any action using them runs, so overlapping
+  // actions don't clear each other's flag. Counts are kept per data object
+  // and path.
+  const running = new WeakMap();
+  const busy = (data, path, delta) => {
+    if (!running.has(data)) running.set(data, new Map());
+    const counts = running.get(data);
+    const n = (counts.get(path) ?? 0) + delta;
+    if (n > 0) counts.set(path, n);
+    else counts.delete(path);
+    set(data, path, n > 0);
   };
 
   // interpolate replaces {{path}} placeholders in strings, recursively.
@@ -60,18 +80,18 @@
     },
     // run executes a list of actions in order, awaiting async ones.
     async run(list, ctx) {
-      for (const { action, into, busy, ...params } of list) {
+      for (const { action, into, busy: busyPath, ...params } of list) {
         const fn = registry.get(action);
         if (!fn) {
           console.error(`[jsonui] unknown action "${action}"`);
           return;
         }
-        if (busy) set(ctx.data, busy, true);
+        if (busyPath) busy(ctx.data, busyPath, 1);
         try {
           const result = await fn({ ...ctx, params: interpolate(params, ctx.data), snapshot: () => snapshot(ctx.data) });
           if (into && result !== undefined) set(ctx.data, into, result);
         } finally {
-          if (busy) set(ctx.data, busy, false);
+          if (busyPath) busy(ctx.data, busyPath, -1);
         }
       }
     },
@@ -82,8 +102,11 @@
   popui.actions.register("set", ({ params, data }) => set(data, params.path, params.value));
   popui.actions.register("reset", ({ el, data }) => {
     // The document root's x-data is the original JSON object. Keys added
-    // since are removed.
-    const initial = JSON.parse(el.closest("[data-popui-document]").getAttribute("x-data"));
+    // since are removed. Documents without data have no root and nothing
+    // to reset.
+    const root = el.closest("[data-popui-document]");
+    if (!root) return;
+    const initial = JSON.parse(root.getAttribute("x-data"));
     for (const key of Object.keys(data)) if (!(key in initial)) delete data[key];
     Object.assign(data, initial);
   });

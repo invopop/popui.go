@@ -337,12 +337,23 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 	if err := json.Unmarshal(n.Bind, &expr); err != nil {
 		return nil, errors.New("text bind: must be a string expression")
 	}
-	isPath := dataPath.MatchString(expr)
-	if !isPath && !b.opts.Trusted {
-		return nil, fmt.Errorf("text bind: %q must be a data path in strict mode", expr)
-	}
 	text := n.Text
-	if b.data != nil && isPath {
+	if !b.opts.Trusted {
+		// Alpine resolves names it can't find in the data from the page's
+		// globals, so x-text="document.cookie" would read the host page. In
+		// strict mode the path must therefore be in the document's data.
+		if !safePath(expr) {
+			return nil, fmt.Errorf("text bind: %q must be a data path in strict mode", expr)
+		}
+		if b.data == nil {
+			return nil, errors.New("text bind: document data must be set")
+		}
+		v, err := lookup(b.data, expr)
+		if err != nil {
+			return nil, fmt.Errorf("text bind: %w", err)
+		}
+		text = display(v)
+	} else if b.data != nil && dataPath.MatchString(expr) {
 		if v, err := lookup(b.data, expr); err == nil {
 			text = display(v)
 		}
