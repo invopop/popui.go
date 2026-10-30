@@ -1,0 +1,10 @@
+# The documentation site, https://popui-go.netlify.app/, built by
+# `popui build` into public/. The jsonui playground's editor is bundled with
+# npm first, as popui build reads the bundle from disk.
+[build]
+  command = "(cd internal/docs/playground/editor && npm ci && npm run build) && go run ./cmd/popui build"
+  publish = "public"
+
+[build.environment]
+  GO_VERSION = "1.25.0"
+  NODE_VERSION = "22"

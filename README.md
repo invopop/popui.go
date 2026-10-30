@@ -69,6 +69,14 @@ To generate all the resources, run:
 go generate ./...
 ```
 
+### Documentation site
+
+The documentation site is served locally with `go run ./cmd/popui serve`, and built into `public/` with `go run ./cmd/popui build`, as Netlify does (see `netlify.toml`). Both need the JSON UI playground's editor, a CodeMirror bundle built with npm that isn't committed. Build it after cloning, and again when its `package-lock.json` changes:
+
+```bash
+cd internal/docs/playground/editor && npm ci && npm run build
+```
+
 ### Editing components
 
 1. Edit the `.templ` files.
