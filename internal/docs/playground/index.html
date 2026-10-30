@@ -52,18 +52,8 @@
 		}
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js" defer></script>
-	<!-- CodeMirror with JSON Schema support, as used by gobl.dev's editor. -->
-	<script type="importmap">
-		{
-			"imports": {
-				"codemirror": "https://esm.sh/codemirror@6.0.1",
-				"@codemirror/state": "https://esm.sh/@codemirror/state@6",
-				"codemirror-json-schema": "https://esm.sh/@invopop/codemirror-json-schema@0.9.4",
-				"@fsegurai/codemirror-theme-vscode-light": "https://esm.sh/@fsegurai/codemirror-theme-vscode-light@6",
-				"@fsegurai/codemirror-theme-vscode-dark": "https://esm.sh/@fsegurai/codemirror-theme-vscode-dark@6"
-			}
-		}
-	</script>
+	<!-- CodeMirror with JSON Schema support, as used by gobl.dev's editor,
+	     bundled from the editor package with npm. -->
 	<script type="module" src="editor.js"></script>
 	<script src="wasm_exec.js"></script>
 	<script src="samples.js"></script>
@@ -75,10 +65,7 @@
 		.stats b { font-weight: 500; color: var(--color-foreground); }
 		.panes { display: grid; grid-template-columns: minmax(320px, 2fr) 3fr; min-height: 0; }
 		.editor { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-right: 1px solid var(--color-border); min-height: 0; }
-		.editor textarea, #code { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
-		.editor textarea { resize: none; font: 12px/1.5 var(--font-mono, monospace); padding: 8px; background: var(--color-background-default-secondary); color: var(--color-foreground); }
-		.editor textarea[hidden] { display: none; }
-		#code:empty { display: none; }
+		#code { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
 		#code .cm-editor { height: 100%; font-size: 12px; }
 		#code .cm-scroller { overflow: auto; }
 		.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
@@ -130,7 +117,6 @@
 				<label title="Reject script in props and allow only the listed actions"><input type="checkbox" id="strict" checked/> strict</label>
 				<a href="schema.json" target="_blank">schema</a>
 			</div>
-			<textarea id="json" spellcheck="false"></textarea>
 			<div id="code"></div>
 			<div id="editor-note" class="note" hidden></div>
 			<div id="error" class="error"></div>
@@ -149,10 +135,12 @@
 		const fmtMs = (ms) => `${ms.toFixed(ms < 10 ? 2 : 1)}ms`;
 		const fmtKB = (b) => (b > 1048576 ? `${(b / 1048576).toFixed(2)}MB` : `${(b / 1024).toFixed(1)}KB`);
 
-		// The editor is a plain textarea until CodeMirror loads (editor.js).
+		// The editor is attached once editor.js, a module, has loaded; until
+		// then the document is kept in pending.
 		let editor = null;
-		const getJSON = () => (editor ? editor.getValue() : $("json").value);
-		const setJSON = (s) => (editor ? editor.setValue(s) : ($("json").value = s));
+		let pending = "";
+		const getJSON = () => (editor ? editor.getValue() : pending);
+		const setJSON = (s) => (editor ? editor.setValue(s) : (pending = s));
 
 		function loadSample(name) {
 			const doc = name === "stress" ? SAMPLES.stress(200) : name === "stress1000" ? SAMPLES.stress(1000) : SAMPLES[name];
@@ -230,12 +218,10 @@
 			});
 		}
 
-		// attachEditor swaps the textarea for the CodeMirror editor once
-		// editor.js has loaded. If it fails to load, the textarea keeps working.
+		// attachEditor is called by editor.js with the CodeMirror editor.
 		window.attachEditor = (api) => {
-			api.setValue($("json").value);
+			api.setValue(pending);
 			api.onChange(scheduleRender);
-			$("json").hidden = true;
 			editor = api;
 		};
 
@@ -243,7 +229,6 @@
 		$("render").addEventListener("click", render);
 		$("strict").addEventListener("change", render);
 		$("bench").addEventListener("click", bench);
-		$("json").addEventListener("input", scheduleRender);
 
 		loadSample("details");
 		boot().catch((e) => ($("error").textContent = `Failed to load WASM: ${e}`));

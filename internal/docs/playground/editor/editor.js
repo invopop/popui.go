@@ -5,12 +5,14 @@
 // published next to the playground) and reloaded whenever it changes. Every
 // step is logged to the console under [playground] to help debugging.
 //
-// Once mounted the editor is handed to the page through window.attachEditor;
-// until then, or if anything here fails, the page keeps using its textarea.
+// Once mounted the editor is handed to the page through window.attachEditor.
+//
+// It's bundled with its dependencies into dist/editor.js by `npm run build`,
+// which `popui serve` and `popui build` read; see package.json.
 
 import { basicSetup, EditorView } from "codemirror";
 import { EditorState, Compartment } from "@codemirror/state";
-import { jsonSchema, updateSchema } from "codemirror-json-schema";
+import { jsonSchema, updateSchema } from "@invopop/codemirror-json-schema";
 import { vsCodeLight } from "@fsegurai/codemirror-theme-vscode-light";
 import { vsCodeDark } from "@fsegurai/codemirror-theme-vscode-dark";
 

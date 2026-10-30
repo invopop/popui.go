@@ -23,3 +23,18 @@ jobs:
       # Includes the check that jsonui/schema/document.json is up to date.
       - name: Test
         run: go test ./...
+
+      # The docs site, as Netlify builds it, including the playground's
+      # editor bundle.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: internal/docs/playground/editor/package-lock.json
+
+      - name: Build docs
+        run: |
+          (cd internal/docs/playground/editor && npm ci && npm run build)
+          go run ./cmd/popui build
+          test -s public/jsonui/editor.js

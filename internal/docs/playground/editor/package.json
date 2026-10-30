@@ -1,0 +1,19 @@
+{
+  "name": "popui-playground-editor",
+  "private": true,
+  "description": "The jsonui playground's CodeMirror editor, bundled into dist/editor.js for popui serve and popui build.",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild editor.js --bundle --format=esm --minify --target=es2022 --define:process.env={} --outfile=dist/editor.js"
+  },
+  "dependencies": {
+    "@codemirror/state": "^6.5.0",
+    "@fsegurai/codemirror-theme-vscode-dark": "^6.2.0",
+    "@fsegurai/codemirror-theme-vscode-light": "^6.2.0",
+    "@invopop/codemirror-json-schema": "0.9.4",
+    "codemirror": "^6.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
