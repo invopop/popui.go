@@ -134,7 +134,10 @@
     const initial = JSON.parse(root.getAttribute("x-data"));
     for (const key of Object.keys(data)) if (!(key in initial)) delete data[key];
     Object.assign(data, initial);
-    Object.assign(errorState(root), freshErrors(root));
+    const s = Object.assign(errorState(root), freshErrors(root));
+    // Validate now: restoring values that hadn't changed doesn't trigger the
+    // validation that follows data changes.
+    validate(root, s, data);
   });
   popui.actions.register("dispatch", ({ params, el, snapshot }) => {
     el.dispatchEvent(new CustomEvent(params.event, { bubbles: true, detail: params.detail ?? snapshot() }));
