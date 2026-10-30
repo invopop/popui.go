@@ -34,6 +34,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"reflect"
 	"regexp"
 	"slices"
@@ -67,6 +68,15 @@ type Document struct {
 	// action, the name of one of the document's handlers, or a list of
 	// either, e.g. "update" so the host receives the initial data.
 	Init json.RawMessage `json:"init,omitempty"`
+	// Schemas map data paths, such as "config", to the JSON Schema their
+	// value must match. The data is validated as it changes, and errors are
+	// shown with the form control whose "model" is their path, or after the
+	// document for paths without one. Labels and options are defined by
+	// components independently of the schemas. Schemas can only
+	// refer to themselves with "$ref". A schema's "errorMessage" replaces the
+	// messages of its errors: one message, or one for each keyword, such as
+	// {"format": "Enter an email address"}.
+	Schemas map[string]json.RawMessage `json:"schemas,omitempty"`
 }
 
 // Node is a single element in the JSON component tree.
@@ -86,8 +96,21 @@ type Node struct {
 	// Alpine expression shown with x-text; a plain path such as
 	// "customer.name" is also resolved from object data at render time so the
 	// text is correct before Alpine starts. On components it maps prop names
-	// to data paths, e.g. {"value": "customer.name"}, resolved at render time.
+	// to data paths, e.g. {"value": "customer.name"}, resolved at render
+	// time. Some props, such as "disabled", also follow the data as it
+	// changes, and only those can be bound to an "each" item.
 	Bind json.RawMessage `json:"bind,omitempty"`
+	// Each repeats the node for every item of the list at a data path, e.g.
+	// "connections". The node and its children refer to the current item as
+	// "item" and its position as "index", e.g. {"value": "item.id"} in
+	// "bind". The node must render a single element.
+	Each string `json:"each,omitempty"`
+	// Show renders the node only while a condition on the data holds: a data
+	// path that is true when its value is, optionally negated with "!", e.g.
+	// "config.sandbox", or an object of data paths to the values each may
+	// have, all of which must match, e.g. {"workflow.schema":
+	// ["bill/invoice"]}. The node must render a single element.
+	Show json.RawMessage `json:"show,omitempty"`
 	// Model two-way binds a form control (input, textarea, select, checkbox)
 	// to a data path, e.g. "customer.email". The initial value is also
 	// rendered from the data.
@@ -112,7 +135,7 @@ var nodeEvents = map[string][]string{}
 var modelProps = map[string]string{
 	"input":    valueProp,
 	"textarea": valueProp,
-	"select":   "options",
+	selectType: "options",
 	"checkbox": "checked",
 }
 
@@ -213,9 +236,10 @@ func init() {
 	register("fieldset", popui.Fieldset)
 	register("input", popui.Input)
 	register("textarea", popui.Textarea)
-	register("select", popui.Select)
+	register(selectType, popui.Select)
 	register("checkbox", popui.Checkbox)
 	register("option_group", popui.OptionGroup)
+	register(optionType, optionComponent)
 
 	// Navigation
 	register("tabs", popui.Tabs)
@@ -239,7 +263,7 @@ func Components() []Component {
 // Names returns the sorted names of the supported components, including
 // "text".
 func Names() []string {
-	out := []string{"text"}
+	out := []string{textType}
 	for _, c := range Components() {
 		out = append(out, c.Name)
 	}
@@ -254,6 +278,16 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 		return nil, errors.New("document: missing components")
 	}
 	b := &docBuilder{opts: opts}
+	var schemas string
+	if len(d.Schemas) > 0 {
+		var err error
+		if b.validator, err = NewValidator(d.Schemas); err != nil {
+			return nil, err
+		}
+		if schemas, err = compactSchemas(d.Schemas); err != nil {
+			return nil, err
+		}
+	}
 	xdata := ""
 	if len(d.Data) > 0 {
 		var err error
@@ -287,10 +321,32 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 			xdata = "{}" // init runs on the document root
 		}
 	}
+	hasErrors := b.fields > 0 || b.validator != nil
+	if hasErrors {
+		body = templ.Join(body, unplacedErrors())
+		if xdata == "" {
+			xdata = "{}" // errors are tracked on the document root
+		}
+	}
 	if xdata == "" {
 		return body, nil
 	}
-	return withChildren(documentRoot(xdata, xinit), body), nil
+	return withChildren(documentRoot(xdata, xinit, hasErrors, schemas), body), nil
+}
+
+// compactSchemas returns the schemas as the compact JSON jsonui.js
+// validates the data with.
+func compactSchemas(schemas map[string]json.RawMessage) (string, error) {
+	out := make(map[string]json.RawMessage, len(schemas))
+	for k, raw := range schemas {
+		var buf bytes.Buffer
+		if err := json.Compact(&buf, raw); err != nil {
+			return "", fmt.Errorf("schemas %s: %w", k, err)
+		}
+		out[k] = buf.Bytes()
+	}
+	data, err := json.Marshal(out)
+	return string(data), err
 }
 
 // parseData returns the compact x-data JSON for the document along with
@@ -320,6 +376,17 @@ type docBuilder struct {
 	data map[string]any
 	// handlers are the document's named handlers, resolved to their actions.
 	handlers map[string][]map[string]any
+	// loops are the list expressions of the "each" nodes being built.
+	loops []string
+	// conds are the "show" conditions of the nodes being built inside the
+	// current select.
+	conds []string
+	// sel is the state of the single select whose options are being built.
+	sel *selectState
+	// validator checks the data against the document's schemas, if any.
+	validator *Validator
+	// fields counts the form controls that show errors for their model.
+	fields int
 }
 
 func (b *docBuilder) buildAll(nodes []Node) (templ.Component, error) {
@@ -335,7 +402,13 @@ func (b *docBuilder) buildAll(nodes []Node) (templ.Component, error) {
 }
 
 func (b *docBuilder) build(n *Node) (templ.Component, error) {
-	if n.Component == "text" {
+	if n.Each != "" {
+		return b.each(n)
+	}
+	if len(n.Show) > 0 {
+		return b.show(n)
+	}
+	if n.Component == textType {
 		return b.text(n)
 	}
 	if !b.opts.Trusted {
@@ -358,17 +431,102 @@ func (b *docBuilder) build(n *Node) (templ.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(n.Children) == 0 {
-		return c, nil
+	if len(n.Children) > 0 {
+		if !e.children {
+			return nil, fmt.Errorf("%s: children are not supported", n.Component)
+		}
+		if c, err = b.withChildNodes(n, c); err != nil {
+			return nil, err
+		}
 	}
-	if !e.children {
-		return nil, fmt.Errorf("%s: children are not supported", n.Component)
+	if path := b.fieldPath(n); path != "" {
+		c = withChildren(field(path, shownError(path)), c)
+	}
+	return c, nil
+}
+
+// fieldPath is the data path a form control shows errors for: its model,
+// unless that's in an "each" item, which has no path of its own.
+func (b *docBuilder) fieldPath(n *Node) string {
+	if _, ok := modelProps[n.Component]; !ok || n.Model == "" || !safePath(n.Model) {
+		return ""
+	}
+	if len(b.loops) > 0 {
+		if root, _, _ := strings.Cut(n.Model, "."); root == loopItem || root == loopIndex {
+			return ""
+		}
+	}
+	return n.Model
+}
+
+// shownError is the Alpine expression of the error shown for a path, or
+// "" when there's none. Paths are data paths, so can be quoted as is.
+func shownError(path string) string {
+	return "$errors.shown('" + path + "')"
+}
+
+// withChildNodes builds the node's children into c. A select's children are
+// its options, which follow its model.
+func (b *docBuilder) withChildNodes(n *Node, c templ.Component) (templ.Component, error) {
+	outer, conds := b.sel, b.conds
+	defer func() { b.sel, b.conds = outer, conds }()
+	b.sel, b.conds = nil, nil
+	if n.Component == selectType {
+		var err error
+		if b.sel, err = b.selectState(n); err != nil {
+			return nil, err
+		}
 	}
 	children, err := b.buildAll(n.Children)
 	if err != nil {
 		return nil, err
 	}
+	if b.sel != nil {
+		if u := b.sel.unavailableOption(); u != nil {
+			children = templ.Join(u, children)
+		}
+	}
 	return withChildren(c, children), nil
+}
+
+// selectState prepares the state of a select with options as children,
+// which only the single select renders.
+func (b *docBuilder) selectState(n *Node) (*selectState, error) {
+	var p struct {
+		Multiple bool
+		Options  json.RawMessage
+	}
+	if len(n.Props) > 0 {
+		if err := json.Unmarshal(n.Props, &p); err != nil {
+			return nil, fmt.Errorf("%s props: %w", n.Component, err)
+		}
+	}
+	if p.Multiple || (len(p.Options) > 0 && string(p.Options) != jsonNull) {
+		return nil, fmt.Errorf("%s: children are only supported by single selects without options", n.Component)
+	}
+	if len(n.Bind) > 0 {
+		var bind map[string]any
+		if err := json.Unmarshal(n.Bind, &bind); err != nil {
+			return nil, fmt.Errorf("%s bind: %w", n.Component, err)
+		}
+		for prop := range bind {
+			if strings.EqualFold(prop, "multiple") || strings.EqualFold(prop, "options") {
+				return nil, fmt.Errorf("%s: %s can't be bound on a select with children", n.Component, prop)
+			}
+		}
+	}
+	s := &selectState{depth: len(b.loops)}
+	if n.Model != "" {
+		expr, inLoop, err := b.livePath(n.Model)
+		if err != nil {
+			return nil, fmt.Errorf("%s model: %w", n.Component, err)
+		}
+		s.model = expr
+		if !inLoop {
+			s.value, _ = lookup(b.data, n.Model) //nolint:errcheck // checked by livePath in strict mode
+		}
+	}
+	return s, nil
 }
 
 func (b *docBuilder) text(n *Node) (templ.Component, error) {
@@ -378,6 +536,15 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 	var expr string
 	if err := json.Unmarshal(n.Bind, &expr); err != nil {
 		return nil, errors.New("text bind: must be a string expression")
+	}
+	if len(b.loops) > 0 && safePath(expr) { // trusted expressions are left to Alpine
+		if root, _, _ := strings.Cut(expr, "."); root == loopItem || root == loopIndex {
+			path, _, err := b.livePath(expr)
+			if err != nil {
+				return nil, fmt.Errorf("text bind: %w", err)
+			}
+			return boundText(n.Text, path), nil
+		}
 	}
 	text := n.Text
 	if !b.opts.Trusted {
@@ -406,7 +573,7 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 // props returns the node's props with any bind, model and on values from
 // the node applied.
 func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
-	if len(n.Bind) == 0 && n.Model == "" && len(n.On) == 0 {
+	if len(n.Bind) == 0 && n.Model == "" && len(n.On) == 0 && n.Component != optionType {
 		return n.Props, nil
 	}
 	var props map[string]json.RawMessage
@@ -418,8 +585,11 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 	if props == nil { // missing or null
 		props = map[string]json.RawMessage{}
 	}
+	live := map[string]any{}
+	var itemProps map[string]bool
 	if len(n.Bind) > 0 {
-		if err := b.bindProps(n.Component, props, n.Bind); err != nil {
+		var err error
+		if itemProps, err = b.bindProps(n.Component, props, live, n.Bind); err != nil {
 			return nil, err
 		}
 		if !b.opts.Trusted {
@@ -431,6 +601,11 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 			if err := checkProps(n.Component, raw); err != nil {
 				return nil, err
 			}
+		}
+	}
+	if n.Component == selectType {
+		if err := multipleDisabled(props, live, itemProps); err != nil {
+			return nil, err
 		}
 	}
 	var attrs map[string]any
@@ -445,6 +620,15 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 	}
 	if attrs == nil { // missing or null
 		attrs = map[string]any{}
+	}
+	maps.Copy(attrs, live)
+	if path := b.fieldPath(n); path != "" {
+		b.fieldAttrs(path, attrs)
+	}
+	if n.Component == optionType {
+		if err := b.optionSelection(props, attrs); err != nil {
+			return nil, err
+		}
 	}
 	if n.Model != "" {
 		if err := b.model(n.Component, props, attrs, n.Model); err != nil {
@@ -467,25 +651,77 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 	return json.Marshal(props)
 }
 
-// bindProps overlays the props with values taken from the document data.
-func (b *docBuilder) bindProps(typ string, props map[string]json.RawMessage, bind json.RawMessage) error {
+// optionSelection keeps an option selected while its value is its select's
+// model, whether the value is bound or set in its props.
+func (b *docBuilder) optionSelection(props map[string]json.RawMessage, attrs map[string]any) error {
+	if expr, ok := attrs[":value"].(string); ok {
+		return b.selectOption(props, attrs, expr, true)
+	}
+	var value string
+	for k, raw := range props {
+		if strings.EqualFold(k, "value") {
+			if err := json.Unmarshal(raw, &value); err != nil {
+				return fmt.Errorf("option value: %w", err)
+			}
+		}
+	}
+	return b.selectOption(props, attrs, value, false)
+}
+
+// multipleDisabled drops the live disabled binding of a multiple select,
+// whose attributes go on a wrapper rather than its controls, so its disabled
+// prop is only resolved at render time, which an "each" item can't be.
+// itemProps are the props bound to the item, by lower case name.
+func multipleDisabled(props map[string]json.RawMessage, live map[string]any, itemProps map[string]bool) error {
+	if _, ok := live[bindDisabled]; !ok {
+		return nil
+	}
+	var multiple bool
+	for k, raw := range props {
+		if strings.EqualFold(k, "multiple") {
+			_ = json.Unmarshal(raw, &multiple) //nolint:errcheck // checked when the props are decoded
+		}
+	}
+	if !multiple {
+		return nil
+	}
+	if itemProps[propDisabled] {
+		return fmt.Errorf("%s bind %s: multiple selects can't follow the %s", selectType, propDisabled, loopItem)
+	}
+	delete(live, bindDisabled)
+	return nil
+}
+
+// bindProps overlays the props with values taken from the document data,
+// and adds the bindings of the props that follow the data to live. It
+// returns the props bound to an "each" item, by lower case name.
+func (b *docBuilder) bindProps(typ string, props map[string]json.RawMessage, live map[string]any, bind json.RawMessage) (map[string]bool, error) {
 	var paths map[string]string
 	if err := decodeStrict(bind, &paths); err != nil {
-		return fmt.Errorf("%s bind: must map prop names to data paths: %w", typ, err)
+		return nil, fmt.Errorf("%s bind: must map prop names to data paths: %w", typ, err)
 	}
-	if b.data == nil {
-		return fmt.Errorf("%s bind: document data must be set", typ)
+	if b.data == nil && len(b.loops) == 0 {
+		return nil, fmt.Errorf("%s bind: document data must be set", typ)
 	}
+	itemProps := map[string]bool{}
 	for prop, path := range paths {
+		inLoop, err := b.liveBind(typ, prop, path, live)
+		if err != nil {
+			return nil, fmt.Errorf("%s bind %s: %w", typ, prop, err)
+		}
+		if inLoop {
+			itemProps[strings.ToLower(prop)] = true
+			continue // only known once Alpine renders the item
+		}
 		v, err := lookup(b.data, path)
 		if err != nil {
-			return fmt.Errorf("%s bind %s: %w", typ, prop, err)
+			return nil, fmt.Errorf("%s bind %s: %w", typ, prop, err)
 		}
 		if props[prop], err = json.Marshal(v); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	return nil
+	return itemProps, nil
 }
 
 // model adds the x-model binding for a form control and renders its initial
@@ -494,6 +730,11 @@ func (b *docBuilder) model(typ string, props map[string]json.RawMessage, attrs m
 	prop, ok := modelProps[typ]
 	if !ok {
 		return fmt.Errorf("%s: model is only supported on form controls", typ)
+	}
+	if expr, inLoop, err := b.livePath(path); err == nil && inLoop {
+		// The item's value is only known once Alpine renders it.
+		attrs["x-model"] = expr
+		return nil
 	}
 	if b.data == nil {
 		return fmt.Errorf("%s model: document data must be set", typ)
@@ -699,7 +940,8 @@ func checkActionPaths(name string, action map[string]any) error {
 	return nil
 }
 
-// lookup resolves a dotted path such as "invoice.lines.0.total" in data.
+// lookup resolves a dotted path such as "invoice.lines.0.total" in data. A
+// list's "length" is its number of items.
 func lookup(data map[string]any, path string) (any, error) {
 	var cur any = data
 	for _, key := range strings.Split(path, ".") {
@@ -711,6 +953,12 @@ func lookup(data map[string]any, path string) (any, error) {
 			}
 			cur = next
 		case []any:
+			if key == "length" {
+				// A list's length, as JavaScript reads it, e.g. for a
+				// condition that the list is empty.
+				cur = json.Number(strconv.Itoa(len(v)))
+				continue
+			}
 			i, err := strconv.Atoi(key)
 			if err != nil || i < 0 || i >= len(v) {
 				return nil, fmt.Errorf("data has no %q", path)

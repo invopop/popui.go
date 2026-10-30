@@ -1,0 +1,187 @@
+const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const { test } = require("node:test");
+const { runInNewContext } = require("node:vm");
+
+// Exercise the public action and magic APIs with a minimal Alpine adapter.
+// No browser or third-party dependencies are needed.
+function setup(schemas = '{"config":{"type":"string"}}') {
+  const magic = {};
+  const directives = {};
+  const timers = new Map();
+  let nextTimer = 0;
+  const data = { config: "valid" };
+  const listeners = {};
+  const root = {
+    getAttribute: (name) => name === "x-jsonui-errors" ? schemas : JSON.stringify({ config: "valid" }),
+    closest() { return this; },
+    querySelectorAll: () => [],
+    addEventListener(type, fn) { (listeners[type] ??= []).push(fn); },
+    removeEventListener() {},
+  };
+  const window = {
+    Alpine: {
+      reactive: (s) => s,
+      magic: (name, fn) => { magic[name] = fn; },
+      directive: (name, fn) => { directives[name] = fn; },
+      closestDataStack: () => [data],
+    },
+  };
+  runInNewContext(readFileSync(`${__dirname}/../assets/jsonui.js`, "utf8"), {
+    window,
+    console: { warn() {}, error() {} },
+    setTimeout(fn) { const id = ++nextTimer; timers.set(id, fn); return id; },
+    clearTimeout(id) { timers.delete(id); },
+  });
+  let saves = 0;
+  window.popui.actions.register("save", () => { saves++; });
+  return {
+    window, data, root,
+    errors: magic.errors(root),
+    get saves() { return saves; },
+    run: (list = [{ action: "validate" }, { action: "save" }]) => window.popui.actions.run(list, { el: root, data }),
+    track() {
+      let effect;
+      directives["jsonui-errors"](root, {}, { effect(fn) { effect = fn; fn(); }, cleanup() {} });
+      return () => effect();
+    },
+    flush() { for (const [id, fn] of timers) { timers.delete(id); fn(); } },
+    // fire dispatches an event from the field with the path, once track
+    // has installed the directive's listeners.
+    fire(type, path) {
+      const target = { closest: () => ({ dataset: { jsonuiField: path } }) };
+      for (const fn of listeners[type] ?? []) fn({ target });
+    },
+  };
+}
+
+test("missing validator stops Save and shows a document error; retry recovers", async () => {
+  const form = setup();
+  assert.equal(form.errors.checked, false);
+  assert.equal(form.errors.valid, false);
+  await form.run();
+  assert.equal(form.saves, 0);
+  assert.match(form.errors.unplaced()[0].message, /Unable to validate/);
+  form.window.popuiValidate = () => ({ errors: [] });
+  await form.run();
+  assert.equal(form.saves, 1);
+  assert.equal(form.errors.checked, true);
+  assert.equal(form.errors.valid, true);
+  assert.equal(form.errors.unplaced().length, 0);
+});
+
+for (const [name, failure] of [["error", () => ({ error: "compile failure" })], ["exception", () => { throw new Error("runtime failure"); }]]) {
+  test(`validator ${name} stops Save after a previously valid check`, async () => {
+    const form = setup();
+    form.window.popuiValidate = () => ({ errors: [] });
+    await form.run();
+    form.window.popuiValidate = failure;
+    await form.run();
+    assert.equal(form.saves, 1);
+    assert.equal(form.errors.checked, false);
+    assert.equal(form.errors.valid, false);
+    assert.match(form.errors.unplaced()[0].message, /Unable to validate/);
+  });
+}
+
+test("silent validation blocks without revealing document errors", async () => {
+  const form = setup();
+  await form.run([{ action: "validate", silent: true }, { action: "save" }]);
+  assert.equal(form.saves, 0);
+  assert.equal(form.errors.unplaced().length, 0);
+});
+
+test("schema errors block Save and keep friendly/custom messages", async () => {
+  const form = setup();
+  form.window.popuiValidate = () => ({ errors: [{ path: "config", message: "Enter a recipient" }] });
+  await form.run();
+  assert.equal(form.saves, 0);
+  assert.equal(form.errors.checked, true);
+  assert.equal(form.errors.valid, false);
+  assert.equal(form.errors.shown("config"), "Enter a recipient");
+});
+
+test("data changes invalidate the previous result during debounce", async () => {
+  const form = setup();
+  form.window.popuiValidate = () => ({ errors: [] });
+  const changed = form.track();
+  form.flush();
+  assert.equal(form.errors.valid, true);
+  form.data.config = 42;
+  changed();
+  assert.equal(form.errors.checked, false);
+  assert.equal(form.errors.valid, false);
+  form.window.popuiValidate = () => ({ errors: [{ path: "config", message: "Must be a string" }] });
+  form.flush();
+  assert.equal(form.errors.checked, true);
+  assert.equal(form.errors.valid, false);
+});
+
+test("reset clears validation failure and requires a fresh check", async () => {
+  const form = setup();
+  await form.run();
+  await form.run([{ action: "reset" }]);
+  assert.equal(form.errors.unplaced().length, 0);
+  assert.equal(form.errors.checked, false);
+  assert.equal(form.errors.valid, false);
+});
+
+test("reset validates the restored data straight away", async () => {
+  const form = setup();
+  form.window.popuiValidate = () => ({ errors: [] });
+  await form.run([{ action: "reset" }]);
+  assert.equal(form.errors.checked, true);
+  assert.equal(form.errors.valid, true);
+});
+
+test("background validation failure remains hidden until explicit validation", async () => {
+  const form = setup();
+  form.track();
+  form.flush();
+  assert.equal(form.errors.unplaced().length, 0);
+  assert.equal(form.errors.valid, false);
+  await form.run();
+  assert.equal(form.errors.unplaced().length, 1);
+});
+
+test("documents without schemas can save without WASM", async () => {
+  const form = setup("");
+  assert.equal(form.errors.checked, true);
+  assert.equal(form.errors.valid, true);
+  await form.run();
+  assert.equal(form.saves, 1);
+});
+
+test("errors thrown by an action stop Save and clear on edit or retry", async () => {
+  const form = setup();
+  form.window.popuiValidate = () => ({ errors: [] });
+  form.track();
+  let fail = true;
+  form.window.popui.actions.register("submit", () => {
+    if (fail) throw { errors: [{ path: "config", message: "Already taken" }] };
+  });
+  const list = [{ action: "submit" }, { action: "save" }];
+  await form.run(list);
+  assert.equal(form.saves, 0);
+  assert.equal(form.errors.shown("config"), "Already taken");
+  form.fire("input", "config");
+  assert.equal(form.errors.shown("config"), "");
+  await form.run(list);
+  assert.equal(form.errors.shown("config"), "Already taken");
+  fail = false;
+  await form.run(list);
+  assert.equal(form.errors.shown("config"), "");
+  assert.equal(form.saves, 1);
+});
+
+test("errors thrown without a path are shown for the whole document", async () => {
+  for (const thrown of [[{ message: "Server unavailable" }], [{ path: "", message: "" }], []]) {
+    const form = setup();
+    form.window.popui.actions.register("submit", () => { throw { errors: thrown }; });
+    await form.run([{ action: "submit" }, { action: "save" }]);
+    assert.equal(form.saves, 0);
+    const [shown] = form.errors.unplaced();
+    assert.equal(shown?.path, "");
+    assert.equal(shown?.message, thrown[0]?.message || "Something went wrong. Please try again.");
+  }
+});

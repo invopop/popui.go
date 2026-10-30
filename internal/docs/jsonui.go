@@ -92,6 +92,86 @@ const jsonuiAssetsExample = `// jsonui.js runs the actions documents reference, 
 e.StaticFS("/_jsonui", echo.MustSubFS(jsonui.Assets, "assets"))
 // <script src="/_jsonui/jsonui.js"></script>`
 
+const jsonuiListsExample = `{
+  "data": {
+    "config": { "connection_id": "" },
+    "connections": [],
+    "loading": { "connections": false }
+  },
+  "handlers": {
+    "load": { "action": "app.request", "path": "/connections", "into": "connections", "busy": "loading.connections" }
+  },
+  "init": "load",
+  "components": [
+    {
+      "is": "select",
+      "props": { "label": "Connection" },
+      "model": "config.connection_id",
+      "bind": { "disabled": "loading.connections" },
+      "children": [
+        { "is": "option", "props": { "value": "", "label": "Default" } },
+        { "is": "option", "each": "connections", "bind": { "value": "item.id", "label": "item.name" } }
+      ]
+    },
+    { "is": "p", "show": "loading.connections", "children": [{ "is": "text", "text": "Loading…" }] }
+  ]
+}`
+
+const jsonuiValidationExample = `{
+  "data": { "config": { "to": "", "format": "html" } },
+  "schemas": {
+    "config": {
+      "type": "object",
+      "required": ["to"],
+      "properties": {
+        "to": {
+          "type": "string",
+          "format": "email",
+          "errorMessage": { "format": "Enter an email address" }
+        },
+        "format": { "enum": ["html", "text"] }
+      }
+    }
+  },
+  "handlers": {
+    "update": [{ "action": "validate", "silent": true }, { "action": "step.update" }]
+  },
+  "components": [
+    { "is": "input", "model": "config.to", "props": { "label": "To" }, "on": { "change": "update" } },
+    { "is": "select", "model": "config.format",
+      "props": { "label": "Format", "options": [
+        { "value": "html", "label": "HTML" },
+        { "value": "text", "label": "Plain text" }
+      ] },
+      "on": { "change": "update" } }
+  ]
+}`
+
+const jsonuiErrorsExample = `<script>
+  // Errors a host action throws show on the fields with their paths.
+  popui.actions.register("step.save", async ({ snapshot }) => {
+    const res = await fetch("/config", { method: "PUT", body: JSON.stringify(snapshot().config) });
+    if (res.status === 422) {
+      const { errors } = await res.json(); // [{ path: "config.to", message: "…" }]
+      throw Object.assign(new Error("invalid config"), { errors });
+    }
+  });
+</script>`
+
+const jsonuiValidatorExample = `v, err := jsonui.NewValidator(doc.Schemas)
+if err != nil {
+	return err
+}
+// Data is JSON shaped like the document's, with each schema's value at its
+// path, e.g. {"config": {...}} with the config being saved.
+errs, err := v.ValidateJSON(data)
+if err != nil {
+	return err
+}
+for _, e := range errs {
+	fmt.Println(e.Path, e.Message) // config.to Enter an email address
+}`
+
 const jsonuiActionsExample = `<script src="/_jsonui/jsonui.js"></script>
 <script>
   // Host actions receive the interpolated params, the document's reactive

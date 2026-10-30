@@ -31,7 +31,31 @@
 				input.addEventListener("cancel", () => resolve(undefined));
 				input.click();
 			}));
-		const ACTIONS = ["alert", "set", "reset", "dispatch", "save", "step.update", "asset.choose"];
+		// app.request is how the console reaches an app's API. Here it answers
+		// from the static APP_RESPONSES in samples.js after a short delay.
+		popui.actions.register("app.request", ({ params }) =>
+			new Promise((resolve, reject) => setTimeout(() => {
+				hostLog("app.request", params);
+				const res = window.APP_RESPONSES?.[params.path];
+				if (res === undefined) reject(new Error(`no sample response for ${params.path}`));
+				else resolve(structuredClone(res));
+			}, 600)));
+		// config.save stands in for an app saving the config, which checks it
+		// again. It rejects addresses at example.com, reporting errors by
+		// path for the document to show.
+		popui.actions.register("config.save", ({ snapshot }) =>
+			new Promise((resolve, reject) => setTimeout(() => {
+				const { config } = snapshot();
+				hostLog("config.save", config);
+				if (!String(config.to).endsWith("@example.com")) return resolve();
+				reject(Object.assign(new Error("invalid config"), {
+					errors: [
+						{ path: "config.to", message: "example.com addresses can't receive email" },
+						{ path: "config", message: "The config wasn't saved" },
+					],
+				}));
+			}, 400)));
+		const ACTIONS = ["alert", "set", "reset", "dispatch", "validate", "save", "step.update", "asset.choose", "app.request", "config.save"];
 
 		function hostLog(topic, body) {
 			const log = document.getElementById("host-log");
@@ -96,6 +120,8 @@
 					<option value="details">Invoice details (data-driven)</option>
 					<option value="interactive">Interactive: customer form</option>
 					<option value="pdf">PDF step config (from pdf.go)</option>
+					<option value="lists">Lists loaded by the host</option>
+					<option value="validation">Validation with a JSON Schema</option>
 					<option value="form">Customer form</option>
 					<option value="stress">Stress: 200 cards</option>
 					<option value="stress1000">Stress: 1000 cards</option>
