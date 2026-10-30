@@ -52,6 +52,9 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e.GET("/", s.index)
 
 	// Experimental jsonui playground
+	if err := playground.Check(); err != nil {
+		return err
+	}
 	e.GET(strings.TrimSuffix(playground.Path, "/"), func(c echo.Context) error {
 		return c.Redirect(http.StatusMovedPermanently, playground.Path)
 	})
