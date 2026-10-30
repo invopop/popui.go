@@ -6,10 +6,10 @@
 	<title>PopUI JSON Playground</title>
 	<link rel="stylesheet" href="/_popui/assets/popui.css"/>
 	<script src="/_popui/assets/popui.js"></script>
-	<!-- jsonui.js runs the actions documents reference; the page can add its own. -->
+	<!-- jsonui.js runs the actions panels reference; the page can add its own. -->
 	<script src="jsonui.js"></script>
 	<script>
-		// Host-defined actions. Documents may only use actions the host both
+		// Host-defined actions. Panels may only use actions the host both
 		// registers here and allows when rendering (see ACTIONS below).
 		popui.actions.register("save", ({ snapshot }) =>
 			alert(`Host action "save" received:\n${JSON.stringify(snapshot(), null, 2)}`));
@@ -42,7 +42,7 @@
 			}, 600)));
 		// config.save stands in for an app saving the config, which checks it
 		// again. It rejects addresses at example.com, reporting errors by
-		// path for the document to show.
+		// path for the panel to show.
 		popui.actions.register("config.save", ({ snapshot }) =>
 			new Promise((resolve, reject) => setTimeout(() => {
 				const { config } = snapshot();
@@ -91,7 +91,7 @@
 		.error { color: var(--color-foreground-critical); font-size: 12px; white-space: pre-wrap; }
 		.preview { overflow: auto; padding: 24px; background: var(--color-background-default-secondary); }
 		.preview > div { max-width: 640px; margin: 0 auto; }
-		/* The host lays out a document's top-level nodes; its root is display: contents. */
+		/* The host lays out a panel's top-level nodes; its root is display: contents. */
 		#preview { display: flex; flex-direction: column; gap: 16px; }
 		.host { margin-top: 24px; border-top: 1px solid var(--color-border); padding-top: 12px; font-size: 12px; }
 		.host strong { font-weight: 500; }
@@ -131,7 +131,7 @@
 				<button id="bench" disabled>Benchmark ×50</button>
 				<label><input type="checkbox" id="live" checked/> live</label>
 				<label title="Reject script in props and allow only the listed actions"><input type="checkbox" id="strict" checked/> strict</label>
-				<a href="schema.json" target="_blank">schema</a>
+				<a href="panel.json" target="_blank">schema</a>
 			</div>
 			<div id="code"></div>
 			<div id="editor-note" class="note" hidden></div>
@@ -152,7 +152,7 @@
 		const fmtKB = (b) => (b > 1048576 ? `${(b / 1048576).toFixed(2)}MB` : `${(b / 1024).toFixed(1)}KB`);
 
 		// The editor is attached once editor.js, a module, has loaded; until
-		// then the document is kept in pending.
+		// then the panel is kept in pending.
 		let editor = null;
 		let pending = "";
 		const getJSON = () => (editor ? editor.getValue() : pending);
@@ -163,8 +163,9 @@
 			setJSON(JSON.stringify(doc, null, 2));
 		}
 
+		let rendered; // the JSON last rendered
 		function render() {
-			const json = getJSON();
+			const json = (rendered = getJSON());
 			let t = performance.now();
 			const res = popuiRender(json, renderOptions());
 			const renderMs = performance.now() - t;
@@ -185,10 +186,12 @@
 		function scheduleRender() {
 			if (!$("live").checked || $("render").disabled) return;
 			clearTimeout(timer);
-			timer = setTimeout(render, 150);
+			// Skip text the page loaded and has rendered, such as a sample, or
+			// the panel would start again and repeat its init.
+			timer = setTimeout(() => getJSON() !== rendered && render(), 150);
 		}
 
-		// serverRender times a server-side render of the same document. Only
+		// serverRender times a server-side render of the same panel. Only
 		// `popui serve` offers it; the published static site resolves to null.
 		async function serverRender(json) {
 			const t = performance.now();

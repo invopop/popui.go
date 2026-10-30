@@ -19,7 +19,7 @@ func render(t *testing.T, opts Options, doc string) (string, error) {
 	return buf.String(), err
 }
 
-// TestStrictRejectsScript locks in that, by default, a document has no way
+// TestStrictRejectsScript locks in that, by default, a panel has no way
 // to run script other than the actions the host allows.
 func TestStrictRejectsScript(t *testing.T) {
 	cases := map[string]struct {
@@ -44,7 +44,7 @@ func TestStrictRejectsScript(t *testing.T) {
 		},
 		"text bind without data": {
 			`{"components":[{"is":"text","bind":"document.cookie"}]}`,
-			`text bind: document data must be set`,
+			`text bind: panel data must be set`,
 		},
 		"text bind through a prototype": {
 			`{"data":{"a":{}},"components":[{"is":"text","bind":"a.constructor.name"}]}`,
@@ -109,7 +109,7 @@ func TestStrictRejectsScript(t *testing.T) {
 	}
 }
 
-// TestAlwaysRejected covers checks that apply to trusted documents too, as
+// TestAlwaysRejected covers checks that apply to trusted panels too, as
 // "model" and "on" keys end up inside generated Alpine attributes.
 func TestAlwaysRejected(t *testing.T) {
 	cases := map[string]string{
@@ -401,13 +401,13 @@ func TestInit(t *testing.T) {
 		t.Errorf("missing %s in:\n%s", want, html)
 	}
 
-	// Without data, init still gets a document root to run on.
+	// Without data, init still gets a panel root to run on.
 	html, err = render(t, Options{}, `{"init": {"action": "alert", "message": "Hi"}, "components": []}`)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(html, `data-popui-document`) || !strings.Contains(html, `x-init=`) {
-		t.Errorf("missing document root with x-init in:\n%s", html)
+	if !strings.Contains(html, `data-popui-panel`) || !strings.Contains(html, `x-init=`) {
+		t.Errorf("missing panel root with x-init in:\n%s", html)
 	}
 
 	bad := map[string]string{

@@ -1,11 +1,11 @@
-// Sample JSON documents for the jsonui playground.
+// Sample JSON panels for the jsonui playground.
 // Wrapped in a function so its helpers stay out of the page's global scope;
-// only window.SAMPLES and window.SCHEMA_PATH are exported.
+// only window.SAMPLES is exported.
 (() => {
-  // Relative, so it resolves to the schema published next to the playground
-  // wherever it's hosted: popui serve, a deploy preview or production.
-  const SCHEMA = "schema.json";
-  window.SCHEMA_PATH = SCHEMA;
+  // The schema's "$id" (schema.ID in Go), as real panels use. The editor
+  // loads the playground's own panel.json in its place, so the schema always
+  // matches the renderer: popui serve, a deploy preview or production.
+  const SCHEMA = "https://assets.invopop.com/popui/v0/panel.json";
 
   const text = (t) => ({ is: "text", text: t });
 
@@ -457,7 +457,7 @@
     ],
   };
 
-  // lists renders data a host action loads after the document starts, as the
+  // lists renders data a host action loads after the panel starts, as the
   // console's step configuration does with "app.request", which the console
   // sends to the app's API. In the playground, app.request answers from
   // APP_RESPONSES below after a short delay, so the loading state shows.
@@ -603,7 +603,7 @@
   //     valid, through a silent "validate";
   //   - the playground's config.save stands in for the app's API, rejecting
   //     addresses at example.com with an error for the field, and an error
-  //     for a path without one, which is shown after the document.
+  //     for a path without one, which is shown after the panel.
   window.SAMPLES.validation = {
     $schema: SCHEMA,
     data: {
@@ -681,7 +681,7 @@
 
   // blocked shows what strict mode rejects: Alpine directives in attributes,
   // javascript: URLs and actions the host hasn't allowed. Untick "strict" to
-  // render it as a trusted document.
+  // render it as a trusted panel.
   window.SAMPLES.blocked = {
     $schema: SCHEMA,
     data: { name: "Acme" },
@@ -689,13 +689,13 @@
       {
         is: "card",
         children: [
-          { is: "card_header", props: { title: "Untrusted document" } },
+          { is: "card_header", props: { title: "Untrusted panel" } },
           {
             is: "card_content",
             children: [
               {
                 is: "button",
-                props: { attributes: { "@click": "alert('Script ran from document attributes: ' + document.title)" } },
+                props: { attributes: { "@click": "alert('Script ran from panel attributes: ' + document.title)" } },
                 children: [text("Run inline script")],
               },
             ],

@@ -1,5 +1,5 @@
 // Package playground provides the experimental jsonui playground: a page
-// that renders JSON documents to PopUI HTML in the browser with the jsonui
+// that renders JSON panels to PopUI HTML in the browser with the jsonui
 // WebAssembly build. It is served by `popui serve` and published by
 // `popui build` under Path. Both read the editor's bundle from disk, so they
 // must run from the module root after building it.
@@ -26,7 +26,7 @@ import (
 // Path is where the playground is mounted on the docs site.
 const Path = "/jsonui/"
 
-// actions are the actions documents may use in the playground: the built-in
+// actions are the actions panels may use in the playground: the built-in
 // ones plus those the playground page registers itself, as in its ACTIONS.
 var actions = append(append([]string{}, jsonui.BuiltinActions...), "save", "step.update", "asset.choose", "app.request", "config.save")
 
@@ -44,7 +44,7 @@ const (
 
 // files returns the published files that don't need compiling.
 func files() (map[string][]byte, error) {
-	out := map[string][]byte{"schema.json": schema.Document}
+	out := map[string][]byte{"panel.json": schema.Panel}
 	for _, name := range []string{"index.html", "samples.js"} {
 		data, err := static.ReadFile(name)
 		if err != nil {
@@ -119,13 +119,13 @@ func goEnv(key string) (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
-// maxRenderBody limits the documents POST render accepts. The playground's
+// maxRenderBody limits the panels POST render accepts. The playground's
 // largest sample, 1000 stress cards, is about 2MB.
 const maxRenderBody = 4 << 20
 
 // Handler serves the playground for local development. The WebAssembly
 // module is compiled from the current source on first request. It also
-// offers POST render, a server-side render of the same document for
+// offers POST render, a server-side render of the same panel for
 // comparison, which the static published site doesn't have.
 func Handler() http.Handler {
 	var (

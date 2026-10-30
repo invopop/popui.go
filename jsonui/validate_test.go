@@ -160,7 +160,7 @@ func TestNewValidatorErrors(t *testing.T) {
 			t.Errorf("%s: got %v, want %q", schemas, err, want)
 		}
 	}
-	// Documents report them too.
+	// Panels report them too.
 	_, err := render(t, Options{}, `{"data": {}, "schemas": {"config": {"$ref": "file:///etc/passwd"}}, "components": []}`)
 	if err == nil || !strings.Contains(err.Error(), "schemas config") {
 		t.Errorf("got %v", err)
@@ -232,7 +232,7 @@ func TestSchemaIndependentPresentation(t *testing.T) {
 }
 
 // TestFieldsWithoutSchemas checks that controls show errors actions report
-// without schemas, and that documents without controls are unchanged.
+// without schemas, and that panels without controls are unchanged.
 func TestFieldsWithoutSchemas(t *testing.T) {
 	html := mustRender(t, `{"data": {"name": ""}, "components": [{"is": "input", "model": "name"}]}`)
 	assertContains(t, html, `x-jsonui-errors=""`, `<div data-jsonui-field="name" x-id="[&#39;jsonui-error&#39;]">`)

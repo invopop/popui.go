@@ -10,8 +10,8 @@
 //	popuiValidate(schemas, data)
 //	  → { errors: [{ path, message }] } or { error }
 //
-// validates document data, as JSON, against a document's schemas, as the
-// JSON object of data paths to schemas jsonui.js finds on documents.
+// validates panel data, as JSON, against a panel's schemas, as the
+// JSON object of data paths to schemas jsonui.js finds on panels.
 //
 //	GOOS=js GOARCH=wasm go build -o popui.wasm ./jsonui/wasm
 package main
@@ -84,7 +84,7 @@ func options(v js.Value) jsonui.Options {
 	return o
 }
 
-// validators keeps the validators of the documents' schemas, as the same
+// validators keeps the validators of the panels' schemas, as the same
 // ones validate the data every time it changes.
 var validators = validatorCache{byJSON: map[string]*jsonui.Validator{}}
 
@@ -92,7 +92,7 @@ type validatorCache struct {
 	byJSON map[string]*jsonui.Validator
 }
 
-// maxValidators bounds the cache; documents rarely change schemas.
+// maxValidators bounds the cache; panels rarely change schemas.
 const maxValidators = 16
 
 func (c *validatorCache) get(schemas string) (*jsonui.Validator, error) {

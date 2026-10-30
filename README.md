@@ -43,7 +43,7 @@ Examples of each component are in `internal/docs/examples` and on the documentat
 
 ### JSON UI
 
-The experimental `jsonui` package renders PopUI components from JSON documents, in Go or in the browser through WebAssembly. Its usage is described on the documentation site's JSON UI page, and the `/jsonui/` playground on the development server is the quickest way to try it.
+The experimental `jsonui` package renders panels of PopUI components described in JSON, in Go or in the browser through WebAssembly. Its usage is described on the documentation site's JSON UI page, and the `/jsonui/` playground on the development server is the quickest way to try it.
 
 ## Development
 
@@ -89,7 +89,7 @@ cd internal/docs/playground/editor && npm ci && npm run build
 3. If templates use new utility classes, run `go generate ./...` to rebuild `assets/popui.css`.
 4. Run `go build ./...` and `go test ./...`.
 
-Generated files (`*_templ.go`, `assets/popui.css` and `jsonui/schema/document.json`) are checked in, so commit them with the source changes.
+Generated files (`*_templ.go`, `assets/popui.css` and `jsonui/schema/panel.json`) are checked in, so commit them with the source changes.
 
 When removing or renaming a component or props type, add an entry to [MIGRATIONS.md](./MIGRATIONS.md) in the same change, with before and after snippets.
 
@@ -138,4 +138,4 @@ The schema, the documentation site's component table and the playground's comple
    - Doc comments on the fields become the schema's descriptions.
    - String props with a fixed set of values list them in a tag, including `""` when the prop is optional: `` Variant string `jsonschema:"enum=,enum=default,enum=pill"` ``.
    - String props that hold URLs are tagged `` `jsonschema:"format=uri-reference"` ``, so strict mode rejects `javascript:` and similar URLs in them. `templ.SafeURL` props are treated as URLs without a tag.
-4. Run `go generate ./jsonui/schema`. `go test ./...` fails while `jsonui/schema/document.json` is out of date.
+4. Run `go generate ./jsonui/schema`. `go test ./...` fails while `jsonui/schema/panel.json` is out of date.
