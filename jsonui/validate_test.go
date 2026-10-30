@@ -114,6 +114,36 @@ func TestValidateErrorMessages(t *testing.T) {
 	})
 }
 
+// TestValidateObjectErrorMessage checks that an object's single
+// "errorMessage" is used for its missing properties too, after their own.
+func TestValidateObjectErrorMessage(t *testing.T) {
+	v := mustValidator(t, `{"config": {
+		"type": "object",
+		"required": ["to", "from"],
+		"errorMessage": "Complete the sender details",
+		"properties": {
+			"to": {"type": "string", "errorMessage": "Enter the recipient"},
+			"from": {"type": "string"}
+		}
+	}}`)
+	assertErrors(t, validateJSON(t, v, `{"config": {}}`), map[string]string{
+		pathTo:        "Enter the recipient",
+		"config.from": "Complete the sender details",
+	})
+}
+
+// TestValidateOneOfNestedConst checks that alternatives failing on more than
+// their const are still listed.
+func TestValidateOneOfNestedConst(t *testing.T) {
+	v := mustValidator(t, `{"config": {"type": "object", "properties": {"mode": {"oneOf": [
+		{"allOf": [{"const": "html"}, {"minLength": 5}]},
+		{"const": "text"}
+	]}}}}`)
+	assertErrors(t, validateJSON(t, v, `{"config": {"mode": "rtf"}}`), map[string]string{
+		"config.mode": "Must be one of html, text",
+	})
+}
+
 func TestNewValidatorErrors(t *testing.T) {
 	for schemas, want := range map[string]string{
 		`{"config": {"$ref": "https://example.com/schema.json"}}`: "may only refer to themselves",
@@ -153,8 +183,14 @@ func TestFields(t *testing.T) {
 	}`)
 	assertContains(t, html,
 		`x-jsonui-errors="{&#34;config&#34;:{&#34;type&#34;:&#34;object&#34;`,
-		`<div data-jsonui-field="config.to">`,
+		`<div data-jsonui-field="config.to" x-id="[&#39;jsonui-error&#39;]">`,
 		`:aria-invalid="!!$errors.shown(&#39;config.to&#39;)"`,
+		// The control is described by its error while it's shown, which is
+		// announced as it appears.
+		`:aria-describedby="$errors.shown(&#39;config.to&#39;) ? $id(&#39;jsonui-error&#39;) : null"`,
+		`<div aria-live="polite"><p `,
+		`:id="$id(&#39;jsonui-error&#39;)"`,
+		`<div aria-live="polite"><template x-for="e in $errors.unplaced()"`,
 		`:class="$errors.shown(&#39;config.to&#39;) ? &#39;!text-foreground-critical`,
 		`x-show="$errors.shown(&#39;config.to&#39;)" x-text="$errors.shown(&#39;config.to&#39;)"`,
 		`<template x-for="e in $errors.unplaced()" :key="e.path">`,
@@ -181,7 +217,7 @@ func TestFields(t *testing.T) {
 // without schemas, and that documents without controls are unchanged.
 func TestFieldsWithoutSchemas(t *testing.T) {
 	html := mustRender(t, `{"data": {"name": ""}, "components": [{"is": "input", "model": "name"}]}`)
-	assertContains(t, html, `x-jsonui-errors=""`, `<div data-jsonui-field="name">`)
+	assertContains(t, html, `x-jsonui-errors=""`, `<div data-jsonui-field="name" x-id="[&#39;jsonui-error&#39;]">`)
 
 	html = mustRender(t, `{"data": {"name": "x"}, "components": [{"is": "text", "bind": "name"}]}`)
 	if strings.Contains(html, "jsonui-errors") || strings.Contains(html, "$errors") {

@@ -16,8 +16,15 @@ import (
 // or left, or after the "validate" action, so a new form isn't covered in
 // them.
 
-// fieldAttrs adds the bindings that mark a control as invalid while its
-// path has an error shown.
+// errorIDName is the name of the Alpine x-id scope of a field, and errorID
+// the expression of its error's id, unique to the field on the page.
+const (
+	errorIDName = "jsonui-error"
+	errorID     = "$id('" + errorIDName + "')"
+)
+
+// fieldAttrs adds the bindings that mark a control as invalid, and described
+// by its error, while its path has an error shown.
 func (b *docBuilder) fieldAttrs(path string, attrs map[string]any) {
 	b.fields++
 	shown := shownError(path)
@@ -25,6 +32,10 @@ func (b *docBuilder) fieldAttrs(path string, attrs map[string]any) {
 		attrs[":class"] = shown + " ? '" + classes.FormFieldError() + "' : ''"
 	}
 	attrs[":aria-invalid"] = "!!" + shown
+	_, own := attrs["aria-describedby"]
+	if _, bound := attrs[":aria-describedby"]; !own && !bound {
+		attrs[":aria-describedby"] = shown + " ? " + errorID + " : null"
+	}
 }
 
 // schemaProps fills in the props a control's schema provides that the node

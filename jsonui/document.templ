@@ -27,20 +27,27 @@ templ documentRoot(xdata, init string, errors bool, schemas string) {
 }
 
 // field wraps a form control with the error shown for the data path it's
-// the model of. It's hidden until Alpine shows it.
+// the model of. It's hidden until Alpine shows it, in a live region so
+// screen readers announce it, and has an id unique to the field that the
+// control is described by while it's shown.
 templ field(path, shown string) {
-	<div data-jsonui-field={ path }>
+	<div data-jsonui-field={ path } x-id={ "['" + errorIDName + "']" }>
 		{ children... }
-		@popui.InputError(props.Error{Class: "mt-2", Attributes: templ.Attributes{"style": "display: none", "x-show": shown, xText: shown}})
+		<div aria-live="polite">
+			@popui.InputError(props.Error{Class: "mt-2", Attributes: templ.Attributes{"style": "display: none", "x-show": shown, xText: shown, ":id": errorID}})
+		</div>
 	</div>
 }
 
 // unplacedErrors lists the errors shown for paths without a field, such as
-// the whole of the data a schema validates.
+// the whole of the data a schema validates, in a live region so screen
+// readers announce them.
 templ unplacedErrors() {
-	<template x-for="e in $errors.unplaced()" :key="e.path">
-		@popui.InputError(props.Error{Class: "mt-2", Attributes: templ.Attributes{xText: "e.message"}})
-	</template>
+	<div aria-live="polite">
+		<template x-for="e in $errors.unplaced()" :key="e.path">
+			@popui.InputError(props.Error{Class: "mt-2", Attributes: templ.Attributes{xText: "e.message"}})
+		</template>
+	</div>
 }
 
 // boundText renders text whose content is kept in sync with an Alpine

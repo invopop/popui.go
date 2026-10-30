@@ -237,9 +237,10 @@ func (v *Validator) message(ve *jsonschema.ValidationError, def string) string {
 	return def
 }
 
-// requiredMessage is the message for a missing property: its own schema's
-// "errorMessage", or the "required" entry of its parent's, which may also
-// be an object with a message for each property.
+// requiredMessage is the message for a missing property: the "required"
+// entry of its parent's "errorMessage", which may also be an object with a
+// message for each property, then its own schema's "errorMessage", then its
+// parent's when that is one message for every error.
 func (v *Validator) requiredMessage(ve *jsonschema.ValidationError, prop string) string {
 	parent, _ := v.subschema(ve.SchemaURL).(map[string]any)
 	if m, ok := parent["errorMessage"].(map[string]any); ok {
@@ -261,6 +262,9 @@ func (v *Validator) requiredMessage(ve *jsonschema.ValidationError, prop string)
 		if msg, ok := m["required"].(string); ok {
 			return msg
 		}
+	}
+	if m, ok := parent["errorMessage"].(string); ok {
+		return m
 	}
 	return msgRequired
 }
@@ -305,10 +309,11 @@ func oneOfMessage(ve *jsonschema.ValidationError) string {
 	var want []string
 	for _, c := range ve.Causes {
 		k, ok := c.ErrorKind.(*kind.Const)
-		if !ok {
-			for _, cc := range c.Causes {
-				k, ok = cc.ErrorKind.(*kind.Const)
+		for _, cc := range c.Causes {
+			if ok {
+				break
 			}
+			k, ok = cc.ErrorKind.(*kind.Const)
 		}
 		if !ok {
 			return "Not one of the allowed values"
