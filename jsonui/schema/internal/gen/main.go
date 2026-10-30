@@ -231,7 +231,7 @@ var builtinActions = []struct {
 		{"value", &jsonschema.Schema{Description: "New value; strings may use {{path}} placeholders."}},
 	}},
 	{"reset", "Restore the document data to its initial values, and clear its errors.", nil},
-	{"validate", "Validate the document data against its schemas, showing every error, and stop the actions after it while there are any.", []param{
+	{"validate", "Validate the document data against its schemas, showing every error, and stop the actions after it while there are errors or validation can't run.", []param{
 		{"silent", &jsonschema.Schema{Type: "boolean", Description: "Don't show errors in fields that haven't been touched, e.g. to only save valid data as it changes."}},
 	}},
 	{"dispatch", "Dispatch a bubbling DOM CustomEvent for the host page to handle.", []param{

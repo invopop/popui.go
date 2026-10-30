@@ -321,8 +321,8 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 			xdata = "{}" // init runs on the document root
 		}
 	}
-	errors := b.fields > 0 || b.validator != nil
-	if errors {
+	hasErrors := b.fields > 0 || b.validator != nil
+	if hasErrors {
 		body = templ.Join(body, unplacedErrors())
 		if xdata == "" {
 			xdata = "{}" // errors are tracked on the document root
@@ -331,7 +331,7 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 	if xdata == "" {
 		return body, nil
 	}
-	return withChildren(documentRoot(xdata, xinit, errors, schemas), body), nil
+	return withChildren(documentRoot(xdata, xinit, hasErrors, schemas), body), nil
 }
 
 // compactSchemas returns the schemas as the compact JSON jsonui.js

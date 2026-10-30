@@ -2263,7 +2263,7 @@
       "required": [
         "action"
       ],
-      "description": "Validate the document data against its schemas, showing every error, and stop the actions after it while there are any."
+      "description": "Validate the document data against its schemas, showing every error, and stop the actions after it while there are errors or validation can't run."
     },
     "node.avatar": {
       "properties": {

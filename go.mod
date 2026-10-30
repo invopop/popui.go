@@ -11,6 +11,7 @@ require (
 	github.com/invopop/icons v0.19.0
 	github.com/invopop/jsonschema v0.14.0
 	github.com/labstack/echo/v4 v4.15.3
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
 	github.com/spf13/cobra v1.9.1
 	github.com/yuin/goldmark v1.8.5
 	golang.org/x/text v0.37.0
@@ -24,7 +25,6 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/pb33f/ordered-map/v2 v2.3.1 // indirect
-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
