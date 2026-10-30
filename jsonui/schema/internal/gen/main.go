@@ -103,6 +103,15 @@ func render() ([]byte, error) {
 	if p, ok := docDef.Properties.Get("handlers"); ok {
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
 	}
+	// Schemas are JSON Schemas, keyed by the data path they validate. Paths
+	// can't reach the keys safePath in jsonui rejects.
+	if p, ok := docDef.Properties.Get("schemas"); ok {
+		p.PropertyNames = &jsonschema.Schema{
+			Pattern: `^[A-Za-z_$][\w$]*(\.[\w$]+)*$`,
+			Not:     &jsonschema.Schema{Pattern: `(^|\.)(__proto__|prototype|constructor)(\.|$)`},
+		}
+		p.AdditionalProperties = &jsonschema.Schema{Ref: "https://json-schema.org/draft/2020-12/schema"}
+	}
 	// Init is a json.RawMessage holding a handler, as in "on".
 	if p, ok := docDef.Properties.Get("init"); ok {
 		docDef.Properties.Set("init", &jsonschema.Schema{Ref: "#/$defs/Handler", Description: p.Description})
@@ -225,7 +234,10 @@ var builtinActions = []struct {
 		{"path", &jsonschema.Schema{Type: typeString, Description: "Data path to change, e.g. \"customer.name\"."}},
 		{"value", &jsonschema.Schema{Description: "New value; strings may use {{path}} placeholders."}},
 	}},
-	{"reset", "Restore the document data to its initial values.", nil},
+	{"reset", "Restore the document data to its initial values, and clear its errors.", nil},
+	{"validate", "Validate the document data against its schemas, showing every error, and stop the actions after it while there are errors or validation can't run.", []param{
+		{"silent", &jsonschema.Schema{Type: "boolean", Description: "Don't show errors in fields that haven't been touched, e.g. to only save valid data as it changes."}},
+	}},
 	{"dispatch", "Dispatch a bubbling DOM CustomEvent for the host page to handle.", []param{
 		{"event", &jsonschema.Schema{Type: typeString, Description: "Event name, e.g. \"customer:save\"."}},
 		{"detail", &jsonschema.Schema{Description: "Event detail; defaults to a copy of the document data."}},

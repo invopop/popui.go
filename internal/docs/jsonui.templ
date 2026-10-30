@@ -41,6 +41,7 @@ templ jsonUI() {
 					{Name: "components", Type: "[]node", Required: true, Description: "The components to render, in order."},
 					{Name: "data", Type: "object", Description: "The document's state. It becomes the Alpine.js `x-data` of the document, is where `bind` and `model` read from, and is what actions change."},
 					{Name: "handlers", Type: "object", Description: "Named actions, or lists of actions, that `on` can refer to by name, so a handler used in several places is defined once."},
+					{Name: "schemas", Type: "object", Description: "Data paths mapped to the JSON Schema their value must match, e.g. `{\"config\": {...}}`. See Validation below."},
 					{Name: "init", Type: "handler", Description: "Runs once when the document starts, like an `on` handler: an action, a handler name or a list of them, e.g. `\"update\"` so the host receives the initial data."},
 					{Name: "$schema", Type: "string", Description: "The JSON Schema of the format, for editors. Ignored when rendering."},
 				},
@@ -67,6 +68,23 @@ templ jsonUI() {
 			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiListsExample, Language: "json"})
 		}
+		@modules.Section("Validation", "json-ui-validation") {
+			@popui.Description() {
+				"schemas" describe what the data must be with JSON Schemas, so a document can check its data as it's edited and an app can check it again with the same schemas when it's saved. They also tell anyone writing the data without the form, such as an LLM, what it must be.
+			}
+			<ul class="list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary">
+				<li>Each form control with a "model" shows the error for its path once it's been changed or left, or after the validate action. Errors for paths without a control are shown after the document.</li>
+				<li>Messages are written for the person filling in the form. A schema's "errorMessage" replaces them: one message, or one for each keyword, such as { `{"format": "Enter an email address"}` }; on an object, "required" can have a message for each property.</li>
+				<li>Labels, descriptions and select options are defined by component props or bindings. Schema annotations and schema structure do not change the presentation.</li>
+				<li>Host actions report errors, such as those from the server saving the data, by throwing an error with an "errors" list of paths and messages. They show on their fields until the field is changed or the action runs again. Errors without a path, or an empty list, show after the document.</li>
+				<li>Schemas can only refer to themselves with "$ref". Data is validated in the browser by popui.wasm. Explicit validate actions stop if validation cannot run and show a document-level error unless silent is true.</li>
+			</ul>
+			@popui.Description() {
+				$errors.checked reports whether the current data has been validated successfully; $errors.valid is true only after a successful check with no schema errors. Both are false while validation is pending or unavailable. Documents without schemas are considered checked and valid.
+			}
+			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiValidationExample, Language: "json"})
+			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiErrorsExample, Language: "markup"})
+		}
 		@modules.Section("Components", "json-ui-components") {
 			@popui.Description() {
 				Each component maps to the PopUI component of the same name, so its props are documented on that component's page. The exceptions are upload_file, option, and the elements that structure tables and lists (thead, tbody, tr, th, td, ul, ol and li), whose props are in the jsonui package.
@@ -82,7 +100,8 @@ templ jsonUI() {
 				Items: []modules.APITableItem{
 					{Name: "alert", Type: "message", Description: "Shows `message` in the browser's alert dialog."},
 					{Name: "set", Type: "path, value", Description: "Sets the data at `path` to `value`."},
-					{Name: "reset", Type: "", Description: "Restores the document's data to its initial values."},
+					{Name: "reset", Type: "", Description: "Restores the document's data to its initial values, and clears its errors."},
+					{Name: "validate", Type: "silent", Description: "Validates the data against the document's schemas and stops the actions after it while there are errors or validation cannot run. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
 					{Name: "dispatch", Type: "event, detail", Description: "Dispatches a bubbling DOM event named `event`, with `detail` or else a snapshot of the data, for the host page to handle."},
 				},
 			})
@@ -123,10 +142,14 @@ templ jsonUI() {
 				The package embeds jsonui.js for apps to serve:
 			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiAssetsExample, Language: "go"})
+			@popui.Description() {
+				Apps validate data they receive against a document's schemas with the same messages:
+			}
+			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiValidatorExample, Language: "go"})
 		}
 		@modules.Section("Rendering in the browser", "json-ui-browser") {
 			@popui.Description() {
-				Each release publishes PopUI's assets, jsonui.js and the WebAssembly renderer to { "https://assets.invopop.com/popui/<version>/" }. Load every file from the same version: wasm_exec.js must match the Go that built popui.wasm. The renderer adds popuiRender(json, options), which returns the HTML or an error, and dispatches popui:ready once it's available.
+				Each release publishes PopUI's assets, jsonui.js and the WebAssembly renderer to { "https://assets.invopop.com/popui/<version>/" }. Load every file from the same version: wasm_exec.js must match the Go that built popui.wasm. The renderer adds popuiRender(json, options), which returns the HTML or an error, and popuiValidate(schemas, data), which jsonui.js validates documents' data with, and dispatches popui:ready once they're available.
 			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiBrowserExample, Language: "markup"})
 		}

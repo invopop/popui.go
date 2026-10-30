@@ -47,6 +47,12 @@ The experimental `jsonui` package renders PopUI components from JSON documents, 
 
 ## Development
 
+JSON UI action and validation runtime tests use Node.js without additional dependencies:
+
+```bash
+node --test jsonui/tests/*.test.cjs
+```
+
 ### Building
 
 In order to generate the CSS, the `tailwindcss` application must be installed in your system. In general we recommend using brew for this:

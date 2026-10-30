@@ -21,10 +21,11 @@ const (
 	actionSet      = "set"
 	actionReset    = "reset"
 	actionDispatch = "dispatch"
+	actionValidate = "validate"
 )
 
 // BuiltinActions are the actions implemented by assets/jsonui.js.
-var BuiltinActions = []string{actionAlert, actionSet, actionReset, actionDispatch}
+var BuiltinActions = []string{actionAlert, actionSet, actionReset, actionDispatch, actionValidate}
 
 // RequiredParams lists the string params each built-in action needs.
 // Actions registered by the host have their params passed through unchecked.

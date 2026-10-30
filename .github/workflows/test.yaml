@@ -24,8 +24,6 @@ jobs:
       - name: Test
         run: go test ./...
 
-      # The docs site, as Netlify builds it, including the playground's
-      # editor bundle.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -33,6 +31,11 @@ jobs:
           cache: npm
           cache-dependency-path: internal/docs/playground/editor/package-lock.json
 
+      - name: Test JSON UI runtime
+        run: node --test jsonui/tests/*.test.cjs
+
+      # The docs site, as Netlify builds it, including the playground's
+      # editor bundle.
       - name: Build docs
         run: |
           (cd internal/docs/playground/editor && npm ci && npm run build)
