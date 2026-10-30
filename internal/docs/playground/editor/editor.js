@@ -56,18 +56,18 @@ async function loadSchema(view) {
   schemaURL = url;
   try {
     const local = await localSchema;
-    if (local && local.$id === url) {
-      schema = local;
-      log(`schema ${url} replaced by the local panel.json`);
-    } else {
+    let loaded = local;
+    if (local?.$id !== url) {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      schema = await res.json();
-      log(`schema loaded from ${url} (${Object.keys(schema.$defs || {}).length} definitions)`);
+      loaded = await res.json();
     }
+    if (url !== schemaURL) return; // "$schema" changed while loading
+    schema = loaded;
+    log(`schema ${url} loaded${loaded === local ? " from the local panel.json" : ""}`);
     syncSchema(view);
   } catch (err) {
-    schemaURL = null; // retry on the next change
+    if (url === schemaURL) schemaURL = null; // retry on the next change
     console.warn("[playground] schema loading failed:", url, err);
   }
 }

@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# Releases run one at a time, in order, so the version tags and the major
+# version's schema always end with the latest release's.
+concurrency:
+  group: release
+
 jobs:
   tag:
     name: Release
