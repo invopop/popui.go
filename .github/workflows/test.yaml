@@ -20,7 +20,7 @@ jobs:
         with:
           go-version-file: "go.mod"
 
-      # Includes the check that jsonui/schema/document.json is up to date.
+      # Includes the check that jsonui/schema/panel.json is up to date.
       - name: Test
         run: go test ./...
 

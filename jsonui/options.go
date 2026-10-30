@@ -35,11 +35,11 @@ var RequiredParams = map[string][]string{
 	actionDispatch: {"event"},
 }
 
-// Options control how documents are checked when they are built.
+// Options control how panels are checked when they are built.
 //
-// By default documents are strict: the only way they can make the page do
+// By default panels are strict: the only way they can make the page do
 // anything is through the named actions in their "on" handlers, so a host
-// can embed documents from another source and decide exactly what they may
+// can embed panels from another source and decide exactly what they may
 // trigger. Strict mode rejects:
 //
 //   - attributes in props that Alpine, htmx or the browser would run as
@@ -55,39 +55,39 @@ var RequiredParams = map[string][]string{
 //     in URL props (see URLFormat);
 //   - actions not listed in Actions.
 type Options struct {
-	// Actions lists the action names documents may use in "on" handlers.
+	// Actions lists the action names panels may use in "on" handlers.
 	// Nil allows BuiltinActions; an empty slice allows none. Hosts that
 	// register their own actions with popui.actions.register list them here
 	// too, e.g. append(jsonui.BuiltinActions, "ui.notify", "modal.close").
 	Actions []string
 	// Trusted turns off the strict checks, allowing Alpine directives and
 	// event attributes in props, Alpine expressions in text binds and any
-	// action name. Only use it for documents from a fully trusted source.
+	// action name. Only use it for panels from a fully trusted source.
 	Trusted bool
 }
 
-// Build parses a strict JSON document into a renderable component using the
+// Build parses a strict JSON panel into a renderable component using the
 // default Options.
 func Build(data []byte) (templ.Component, error) {
 	return Options{}.Build(data)
 }
 
-// Render parses a strict JSON document using the default Options and writes
+// Render parses a strict JSON panel using the default Options and writes
 // the resulting HTML to w.
 func Render(ctx context.Context, data []byte, w io.Writer) error {
 	return Options{}.Render(ctx, data, w)
 }
 
-// Build parses a JSON document into a renderable component.
+// Build parses a JSON panel into a renderable component.
 func (o Options) Build(data []byte) (templ.Component, error) {
-	var doc Document
-	if err := decodeStrict(data, &doc); err != nil {
+	var p Panel
+	if err := decodeStrict(data, &p); err != nil {
 		return nil, err
 	}
-	return doc.Component(o)
+	return p.Component(o)
 }
 
-// Render parses the JSON document and writes the resulting HTML to w.
+// Render parses the JSON panel and writes the resulting HTML to w.
 func (o Options) Render(ctx context.Context, data []byte, w io.Writer) error {
 	c, err := o.Build(data)
 	if err != nil {

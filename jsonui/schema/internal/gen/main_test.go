@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// TestSchemaUpToDate fails when document.json doesn't match the registry and
+// TestSchemaUpToDate fails when panel.json doesn't match the registry and
 // props, e.g. after adding a component or a prop without regenerating it.
 func TestSchemaUpToDate(t *testing.T) {
 	t.Chdir("../../../..")

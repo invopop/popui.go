@@ -5,14 +5,14 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-// documentRoot wraps a document's template in an Alpine.js component using
-// the document data as its x-data, and init as its x-init when set.
-// `display: contents` keeps the wrapper out of the layout. Documents with
+// panelRoot wraps a panel's template in an Alpine.js component using
+// the panel data as its x-data, and init as its x-init when set.
+// `display: contents` keeps the wrapper out of the layout. Panels with
 // fields have jsonui.js track their errors, validating the data against
 // schemas when there are any.
-templ documentRoot(xdata, init string, errors bool, schemas string) {
+templ panelRoot(xdata, init string, errors bool, schemas string) {
 	<div
-		data-popui-document
+		data-popui-panel
 		class="contents"
 		x-data={ xdata }
 		if init != "" {
