@@ -126,6 +126,14 @@ test("reset clears validation failure and requires a fresh check", async () => {
   assert.equal(form.errors.valid, false);
 });
 
+test("reset validates the restored data straight away", async () => {
+  const form = setup();
+  form.window.popuiValidate = () => ({ errors: [] });
+  await form.run([{ action: "reset" }]);
+  assert.equal(form.errors.checked, true);
+  assert.equal(form.errors.valid, true);
+});
+
 test("background validation failure remains hidden until explicit validation", async () => {
   const form = setup();
   form.track();

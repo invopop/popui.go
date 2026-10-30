@@ -1657,6 +1657,9 @@
             "$ref": "https://json-schema.org/draft/2020-12/schema"
           },
           "propertyNames": {
+            "not": {
+              "pattern": "(^|\\.)(__proto__|prototype|constructor)(\\.|$)"
+            },
             "pattern": "^[A-Za-z_$][\\w$]*(\\.[\\w$]+)*$"
           },
           "type": "object",

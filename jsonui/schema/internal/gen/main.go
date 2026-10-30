@@ -103,9 +103,13 @@ func render() ([]byte, error) {
 	if p, ok := docDef.Properties.Get("handlers"); ok {
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "#/$defs/HandlerDefinition"}
 	}
-	// Schemas are JSON Schemas, keyed by the data path they validate.
+	// Schemas are JSON Schemas, keyed by the data path they validate. Paths
+	// can't reach the keys safePath in jsonui rejects.
 	if p, ok := docDef.Properties.Get("schemas"); ok {
-		p.PropertyNames = &jsonschema.Schema{Pattern: `^[A-Za-z_$][\w$]*(\.[\w$]+)*$`}
+		p.PropertyNames = &jsonschema.Schema{
+			Pattern: `^[A-Za-z_$][\w$]*(\.[\w$]+)*$`,
+			Not:     &jsonschema.Schema{Pattern: `(^|\.)(__proto__|prototype|constructor)(\.|$)`},
+		}
 		p.AdditionalProperties = &jsonschema.Schema{Ref: "https://json-schema.org/draft/2020-12/schema"}
 	}
 	// Init is a json.RawMessage holding a handler, as in "on".
