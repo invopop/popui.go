@@ -12,7 +12,7 @@ import (
 
 const uploadFileType = "upload_file"
 
-// UploadFile are the props of the "upload_file" node, a file picker row with
+// UploadFile is the props of the "upload_file" node, a file picker row with
 // a preview image and Upload/Remove buttons. The node's "model" is the data
 // path holding the file URL, and its "on" handlers take "select" and
 // "remove" actions, e.g.

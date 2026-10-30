@@ -337,6 +337,9 @@ type docBuilder struct {
 	handlers map[string][]map[string]any
 	// loops are the list expressions of the "each" nodes being built.
 	loops []string
+	// conds are the "show" conditions of the nodes being built inside the
+	// current select.
+	conds []string
 	// sel is the state of the single select whose options are being built.
 	sel *selectState
 }
@@ -395,9 +398,9 @@ func (b *docBuilder) build(n *Node) (templ.Component, error) {
 // withChildNodes builds the node's children into c. A select's children are
 // its options, which follow its model.
 func (b *docBuilder) withChildNodes(n *Node, c templ.Component) (templ.Component, error) {
-	outer := b.sel
-	defer func() { b.sel = outer }()
-	b.sel = nil
+	outer, conds := b.sel, b.conds
+	defer func() { b.sel, b.conds = outer, conds }()
+	b.sel, b.conds = nil, nil
 	if n.Component == selectType {
 		var err error
 		if b.sel, err = b.selectState(n); err != nil {
@@ -431,7 +434,18 @@ func (b *docBuilder) selectState(n *Node) (*selectState, error) {
 	if p.Multiple || (len(p.Options) > 0 && string(p.Options) != "null") {
 		return nil, fmt.Errorf("%s: children are only supported by single selects without options", n.Component)
 	}
-	s := new(selectState)
+	if len(n.Bind) > 0 {
+		var bind map[string]any
+		if err := json.Unmarshal(n.Bind, &bind); err != nil {
+			return nil, fmt.Errorf("%s bind: %w", n.Component, err)
+		}
+		for prop := range bind {
+			if strings.EqualFold(prop, "multiple") || strings.EqualFold(prop, "options") {
+				return nil, fmt.Errorf("%s: %s can't be bound on a select with children", n.Component, prop)
+			}
+		}
+	}
+	s := &selectState{depth: len(b.loops)}
 	if n.Model != "" {
 		expr, inLoop, err := b.livePath(n.Model)
 		if err != nil {
@@ -517,6 +531,11 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 			}
 		}
 	}
+	if n.Component == selectType {
+		if err := multipleDisabled(props, live); err != nil {
+			return nil, err
+		}
+	}
 	var attrs map[string]any
 	attrsKey := "attributes"
 	for k, v := range props {
@@ -572,6 +591,32 @@ func (b *docBuilder) optionSelection(props map[string]json.RawMessage, attrs map
 		}
 	}
 	return b.selectOption(props, attrs, value, false)
+}
+
+// multipleDisabled drops the live disabled binding of a multiple select,
+// whose attributes go on a wrapper rather than its controls, so its disabled
+// prop is only resolved at render time, which an "each" item can't be.
+func multipleDisabled(props map[string]json.RawMessage, live map[string]any) error {
+	if _, ok := live[bindDisabled]; !ok {
+		return nil
+	}
+	var multiple, disabled bool
+	for k, raw := range props {
+		switch {
+		case strings.EqualFold(k, "multiple"):
+			_ = json.Unmarshal(raw, &multiple) //nolint:errcheck // checked when the props are decoded
+		case strings.EqualFold(k, propDisabled):
+			disabled = true
+		}
+	}
+	if !multiple {
+		return nil
+	}
+	if !disabled {
+		return fmt.Errorf("%s bind %s: multiple selects can't follow the %s", selectType, propDisabled, loopItem)
+	}
+	delete(live, bindDisabled)
+	return nil
 }
 
 // bindProps overlays the props with values taken from the document data,

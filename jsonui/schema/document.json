@@ -378,7 +378,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Cell are the props of a table's \"th\" and \"td\" cells."
+      "description": "Cell is the props of a table's \"th\" and \"td\" cells."
     },
     "Checkbox": {
       "properties": {
@@ -603,7 +603,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Element are the props of the plain HTML elements that structure a table or a list, which popui styles from the component around them, such as \"table\"."
+      "description": "Element is the props of the plain HTML elements that structure a table or a list, which popui styles from the component around them, such as \"table\"."
     },
     "Error": {
       "properties": {
@@ -1607,7 +1607,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Option are the props of the \"option\" node, a choice in a select."
+      "description": "Option is the props of the \"option\" node, a choice in a select."
     },
     "OptionGroup": {
       "properties": {
@@ -2107,7 +2107,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "UploadFile are the props of the \"upload_file\" node, a file picker row with a preview image and Upload/Remove buttons."
+      "description": "UploadFile is the props of the \"upload_file\" node, a file picker row with a preview image and Upload/Remove buttons."
     },
     "action.alert": {
       "properties": {

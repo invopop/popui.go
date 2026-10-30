@@ -30,7 +30,7 @@ const (
 	loopIndex = "index"
 )
 
-// Option are the props of the "option" node, a choice in a select. Options
+// Option is the props of the "option" node, a choice in a select. Options
 // rendered from a list with "each" keep the select's model selected as the
 // list changes:
 //
@@ -83,15 +83,37 @@ type selectState struct {
 	model string
 	// value is the model's value at render time.
 	value any
-	// statics are the values of the options not rendered from a list.
+	// depth is the number of "each" nodes around the select, so its options
+	// only count those inside it as their own lists.
+	depth int
+	// statics are the values of the options always rendered with a value
+	// set in their props.
 	statics []string
-	// loops are the lists options are rendered from, and the expression of
-	// each option's value in the list.
-	loops []selectLoop
+	// choices are the other options: rendered from a list, shown on a
+	// condition, or with a value bound to the data.
+	choices []selectChoice
 }
 
-type selectLoop struct {
-	list, value string
+// selectChoice is an option whose value may change after rendering.
+type selectChoice struct {
+	// list is the expression of the list the option is rendered from, if
+	// any.
+	list string
+	// value is the Alpine expression of the option's value.
+	value string
+	// cond is the expression of the "show" conditions the option is
+	// rendered on, if any.
+	cond string
+}
+
+// matches is the expression of whether the choice is rendered with the
+// model's value.
+func (c selectChoice) matches(model string) string {
+	m := fmt.Sprintf("String(%s) === String(%s)", c.value, model)
+	if c.cond != "" {
+		m = fmt.Sprintf("(%s) && %s", c.cond, m)
+	}
+	return m
 }
 
 // livePath checks a data path read by an Alpine binding and returns its
@@ -149,7 +171,9 @@ func (b *docBuilder) show(n *Node) (templ.Component, error) {
 	}
 	inner := *n
 	inner.Show = nil
+	b.conds = append(b.conds, cond)
 	c, err := b.element(&inner)
+	b.conds = b.conds[:len(b.conds)-1]
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +264,6 @@ func (b *docBuilder) selectOption(props map[string]json.RawMessage, attrs map[st
 	}
 	expr := value
 	if !live {
-		s.statics = append(s.statics, value)
 		lit, err := json.Marshal(value)
 		if err != nil {
 			return err
@@ -249,8 +272,15 @@ func (b *docBuilder) selectOption(props map[string]json.RawMessage, attrs map[st
 		if props["selected"], err = json.Marshal(value == display(s.value)); err != nil {
 			return err
 		}
-	} else if len(b.loops) > 0 {
-		s.loops = append(s.loops, selectLoop{list: b.loops[len(b.loops)-1], value: value})
+	}
+	c := selectChoice{value: expr, cond: strings.Join(b.conds, " && ")}
+	if len(b.loops) > s.depth {
+		c.list = b.loops[len(b.loops)-1]
+	}
+	if live || c.list != "" || c.cond != "" {
+		s.choices = append(s.choices, c)
+	} else {
+		s.statics = append(s.statics, value)
 	}
 	attrs[":selected"] = fmt.Sprintf("String(%s) === String(%s)", expr, s.model)
 	return nil
@@ -262,7 +292,7 @@ func (b *docBuilder) selectOption(props map[string]json.RawMessage, attrs map[st
 // chooses another. It's also shown while lists are still empty, such as while
 // they load, so the saved choice is still the one shown.
 func (s *selectState) unavailableOption() templ.Component {
-	if len(s.loops) == 0 {
+	if len(s.choices) == 0 {
 		return nil
 	}
 	statics, _ := json.Marshal(append([]string{""}, s.statics...)) //nolint:errcheck // strings always marshal
@@ -270,12 +300,19 @@ func (s *selectState) unavailableOption() templ.Component {
 		fmt.Sprintf("%s != null", s.model),
 		fmt.Sprintf("!%s.includes(String(%s))", statics, s.model),
 	}
-	lengths := make([]string, len(s.loops))
-	for i, l := range s.loops {
-		conds = append(conds, fmt.Sprintf("!(%s || []).some((%s, %s) => String(%s) === String(%s))", l.list, loopItem, loopIndex, l.value, s.model))
-		lengths[i] = fmt.Sprintf("(%s || []).length", l.list)
+	var lengths []string
+	for _, c := range s.choices {
+		if c.list == "" {
+			conds = append(conds, fmt.Sprintf("!(%s)", c.matches(s.model)))
+			continue
+		}
+		conds = append(conds, fmt.Sprintf("!(%s || []).some((%s, %s) => %s)", c.list, loopItem, loopIndex, c.matches(s.model)))
+		lengths = append(lengths, fmt.Sprintf("(%s || []).length", c.list))
 	}
-	label := fmt.Sprintf("String(%s) + (%s ? ' (unavailable)' : '')", s.model, strings.Join(lengths, " + "))
+	label := fmt.Sprintf("String(%s) + ' (unavailable)'", s.model)
+	if len(lengths) > 0 {
+		label = fmt.Sprintf("String(%s) + (%s ? ' (unavailable)' : '')", s.model, strings.Join(lengths, " + "))
+	}
 	return withChildren(ifTemplate(strings.Join(conds, " && ")), unavailable(s.model, label))
 }
 

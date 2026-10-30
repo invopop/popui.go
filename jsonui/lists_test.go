@@ -66,6 +66,37 @@ func TestEachOptions(t *testing.T) {
 	}
 }
 
+// TestOptionAvailability checks which options the unavailable option looks
+// for the model's value in.
+func TestOptionAvailability(t *testing.T) {
+	// A static option in a select repeated over a list is not a list option.
+	html := mustRender(t, `{"data": {"rows": []}, "components": [{"is": "select", "each": "rows", "model": "item.v", "children": [
+		{"is": "option", "props": {"value": "a", "label": "A"}},
+		{"is": "option", "bind": {"value": "item.default"}}
+	]}]}`)
+	assertContains(t, html,
+		`<template x-if="item.v != null &amp;&amp; ![&#34;&#34;,&#34;a&#34;].includes(String(item.v)) &amp;&amp; !(String(item.default) === String(item.v))">`,
+		`x-text="String(item.v) + &#39; (unavailable)&#39;"`,
+	)
+	if strings.Contains(html, "some(") {
+		t.Errorf("static option treated as a list in:\n%s", html)
+	}
+
+	// Live static options count alongside list options, and options shown on
+	// a condition only while it holds.
+	html = mustRender(t, `{"data": {"v": "a", "fallback": "x", "rows": []}, "components": [{"is": "select", "model": "v", "children": [
+		{"is": "option", "bind": {"value": "fallback"}},
+		{"is": "option", "props": {"value": "b"}, "show": "!fallback"},
+		{"is": "option", "each": "rows", "show": "item.active", "bind": {"value": "item.id"}}
+	]}]}`)
+	assertContains(t, html,
+		`![&#34;&#34;].includes(String(v))`,
+		`!(String(fallback) === String(v))`,
+		`!((!fallback) &amp;&amp; String(&#34;b&#34;) === String(v))`,
+		`!(rows || []).some((item, index) =&gt; (item.active) &amp;&amp; String(item.id) === String(v))`,
+	)
+}
+
 func TestEachText(t *testing.T) {
 	html := mustRender(t, `{"data": {"rows": [{"name": "A"}]}, "components": [
 		{"is": "p", "each": "rows", "children": [{"is": "text", "bind": "item.name"}, {"is": "text", "text": " #"}, {"is": "text", "bind": "index"}]},
@@ -114,6 +145,9 @@ func TestListsStrict(t *testing.T) {
 		`{"data": {"rows": []}, "components": [{"is": "option", "each": "rows", "bind": {"label": "item.name"}}]}`:                                      `option: must be a child of a select`,
 		`{"data": {"v": []}, "components": [{"is": "select", "model": "v", "props": {"multiple": true}, "children": [{"is": "option"}]}]}`:              `children are only supported by single selects without options`,
 		`{"data": {"rows": []}, "components": [{"is": "select", "children": [{"is": "option", "each": "rows", "bind": {"value": "item.__proto__"}}]}]}`: errNotDataPath,
+		`{"data": {"m": true}, "components": [{"is": "select", "bind": {"multiple": "m"}, "children": [{"is": "option"}]}]}`:                            `multiple can't be bound on a select with children`,
+		`{"data": {"o": []}, "components": [{"is": "select", "bind": {"Options": "o"}, "children": [{"is": "option"}]}]}`:                               `Options can't be bound on a select with children`,
+		`{"data": {"rows": []}, "components": [{"is": "select", "each": "rows", "props": {"multiple": true}, "bind": {"disabled": "item.off"}}]}`:       `multiple selects can't follow the item`,
 	}
 	for doc, want := range bad {
 		if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), want) {
@@ -129,6 +163,16 @@ func TestLiveBind(t *testing.T) {
 		{"is": "button", "bind": {"disabled": "busy"}, "children": [{"is": "text", "text": "Save"}]}
 	]}`)
 	assertContains(t, html, `:disabled="busy"`, ` disabled`)
+
+	// A multiple select's disabled is only resolved when rendering, as its
+	// attributes go on a wrapper rather than its controls.
+	html = mustRender(t, `{"data": {"busy": true}, "components": [
+		{"is": "select", "props": {"multiple": true}, "bind": {"disabled": "busy"}}
+	]}`)
+	if strings.Contains(html, `:disabled`) {
+		t.Errorf("live disabled on a multiple select in:\n%s", html)
+	}
+	assertContains(t, html, ` disabled`)
 }
 
 func TestEachModel(t *testing.T) {

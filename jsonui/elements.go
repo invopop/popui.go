@@ -9,7 +9,7 @@ import (
 	popui "github.com/invopop/popui.go"
 )
 
-// Element are the props of the plain HTML elements that structure a table
+// Element is the props of the plain HTML elements that structure a table
 // or a list, which popui styles from the component around them, such as
 // "table".
 type Element struct {
@@ -18,7 +18,7 @@ type Element struct {
 	Attributes templ.Attributes
 }
 
-// Cell are the props of a table's "th" and "td" cells.
+// Cell is the props of a table's "th" and "td" cells.
 type Cell struct {
 	Class string
 	// Colspan is the number of columns the cell spans, e.g. for a row that
