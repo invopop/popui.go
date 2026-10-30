@@ -616,23 +616,11 @@
         type: "object",
         required: ["connection_id", "to", "subject"],
         properties: {
-          connection_id: { type: "string", minLength: 1, title: "Send with", errorMessage: "Choose a connection to send with" },
-          to: {
-            type: "string",
-            format: "email",
-            title: "To",
-            description: "Who receives the email",
-            errorMessage: { format: "Enter an email address" },
-          },
-          subject: { type: "string", minLength: 1, maxLength: 40, title: "Subject" },
-          format: {
-            title: "Format",
-            oneOf: [
-              { const: "html", title: "HTML" },
-              { const: "text", title: "Plain text" },
-            ],
-          },
-          attach_pdf: { type: "boolean", title: "Attach the PDF" },
+          connection_id: { type: "string", minLength: 1, errorMessage: "Choose a connection to send with" },
+          to: { type: "string", format: "email", errorMessage: { format: "Enter an email address" } },
+          subject: { type: "string", minLength: 1, maxLength: 40 },
+          format: { enum: ["html", "text"] },
+          attach_pdf: { type: "boolean" },
         },
       },
     },
