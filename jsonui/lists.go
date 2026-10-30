@@ -20,6 +20,10 @@ const (
 	optionType = "option"
 	selectType = "select"
 	textType   = "text"
+	// xText is the Alpine directive that sets an element's text.
+	xText = "x-text"
+	// jsonNull is null in JSON, as a prop set to it is unset.
+	jsonNull = "null"
 	// propDisabled is the prop that disables a control, kept live by its
 	// Alpine binding, bindDisabled.
 	propDisabled = "disabled"
@@ -65,7 +69,7 @@ func optionComponent(p ...Option) templ.Component {
 // component, and the Alpine directive that does it. Other props are only
 // resolved at render time.
 var liveProps = map[string]map[string]string{
-	optionType: {"value": ":value", "label": "x-text", propDisabled: bindDisabled},
+	optionType: {"value": ":value", "label": xText, propDisabled: bindDisabled},
 	"input":    controlLiveProps,
 	"textarea": controlLiveProps,
 	selectType: controlLiveProps,

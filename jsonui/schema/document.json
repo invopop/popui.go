@@ -54,6 +54,21 @@
           "if": {
             "properties": {
               "action": {
+                "const": "validate"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action.validate"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
                 "const": "dispatch"
               }
             },
@@ -74,6 +89,7 @@
             "alert",
             "set",
             "reset",
+            "validate",
             "dispatch"
           ]
         }
@@ -582,6 +598,16 @@
         "init": {
           "$ref": "#/$defs/Handler",
           "description": "Init is run once when the document starts, like an \"on\" handler: an\naction, the name of one of the document's handlers, or a list of\neither, e.g. \"update\" so the host receives the initial data."
+        },
+        "schemas": {
+          "additionalProperties": {
+            "$ref": "https://json-schema.org/draft/2020-12/schema"
+          },
+          "propertyNames": {
+            "pattern": "^[A-Za-z_$][\\w$]*(\\.[\\w$]+)*$"
+          },
+          "type": "object",
+          "description": "Schemas map data paths, such as \"config\", to the JSON Schema their\nvalue must match. The data is validated as it changes, and errors are\nshown with the form control whose \"model\" is their path, or after the\ndocument for paths without one. Schemas also give controls their\nlabel, from \"title\", and selects without options their options, from\n\"enum\" or the \"const\" and \"title\" of each \"oneOf\". Schemas can only\nrefer to themselves with \"$ref\". A schema's \"errorMessage\" replaces the\nmessages of its errors: one message, or one for each keyword, such as\n{\"format\": \"Enter an email address\"}."
         }
       },
       "additionalProperties": false,
@@ -2183,7 +2209,7 @@
       "required": [
         "action"
       ],
-      "description": "Restore the document data to its initial values."
+      "description": "Restore the document data to its initial values, and clear its errors."
     },
     "action.set": {
       "properties": {
@@ -2213,6 +2239,31 @@
         "path"
       ],
       "description": "Set a data path to a value."
+    },
+    "action.validate": {
+      "properties": {
+        "action": {
+          "const": "validate"
+        },
+        "silent": {
+          "type": "boolean",
+          "description": "Don't show errors in fields that haven't been touched, e.g. to only save valid data as it changes."
+        },
+        "into": {
+          "type": "string",
+          "description": "Data path to store the action's result in."
+        },
+        "busy": {
+          "type": "string",
+          "description": "Data path set to true while the action runs."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "description": "Validate the document data against its schemas, showing every error, and stop the actions after it while there are any."
     },
     "node.avatar": {
       "properties": {

@@ -593,6 +593,104 @@
     ],
   };
 
+  // validation checks an email step's config against a JSON Schema, which
+  // the email app would also check it with when it's saved:
+  //   - each field shows the error for its model's path once it's been
+  //     changed or left; "Save" runs "validate", which shows them all and
+  //     stops the save while there are any;
+  //   - labels come from the schema's titles, and the format select's
+  //     options from its "oneOf";
+  //   - changes reach the host with step.update only while the config is
+  //     valid, through a silent "validate";
+  //   - the playground's config.save stands in for the app's API, rejecting
+  //     addresses at example.com with an error for the field, and an error
+  //     for a path without one, which is shown after the document.
+  window.SAMPLES.validation = {
+    $schema: SCHEMA,
+    data: {
+      config: { connection_id: "", to: "", subject: "Invoice {{.Code}}", format: "html", attach_pdf: true },
+      connections: [],
+      loading: false,
+    },
+    schemas: {
+      config: {
+        type: "object",
+        required: ["connection_id", "to", "subject"],
+        properties: {
+          connection_id: { type: "string", minLength: 1, title: "Send with", errorMessage: "Choose a connection to send with" },
+          to: {
+            type: "string",
+            format: "email",
+            title: "To",
+            description: "Who receives the email",
+            errorMessage: { format: "Enter an email address" },
+          },
+          subject: { type: "string", minLength: 1, maxLength: 40, title: "Subject" },
+          format: {
+            title: "Format",
+            oneOf: [
+              { const: "html", title: "HTML" },
+              { const: "text", title: "Plain text" },
+            ],
+          },
+          attach_pdf: { type: "boolean", title: "Attach the PDF" },
+        },
+      },
+    },
+    handlers: {
+      update: [
+        { action: "validate", silent: true },
+        { action: "step.update", summary: "To {{config.to}}" },
+      ],
+    },
+    init: { action: "app.request", path: "/config/connections", into: "connections", busy: "loading" },
+    components: [
+      {
+        is: "card",
+        children: [
+          { is: "card_header", props: { title: "Send by email", subtitle: "Validated against the config's JSON Schema" } },
+          {
+            is: "card_content",
+            children: [
+              {
+                is: "form",
+                on: { "submit.prevent": [{ action: "validate" }, { action: "config.save" }] },
+                children: [
+                  {
+                    is: "fieldset",
+                    children: [
+                      {
+                        is: "select",
+                        model: "config.connection_id",
+                        bind: { disabled: "loading" },
+                        on: { change: "update" },
+                        children: [
+                          { is: "option", props: { value: "", label: "Choose…" } },
+                          { is: "option", each: "connections", bind: { value: "item.id", label: "item.name" } },
+                        ],
+                      },
+                      { is: "input", model: "config.to", props: { type: "email" }, on: { change: "update" } },
+                      { is: "input", model: "config.subject", on: { change: "update" } },
+                      { is: "select", model: "config.format", on: { change: "update" } },
+                      { is: "checkbox", model: "config.attach_pdf", on: { change: "update" } },
+                    ],
+                  },
+                  {
+                    is: "button_group",
+                    children: [
+                      { is: "button", props: { type: "submit" }, children: [text("Save")] },
+                      { is: "button", props: { type: "button", variant: "secondary" }, on: { click: { action: "reset" } }, children: [text("Reset")] },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
   // blocked shows what strict mode rejects: Alpine directives in attributes,
   // javascript: URLs and actions the host hasn't allowed. Untick "strict" to
   // render it as a trusted document.
