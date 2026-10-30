@@ -1,4 +1,4 @@
-// jsonui.js: runs the actions declared in jsonui documents.
+// jsonui.js: runs the actions declared in jsonui panels.
 //
 // A node's "on" handlers render as `x-on:<event>="$actions([...], $event)"`, so the
 // JSON only names actions and their params; the behaviour lives here and in
@@ -6,7 +6,7 @@
 //
 //   popui.actions.register("save", ({ params, data, event, el }) => { ... });
 //
-// String params may reference the document data with {{path}} placeholders,
+// String params may reference the panel data with {{path}} placeholders,
 // e.g. "Hello {{customer.name}}", resolved when the action runs. Two params
 // work with every action:
 //
@@ -15,8 +15,8 @@
 //   busy: data path set to true while the action runs.
 //
 // Form controls with a "model" show the error for their path, kept by
-// document in $errors. Errors come from validating the data against the
-// document's schemas with popuiValidate, from popui.wasm, as it changes, and
+// panel in $errors. Errors come from validating the data against the
+// panel's schemas with popuiValidate, from popui.wasm, as it changes, and
 // from actions that throw an error with an "errors" list, such as a host
 // whose server rejected the data:
 //
@@ -126,10 +126,10 @@
   popui.actions.register("alert", ({ params }) => window.alert(params.message ?? ""));
   popui.actions.register("set", ({ params, data }) => set(data, params.path, params.value));
   popui.actions.register("reset", ({ el, data }) => {
-    // The document root's x-data is the original JSON object. Keys added
-    // since are removed. Documents without data have no root and nothing
+    // The panel root's x-data is the original JSON object. Keys added
+    // since are removed. Panels without data have no root and nothing
     // to reset.
-    const root = el.closest("[data-popui-document]");
+    const root = el.closest("[data-popui-panel]");
     if (!root) return;
     const initial = JSON.parse(root.getAttribute("x-data"));
     for (const key of Object.keys(data)) if (!(key in initial)) delete data[key];
@@ -141,7 +141,7 @@
   });
 
   popui.actions.register("validate", ({ params, el, data }) => {
-    const root = el.closest("[data-popui-document]");
+    const root = el.closest("[data-popui-panel]");
     if (!root) return;
     const s = errorState(root);
     validate(root, s, data);
@@ -149,7 +149,7 @@
     if (!s.checked || Object.keys(s.schema).length > 0) return STOP;
   });
 
-  // Errors are kept for each document root: those found by validating the
+  // Errors are kept for each panel root: those found by validating the
   // data against its schemas, those reported by actions, and which fields
   // have been touched, by path.
   const errors = new WeakMap();
@@ -165,8 +165,8 @@
   // reported shows the errors an action reported, replacing any reported
   // before.
   const reported = (el, action, list) => {
-    const root = el.closest("[data-popui-document]");
-    if (!root) return console.error("[jsonui] errors reported outside a document", list);
+    const root = el.closest("[data-popui-panel]");
+    if (!root) return console.error("[jsonui] errors reported outside a panel", list);
     const host = {};
     for (const { path, message } of list) if (path && !(path in host)) host[path] = String(message ?? "");
     Object.assign(errorState(root), { host, reporter: action });
@@ -174,13 +174,13 @@
 
   // retried clears the errors an action reported when it runs again.
   const retried = (el, action) => {
-    const root = el.closest("[data-popui-document]");
+    const root = el.closest("[data-popui-panel]");
     const s = root && errors.get(root);
     if (s?.reporter === action) Object.assign(s, { host: {}, reporter: undefined });
   };
 
   let unavailable = false;
-  // validate updates the errors found in the data by the document's schemas.
+  // validate updates the errors found in the data by the panel's schemas.
   // It needs popuiValidate from popui.wasm.
   const validate = (root, s, data) => {
     const schemas = root.getAttribute("x-jsonui-errors");
@@ -207,9 +207,9 @@
     }
   };
 
-  // The $errors API for a document. Errors reported by actions show as soon
+  // The $errors API for a panel. Errors reported by actions show as soon
   // as they're reported, those from schemas once their path is touched or
-  // the document validated.
+  // the panel validated.
   const errorsAPI = (root, s) => ({
     shown(path) {
       if (path in s.host) return s.host[path];
@@ -238,24 +238,24 @@
   // field finds the path of the field an event came from.
   const field = (e) => e.target?.closest?.("[data-jsonui-field]")?.dataset.jsonuiField;
 
-  // Actions work on the document's own data, the x-data of its root, rather
+  // Actions work on the panel's own data, the x-data of its root, rather
   // than the merged scope at the element: components such as tabs add scopes
-  // inside the document, and the host page may have scopes around it.
-  // Documents without data have no root and use the element's scope.
+  // inside the panel, and the host page may have scopes around it.
+  // Panels without data have no root and use the element's scope.
   const install = (Alpine) => {
     Alpine.magic("actions", (el) => (list, event) => {
-      const root = el.closest("[data-popui-document]");
+      const root = el.closest("[data-popui-panel]");
       const data = root ? Alpine.closestDataStack(root)[0] : Alpine.$data(el);
       return popui.actions.run(list, { el, event, data });
     });
 
     Alpine.magic("errors", (el) => {
-      const root = el.closest("[data-popui-document]");
+      const root = el.closest("[data-popui-panel]");
       return root ? errorsAPI(root, errorState(root)) : noErrors;
     });
 
-    // x-jsonui-errors is rendered on the root of documents with fields, with
-    // the document's schemas, if any. The data is validated shortly after it
+    // x-jsonui-errors is rendered on the root of panels with fields, with
+    // the panel's schemas, if any. The data is validated shortly after it
     // changes, a field is touched when it's changed or left, and an error an
     // action reported clears when its field is changed.
     Alpine.directive("jsonui-errors", (el, _, { effect, cleanup }) => {

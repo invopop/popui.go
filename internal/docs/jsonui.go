@@ -79,15 +79,15 @@ opts := jsonui.Options{
 	Actions: append(jsonui.BuiltinActions, "ui.notify"),
 }
 
-// Render writes the HTML for a document straight to a response...
+// Render writes the HTML for a panel straight to a response...
 if err := opts.Render(ctx, body, w); err != nil {
-	return err // invalid or unsafe documents are rejected with an error
+	return err // invalid or unsafe panels are rejected with an error
 }
 
 // ...or Build returns a templ.Component to use inside other templates.
 c, err := opts.Build(body)`
 
-const jsonuiAssetsExample = `// jsonui.js runs the actions documents reference, and must be on the page
+const jsonuiAssetsExample = `// jsonui.js runs the actions panels reference, and must be on the page
 // alongside PopUI's own assets and Alpine.js.
 e.StaticFS("/_jsonui", echo.MustSubFS(jsonui.Assets, "assets"))
 // <script src="/_jsonui/jsonui.js"></script>`
@@ -162,7 +162,7 @@ const jsonuiValidatorExample = `v, err := jsonui.NewValidator(doc.Schemas)
 if err != nil {
 	return err
 }
-// Data is JSON shaped like the document's, with each schema's value at its
+// Data is JSON shaped like the panel's, with each schema's value at its
 // path, e.g. {"config": {...}} with the config being saved.
 errs, err := v.ValidateJSON(data)
 if err != nil {
@@ -174,7 +174,7 @@ for _, e := range errs {
 
 const jsonuiActionsExample = `<script src="/_jsonui/jsonui.js"></script>
 <script>
-  // Host actions receive the interpolated params, the document's reactive
+  // Host actions receive the interpolated params, the panel's reactive
   // data, a snapshot() of it, the DOM event and the element.
   popui.actions.register("ui.notify", ({ params }) => showToast(params.message));
 
@@ -203,7 +203,7 @@ const jsonuiBrowserExample = `<link rel="stylesheet" href="https://assets.invopo
   document.getElementById("app").innerHTML = html; // Alpine initialises it
 </script>`
 
-// jsonuiRender renders a docs example document with the default, strict
+// jsonuiRender renders a docs example panel with the default, strict
 // options, so the examples also show what strict mode accepts.
 func jsonuiRender(doc string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {

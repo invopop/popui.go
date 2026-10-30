@@ -48,7 +48,7 @@ function setup(schemas = '{"config":{"type":"string"}}') {
   };
 }
 
-test("missing validator stops Save and shows a document error; retry recovers", async () => {
+test("missing validator stops Save and shows a panel error; retry recovers", async () => {
   const form = setup();
   assert.equal(form.errors.checked, false);
   assert.equal(form.errors.valid, false);
@@ -77,7 +77,7 @@ for (const [name, failure] of [["error", () => ({ error: "compile failure" })], 
   });
 }
 
-test("silent validation blocks without revealing document errors", async () => {
+test("silent validation blocks without revealing panel errors", async () => {
   const form = setup();
   await form.run([{ action: "validate", silent: true }, { action: "save" }]);
   assert.equal(form.saves, 0);
@@ -129,7 +129,7 @@ test("background validation failure remains hidden until explicit validation", a
   assert.equal(form.errors.unplaced().length, 1);
 });
 
-test("documents without schemas can save without WASM", async () => {
+test("panels without schemas can save without WASM", async () => {
   const form = setup("");
   assert.equal(form.errors.checked, true);
   assert.equal(form.errors.valid, true);

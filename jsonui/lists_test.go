@@ -127,13 +127,13 @@ func TestShow(t *testing.T) {
 	assertContains(t, html, `<template x-for="(item, index) in rows"><template x-if="[true].includes(item.active)">`)
 }
 
-// TestListsStrict checks that lists and conditions only read the document's
+// TestListsStrict checks that lists and conditions only read the panel's
 // own data.
 func TestListsStrict(t *testing.T) {
 	bad := map[string]string{
 		`{"data": {}, "components": [{"is": "p", "each": "rows"}]}`:                                                                                     `data has no "rows"`,
 		`{"data": {"rows": 1}, "components": [{"is": "p", "each": "rows"}]}`:                                                                            `"rows" is not a list`,
-		`{"components": [{"is": "p", "each": "rows"}]}`:                                                                                                 `document data must be set`,
+		`{"components": [{"is": "p", "each": "rows"}]}`:                                                                                                 `panel data must be set`,
 		`{"data": {}, "components": [{"is": "p", "show": "document.cookie"}]}`:                                                                          `data has no "document.cookie"`,
 		`{"data": {"a": 1}, "components": [{"is": "p", "show": "a || alert(1)"}]}`:                                                                      `is not a data path`,
 		`{"data": {"a": 1}, "components": [{"is": "p", "show": {"a": "x"}}]}`:                                                                           `a: expected a list of values`,

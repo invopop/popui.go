@@ -79,3 +79,24 @@ jobs:
               --cache-control "public, max-age=31536000, immutable"
           done
           echo "Published https://assets.invopop.com/$PREFIX/"
+
+      # Copies the schema to https://assets.invopop.com/popui/<major>/panel.json,
+      # the schema's "$id", so panels can refer to it whatever minor version
+      # they use. It's replaced on every release, so it's cached briefly.
+      - name: Publish major version schema
+        if: steps.bump.outputs.new_tag != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          TAG: ${{ steps.bump.outputs.new_tag }}
+        run: |
+          KEY="popui/${TAG%%.*}/panel.json"
+          aws s3 cp dist/panel.json "s3://assets/$KEY" \
+            --endpoint-url "$ENDPOINT" \
+            --content-type "application/schema+json" \
+            --cache-control "public, max-age=300"
+          echo "Published https://assets.invopop.com/$KEY"

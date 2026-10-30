@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/invopop/popui.go/main/jsonui/schema/document.json",
-  "$ref": "#/$defs/Document",
+  "$id": "https://assets.invopop.com/popui/v0/panel.json",
+  "$ref": "#/$defs/Panel",
   "$defs": {
     "Action": {
       "allOf": [
@@ -571,52 +571,6 @@
       "type": "object",
       "description": "DescriptionListItem defines the props for the DescriptionListItem component."
     },
-    "Document": {
-      "properties": {
-        "$schema": {
-          "type": "string",
-          "description": "Schema identifies the JSON Schema of the document so editors can offer\ncompletion and validation. It is ignored when rendering."
-        },
-        "data": {
-          "type": "object",
-          "description": "Data is a JSON object with the document's state. It becomes the\nAlpine.js `x-data` of the document, is the source for node \"bind\" and\n\"model\" values, and is what actions in \"on\" handlers read and change.\nBehaviour is never embedded here: actions are implemented in JS (see\nassets/jsonui.js) and only referenced by name."
-        },
-        "components": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Components is the list of nodes to render."
-        },
-        "handlers": {
-          "additionalProperties": {
-            "$ref": "#/$defs/HandlerDefinition"
-          },
-          "type": "object",
-          "description": "Handlers are named actions, or lists of actions, that \"on\" handlers\ncan refer to by name so a handler used in several places is defined\nonce, e.g. {\"update\": {\"action\": \"step.update\", \"summary\": \"…\"}} and\nthen {\"on\": {\"change\": \"update\"}}. Handlers can't refer to each other."
-        },
-        "init": {
-          "$ref": "#/$defs/Handler",
-          "description": "Init is run once when the document starts, like an \"on\" handler: an\naction, the name of one of the document's handlers, or a list of\neither, e.g. \"update\" so the host receives the initial data."
-        },
-        "schemas": {
-          "additionalProperties": {
-            "$ref": "https://json-schema.org/draft/2020-12/schema"
-          },
-          "propertyNames": {
-            "pattern": "^[A-Za-z_$][\\w$]*(\\.[\\w$]+)*$"
-          },
-          "type": "object",
-          "description": "Schemas map data paths, such as \"config\", to the JSON Schema their\nvalue must match. The data is validated as it changes, and errors are\nshown with the form control whose \"model\" is their path, or after the\ndocument for paths without one. Labels and options are defined by\ncomponents independently of the schemas. Schemas can only\nrefer to themselves with \"$ref\". A schema's \"errorMessage\" replaces the\nmessages of its errors: one message, or one for each keyword, such as\n{\"format\": \"Enter an email address\"}."
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "components"
-      ],
-      "description": "Document is the root of a JSON UI description."
-    },
     "Element": {
       "properties": {
         "class": {
@@ -862,7 +816,7 @@
         },
         {
           "type": "string",
-          "description": "The name of one of the document's handlers."
+          "description": "The name of one of the panel's handlers."
         },
         {
           "items": {
@@ -872,7 +826,7 @@
               },
               {
                 "type": "string",
-                "description": "The name of one of the document's handlers."
+                "description": "The name of one of the panel's handlers."
               }
             ]
           },
@@ -1610,7 +1564,7 @@
       "required": [
         "is"
       ],
-      "description": "A node in the document, identified by its component."
+      "description": "A node in the panel, identified by its component."
     },
     "Option": {
       "properties": {
@@ -1669,6 +1623,52 @@
       "additionalProperties": false,
       "type": "object",
       "description": "P defines the props for the P component."
+    },
+    "Panel": {
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Schema identifies the JSON Schema of the panel so editors can offer\ncompletion and validation. It is ignored when rendering."
+        },
+        "data": {
+          "type": "object",
+          "description": "Data is a JSON object with the panel's state. It becomes the\nAlpine.js `x-data` of the panel, is the source for node \"bind\" and\n\"model\" values, and is what actions in \"on\" handlers read and change.\nBehaviour is never embedded here: actions are implemented in JS (see\nassets/jsonui.js) and only referenced by name."
+        },
+        "components": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Components is the list of nodes to render."
+        },
+        "handlers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/HandlerDefinition"
+          },
+          "type": "object",
+          "description": "Handlers are named actions, or lists of actions, that \"on\" handlers\ncan refer to by name so a handler used in several places is defined\nonce, e.g. {\"update\": {\"action\": \"step.update\", \"summary\": \"…\"}} and\nthen {\"on\": {\"change\": \"update\"}}. Handlers can't refer to each other."
+        },
+        "init": {
+          "$ref": "#/$defs/Handler",
+          "description": "Init is run once when the panel starts, like an \"on\" handler: an\naction, the name of one of the panel's handlers, or a list of\neither, e.g. \"update\" so the host receives the initial data."
+        },
+        "schemas": {
+          "additionalProperties": {
+            "$ref": "https://json-schema.org/draft/2020-12/schema"
+          },
+          "propertyNames": {
+            "pattern": "^[A-Za-z_$][\\w$]*(\\.[\\w$]+)*$"
+          },
+          "type": "object",
+          "description": "Schemas map data paths, such as \"config\", to the JSON Schema their\nvalue must match. The data is validated as it changes, and errors are\nshown with the form control whose \"model\" is their path, or after the\npanel for paths without one. Labels and options are defined by\ncomponents independently of the schemas. Schemas can only\nrefer to themselves with \"$ref\". A schema's \"errorMessage\" replaces the\nmessages of its errors: one message, or one for each keyword, such as\n{\"format\": \"Enter an email address\"}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "components"
+      ],
+      "description": "Panel is the root of a JSON UI description."
     },
     "Select": {
       "properties": {
@@ -2171,7 +2171,7 @@
           "description": "Event name, e.g. \"customer:save\"."
         },
         "detail": {
-          "description": "Event detail; defaults to a copy of the document data."
+          "description": "Event detail; defaults to a copy of the panel data."
         },
         "into": {
           "type": "string",
@@ -2209,7 +2209,7 @@
       "required": [
         "action"
       ],
-      "description": "Restore the document data to its initial values, and clear its errors."
+      "description": "Restore the panel data to its initial values, and clear its errors."
     },
     "action.set": {
       "properties": {
@@ -2263,7 +2263,7 @@
       "required": [
         "action"
       ],
-      "description": "Validate the document data against its schemas, showing every error, and stop the actions after it while there are any."
+      "description": "Validate the panel data against its schemas, showing every error, and stop the actions after it while there are any."
     },
     "node.avatar": {
       "properties": {
@@ -2295,7 +2295,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2305,7 +2305,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2396,7 +2396,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2406,7 +2406,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2480,7 +2480,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2490,7 +2490,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2566,7 +2566,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2576,7 +2576,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2649,7 +2649,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2659,7 +2659,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2734,7 +2734,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2744,7 +2744,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2815,7 +2815,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -2825,7 +2825,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2906,7 +2906,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "model": {
           "type": "string",
@@ -2920,7 +2920,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -2993,7 +2993,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3003,7 +3003,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3076,7 +3076,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3086,7 +3086,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3159,7 +3159,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3169,7 +3169,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3249,7 +3249,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3259,7 +3259,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3332,7 +3332,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3342,7 +3342,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3417,7 +3417,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3427,7 +3427,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3509,7 +3509,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3519,7 +3519,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3598,7 +3598,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "model": {
           "type": "string",
@@ -3612,7 +3612,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3684,7 +3684,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3694,7 +3694,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3766,7 +3766,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3776,7 +3776,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3844,7 +3844,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3854,7 +3854,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -3928,7 +3928,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -3938,7 +3938,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4011,7 +4011,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4021,7 +4021,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4105,7 +4105,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "model": {
           "type": "string",
@@ -4119,7 +4119,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4192,7 +4192,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4202,7 +4202,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4270,7 +4270,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4280,7 +4280,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4353,7 +4353,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4363,7 +4363,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4438,7 +4438,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4448,7 +4448,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4527,7 +4527,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4537,7 +4537,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4614,7 +4614,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4624,7 +4624,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4693,7 +4693,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4703,7 +4703,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4775,7 +4775,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4785,7 +4785,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -4858,7 +4858,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -4868,7 +4868,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5007,7 +5007,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "model": {
           "type": "string",
@@ -5021,7 +5021,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5094,7 +5094,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -5104,7 +5104,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5176,7 +5176,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -5186,7 +5186,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5259,7 +5259,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -5269,7 +5269,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5338,7 +5338,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -5348,7 +5348,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5420,7 +5420,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -5430,7 +5430,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5502,7 +5502,7 @@
             ]
           },
           "type": "object",
-          "description": "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
         },
         "on": {
           "additionalProperties": {
@@ -5512,7 +5512,7 @@
             "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5581,7 +5581,7 @@
             ]
           },
           "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the document's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
         "each": {
           "type": "string",
@@ -5628,5 +5628,5 @@
       "description": "PopUI UploadFile component."
     }
   },
-  "title": "PopUI JSON document"
+  "title": "PopUI JSON panel"
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 	"github.com/invopop/popui.go/internal/docs/playground"
 	"github.com/invopop/popui.go/jsonui"
+	"github.com/invopop/popui.go/jsonui/schema"
 	"github.com/invopop/popui.go/props"
 	"strings"
 )
@@ -62,7 +63,7 @@ func jsonUI() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "The jsonui package renders PopUI components from a JSON document instead of templ code, so an app can send a form or a detail view as data. The same Go renderer runs on the server or, compiled to WebAssembly, in the browser, and a JSON Schema gives editors completion and validation. Documents hold no code: behaviour comes from named actions that the host page implements and allows.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "The jsonui package renders PopUI components from a panel described in JSON instead of templ code, so an app can send a form or a detail view as data. A panel is part of a page rather than a whole page: the host places it wherever it fits, and it carries its own data, handlers and validation. The same Go renderer runs on the server or, compiled to WebAssembly, in the browser, and a JSON Schema gives editors completion and validation. Panels hold no code: behaviour comes from named actions that the host page implements and allows.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -140,7 +141,7 @@ func jsonUI() templ.Component {
 			})
 			templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 				Title:       "Data and bind",
-				Description: "A document lists the components to render, each named with \"is\" after HTML's global is attribute. \"props\" are the component's props from the props package, and \"bind\" fills props from the document's \"data\" when it is rendered.",
+				Description: "A panel lists the components to render, each named with \"is\" after HTML's global is attribute. \"props\" are the component's props from the props package, and \"bind\" fills props from the panel's \"data\" when it is rendered.",
 				Code:        jsonuiDetailsExample,
 				Language:    "json",
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
@@ -171,7 +172,7 @@ func jsonUI() templ.Component {
 			})
 			templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 				Title:       "Forms and actions",
-				Description: "\"model\" binds a form control to the data both ways, \"bind\" on a text node keeps it in sync, and \"on\" runs actions for DOM events, inline or by the name of one of the document's handlers. Edit the fields, then save or reset.",
+				Description: "\"model\" binds a form control to the data both ways, \"bind\" on a text node keeps it in sync, and \"on\" runs actions for DOM events, inline or by the name of one of the panel's handlers. Edit the fields, then save or reset.",
 				Code:        jsonuiFormExample,
 				Language:    "json",
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
@@ -197,10 +198,10 @@ func jsonUI() templ.Component {
 				templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 					Items: []modules.APITableItem{
 						{Name: "components", Type: "[]node", Required: true, Description: "The components to render, in order."},
-						{Name: "data", Type: "object", Description: "The document's state. It becomes the Alpine.js `x-data` of the document, is where `bind` and `model` read from, and is what actions change."},
+						{Name: "data", Type: "object", Description: "The panel's state. It becomes the Alpine.js `x-data` of the panel, is where `bind` and `model` read from, and is what actions change."},
 						{Name: "handlers", Type: "object", Description: "Named actions, or lists of actions, that `on` can refer to by name, so a handler used in several places is defined once."},
 						{Name: "schemas", Type: "object", Description: "Data paths mapped to the JSON Schema their value must match, e.g. `{\"config\": {...}}`. See Validation below."},
-						{Name: "init", Type: "handler", Description: "Runs once when the document starts, like an `on` handler: an action, a handler name or a list of them, e.g. `\"update\"` so the host receives the initial data."},
+						{Name: "init", Type: "handler", Description: "Runs once when the panel starts, like an `on` handler: an action, a handler name or a list of them, e.g. `\"update\"` so the host receives the initial data."},
 						{Name: "$schema", Type: "string", Description: "The JSON Schema of the format, for editors. Ignored when rendering."},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -209,7 +210,7 @@ func jsonUI() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = modules.Section("Document", "json-ui-document").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = modules.Section("Panel", "json-ui-panel").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -331,7 +332,7 @@ func jsonUI() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"schemas\" describe what the data must be with JSON Schemas, so a document can check its data as it's edited and an app can check it again with the same schemas when it's saved. They also tell anyone writing the data without the form, such as an LLM, what it must be.")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"schemas\" describe what the data must be with JSON Schemas, so a panel can check its data as it's edited and an app can check it again with the same schemas when it's saved. They also tell anyone writing the data without the form, such as an LLM, what it must be.")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -341,20 +342,20 @@ func jsonUI() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " <ul class=\"list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary\"><li>Each form control with a \"model\" shows the error for its path once it's been changed or left, or after the validate action. Errors for paths without a control are shown after the document.</li><li>Messages are written for the person filling in the form. A schema's \"errorMessage\" replaces them: one message, or one for each keyword, such as ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " <ul class=\"list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary\"><li>Each form control with a \"model\" shows the error for its path once it's been changed or left, or after the validate action. Errors for paths without a control are shown after the panel.</li><li>Messages are written for the person filling in the form. A schema's \"errorMessage\" replaces them: one message, or one for each keyword, such as ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(`{"format": "Enter an email address"}`)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 77, Col: 192}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 78, Col: 192}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "; on an object, \"required\" can have a message for each property.</li><li>Labels, descriptions and select options are defined by component props or bindings. Schema annotations and schema structure do not change the presentation.</li><li>Host actions report errors, such as those from the server saving the data, by throwing an error with an \"errors\" list of paths and messages. They show on their fields until the field is changed or the action runs again.</li><li>Schemas can only refer to themselves with \"$ref\". Data is validated in the browser by popui.wasm. Explicit validate actions stop if validation cannot run and show a document-level error unless silent is true.</li></ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "; on an object, \"required\" can have a message for each property.</li><li>Labels, descriptions and select options are defined by component props or bindings. Schema annotations and schema structure do not change the presentation.</li><li>Host actions report errors, such as those from the server saving the data, by throwing an error with an \"errors\" list of paths and messages. They show on their fields until the field is changed or the action runs again.</li><li>Schemas can only refer to themselves with \"$ref\". Data is validated in the browser by popui.wasm. Explicit validate actions stop if validation cannot run and show a panel-level error unless silent is true.</li></ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -370,7 +371,7 @@ func jsonUI() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "$errors.checked reports whether the current data has been validated successfully; $errors.valid is true only after a successful check with no schema errors. Both are false while validation is pending or unavailable. Documents without schemas are considered checked and valid.")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "$errors.checked reports whether the current data has been validated successfully; $errors.valid is true only after a successful check with no schema errors. Both are false while validation is pending or unavailable. Panels without schemas are considered checked and valid.")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -489,7 +490,7 @@ func jsonUI() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(`"Hello {{customer.name}}"`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 96, Col: 189}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 97, Col: 189}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -514,8 +515,8 @@ func jsonUI() templ.Component {
 					Items: []modules.APITableItem{
 						{Name: "alert", Type: "message", Description: "Shows `message` in the browser's alert dialog."},
 						{Name: "set", Type: "path, value", Description: "Sets the data at `path` to `value`."},
-						{Name: "reset", Type: "", Description: "Restores the document's data to its initial values, and clears its errors."},
-						{Name: "validate", Type: "silent", Description: "Validates the data against the document's schemas and stops the actions after it while there are errors or validation cannot run. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
+						{Name: "reset", Type: "", Description: "Restores the panel's data to its initial values, and clears its errors."},
+						{Name: "validate", Type: "silent", Description: "Validates the data against the panel's schemas and stops the actions after it while there are errors or validation cannot run. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
 						{Name: "dispatch", Type: "event, detail", Description: "Dispatches a bubbling DOM event named `event`, with `detail` or else a snapshot of the data, for the host page to handle."},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -604,7 +605,7 @@ func jsonUI() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Documents are untrusted by default, so a document can't run script on the host page beyond the actions the host allows. Rendering fails with an error when a document has:")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Panels are untrusted by default, so a panel can't run script on the host page beyond the actions the host allows. Rendering fails with an error when a panel has:")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -614,15 +615,15 @@ func jsonUI() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " <ul class=\"list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary\"><li>Alpine directives, event handler attributes or htmx attributes in props or bound values</li><li>URLs that can run script, such as javascript:, in props or bound values</li><li>text binds, \"each\" lists and \"show\" conditions that aren't paths in the document's data</li><li>data paths through __proto__, prototype or constructor</li><li>actions the host hasn't allowed, or unknown handlers</li></ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " <ul class=\"list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary\"><li>Alpine directives, event handler attributes or htmx attributes in props or bound values</li><li>URLs that can run script, such as javascript:, in props or bound values</li><li>text binds, \"each\" lists and \"show\" conditions that aren't paths in the panel's data</li><li>data paths through __proto__, prototype or constructor</li><li>actions the host hasn't allowed, or unknown handlers</li></ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 					Title: "jsonui.Options",
 					Items: []modules.APITableItem{
-						{Name: "Actions", Type: "[]string", Default: "BuiltinActions", Description: "The actions documents may use. An empty slice allows none."},
-						{Name: "Trusted", Type: "bool", Default: "false", Description: "Turns the strict checks off, for documents from a trusted source."},
+						{Name: "Actions", Type: "[]string", Default: "BuiltinActions", Description: "The actions panels may use. An empty slice allows none."},
+						{Name: "Trusted", Type: "bool", Default: "false", Description: "Turns the strict checks off, for panels from a trusted source."},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -704,7 +705,7 @@ func jsonUI() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "Apps validate data they receive against a document's schemas with the same messages:")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "Apps validate data they receive against a panel's schemas with the same messages:")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -763,13 +764,13 @@ func jsonUI() templ.Component {
 					var templ_7745c5c3_Var29 string
 					templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs("https://assets.invopop.com/popui/<version>/")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 152, Col: 132}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/docs/jsonui.templ`, Line: 153, Col: 132}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, ". Load every file from the same version: wasm_exec.js must match the Go that built popui.wasm. The renderer adds popuiRender(json, options), which returns the HTML or an error, and popuiValidate(schemas, data), which jsonui.js validates documents' data with, and dispatches popui:ready once they're available.")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, ". Load every file from the same version: wasm_exec.js must match the Go that built popui.wasm. The renderer adds popuiRender(json, options), which returns the HTML or an error, and popuiValidate(schemas, data), which jsonui.js validates panels' data with, and dispatches popui:ready once they're available.")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -821,7 +822,7 @@ func jsonUI() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "Set \"$schema\" to the document schema, which is generated from the same components and props as the renderer, for completion, documentation on hover and validation in editors such as VS Code. Each release publishes it as schema.json next to the other assets; it's also embedded in Go as schema.Document in the jsonui/schema package.")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "Set \"$schema\" to the panel schema, which is generated from the same components and props as the renderer, for completion, documentation on hover and validation in editors such as VS Code. Use the major version's address below, which always holds the latest release's schema and is the schema's \"$id\". Each release also publishes its own copy as panel.json next to the other assets, and it's embedded in Go as schema.Panel in the jsonui/schema package.")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -835,7 +836,7 @@ func jsonUI() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = modules.CodeBlock(modules.CodeBlockProps{Code: `{ "$schema": "https://assets.invopop.com/popui/v0.75.0/schema.json", "components": [] }`, Language: "json"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = modules.CodeBlock(modules.CodeBlockProps{Code: `{ "$schema": "` + schema.ID + `", "components": [] }`, Language: "json"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -847,7 +848,7 @@ func jsonUI() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = article("json-ui", "JSON UI", "Describe PopUI interfaces as JSON documents and render them in Go or in the browser. Experimental.").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = article("json-ui", "JSON UI", "Describe panels of PopUI components in JSON and render them in Go or in the browser. Experimental.").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -855,7 +856,7 @@ func jsonUI() templ.Component {
 	})
 }
 
-// jsonuiComponentItems lists the components documents can use, from the
+// jsonuiComponentItems lists the components panels can use, from the
 // jsonui registry, so the table can't fall behind the renderer.
 func jsonuiComponentItems() []modules.APITableItem {
 	items := []modules.APITableItem{

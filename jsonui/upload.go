@@ -33,7 +33,7 @@ type UploadFile struct {
 }
 
 func init() {
-	// Built by docBuilder.uploadFile; the entry provides the props type for
+	// Built by panelBuilder.uploadFile; the entry provides the props type for
 	// Components and the schema.
 	registry[uploadFileType] = entry{props: reflect.TypeFor[UploadFile]()}
 	modelProps[uploadFileType] = ""
@@ -41,8 +41,8 @@ func init() {
 }
 
 // uploadFile builds alpine.UploadFile, whose props are Alpine expressions,
-// from the node's data paths and actions so documents never supply script.
-func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
+// from the node's data paths and actions so panels never supply script.
+func (b *panelBuilder) uploadFile(n *Node) (templ.Component, error) {
 	var p UploadFile
 	if len(n.Props) > 0 {
 		if err := decodeStrict(n.Props, &p); err != nil {
@@ -56,7 +56,7 @@ func (b *docBuilder) uploadFile(n *Node) (templ.Component, error) {
 		return nil, fmt.Errorf("%s: model is required", n.Component)
 	}
 	if b.data == nil {
-		return nil, fmt.Errorf("%s model: document data must be set", n.Component)
+		return nil, fmt.Errorf("%s model: panel data must be set", n.Component)
 	}
 	if !safePath(n.Model) {
 		return nil, fmt.Errorf("%s model: %q is not a data path", n.Component, n.Model)

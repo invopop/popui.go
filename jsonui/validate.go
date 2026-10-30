@@ -18,7 +18,7 @@ import (
 	"golang.org/x/text/message"
 )
 
-// Documents describe what their data must be with JSON Schemas, one for each
+// Panels describe what their data must be with JSON Schemas, one for each
 // part of the data they validate, e.g. the "config" a step saves:
 //
 //	{
@@ -52,11 +52,11 @@ const (
 	msgEmail    = "Must be an email address"
 )
 
-// schemaURL is the base URL of the schemas in a document, which never
+// schemaURL is the base URL of the schemas in a panel, which never
 // reach outside it.
 const schemaURL = "jsonui:schemas"
 
-// Validator validates document data against the document's schemas.
+// Validator validates panel data against the panel's schemas.
 type Validator struct {
 	paths   []string
 	schemas map[string]*jsonschema.Schema
@@ -64,8 +64,8 @@ type Validator struct {
 	raw map[string]any
 }
 
-// NewValidator compiles a document's schemas, keyed by data path. Schemas
-// can only refer to definitions inside themselves with "$ref", as documents
+// NewValidator compiles a panel's schemas, keyed by data path. Schemas
+// can only refer to definitions inside themselves with "$ref", as panels
 // may come from anywhere and must not make the renderer fetch anything.
 func NewValidator(schemas map[string]json.RawMessage) (*Validator, error) {
 	v := &Validator{schemas: map[string]*jsonschema.Schema{}, raw: map[string]any{}}
@@ -96,7 +96,7 @@ func NewValidator(schemas map[string]json.RawMessage) (*Validator, error) {
 	return v, nil
 }
 
-// noLoader refuses to load schemas from anywhere: documents' schemas must be
+// noLoader refuses to load schemas from anywhere: panels' schemas must be
 // complete.
 type noLoader struct{}
 
@@ -118,7 +118,7 @@ func schemaError(err error) error {
 	return err
 }
 
-// Validate checks the document data against the schemas, returning every
+// Validate checks the panel data against the schemas, returning every
 // error found, one per path at most, in order of path.
 func (v *Validator) Validate(data map[string]any) []FieldError {
 	var out []FieldError
@@ -147,7 +147,7 @@ func (v *Validator) Validate(data map[string]any) []FieldError {
 	return out
 }
 
-// ValidateJSON validates document data given as JSON, as the browser sends
+// ValidateJSON validates panel data given as JSON, as the browser sends
 // it.
 func (v *Validator) ValidateJSON(data []byte) ([]FieldError, error) {
 	doc, err := jsonschema.UnmarshalJSON(bytes.NewReader(data))

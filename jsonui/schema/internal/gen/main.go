@@ -1,4 +1,4 @@
-// Command gen generates document.json from the jsonui registry, using the props structs'
+// Command gen generates panel.json from the jsonui registry, using the props structs'
 // Go doc comments as descriptions and their jsonschema tags for allowed
 // values and URL formats. Run with `go generate ./jsonui/schema`.
 package main
@@ -18,7 +18,7 @@ import (
 	"github.com/invopop/popui.go/jsonui/schema"
 )
 
-const outPath = "jsonui/schema/document.json"
+const outPath = "jsonui/schema/panel.json"
 
 // componentKey is the node property that names its component.
 const componentKey = "is"
@@ -87,16 +87,16 @@ func render() ([]byte, error) {
 		}
 	}
 
-	doc := r.Reflect(jsonui.Document{})
+	doc := r.Reflect(jsonui.Panel{})
 	merge(doc)
 	// Data is a json.RawMessage, which reflects as an untyped value.
-	docDef := defs["Document"]
+	docDef := defs["Panel"]
 	if p, ok := docDef.Properties.Get("data"); ok {
 		p.Type = typeObject
 	}
 	docDef.Properties.Set("components", &jsonschema.Schema{
 		Type:        typeArray,
-		Description: r.CommentMap["github.com/invopop/popui.go/jsonui.Document.Components"],
+		Description: r.CommentMap["github.com/invopop/popui.go/jsonui.Panel.Components"],
 		Items:       &jsonschema.Schema{Ref: "#/$defs/Node"},
 	})
 	docDef.Required = []string{"components"}
@@ -194,8 +194,8 @@ func render() ([]byte, error) {
 	out := &jsonschema.Schema{
 		Version:     jsonschema.Version,
 		ID:          schema.ID,
-		Ref:         "#/$defs/Document",
-		Title:       "PopUI JSON document",
+		Ref:         "#/$defs/Panel",
+		Title:       "PopUI JSON panel",
 		Definitions: defs,
 	}
 	data, err := json.MarshalIndent(out, "", "  ")
@@ -230,13 +230,13 @@ var builtinActions = []struct {
 		{"path", &jsonschema.Schema{Type: typeString, Description: "Data path to change, e.g. \"customer.name\"."}},
 		{"value", &jsonschema.Schema{Description: "New value; strings may use {{path}} placeholders."}},
 	}},
-	{"reset", "Restore the document data to its initial values, and clear its errors.", nil},
-	{"validate", "Validate the document data against its schemas, showing every error, and stop the actions after it while there are any.", []param{
+	{"reset", "Restore the panel data to its initial values, and clear its errors.", nil},
+	{"validate", "Validate the panel data against its schemas, showing every error, and stop the actions after it while there are any.", []param{
 		{"silent", &jsonschema.Schema{Type: "boolean", Description: "Don't show errors in fields that haven't been touched, e.g. to only save valid data as it changes."}},
 	}},
 	{"dispatch", "Dispatch a bubbling DOM CustomEvent for the host page to handle.", []param{
 		{"event", &jsonschema.Schema{Type: typeString, Description: "Event name, e.g. \"customer:save\"."}},
-		{"detail", &jsonschema.Schema{Description: "Event detail; defaults to a copy of the document data."}},
+		{"detail", &jsonschema.Schema{Description: "Event detail; defaults to a copy of the panel data."}},
 	}},
 }
 
@@ -289,7 +289,7 @@ func addActions(defs jsonschema.Definitions) {
 		Examples:    names,
 	})
 	defs["Action"] = action
-	// Handlers defined on the document hold actions only; "on" values can
+	// Handlers defined on the panel hold actions only; "on" values can
 	// also name one of them.
 	defs["HandlerDefinition"] = &jsonschema.Schema{
 		AnyOf: []*jsonschema.Schema{
@@ -299,7 +299,7 @@ func addActions(defs jsonschema.Definitions) {
 	}
 	actionOrName := &jsonschema.Schema{AnyOf: []*jsonschema.Schema{
 		{Ref: actionRef},
-		{Type: typeString, Description: "The name of one of the document's handlers."},
+		{Type: typeString, Description: "The name of one of the panel's handlers."},
 	}}
 	defs["Handler"] = &jsonschema.Schema{
 		AnyOf: append(actionOrName.AnyOf, &jsonschema.Schema{Type: typeArray, Items: actionOrName}),
@@ -317,7 +317,7 @@ func bindSchema(props *jsonschema.Schema) *jsonschema.Schema {
 	}
 	return &jsonschema.Schema{
 		Type:                 typeObject,
-		Description:          "Props to take from the document data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time.",
+		Description:          "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time.",
 		PropertyNames:        &jsonschema.Schema{Enum: names},
 		AdditionalProperties: &jsonschema.Schema{Type: typeString},
 	}
@@ -339,7 +339,7 @@ func nodeSchema(names []string) *jsonschema.Schema {
 		branches[i] = &jsonschema.Schema{If: match, Then: &jsonschema.Schema{Ref: "#/$defs/node." + name}}
 	}
 	s := &jsonschema.Schema{
-		Description: "A node in the document, identified by its component.",
+		Description: "A node in the panel, identified by its component.",
 		Type:        typeObject,
 		Properties:  jsonschema.NewProperties(),
 		Required:    []string{componentKey},
@@ -372,7 +372,7 @@ func dropUnsupported(s *jsonschema.Schema) {
 	}
 }
 
-// lowerCamel converts Go field names to the camelCase used in documents:
+// lowerCamel converts Go field names to the camelCase used in panels:
 // "Label" → "label", "ID" → "id", "HTMLClass" → "htmlClass". Decoding is
 // case-insensitive, so these map back onto the same fields.
 func lowerCamel(s string) string {

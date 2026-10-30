@@ -124,7 +124,7 @@ func (c selectChoice) matches(model string) string {
 // expression, and whether it's relative to the current "each" item. Other
 // paths must be in the data in strict mode, so they can't reach the page's
 // globals.
-func (b *docBuilder) livePath(path string) (string, bool, error) {
+func (b *panelBuilder) livePath(path string) (string, bool, error) {
 	if !safePath(path) {
 		return "", false, fmt.Errorf("%q is not a data path", path)
 	}
@@ -135,7 +135,7 @@ func (b *docBuilder) livePath(path string) (string, bool, error) {
 		}
 	}
 	if b.data == nil {
-		return "", false, errors.New("document data must be set")
+		return "", false, errors.New("panel data must be set")
 	}
 	if !b.opts.Trusted {
 		if _, err := lookup(b.data, path); err != nil {
@@ -146,7 +146,7 @@ func (b *docBuilder) livePath(path string) (string, bool, error) {
 }
 
 // each renders the node once for every item of the list at its "each" path.
-func (b *docBuilder) each(n *Node) (templ.Component, error) {
+func (b *panelBuilder) each(n *Node) (templ.Component, error) {
 	list, _, err := b.livePath(n.Each)
 	if err != nil {
 		return nil, fmt.Errorf("%s each: %w", n.Component, err)
@@ -168,7 +168,7 @@ func (b *docBuilder) each(n *Node) (templ.Component, error) {
 }
 
 // show renders the node only while its "show" condition holds.
-func (b *docBuilder) show(n *Node) (templ.Component, error) {
+func (b *panelBuilder) show(n *Node) (templ.Component, error) {
 	cond, err := b.condition(n.Show)
 	if err != nil {
 		return nil, fmt.Errorf("%s show: %w", n.Component, err)
@@ -186,7 +186,7 @@ func (b *docBuilder) show(n *Node) (templ.Component, error) {
 
 // element builds a node for a template, which keeps only its first element,
 // so plain text is given one.
-func (b *docBuilder) element(n *Node) (templ.Component, error) {
+func (b *panelBuilder) element(n *Node) (templ.Component, error) {
 	if n.Component == textType && len(n.Bind) == 0 && n.Each == "" && len(n.Show) == 0 {
 		return plainText(n.Text), nil
 	}
@@ -198,9 +198,9 @@ func (b *docBuilder) element(n *Node) (templ.Component, error) {
 // e.g. "!config.sandbox", or an object of data paths to the list of values
 // each may have, all of which must match, e.g.
 // {"workflow.schema": ["bill/invoice"], "config.mode": ["a", "b"]}.
-// Conditions are data rather than expressions, so documents can't run
+// Conditions are data rather than expressions, so panels can't run
 // script through them.
-func (b *docBuilder) condition(raw json.RawMessage) (string, error) {
+func (b *panelBuilder) condition(raw json.RawMessage) (string, error) {
 	var v any
 	if err := json.Unmarshal(raw, &v); err != nil {
 		return "", err
@@ -258,7 +258,7 @@ func (b *docBuilder) condition(raw json.RawMessage) (string, error) {
 // select's model: it's selected while its value is the model's, whether the
 // option, the model or the other options change. value is the Alpine
 // expression of a live value, or the value itself.
-func (b *docBuilder) selectOption(props map[string]json.RawMessage, attrs map[string]any, value string, live bool) error {
+func (b *panelBuilder) selectOption(props map[string]json.RawMessage, attrs map[string]any, value string, live bool) error {
 	s := b.sel
 	if s == nil {
 		return errors.New("option: must be a child of a select without options or multiple")
@@ -323,7 +323,7 @@ func (s *selectState) unavailableOption() templ.Component {
 // liveBind adds the Alpine bindings for the props a component keeps in sync
 // with the data. Props bound to the "each" item can only be live ones, as
 // they can't be resolved at render time.
-func (b *docBuilder) liveBind(typ, prop, path string, attrs map[string]any) (bool, error) {
+func (b *panelBuilder) liveBind(typ, prop, path string, attrs map[string]any) (bool, error) {
 	expr, inLoop, err := b.livePath(path)
 	if err != nil {
 		return false, err

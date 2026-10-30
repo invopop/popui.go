@@ -3,11 +3,11 @@
 // server-side rendering and to WebAssembly (see ./wasm) so a browser can turn
 // JSON straight into PopUI HTML without a Go server round-trip.
 //
-// A document is an object with a list of components and optional Alpine.js
+// A panel is an object with a list of components and optional Alpine.js
 // data, which is also the source for bound values:
 //
 //	{
-//	  "$schema": "https://…/jsonui/schema/document.json",
+//	  "$schema": "https://assets.invopop.com/popui/v0/panel.json",
 //	  "data": {"customer": {"name": "Acme S.L."}},
 //	  "components": [
 //	    {
@@ -46,13 +46,13 @@ import (
 	popui "github.com/invopop/popui.go"
 )
 
-// Document is the root of a JSON UI description.
-type Document struct {
-	// Schema identifies the JSON Schema of the document so editors can offer
+// Panel is the root of a JSON UI description.
+type Panel struct {
+	// Schema identifies the JSON Schema of the panel so editors can offer
 	// completion and validation. It is ignored when rendering.
 	Schema string `json:"$schema,omitempty"`
-	// Data is a JSON object with the document's state. It becomes the
-	// Alpine.js `x-data` of the document, is the source for node "bind" and
+	// Data is a JSON object with the panel's state. It becomes the
+	// Alpine.js `x-data` of the panel, is the source for node "bind" and
 	// "model" values, and is what actions in "on" handlers read and change.
 	// Behaviour is never embedded here: actions are implemented in JS (see
 	// assets/jsonui.js) and only referenced by name.
@@ -64,14 +64,14 @@ type Document struct {
 	// once, e.g. {"update": {"action": "step.update", "summary": "…"}} and
 	// then {"on": {"change": "update"}}. Handlers can't refer to each other.
 	Handlers map[string]json.RawMessage `json:"handlers,omitempty"`
-	// Init is run once when the document starts, like an "on" handler: an
-	// action, the name of one of the document's handlers, or a list of
+	// Init is run once when the panel starts, like an "on" handler: an
+	// action, the name of one of the panel's handlers, or a list of
 	// either, e.g. "update" so the host receives the initial data.
 	Init json.RawMessage `json:"init,omitempty"`
 	// Schemas map data paths, such as "config", to the JSON Schema their
 	// value must match. The data is validated as it changes, and errors are
 	// shown with the form control whose "model" is their path, or after the
-	// document for paths without one. Labels and options are defined by
+	// panel for paths without one. Labels and options are defined by
 	// components independently of the schemas. Schemas can only
 	// refer to themselves with "$ref". A schema's "errorMessage" replaces the
 	// messages of its errors: one message, or one for each keyword, such as
@@ -92,7 +92,7 @@ type Node struct {
 	Children []Node `json:"children,omitempty"`
 	// Text is only used by the "text" node type.
 	Text string `json:"text,omitempty"`
-	// Bind takes values from the document data. On "text" nodes it is an
+	// Bind takes values from the panel data. On "text" nodes it is an
 	// Alpine expression shown with x-text; a plain path such as
 	// "customer.name" is also resolved from object data at render time so the
 	// text is correct before Alpine starts. On components it maps prop names
@@ -116,7 +116,7 @@ type Node struct {
 	// rendered from the data.
 	Model string `json:"model,omitempty"`
 	// On maps DOM events, with optional Alpine modifiers such as
-	// "submit.prevent", to an action, the name of one of the document's
+	// "submit.prevent", to an action, the name of one of the panel's
 	// handlers, or a list of either to run in order, e.g.
 	// {"click": {"action": "alert", "message": "Hi {{customer.name}}"}} or
 	// {"change": "update"}.
@@ -192,7 +192,7 @@ func register[P any](name string, fn func(...P) templ.Component) {
 const childMarker = "\x00jsonui-children\x00"
 
 // rendersChildren reports whether c renders its children, by rendering it
-// with its default props and a marker child, so that documents can't supply
+// with its default props and a marker child, so that panels can't supply
 // children a component would silently drop.
 func rendersChildren(c templ.Component) bool {
 	marker := templ.Raw(childMarker)
@@ -271,13 +271,13 @@ func Names() []string {
 	return out
 }
 
-// Component builds the document's components. When the document has data,
+// Component builds the panel's components. When the panel has data,
 // they are wrapped in an Alpine.js component root.
-func (d *Document) Component(opts Options) (templ.Component, error) {
+func (d *Panel) Component(opts Options) (templ.Component, error) {
 	if d.Components == nil {
-		return nil, errors.New("document: missing components")
+		return nil, errors.New("panel: missing components")
 	}
-	b := &docBuilder{opts: opts}
+	b := &panelBuilder{opts: opts}
 	var schemas string
 	if len(d.Schemas) > 0 {
 		var err error
@@ -315,23 +315,23 @@ func (d *Document) Component(opts Options) (templ.Component, error) {
 		if err != nil {
 			return nil, fmt.Errorf("init: %w", err)
 		}
-		// There's no event when the document starts.
+		// There's no event when the panel starts.
 		xinit = "$actions(" + list + ")"
 		if xdata == "" {
-			xdata = "{}" // init runs on the document root
+			xdata = "{}" // init runs on the panel root
 		}
 	}
 	errors := b.fields > 0 || b.validator != nil
 	if errors {
 		body = templ.Join(body, unplacedErrors())
 		if xdata == "" {
-			xdata = "{}" // errors are tracked on the document root
+			xdata = "{}" // errors are tracked on the panel root
 		}
 	}
 	if xdata == "" {
 		return body, nil
 	}
-	return withChildren(documentRoot(xdata, xinit, errors, schemas), body), nil
+	return withChildren(panelRoot(xdata, xinit, errors, schemas), body), nil
 }
 
 // compactSchemas returns the schemas as the compact JSON jsonui.js
@@ -349,32 +349,32 @@ func compactSchemas(schemas map[string]json.RawMessage) (string, error) {
 	return string(data), err
 }
 
-// parseData returns the compact x-data JSON for the document along with
+// parseData returns the compact x-data JSON for the panel along with
 // its decoded value for resolving binds and models.
 func parseData(raw json.RawMessage) (string, map[string]any, error) {
 	var v any
 	dec := json.NewDecoder(bytes.NewReader(raw))
 	dec.UseNumber()
 	if err := dec.Decode(&v); err != nil {
-		return "", nil, fmt.Errorf("document data: %w", err)
+		return "", nil, fmt.Errorf("panel data: %w", err)
 	}
 	obj, ok := v.(map[string]any)
 	if !ok {
-		return "", nil, errors.New("document data: must be an object")
+		return "", nil, errors.New("panel data: must be an object")
 	}
 	var buf bytes.Buffer
 	if err := json.Compact(&buf, raw); err != nil {
-		return "", nil, fmt.Errorf("document data: %w", err)
+		return "", nil, fmt.Errorf("panel data: %w", err)
 	}
 	return buf.String(), obj, nil
 }
 
-// docBuilder holds the state shared while building a document's nodes.
-type docBuilder struct {
+// panelBuilder holds the state shared while building a panel's nodes.
+type panelBuilder struct {
 	opts Options
-	// data is the document data when it is a JSON object, or nil.
+	// data is the panel data when it is a JSON object, or nil.
 	data map[string]any
-	// handlers are the document's named handlers, resolved to their actions.
+	// handlers are the panel's named handlers, resolved to their actions.
 	handlers map[string][]map[string]any
 	// loops are the list expressions of the "each" nodes being built.
 	loops []string
@@ -383,13 +383,13 @@ type docBuilder struct {
 	conds []string
 	// sel is the state of the single select whose options are being built.
 	sel *selectState
-	// validator checks the data against the document's schemas, if any.
+	// validator checks the data against the panel's schemas, if any.
 	validator *Validator
 	// fields counts the form controls that show errors for their model.
 	fields int
 }
 
-func (b *docBuilder) buildAll(nodes []Node) (templ.Component, error) {
+func (b *panelBuilder) buildAll(nodes []Node) (templ.Component, error) {
 	comps := make([]templ.Component, len(nodes))
 	for i := range nodes {
 		c, err := b.build(&nodes[i])
@@ -401,7 +401,7 @@ func (b *docBuilder) buildAll(nodes []Node) (templ.Component, error) {
 	return templ.Join(comps...), nil
 }
 
-func (b *docBuilder) build(n *Node) (templ.Component, error) {
+func (b *panelBuilder) build(n *Node) (templ.Component, error) {
 	if n.Each != "" {
 		return b.each(n)
 	}
@@ -447,7 +447,7 @@ func (b *docBuilder) build(n *Node) (templ.Component, error) {
 
 // fieldPath is the data path a form control shows errors for: its model,
 // unless that's in an "each" item, which has no path of its own.
-func (b *docBuilder) fieldPath(n *Node) string {
+func (b *panelBuilder) fieldPath(n *Node) string {
 	if _, ok := modelProps[n.Component]; !ok || n.Model == "" || !safePath(n.Model) {
 		return ""
 	}
@@ -467,7 +467,7 @@ func shownError(path string) string {
 
 // withChildNodes builds the node's children into c. A select's children are
 // its options, which follow its model.
-func (b *docBuilder) withChildNodes(n *Node, c templ.Component) (templ.Component, error) {
+func (b *panelBuilder) withChildNodes(n *Node, c templ.Component) (templ.Component, error) {
 	outer, conds := b.sel, b.conds
 	defer func() { b.sel, b.conds = outer, conds }()
 	b.sel, b.conds = nil, nil
@@ -491,7 +491,7 @@ func (b *docBuilder) withChildNodes(n *Node, c templ.Component) (templ.Component
 
 // selectState prepares the state of a select with options as children,
 // which only the single select renders.
-func (b *docBuilder) selectState(n *Node) (*selectState, error) {
+func (b *panelBuilder) selectState(n *Node) (*selectState, error) {
 	var p struct {
 		Multiple bool
 		Options  json.RawMessage
@@ -529,7 +529,7 @@ func (b *docBuilder) selectState(n *Node) (*selectState, error) {
 	return s, nil
 }
 
-func (b *docBuilder) text(n *Node) (templ.Component, error) {
+func (b *panelBuilder) text(n *Node) (templ.Component, error) {
 	if len(n.Bind) == 0 {
 		return templ.Raw(templ.EscapeString(n.Text)), nil
 	}
@@ -550,12 +550,12 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 	if !b.opts.Trusted {
 		// Alpine resolves names it can't find in the data from the page's
 		// globals, so x-text="document.cookie" would read the host page. In
-		// strict mode the path must therefore be in the document's data.
+		// strict mode the path must therefore be in the panel's data.
 		if !safePath(expr) {
 			return nil, fmt.Errorf("text bind: %q must be a data path in strict mode", expr)
 		}
 		if b.data == nil {
-			return nil, errors.New("text bind: document data must be set")
+			return nil, errors.New("text bind: panel data must be set")
 		}
 		v, err := lookup(b.data, expr)
 		if err != nil {
@@ -572,7 +572,7 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 
 // props returns the node's props with any bind, model and on values from
 // the node applied.
-func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
+func (b *panelBuilder) props(n *Node) (json.RawMessage, error) {
 	if len(n.Bind) == 0 && n.Model == "" && len(n.On) == 0 && n.Component != optionType {
 		return n.Props, nil
 	}
@@ -651,7 +651,7 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 
 // optionSelection keeps an option selected while its value is its select's
 // model, whether the value is bound or set in its props.
-func (b *docBuilder) optionSelection(props map[string]json.RawMessage, attrs map[string]any) error {
+func (b *panelBuilder) optionSelection(props map[string]json.RawMessage, attrs map[string]any) error {
 	if expr, ok := attrs[":value"].(string); ok {
 		return b.selectOption(props, attrs, expr, true)
 	}
@@ -692,15 +692,15 @@ func multipleDisabled(props map[string]json.RawMessage, live map[string]any) err
 	return nil
 }
 
-// bindProps overlays the props with values taken from the document data,
+// bindProps overlays the props with values taken from the panel data,
 // and adds the bindings of the props that follow the data to live.
-func (b *docBuilder) bindProps(typ string, props map[string]json.RawMessage, live map[string]any, bind json.RawMessage) error {
+func (b *panelBuilder) bindProps(typ string, props map[string]json.RawMessage, live map[string]any, bind json.RawMessage) error {
 	var paths map[string]string
 	if err := decodeStrict(bind, &paths); err != nil {
 		return fmt.Errorf("%s bind: must map prop names to data paths: %w", typ, err)
 	}
 	if b.data == nil && len(b.loops) == 0 {
-		return fmt.Errorf("%s bind: document data must be set", typ)
+		return fmt.Errorf("%s bind: panel data must be set", typ)
 	}
 	for prop, path := range paths {
 		inLoop, err := b.liveBind(typ, prop, path, live)
@@ -723,7 +723,7 @@ func (b *docBuilder) bindProps(typ string, props map[string]json.RawMessage, liv
 
 // model adds the x-model binding for a form control and renders its initial
 // value from the data.
-func (b *docBuilder) model(typ string, props map[string]json.RawMessage, attrs map[string]any, path string) error {
+func (b *panelBuilder) model(typ string, props map[string]json.RawMessage, attrs map[string]any, path string) error {
 	prop, ok := modelProps[typ]
 	if !ok {
 		return fmt.Errorf("%s: model is only supported on form controls", typ)
@@ -734,7 +734,7 @@ func (b *docBuilder) model(typ string, props map[string]json.RawMessage, attrs m
 		return nil
 	}
 	if b.data == nil {
-		return fmt.Errorf("%s model: document data must be set", typ)
+		return fmt.Errorf("%s model: panel data must be set", typ)
 	}
 	if !safePath(path) {
 		return fmt.Errorf("%s model: %q is not a data path", typ, path)
@@ -796,7 +796,7 @@ func selectOptions(props map[string]json.RawMessage, value any) error {
 
 // actions converts an "on" handler to the Alpine expression that runs its
 // actions through the jsonui.js runtime.
-func (b *docBuilder) actions(event string, raw json.RawMessage) (string, error) {
+func (b *panelBuilder) actions(event string, raw json.RawMessage) (string, error) {
 	if !eventName.MatchString(event) {
 		return "", fmt.Errorf("invalid event name %q", event)
 	}
@@ -808,7 +808,7 @@ func (b *docBuilder) actions(event string, raw json.RawMessage) (string, error) 
 }
 
 // actionList resolves a handler to the JSON list of actions it runs.
-func (b *docBuilder) actionList(raw json.RawMessage) (string, error) {
+func (b *panelBuilder) actionList(raw json.RawMessage) (string, error) {
 	list, err := b.resolve(raw, true)
 	if err != nil {
 		return "", err
@@ -823,7 +823,7 @@ func (b *docBuilder) actionList(raw json.RawMessage) (string, error) {
 // resolve converts a handler (an action, a handler name when refs is true,
 // or a list of either) to the list of actions it runs, checking that each
 // action is allowed.
-func (b *docBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, error) {
+func (b *panelBuilder) resolve(raw json.RawMessage, refs bool) ([]map[string]any, error) {
 	var v any
 	if err := json.Unmarshal(raw, &v); err != nil {
 		return nil, err
@@ -877,7 +877,7 @@ var dataPath = regexp.MustCompile(`^[A-Za-z_$][\w$]*(\.[\w$]+)*$`)
 // alpinePath writes a data path as an Alpine expression. Segments that
 // aren't identifiers, such as array indexes, use brackets, so
 // "invoice.lines.0.total" becomes "invoice.lines[0].total". Anything other
-// than a data path, such as an expression in a trusted document, is
+// than a data path, such as an expression in a trusted panel, is
 // returned unchanged.
 func alpinePath(path string) string {
 	if !dataPath.MatchString(path) {
