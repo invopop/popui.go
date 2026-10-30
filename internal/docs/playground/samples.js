@@ -669,7 +669,7 @@
                           { is: "option", each: "connections", bind: { value: "item.id", label: "item.name" } },
                         ],
                       },
-                      { is: "input", model: "config.to", props: { type: "email", label: "To", description: "Who receives the email" }, on: { change: "update" } },
+                      { is: "input", model: "config.to", props: { type: "email", label: "To", tooltip: { description: "Who receives the email" } }, on: { change: "update" } },
                       { is: "input", model: "config.subject", props: { label: "Subject" }, on: { change: "update" } },
                       { is: "select", model: "config.format", props: { label: "Format", options: [{ value: "html", label: "HTML" }, { value: "text", label: "Plain text" }] }, on: { change: "update" } },
                       { is: "checkbox", model: "config.attach_pdf", props: { label: "Attach the PDF" }, on: { change: "update" } },
