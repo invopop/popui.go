@@ -295,27 +295,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div x-show=\"!searching\" class=\"flex items-center gap-0.5 p-1 shrink-0 overflow-x-auto\"><button type=\"button\" @click=\"trail = []\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if prp.Root != "" {
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Root)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 173, Col: 16}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "root")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</button><template x-for=\"(entry, index) in trail\" :key=\"entry\"><span class=\"flex items-center gap-0.5 shrink-0\"><span class=\"shrink-0 text-icon-default-secondary\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div x-show=\"!searching\" class=\"flex items-center gap-0.5 p-1 shrink-0 overflow-x-auto\"><button type=\"button\" @click=\"trail = []\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\"><span x-text=\"rootLabel\"></span></button><template x-for=\"(entry, index) in trail\" :key=\"entry\"><span class=\"flex items-center gap-0.5 shrink-0\"><span class=\"shrink-0 text-icon-default-secondary\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -323,11 +303,11 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span> <button type=\"button\" @click=\"trail = trail.slice(0, index + 1)\" x-text=\"entries[entry].name + (entries[entry].array ? '[]' : '')\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\"></button></span></template>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span> <button type=\"button\" @click=\"trail = trail.slice(0, index + 1)\" x-text=\"entries[entry].name + (entries[entry].array ? '[]' : '')\" class=\"shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary\"></button></span></template>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -358,11 +338,11 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 				"aria-label":   "Clear",
 				"title":        "Clear",
 			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-picker') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"flex-1 min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-picker') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex, 'mt-2 before:absolute before:inset-x-1 before:-top-1 before:border-t before:border-border': entries[row.i].divider && !row.parts }\" class=\"relative flex items-center gap-2 min-h-8 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"relative shrink-0 flex items-center pl-2 size-4 box-content text-icon-default-secondary [&_svg]:size-4\" :title=\"typeLabel(row.i)\"><span x-show=\"entries[row.i].icon\" x-html=\"entries[row.i].icon\" class=\"flex items-center\"></span> <span x-show=\"typeKind(row.i) === 'string'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><ul x-ref=\"list\" tabindex=\"-1\" role=\"listbox\" :id=\"$id('field-picker') + '-listbox'\" :aria-activedescendant=\"activeId\" class=\"flex-1 min-h-0 overflow-y-auto overflow-x-hidden outline-none\"><template x-for=\"(row, index) in rows\" :key=\"entries[row.i].path\"><li role=\"option\" :id=\"$id('field-picker') + '-opt-' + index\" :aria-selected=\"isSelected(row.i)\" :class=\"{ 'bg-background-default-secondary': index === activeIndex, 'mt-2 before:absolute before:inset-x-1 before:-top-1 before:border-t before:border-border': entries[row.i].divider && !row.parts }\" class=\"relative flex items-center gap-2 min-h-8 px-2.5 py-1 rounded-md cursor-pointer\" :title=\"entries[row.i].description || entries[row.i].path\" @click=\"select(row.i)\" @mouseenter=\"activePath = entries[row.i].path\"><span class=\"relative shrink-0 flex items-center pl-2 size-4 box-content text-icon-default-secondary [&_svg]:size-4\" :title=\"typeLabel(row.i)\"><span x-show=\"entries[row.i].icon\" x-html=\"entries[row.i].icon\" class=\"flex items-center\"></span> <span x-show=\"typeKind(row.i) === 'string'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -370,7 +350,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span> <span x-show=\"typeKind(row.i) === 'object'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span> <span x-show=\"typeKind(row.i) === 'object'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,7 +358,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <span x-show=\"typeKind(row.i) === 'array'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</span> <span x-show=\"typeKind(row.i) === 'array'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -386,7 +366,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span> <span x-show=\"typeKind(row.i) === 'number'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span> <span x-show=\"typeKind(row.i) === 'number'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -394,7 +374,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</span> <span x-show=\"typeKind(row.i) === 'boolean'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <span x-show=\"typeKind(row.i) === 'boolean'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -402,20 +382,20 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span> <span x-show=\"entries[row.i].always\" class=\"absolute left-0 top-1/2 -translate-y-1/2 size-1 rounded-full bg-background-success-bold\"></span></span><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-semibold\" :class=\"entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center -mr-1.5\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span aria-hidden=\"true\" class=\"shrink-0\" :class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span> <span x-show=\"entries[row.i].always\" class=\"absolute left-0 top-1/2 -translate-y-1/2 size-1 rounded-full bg-background-success-bold\"></span></span><span class=\"min-w-0 flex-1 truncate text-base text-foreground\"><span class=\"font-semibold\" :class=\"entries[row.i].group && !row.parts ? 'font-sans' : 'font-mono'\" x-html=\"labelHTML(row)\"></span><template x-if=\"entries[row.i].description\"><span class=\"ml-1.5 text-foreground-default-tertiary\" x-text=\"entries[row.i].description\"></span></template></span><span class=\"ml-auto shrink-0 group flex items-center -mr-1.5\" :class=\"entries[row.i].children ? 'cursor-pointer' : ''\" @click=\"if (entries[row.i].children) { $event.stopPropagation(); drill(row.i) }\"><span aria-hidden=\"true\" class=\"shrink-0\" :class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fieldPickerCaretClass())
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fieldPickerCaretClass())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 304, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `field_picker.templ`, Line: 300, Col: 40}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -423,7 +403,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</span></span></li></template><li role=\"presentation\" x-show=\"rows.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No fields found</li></ul><div class=\"flex items-center gap-3 shrink-0 px-2.5 pt-2 pb-1 border-t border-border text-sm text-foreground-default-tertiary\"><span class=\"flex items-center gap-1.5\"><span class=\"size-1 rounded-full bg-background-success-bold\"></span> Always present</span> <span class=\"ml-auto shrink-0\" x-text=\"rows.length + (searching ? ' matches' : ' fields')\"></span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span></span></li></template><li role=\"presentation\" x-show=\"rows.length === 0\" class=\"px-2 py-1.5 text-base text-foreground-default-tertiary\">No fields found</li></ul><div class=\"flex items-center gap-3 shrink-0 px-2.5 pt-2 pb-1 border-t border-border text-sm text-foreground-default-tertiary\"><span class=\"flex items-center gap-1.5\"><span class=\"size-1 rounded-full bg-background-success-bold\"></span> Always present</span> <span class=\"ml-auto shrink-0\" x-text=\"rows.length + (searching ? ' matches' : ' fields')\"></span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -433,7 +413,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -531,15 +511,18 @@ func appendFieldPickerEntries(ctx context.Context, entries []fieldPickerEntry, f
 
 // fieldPickerData builds the x-data="fieldPicker({...})" snippet: where to
 // read the field tree from, the initial value, the hidden input's name, the
-// format a pick is wrapped in, and the element it is inserted into.
+// format a pick is wrapped in, the element it is inserted into, the root
+// crumb's label and the group the panel is scoped to.
 func fieldPickerData(p props.FieldPicker) string {
 	source, _ := json.Marshal(fieldPickerFieldsID(p))
 	value, _ := json.Marshal(p.Value)
 	name, _ := json.Marshal(p.Name)
 	format, _ := json.Marshal(p.Format)
 	target, _ := json.Marshal(p.Target)
-	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, disabled: %s, scalarsOnly: %s})",
-		source, value, name, format, target, boolStr(p.Disabled), boolStr(p.ScalarsOnly))
+	root, _ := json.Marshal(p.Root)
+	scope, _ := json.Marshal(p.Scope)
+	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, root: %s, scope: %s, disabled: %s, scalarsOnly: %s})",
+		source, value, name, format, target, root, scope, boolStr(p.Disabled), boolStr(p.ScalarsOnly))
 }
 
 var _ = templruntime.GeneratedTemplate
