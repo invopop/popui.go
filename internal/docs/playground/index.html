@@ -163,8 +163,9 @@
 			setJSON(JSON.stringify(doc, null, 2));
 		}
 
+		let rendered; // the JSON last rendered
 		function render() {
-			const json = getJSON();
+			const json = (rendered = getJSON());
 			let t = performance.now();
 			const res = popuiRender(json, renderOptions());
 			const renderMs = performance.now() - t;
@@ -185,7 +186,9 @@
 		function scheduleRender() {
 			if (!$("live").checked || $("render").disabled) return;
 			clearTimeout(timer);
-			timer = setTimeout(render, 150);
+			// Skip text the page loaded and has rendered, such as a sample, or
+			// the panel would start again and repeat its init.
+			timer = setTimeout(() => getJSON() !== rendered && render(), 150);
 		}
 
 		// serverRender times a server-side render of the same panel. Only
