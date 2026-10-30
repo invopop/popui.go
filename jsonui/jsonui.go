@@ -537,7 +537,7 @@ func (b *docBuilder) text(n *Node) (templ.Component, error) {
 	if err := json.Unmarshal(n.Bind, &expr); err != nil {
 		return nil, errors.New("text bind: must be a string expression")
 	}
-	if len(b.loops) > 0 {
+	if len(b.loops) > 0 && safePath(expr) { // trusted expressions are left to Alpine
 		if root, _, _ := strings.Cut(expr, "."); root == loopItem || root == loopIndex {
 			path, _, err := b.livePath(expr)
 			if err != nil {
@@ -586,8 +586,10 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 		props = map[string]json.RawMessage{}
 	}
 	live := map[string]any{}
+	var itemProps map[string]bool
 	if len(n.Bind) > 0 {
-		if err := b.bindProps(n.Component, props, live, n.Bind); err != nil {
+		var err error
+		if itemProps, err = b.bindProps(n.Component, props, live, n.Bind); err != nil {
 			return nil, err
 		}
 		if !b.opts.Trusted {
@@ -602,7 +604,7 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 		}
 	}
 	if n.Component == selectType {
-		if err := multipleDisabled(props, live); err != nil {
+		if err := multipleDisabled(props, live, itemProps); err != nil {
 			return nil, err
 		}
 	}
@@ -669,23 +671,21 @@ func (b *docBuilder) optionSelection(props map[string]json.RawMessage, attrs map
 // multipleDisabled drops the live disabled binding of a multiple select,
 // whose attributes go on a wrapper rather than its controls, so its disabled
 // prop is only resolved at render time, which an "each" item can't be.
-func multipleDisabled(props map[string]json.RawMessage, live map[string]any) error {
+// itemProps are the props bound to the item, by lower case name.
+func multipleDisabled(props map[string]json.RawMessage, live map[string]any, itemProps map[string]bool) error {
 	if _, ok := live[bindDisabled]; !ok {
 		return nil
 	}
-	var multiple, disabled bool
+	var multiple bool
 	for k, raw := range props {
-		switch {
-		case strings.EqualFold(k, "multiple"):
+		if strings.EqualFold(k, "multiple") {
 			_ = json.Unmarshal(raw, &multiple) //nolint:errcheck // checked when the props are decoded
-		case strings.EqualFold(k, propDisabled):
-			disabled = true
 		}
 	}
 	if !multiple {
 		return nil
 	}
-	if !disabled {
+	if itemProps[propDisabled] {
 		return fmt.Errorf("%s bind %s: multiple selects can't follow the %s", selectType, propDisabled, loopItem)
 	}
 	delete(live, bindDisabled)
@@ -693,32 +693,35 @@ func multipleDisabled(props map[string]json.RawMessage, live map[string]any) err
 }
 
 // bindProps overlays the props with values taken from the document data,
-// and adds the bindings of the props that follow the data to live.
-func (b *docBuilder) bindProps(typ string, props map[string]json.RawMessage, live map[string]any, bind json.RawMessage) error {
+// and adds the bindings of the props that follow the data to live. It
+// returns the props bound to an "each" item, by lower case name.
+func (b *docBuilder) bindProps(typ string, props map[string]json.RawMessage, live map[string]any, bind json.RawMessage) (map[string]bool, error) {
 	var paths map[string]string
 	if err := decodeStrict(bind, &paths); err != nil {
-		return fmt.Errorf("%s bind: must map prop names to data paths: %w", typ, err)
+		return nil, fmt.Errorf("%s bind: must map prop names to data paths: %w", typ, err)
 	}
 	if b.data == nil && len(b.loops) == 0 {
-		return fmt.Errorf("%s bind: document data must be set", typ)
+		return nil, fmt.Errorf("%s bind: document data must be set", typ)
 	}
+	itemProps := map[string]bool{}
 	for prop, path := range paths {
 		inLoop, err := b.liveBind(typ, prop, path, live)
 		if err != nil {
-			return fmt.Errorf("%s bind %s: %w", typ, prop, err)
+			return nil, fmt.Errorf("%s bind %s: %w", typ, prop, err)
 		}
 		if inLoop {
+			itemProps[strings.ToLower(prop)] = true
 			continue // only known once Alpine renders the item
 		}
 		v, err := lookup(b.data, path)
 		if err != nil {
-			return fmt.Errorf("%s bind %s: %w", typ, prop, err)
+			return nil, fmt.Errorf("%s bind %s: %w", typ, prop, err)
 		}
 		if props[prop], err = json.Marshal(v); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	return nil
+	return itemProps, nil
 }
 
 // model adds the x-model binding for a form control and renders its initial
