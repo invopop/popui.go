@@ -804,7 +804,7 @@ form {
 /* Detail rows (popui.DescriptionListItem with Inline/Actions) — console-ui-style
    label-on-left / value-on-right rows for side panels and drawers. Shipped
    here so any consuming app gets the styling without copying a <style> block. */
-.popui-detail-row { display: flex; gap: 1.5rem; align-items: center; }
+.popui-detail-row { display: flex; gap: 0.5rem; align-items: center; }
 /* Stacked variant: label above the value. */
 .popui-detail-row.popui-detail-stacked {
   flex-direction: column;
