@@ -1,12 +1,14 @@
 // Package playground provides the experimental jsonui playground: a page
 // that renders JSON documents to PopUI HTML in the browser with the jsonui
 // WebAssembly build. It is served by `popui serve` and published by
-// `popui build` under Path.
+// `popui build` under Path. Both read the editor's bundle from disk, so they
+// must run from the module root after building it.
 package playground
 
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -28,19 +30,35 @@ const Path = "/jsonui/"
 // ones plus "save", which the playground page registers itself.
 var actions = append(append([]string{}, jsonui.BuiltinActions...), "save")
 
-//go:embed index.html samples.js editor.js
+//go:embed index.html samples.js
 var static embed.FS
+
+// EditorDir holds the playground's CodeMirror editor, an npm package bundled
+// into EditorBundle. The bundle isn't committed, so it must be built before
+// serving or publishing the playground; see EditorBuild.
+const (
+	EditorDir    = "internal/docs/playground/editor"
+	EditorBundle = EditorDir + "/dist/editor.js"
+	EditorBuild  = "cd " + EditorDir + " && npm ci && npm run build"
+)
 
 // files returns the published files that don't need compiling.
 func files() (map[string][]byte, error) {
 	out := map[string][]byte{"schema.json": schema.Document}
-	for _, name := range []string{"index.html", "samples.js", "editor.js"} {
+	for _, name := range []string{"index.html", "samples.js"} {
 		data, err := static.ReadFile(name)
 		if err != nil {
 			return nil, err
 		}
 		out[name] = data
 	}
+	editor, err := os.ReadFile(EditorBundle)
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil, fmt.Errorf("the playground editor isn't built; run `%s` from the module root", EditorBuild)
+	} else if err != nil {
+		return nil, err
+	}
+	out["editor.js"] = editor
 	runtime, err := fs.ReadFile(jsonui.Assets, "assets/jsonui.js")
 	if err != nil {
 		return nil, err
@@ -54,6 +72,13 @@ func files() (map[string][]byte, error) {
 		return nil, err
 	}
 	return out, nil
+}
+
+// Check reports whether the playground can be served, which needs the
+// editor's bundle.
+func Check() error {
+	_, err := files()
+	return err
 }
 
 // Publish writes the playground, including the compiled WebAssembly module,
