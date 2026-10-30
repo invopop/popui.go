@@ -134,7 +134,7 @@
     const initial = JSON.parse(root.getAttribute("x-data"));
     for (const key of Object.keys(data)) if (!(key in initial)) delete data[key];
     Object.assign(data, initial);
-    Object.assign(errorState(root), { schema: {}, host: {}, reporter: undefined, touched: {}, revealed: false, checked: !root.getAttribute("x-jsonui-errors"), failure: "" });
+    Object.assign(errorState(root), freshErrors(root));
   });
   popui.actions.register("dispatch", ({ params, el, snapshot }) => {
     el.dispatchEvent(new CustomEvent(params.event, { bubbles: true, detail: params.detail ?? snapshot() }));
@@ -153,22 +153,33 @@
   // data against its schemas, those reported by actions, and which fields
   // have been touched, by path.
   const errors = new WeakMap();
+  // freshErrors is the error state of a panel that hasn't been edited or
+  // validated: panels without schemas are already checked.
+  const freshErrors = (root) => ({ schema: {}, host: {}, reporter: undefined, touched: {}, revealed: false, checked: !root.getAttribute("x-jsonui-errors"), failure: "" });
   const errorState = (root) => {
     let s = errors.get(root);
     if (!s) {
-      s = window.Alpine.reactive({ schema: {}, host: {}, reporter: undefined, touched: {}, revealed: false, checked: !root.getAttribute("x-jsonui-errors"), failure: "" });
+      s = window.Alpine.reactive(freshErrors(root));
       errors.set(root, s);
     }
     return s;
   };
 
+  // hostFailure is shown when an action reports errors without a message.
+  const hostFailure = "Something went wrong. Please try again.";
+
   // reported shows the errors an action reported, replacing any reported
-  // before.
+  // before. Errors without a path, or an empty list, are shown for the
+  // whole panel, so the action never stops without saying why.
   const reported = (el, action, list) => {
     const root = el.closest("[data-popui-panel]");
     if (!root) return console.error("[jsonui] errors reported outside a panel", list);
     const host = {};
-    for (const { path, message } of list) if (path && !(path in host)) host[path] = String(message ?? "");
+    for (const { path, message } of list) {
+      const key = path ? String(path) : "";
+      if (!(key in host)) host[key] = String(message || hostFailure);
+    }
+    if (list.length === 0) host[""] = hostFailure;
     Object.assign(errorState(root), { host, reporter: action });
   };
 

@@ -77,7 +77,7 @@ templ jsonUI() {
 				<li>Each form control with a "model" shows the error for its path once it's been changed or left, or after the validate action. Errors for paths without a control are shown after the panel.</li>
 				<li>Messages are written for the person filling in the form. A schema's "errorMessage" replaces them: one message, or one for each keyword, such as { `{"format": "Enter an email address"}` }; on an object, "required" can have a message for each property.</li>
 				<li>Labels, descriptions and select options are defined by component props or bindings. Schema annotations and schema structure do not change the presentation.</li>
-				<li>Host actions report errors, such as those from the server saving the data, by throwing an error with an "errors" list of paths and messages. They show on their fields until the field is changed or the action runs again.</li>
+				<li>Host actions report errors, such as those from the server saving the data, by throwing an error with an "errors" list of paths and messages. They show on their fields until the field is changed or the action runs again. Errors without a path, or an empty list, show after the panel.</li>
 				<li>Schemas can only refer to themselves with "$ref". Data is validated in the browser by popui.wasm. Explicit validate actions stop if validation cannot run and show a panel-level error unless silent is true.</li>
 			</ul>
 			@popui.Description() {

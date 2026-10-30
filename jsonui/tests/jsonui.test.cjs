@@ -11,11 +11,12 @@ function setup(schemas = '{"config":{"type":"string"}}') {
   const timers = new Map();
   let nextTimer = 0;
   const data = { config: "valid" };
+  const listeners = {};
   const root = {
     getAttribute: (name) => name === "x-jsonui-errors" ? schemas : JSON.stringify({ config: "valid" }),
     closest() { return this; },
     querySelectorAll: () => [],
-    addEventListener() {},
+    addEventListener(type, fn) { (listeners[type] ??= []).push(fn); },
     removeEventListener() {},
   };
   const window = {
@@ -45,6 +46,12 @@ function setup(schemas = '{"config":{"type":"string"}}') {
       return () => effect();
     },
     flush() { for (const [id, fn] of timers) { timers.delete(id); fn(); } },
+    // fire dispatches an event from the field with the path, once track
+    // has installed the directive's listeners.
+    fire(type, path) {
+      const target = { closest: () => ({ dataset: { jsonuiField: path } }) };
+      for (const fn of listeners[type] ?? []) fn({ target });
+    },
   };
 }
 
@@ -135,4 +142,38 @@ test("panels without schemas can save without WASM", async () => {
   assert.equal(form.errors.valid, true);
   await form.run();
   assert.equal(form.saves, 1);
+});
+
+test("errors thrown by an action stop Save and clear on edit or retry", async () => {
+  const form = setup();
+  form.window.popuiValidate = () => ({ errors: [] });
+  form.track();
+  let fail = true;
+  form.window.popui.actions.register("submit", () => {
+    if (fail) throw { errors: [{ path: "config", message: "Already taken" }] };
+  });
+  const list = [{ action: "submit" }, { action: "save" }];
+  await form.run(list);
+  assert.equal(form.saves, 0);
+  assert.equal(form.errors.shown("config"), "Already taken");
+  form.fire("input", "config");
+  assert.equal(form.errors.shown("config"), "");
+  await form.run(list);
+  assert.equal(form.errors.shown("config"), "Already taken");
+  fail = false;
+  await form.run(list);
+  assert.equal(form.errors.shown("config"), "");
+  assert.equal(form.saves, 1);
+});
+
+test("errors thrown without a path are shown for the whole panel", async () => {
+  for (const thrown of [[{ message: "Server unavailable" }], [{ path: "", message: "" }], []]) {
+    const form = setup();
+    form.window.popui.actions.register("submit", () => { throw { errors: thrown }; });
+    await form.run([{ action: "submit" }, { action: "save" }]);
+    assert.equal(form.saves, 0);
+    const [shown] = form.errors.unplaced();
+    assert.equal(shown?.path, "");
+    assert.equal(shown?.message, thrown[0]?.message || "Something went wrong. Please try again.");
+  }
 });

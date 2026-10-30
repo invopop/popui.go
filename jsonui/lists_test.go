@@ -131,23 +131,24 @@ func TestShow(t *testing.T) {
 // own data.
 func TestListsStrict(t *testing.T) {
 	bad := map[string]string{
-		`{"data": {}, "components": [{"is": "p", "each": "rows"}]}`:                                                                                     `data has no "rows"`,
-		`{"data": {"rows": 1}, "components": [{"is": "p", "each": "rows"}]}`:                                                                            `"rows" is not a list`,
-		`{"components": [{"is": "p", "each": "rows"}]}`:                                                                                                 `panel data must be set`,
-		`{"data": {}, "components": [{"is": "p", "show": "document.cookie"}]}`:                                                                          `data has no "document.cookie"`,
-		`{"data": {"a": 1}, "components": [{"is": "p", "show": "a || alert(1)"}]}`:                                                                      `is not a data path`,
-		`{"data": {"a": 1}, "components": [{"is": "p", "show": {"a": "x"}}]}`:                                                                           `a: expected a list of values`,
-		`{"data": {"a": 1}, "components": [{"is": "p", "show": {"a": [{"b": 1}]}}]}`:                                                                    `values must be strings`,
-		`{"data": {"a": 1}, "components": [{"is": "p", "show": {}}]}`:                                                                                   `expected at least one data path`,
-		`{"data": {"a": 1}, "components": [{"is": "p", "show": 1}]}`:                                                                                    `expected a data path or an object`,
-		`{"data": {"a": 1}, "components": [{"is": "p", "show": "item.x"}]}`:                                                                             `data has no "item.x"`,
-		`{"data": {"rows": []}, "components": [{"is": "card_header", "each": "rows", "bind": {"title": "item.name"}}]}`:                                 `card_header bind title: can't be bound to the item; no props can`,
-		`{"data": {"rows": []}, "components": [{"is": "option", "each": "rows", "bind": {"label": "item.name"}}]}`:                                      `option: must be a child of a select`,
-		`{"data": {"v": []}, "components": [{"is": "select", "model": "v", "props": {"multiple": true}, "children": [{"is": "option"}]}]}`:              `children are only supported by single selects without options`,
-		`{"data": {"rows": []}, "components": [{"is": "select", "children": [{"is": "option", "each": "rows", "bind": {"value": "item.__proto__"}}]}]}`: errNotDataPath,
-		`{"data": {"m": true}, "components": [{"is": "select", "bind": {"multiple": "m"}, "children": [{"is": "option"}]}]}`:                            `multiple can't be bound on a select with children`,
-		`{"data": {"o": []}, "components": [{"is": "select", "bind": {"Options": "o"}, "children": [{"is": "option"}]}]}`:                               `Options can't be bound on a select with children`,
-		`{"data": {"rows": []}, "components": [{"is": "select", "each": "rows", "props": {"multiple": true}, "bind": {"disabled": "item.off"}}]}`:       `multiple selects can't follow the item`,
+		`{"data": {}, "components": [{"is": "p", "each": "rows"}]}`:                                                                                                  `data has no "rows"`,
+		`{"data": {"rows": 1}, "components": [{"is": "p", "each": "rows"}]}`:                                                                                         `"rows" is not a list`,
+		`{"components": [{"is": "p", "each": "rows"}]}`:                                                                                                              `panel data must be set`,
+		`{"data": {}, "components": [{"is": "p", "show": "document.cookie"}]}`:                                                                                       `data has no "document.cookie"`,
+		`{"data": {"a": 1}, "components": [{"is": "p", "show": "a || alert(1)"}]}`:                                                                                   `is not a data path`,
+		`{"data": {"a": 1}, "components": [{"is": "p", "show": {"a": "x"}}]}`:                                                                                        `a: expected a list of values`,
+		`{"data": {"a": 1}, "components": [{"is": "p", "show": {"a": [{"b": 1}]}}]}`:                                                                                 `values must be strings`,
+		`{"data": {"a": 1}, "components": [{"is": "p", "show": {}}]}`:                                                                                                `expected at least one data path`,
+		`{"data": {"a": 1}, "components": [{"is": "p", "show": 1}]}`:                                                                                                 `expected a data path or an object`,
+		`{"data": {"a": 1}, "components": [{"is": "p", "show": "item.x"}]}`:                                                                                          `data has no "item.x"`,
+		`{"data": {"rows": []}, "components": [{"is": "card_header", "each": "rows", "bind": {"title": "item.name"}}]}`:                                              `card_header bind title: can't be bound to the item; no props can`,
+		`{"data": {"rows": []}, "components": [{"is": "option", "each": "rows", "bind": {"label": "item.name"}}]}`:                                                   `option: must be a child of a select`,
+		`{"data": {"v": []}, "components": [{"is": "select", "model": "v", "props": {"multiple": true}, "children": [{"is": "option"}]}]}`:                           `children are only supported by single selects without options`,
+		`{"data": {"rows": []}, "components": [{"is": "select", "children": [{"is": "option", "each": "rows", "bind": {"value": "item.__proto__"}}]}]}`:              errNotDataPath,
+		`{"data": {"m": true}, "components": [{"is": "select", "bind": {"multiple": "m"}, "children": [{"is": "option"}]}]}`:                                         `multiple can't be bound on a select with children`,
+		`{"data": {"o": []}, "components": [{"is": "select", "bind": {"Options": "o"}, "children": [{"is": "option"}]}]}`:                                            `Options can't be bound on a select with children`,
+		`{"data": {"rows": []}, "components": [{"is": "select", "each": "rows", "props": {"multiple": true}, "bind": {"disabled": "item.off"}}]}`:                    `multiple selects can't follow the item`,
+		`{"data": {"rows": []}, "components": [{"is": "select", "each": "rows", "props": {"multiple": true, "disabled": false}, "bind": {"disabled": "item.off"}}]}`: `multiple selects can't follow the item`,
 	}
 	for doc, want := range bad {
 		if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), want) {
@@ -180,6 +181,27 @@ func TestEachModel(t *testing.T) {
 		{"is": "input", "each": "to", "model": "item.email"}
 	]}`)
 	assertContains(t, html, `x-model="item.email"`)
+
+	html = mustRender(t, `{"data": {"files": [{"url": ""}]}, "components": [
+		{"is": "upload_file", "each": "files", "model": "item.url"}
+	]}`)
+	assertContains(t, html, `item.url`)
+}
+
+// TestEachTrustedText checks that trusted panels can bind text to an
+// expression on the item, which strict ones can't.
+func TestEachTrustedText(t *testing.T) {
+	doc := `{"data": {"rows": []}, "components": [
+		{"is": "p", "each": "rows", "children": [{"is": "text", "bind": "item.name + '!'"}]}
+	]}`
+	html, err := render(t, Options{Trusted: true}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertContains(t, html, `x-text="item.name + &#39;!&#39;"`)
+	if _, err := render(t, Options{}, doc); err == nil || !strings.Contains(err.Error(), "must be a data path") {
+		t.Errorf("strict: want a data path error, got %v", err)
+	}
 }
 
 // TestEachRows checks that table rows and list items repeat, with an empty

@@ -55,14 +55,14 @@ func (b *panelBuilder) uploadFile(n *Node) (templ.Component, error) {
 	if n.Model == "" {
 		return nil, fmt.Errorf("%s: model is required", n.Component)
 	}
-	if b.data == nil {
-		return nil, fmt.Errorf("%s model: panel data must be set", n.Component)
-	}
-	if !safePath(n.Model) {
-		return nil, fmt.Errorf("%s model: %q is not a data path", n.Component, n.Model)
-	}
-	if _, err := lookup(b.data, n.Model); err != nil {
+	model, inLoop, err := b.livePath(n.Model)
+	if err != nil {
 		return nil, fmt.Errorf("%s model: %w", n.Component, err)
+	}
+	if !inLoop {
+		if _, err := lookup(b.data, n.Model); err != nil {
+			return nil, fmt.Errorf("%s model: %w", n.Component, err)
+		}
 	}
 	loading := "false"
 	if p.Loading != "" {
@@ -83,7 +83,7 @@ func (b *panelBuilder) uploadFile(n *Node) (templ.Component, error) {
 		handlers[event] = h
 	}
 	return alpine.UploadFile(props.UploadFile{
-		XModel:   alpinePath(n.Model),
+		XModel:   model,
 		Loading:  loading,
 		OnSelect: handlers["select"],
 		OnRemove: handlers["remove"],
