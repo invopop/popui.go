@@ -71,9 +71,8 @@ type Document struct {
 	// Schemas map data paths, such as "config", to the JSON Schema their
 	// value must match. The data is validated as it changes, and errors are
 	// shown with the form control whose "model" is their path, or after the
-	// document for paths without one. Schemas also give controls their
-	// label, from "title", and selects without options their options, from
-	// "enum" or the "const" and "title" of each "oneOf". Schemas can only
+	// document for paths without one. Labels and options are defined by
+	// components independently of the schemas. Schemas can only
 	// refer to themselves with "$ref". A schema's "errorMessage" replaces the
 	// messages of its errors: one message, or one for each keyword, such as
 	// {"format": "Enter an email address"}.
@@ -622,9 +621,6 @@ func (b *docBuilder) props(n *Node) (json.RawMessage, error) {
 	}
 	maps.Copy(attrs, live)
 	if path := b.fieldPath(n); path != "" {
-		if err := b.schemaProps(n, props); err != nil {
-			return nil, err
-		}
 		b.fieldAttrs(path, attrs)
 	}
 	if n.Component == optionType {

@@ -167,17 +167,16 @@ func TestNewValidatorErrors(t *testing.T) {
 	}
 }
 
-// TestFields checks that form controls show the error for their model, and
-// take what they don't set from their schema.
+// TestFields checks error placement and explicit component presentation.
 func TestFields(t *testing.T) {
 	html := mustRender(t, `{
 		"data": {"config": {"connection_id": "", "to": "", "mode": "text", "priority": ""}, "items": [{"v": ""}]},
 		"schemas": `+emailSchema+`,
 		"components": [
-			{"is": "input", "model": "config.connection_id"},
+			{"is": "input", "model": "config.connection_id", "props": {"label": "Connection"}},
 			{"is": "input", "model": "config.to", "props": {"label": "Recipient"}},
-			{"is": "select", "model": "config.mode"},
-			{"is": "select", "model": "config.priority"},
+			{"is": "select", "model": "config.mode", "props": {"options": [{"value":"html", "label":"HTML"}, {"value":"text", "label":"Plain text"}]}},
+			{"is": "select", "model": "config.priority", "props": {"options": [{"value":"", "label":""}, {"value":"low", "label":"low"}]}},
 			{"is": "input", "each": "items", "model": "item.v"}
 		]
 	}`)
@@ -194,10 +193,10 @@ func TestFields(t *testing.T) {
 		`:class="$errors.shown(&#39;config.to&#39;) ? &#39;!text-foreground-critical`,
 		`x-show="$errors.shown(&#39;config.to&#39;)" x-text="$errors.shown(&#39;config.to&#39;)"`,
 		`<template x-for="e in $errors.unplaced()" :key="e.path">`,
-		// The label comes from the title unless the node sets one.
+		// Labels and options come from component props.
 		`>Connection</label>`,
 		`>Recipient</label>`,
-		// Options come from the choices, with the current value.
+		// The model selects the matching option.
 		`<option value="html">HTML</option>`,
 		`<option value="text" selected>Plain text</option>`,
 		`<option value="" selected></option>`,
@@ -210,6 +209,25 @@ func TestFields(t *testing.T) {
 	// Selects with an option for their value don't get another.
 	if strings.Contains(html, `<option value="text" selected>text</option>`) {
 		t.Errorf("extra option in:\n%s", html)
+	}
+}
+
+// Schema refactoring and annotations must not change component presentation.
+func TestSchemaIndependentPresentation(t *testing.T) {
+	for name, schema := range map[string]string{
+		"inline": `{"properties":{"mode":{"title":"Schema label","description":"Schema description","enum":["html","text"]}}}`,
+		"ref":    `{"$defs":{"mode":{"enum":["html","text"]}},"properties":{"mode":{"$ref":"#/$defs/mode","title":"Schema label"}}}`,
+		"allOf":  `{"allOf":[{"properties":{"mode":{"title":"Schema label","enum":["html","text"]}}}]}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			base := `{"data":{"config":{"mode":"text"}},"schemas":{"config":` + schema + `},"components":`
+			html := mustRender(t, base+`[{"is":"select","model":"config.mode"}]}`)
+			if strings.Contains(html, "<option") || strings.Contains(html, "<label") {
+				t.Fatalf("schema supplied presentation: %s", html)
+			}
+			html = mustRender(t, base+`[{"is":"select","model":"config.mode","props":{"label":"Output format","options":[{"value":"html","label":"HTML"},{"value":"text","label":"Plain text"}]}}]}`)
+			assertContains(t, html, `>Output format</label>`, `<option value="html">HTML</option>`, `<option value="text" selected>Plain text</option>`)
+		})
 	}
 }
 
@@ -232,4 +250,15 @@ func TestValidateAction(t *testing.T) {
 		"components": [{"is": "button", "on": {"click": [{"action": "validate"}, {"action": "dispatch", "event": "save"}]}}]
 	}`)
 	assertContains(t, html, `{&#34;action&#34;:&#34;validate&#34;}`)
+}
+
+// Message overrides continue to follow refs independently of component rendering.
+func TestValidateRefErrorMessage(t *testing.T) {
+	v := mustValidator(t, `{"config": {
+		"$defs": {"address": {"type": "string", "format": "email", "errorMessage": {"format": "Use a verified recipient address"}}},
+		"properties": {"to": {"$ref": "#/$defs/address"}}
+	}}`)
+	assertErrors(t, validateJSON(t, v, `{"config":{"to":"invalid"}}`), map[string]string{
+		pathTo: "Use a verified recipient address",
+	})
 }

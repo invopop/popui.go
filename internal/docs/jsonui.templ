@@ -75,10 +75,13 @@ templ jsonUI() {
 			<ul class="list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary">
 				<li>Each form control with a "model" shows the error for its path once it's been changed or left, or after the validate action. Errors for paths without a control are shown after the document.</li>
 				<li>Messages are written for the person filling in the form. A schema's "errorMessage" replaces them: one message, or one for each keyword, such as { `{"format": "Enter an email address"}` }; on an object, "required" can have a message for each property.</li>
-				<li>A control without a label takes the "title" of its schema, and its "description" when it has one. A select without options or children takes them from an "enum", or from the "const" and "title" of each "oneOf".</li>
+				<li>Labels, descriptions and select options are defined by component props or bindings. Schema annotations and schema structure do not change the presentation.</li>
 				<li>Host actions report errors, such as those from the server saving the data, by throwing an error with an "errors" list of paths and messages. They show on their fields until the field is changed or the action runs again.</li>
-				<li>Schemas can only refer to themselves with "$ref". Data is validated in the browser by popui.wasm, so documents only show errors from schemas where it's loaded.</li>
+				<li>Schemas can only refer to themselves with "$ref". Data is validated in the browser by popui.wasm. Explicit validate actions stop if validation cannot run and show a document-level error unless silent is true.</li>
 			</ul>
+			@popui.Description() {
+				$errors.checked reports whether the current data has been validated successfully; $errors.valid is true only after a successful check with no schema errors. Both are false while validation is pending or unavailable. Documents without schemas are considered checked and valid.
+			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiValidationExample, Language: "json"})
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiErrorsExample, Language: "markup"})
 		}
@@ -98,7 +101,7 @@ templ jsonUI() {
 					{Name: "alert", Type: "message", Description: "Shows `message` in the browser's alert dialog."},
 					{Name: "set", Type: "path, value", Description: "Sets the data at `path` to `value`."},
 					{Name: "reset", Type: "", Description: "Restores the document's data to its initial values, and clears its errors."},
-					{Name: "validate", Type: "silent", Description: "Validates the data against the document's schemas and stops the actions after it while there are errors. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
+					{Name: "validate", Type: "silent", Description: "Validates the data against the document's schemas and stops the actions after it while there are errors or validation cannot run. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
 					{Name: "dispatch", Type: "event, detail", Description: "Dispatches a bubbling DOM event named `event`, with `detail` or else a snapshot of the data, for the host page to handle."},
 				},
 			})

@@ -127,16 +127,9 @@ const jsonuiValidationExample = `{
         "to": {
           "type": "string",
           "format": "email",
-          "title": "To",
           "errorMessage": { "format": "Enter an email address" }
         },
-        "format": {
-          "title": "Format",
-          "oneOf": [
-            { "const": "html", "title": "HTML" },
-            { "const": "text", "title": "Plain text" }
-          ]
-        }
+        "format": { "enum": ["html", "text"] }
       }
     }
   },
@@ -144,8 +137,13 @@ const jsonuiValidationExample = `{
     "update": [{ "action": "validate", "silent": true }, { "action": "step.update" }]
   },
   "components": [
-    { "is": "input", "model": "config.to", "on": { "change": "update" } },
-    { "is": "select", "model": "config.format", "on": { "change": "update" } }
+    { "is": "input", "model": "config.to", "props": { "label": "To" }, "on": { "change": "update" } },
+    { "is": "select", "model": "config.format",
+      "props": { "label": "Format", "options": [
+        { "value": "html", "label": "HTML" },
+        { "value": "text", "label": "Plain text" }
+      ] },
+      "on": { "change": "update" } }
   ]
 }`
 

@@ -27,18 +27,17 @@ import (
 //	    "config": {
 //	      "type": "object",
 //	      "required": ["to"],
-//	      "properties": {"to": {"type": "string", "format": "email", "title": "To"}}
+//	      "properties": {"to": {"type": "string", "format": "email"}}
 //	    }
 //	  },
-//	  "components": [{"is": "input", "model": "config.to"}]
+//	  "components": [{"is": "input", "model": "config.to", "props": {"label": "To"}}]
 //	}
 //
 // The data is validated as it changes, and each error is shown with the form
 // control whose model is the path it's about. The same schemas can be used
 // wherever the data is saved, so the browser and the server agree, and tell
 // anyone writing the data without the form, such as an LLM, what it must be.
-// Schemas also give controls their label, from "title", and selects their
-// options, from "enum" or "oneOf" consts with titles.
+// Labels and options belong to the components, independently of the schemas.
 
 // FieldError is a problem with the value at a data path, such as
 // "config.to", or "config" for the object itself.
@@ -61,8 +60,7 @@ const schemaURL = "jsonui:schemas"
 type Validator struct {
 	paths   []string
 	schemas map[string]*jsonschema.Schema
-	// raw are the schemas as JSON values, where errors find their custom
-	// "errorMessage" and controls their labels and options.
+	// raw are the schemas as JSON values, used to resolve errorMessage overrides.
 	raw map[string]any
 }
 
@@ -427,86 +425,4 @@ func number(r *big.Rat) string {
 func capitalize(s string) string {
 	r, n := utf8.DecodeRuneInString(s)
 	return string(unicode.ToUpper(r)) + s[n:]
-}
-
-// schemaAt finds the schema of the value at a data path, following
-// "properties", "items" and "$ref"s within the schema, or nil when it can't
-// tell, such as when the path is only described in an "allOf".
-func (v *Validator) schemaAt(path string) map[string]any {
-	if v == nil {
-		return nil
-	}
-	for _, root := range v.paths {
-		rest, ok := strings.CutPrefix(path, root)
-		if !ok || (rest != "" && rest[0] != '.') {
-			continue
-		}
-		doc := v.raw[root]
-		s := deref(doc, v.raw[root])
-		for _, key := range strings.Split(strings.TrimPrefix(rest, "."), ".") {
-			if key == "" || s == nil {
-				break
-			}
-			if props, ok := s["properties"].(map[string]any); ok && props[key] != nil {
-				s = deref(doc, props[key])
-				continue
-			}
-			if items, ok := s["items"]; ok && strings.Trim(key, "0123456789") == "" {
-				s = deref(doc, items)
-				continue
-			}
-			s = nil
-		}
-		return s
-	}
-	return nil
-}
-
-// deref follows a schema's local "$ref", e.g. "#/$defs/connection".
-func deref(doc, s any) map[string]any {
-	for range 8 { // refs to refs, but not forever
-		m, ok := s.(map[string]any)
-		if !ok {
-			return nil
-		}
-		ref, ok := m["$ref"].(string)
-		if !ok || !strings.HasPrefix(ref, "#") {
-			return m
-		}
-		s = pointer(doc, strings.TrimPrefix(ref, "#"))
-	}
-	return nil
-}
-
-// schemaOptions are the choices a schema offers: its "enum", or the "const"
-// of each of its "oneOf" or "anyOf", labelled with their "title".
-func schemaOptions(s map[string]any) ([]Option, bool) {
-	if enum, ok := s["enum"].([]any); ok {
-		out := make([]Option, 0, len(enum))
-		for _, e := range enum {
-			out = append(out, Option{Value: display(e), Label: display(e)})
-		}
-		return out, true
-	}
-	for _, key := range []string{"oneOf", "anyOf"} {
-		alts, ok := s[key].([]any)
-		if !ok {
-			continue
-		}
-		out := make([]Option, 0, len(alts))
-		for _, a := range alts {
-			m, _ := a.(map[string]any)
-			c, ok := m["const"]
-			if !ok {
-				return nil, false
-			}
-			label, _ := m["title"].(string)
-			if label == "" {
-				label = display(c)
-			}
-			out = append(out, Option{Value: display(c), Label: label})
-		}
-		return out, true
-	}
-	return nil, false
 }

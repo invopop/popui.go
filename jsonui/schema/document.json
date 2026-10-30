@@ -607,7 +607,7 @@
             "pattern": "^[A-Za-z_$][\\w$]*(\\.[\\w$]+)*$"
           },
           "type": "object",
-          "description": "Schemas map data paths, such as \"config\", to the JSON Schema their\nvalue must match. The data is validated as it changes, and errors are\nshown with the form control whose \"model\" is their path, or after the\ndocument for paths without one. Schemas also give controls their\nlabel, from \"title\", and selects without options their options, from\n\"enum\" or the \"const\" and \"title\" of each \"oneOf\". Schemas can only\nrefer to themselves with \"$ref\". A schema's \"errorMessage\" replaces the\nmessages of its errors: one message, or one for each keyword, such as\n{\"format\": \"Enter an email address\"}."
+          "description": "Schemas map data paths, such as \"config\", to the JSON Schema their\nvalue must match. The data is validated as it changes, and errors are\nshown with the form control whose \"model\" is their path, or after the\ndocument for paths without one. Labels and options are defined by\ncomponents independently of the schemas. Schemas can only\nrefer to themselves with \"$ref\". A schema's \"errorMessage\" replaces the\nmessages of its errors: one message, or one for each keyword, such as\n{\"format\": \"Enter an email address\"}."
         }
       },
       "additionalProperties": false,

@@ -134,7 +134,7 @@
     const initial = JSON.parse(root.getAttribute("x-data"));
     for (const key of Object.keys(data)) if (!(key in initial)) delete data[key];
     Object.assign(data, initial);
-    Object.assign(errorState(root), { host: {}, touched: {}, revealed: false });
+    Object.assign(errorState(root), { schema: {}, host: {}, reporter: undefined, touched: {}, revealed: false, checked: !root.getAttribute("x-jsonui-errors"), failure: "" });
   });
   popui.actions.register("dispatch", ({ params, el, snapshot }) => {
     el.dispatchEvent(new CustomEvent(params.event, { bubbles: true, detail: params.detail ?? snapshot() }));
@@ -146,7 +146,7 @@
     const s = errorState(root);
     validate(root, s, data);
     if (!params.silent) s.revealed = true;
-    if (Object.keys(s.schema).length > 0) return STOP;
+    if (!s.checked || Object.keys(s.schema).length > 0) return STOP;
   });
 
   // Errors are kept for each document root: those found by validating the
@@ -156,7 +156,7 @@
   const errorState = (root) => {
     let s = errors.get(root);
     if (!s) {
-      s = window.Alpine.reactive({ schema: {}, host: {}, reporter: undefined, touched: {}, revealed: false });
+      s = window.Alpine.reactive({ schema: {}, host: {}, reporter: undefined, touched: {}, revealed: false, checked: !root.getAttribute("x-jsonui-errors"), failure: "" });
       errors.set(root, s);
     }
     return s;
@@ -184,17 +184,27 @@
   // It needs popuiValidate from popui.wasm.
   const validate = (root, s, data) => {
     const schemas = root.getAttribute("x-jsonui-errors");
-    if (!schemas) return;
+    if (!schemas) {
+      Object.assign(s, { schema: {}, checked: true, failure: "" });
+      return;
+    }
+    s.checked = false;
     if (typeof window.popuiValidate !== "function") {
       if (!unavailable) console.warn("[jsonui] popui.wasm isn't loaded, so data isn't validated");
       unavailable = true;
+      s.failure = "Unable to validate this form. Please try again.";
       return;
     }
-    const res = window.popuiValidate(schemas, JSON.stringify(data));
-    if (res.error) return console.error(`[jsonui] ${res.error}`);
-    const found = {};
-    for (const { path, message } of res.errors ?? []) found[path] = message;
-    s.schema = found;
+    try {
+      const res = window.popuiValidate(schemas, JSON.stringify(data));
+      if (res.error) throw new Error(res.error);
+      const found = {};
+      for (const { path, message } of res.errors ?? []) found[path] = message;
+      Object.assign(s, { schema: found, checked: true, failure: "" });
+    } catch (err) {
+      console.error("[jsonui] validation failed", err);
+      s.failure = "Unable to validate this form. Please try again.";
+    }
   };
 
   // The $errors API for a document. Errors reported by actions show as soon
@@ -205,20 +215,25 @@
       if (path in s.host) return s.host[path];
       return (s.revealed || s.touched[path]) && path in s.schema ? s.schema[path] : "";
     },
+    get checked() {
+      return s.checked;
+    },
     get valid() {
-      return Object.keys(s.schema).length === 0;
+      return s.checked && Object.keys(s.schema).length === 0;
     },
     // unplaced lists the shown errors no field is showing.
     unplaced() {
       const fields = new Set([...root.querySelectorAll("[data-jsonui-field]")].map((f) => f.dataset.jsonuiField));
       const paths = new Set([...Object.keys(s.host), ...Object.keys(s.schema)]);
-      return [...paths]
+      const list = [...paths]
         .filter((p) => !fields.has(p))
         .map((path) => ({ path, message: this.shown(path) }))
         .filter((e) => e.message);
+      if (s.revealed && s.failure) list.push({ path: "", message: s.failure });
+      return list;
     },
   });
-  const noErrors = { shown: () => "", valid: true, unplaced: () => [] };
+  const noErrors = { shown: () => "", checked: true, valid: true, unplaced: () => [] };
 
   // field finds the path of the field an event came from.
   const field = (e) => e.target?.closest?.("[data-jsonui-field]")?.dataset.jsonuiField;
@@ -249,6 +264,7 @@
       let timer;
       effect(() => {
         JSON.stringify(data); // depend on all of it
+        if (el.getAttribute("x-jsonui-errors")) s.checked = false;
         clearTimeout(timer);
         timer = setTimeout(() => validate(el, s, data), 100);
       });

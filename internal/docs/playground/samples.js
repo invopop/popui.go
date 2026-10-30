@@ -598,8 +598,7 @@
   //   - each field shows the error for its model's path once it's been
   //     changed or left; "Save" runs "validate", which shows them all and
   //     stops the save while there are any;
-  //   - labels come from the schema's titles, and the format select's
-  //     options from its "oneOf";
+  //   - components define their labels and options independently of the schema;
   //   - changes reach the host with step.update only while the config is
   //     valid, through a silent "validate";
   //   - the playground's config.save stands in for the app's API, rejecting
@@ -662,6 +661,7 @@
                       {
                         is: "select",
                         model: "config.connection_id",
+                        props: { label: "Send with" },
                         bind: { disabled: "loading" },
                         on: { change: "update" },
                         children: [
@@ -669,10 +669,10 @@
                           { is: "option", each: "connections", bind: { value: "item.id", label: "item.name" } },
                         ],
                       },
-                      { is: "input", model: "config.to", props: { type: "email" }, on: { change: "update" } },
-                      { is: "input", model: "config.subject", on: { change: "update" } },
-                      { is: "select", model: "config.format", on: { change: "update" } },
-                      { is: "checkbox", model: "config.attach_pdf", on: { change: "update" } },
+                      { is: "input", model: "config.to", props: { type: "email", label: "To", description: "Who receives the email" }, on: { change: "update" } },
+                      { is: "input", model: "config.subject", props: { label: "Subject" }, on: { change: "update" } },
+                      { is: "select", model: "config.format", props: { label: "Format", options: [{ value: "html", label: "HTML" }, { value: "text", label: "Plain text" }] }, on: { change: "update" } },
+                      { is: "checkbox", model: "config.attach_pdf", props: { label: "Attach the PDF" }, on: { change: "update" } },
                     ],
                   },
                   {
