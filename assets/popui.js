@@ -498,8 +498,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     return { table: table, th: th, index: th.cellIndex + 1 }
   }
 
+  // Sets a column's width, no less than its minimum. The last column also
+  // fills the space the others leave, so it's held at that too: narrower
+  // wouldn't show, and the width reported would not be the one drawn.
   function tableColumnWidth(col, width) {
-    const min = parseInt(col.th.dataset.minWidth, 10) || 0
+    let min = parseInt(col.th.dataset.minWidth, 10) || 0
+    if (!col.th.nextElementSibling && col.table.parentElement) {
+      const others = col.table.offsetWidth - col.th.offsetWidth
+      min = Math.max(min, col.table.parentElement.clientWidth - others)
+    }
     width = Math.max(min, Math.round(width))
     col.table.style.setProperty('--popui-col-' + col.index, width + 'px')
     return width

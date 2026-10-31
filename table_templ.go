@@ -499,7 +499,7 @@ func tableColumnTitle(col tableColumn) templ.Component {
 			}
 		}
 		switch col.Sort {
-		case "asc":
+		case props.TableColumnSortAscending:
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span class=\"popui-table-sort-arrow\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -512,7 +512,7 @@ func tableColumnTitle(col tableColumn) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "desc":
+		case props.TableColumnSortDescending:
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"popui-table-sort-arrow\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -574,7 +574,7 @@ func tableColumnMenuItems(col tableColumn, freezable bool) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = MenuItem(props.MenuItem{Selected: col.Sort == "asc", Attributes: col.SortAscending}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = MenuItem(props.MenuItem{Selected: col.Sort == props.TableColumnSortAscending, Attributes: col.SortAscending}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -602,7 +602,7 @@ func tableColumnMenuItems(col tableColumn, freezable bool) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = MenuItem(props.MenuItem{Selected: col.Sort == "desc", Attributes: col.SortDescending}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = MenuItem(props.MenuItem{Selected: col.Sort == props.TableColumnSortDescending, Attributes: col.SortDescending}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

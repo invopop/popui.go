@@ -13,6 +13,8 @@ import (
 const (
 	tableColumnDefaultWidth    = 150
 	tableColumnDefaultMinWidth = 60
+
+	styleAttribute = "style"
 )
 
 // tableColumn is a props.TableColumn with its defaults applied.
@@ -64,10 +66,10 @@ func tableFrozenCount(cols []tableColumn) int {
 // tables of the same shape share it, and rendering stays deterministic.
 func tableColumnsClass(cols []tableColumn) string {
 	h := fnv.New32a()
-	fmt.Fprintf(h, "%d", len(cols))
+	_, _ = fmt.Fprintf(h, "%d", len(cols))
 	for _, c := range cols {
 		if c.right() {
-			fmt.Fprintf(h, ",%d", c.Index)
+			_, _ = fmt.Fprintf(h, ",%d", c.Index)
 		}
 	}
 	return fmt.Sprintf("popui-table-cols-%08x", h.Sum32())
@@ -132,7 +134,7 @@ func tableColumnsAttributes(cols []tableColumn, attrs templ.Attributes) templ.At
 	}
 	out := templ.Attributes{"data-popui-columns": true}
 	for k, v := range attrs {
-		if k == "style" {
+		if k == styleAttribute {
 			if s, ok := v.(string); ok {
 				style.WriteString(s)
 				continue
@@ -140,7 +142,7 @@ func tableColumnsAttributes(cols []tableColumn, attrs templ.Attributes) templ.At
 		}
 		out[k] = v
 	}
-	out["style"] = style.String()
+	out[styleAttribute] = style.String()
 	if n := tableFrozenCount(cols); n > 0 {
 		out["data-frozen"] = tableFrozenList(n)
 		out["data-frozen-last"] = strconv.Itoa(n)
@@ -169,9 +171,9 @@ func tableColumnAttributes(c tableColumn, frozen bool, resizable bool) templ.Att
 		out["data-frozen"] = true
 	}
 	switch c.Sort {
-	case "asc":
+	case props.TableColumnSortAscending:
 		out["aria-sort"] = "ascending"
-	case "desc":
+	case props.TableColumnSortDescending:
 		out["aria-sort"] = "descending"
 	}
 	for k, v := range c.Attributes {

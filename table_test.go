@@ -135,7 +135,7 @@ func TestTableWithoutColumns(t *testing.T) {
 func TestTableColumnsKeepsPageStyle(t *testing.T) {
 	got := renderTable(t, props.Table{
 		Columns:    []props.TableColumn{{Title: "A", Width: 100}},
-		Attributes: templ.Attributes{"style": "color:red"},
+		Attributes: templ.Attributes{styleAttribute: "color:red"},
 	})
 	if !strings.Contains(tableTag.FindString(got), `style="--popui-col-1:100px;color:red"`) {
 		t.Errorf("got %s", tableTag.FindString(got))

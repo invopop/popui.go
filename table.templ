@@ -172,11 +172,11 @@ templ tableColumnTitle(col tableColumn) {
 		<span class="truncate">{ col.Title }</span>
 	}
 	switch col.Sort {
-		case "asc":
+		case props.TableColumnSortAscending:
 			<span class="popui-table-sort-arrow">
 				@icons.ArrowUp()
 			</span>
-		case "desc":
+		case props.TableColumnSortDescending:
 			<span class="popui-table-sort-arrow">
 				@icons.ArrowDown()
 			</span>
@@ -185,13 +185,13 @@ templ tableColumnTitle(col tableColumn) {
 
 templ tableColumnMenuItems(col tableColumn, freezable bool) {
 	if col.SortAscending != nil {
-		@MenuItem(props.MenuItem{Selected: col.Sort == "asc", Attributes: col.SortAscending}) {
+		@MenuItem(props.MenuItem{Selected: col.Sort == props.TableColumnSortAscending, Attributes: col.SortAscending}) {
 			@icons.SortAscending()
 			<span>Sort ascending</span>
 		}
 	}
 	if col.SortDescending != nil {
-		@MenuItem(props.MenuItem{Selected: col.Sort == "desc", Attributes: col.SortDescending}) {
+		@MenuItem(props.MenuItem{Selected: col.Sort == props.TableColumnSortDescending, Attributes: col.SortDescending}) {
 			@icons.SortDescending()
 			<span>Sort descending</span>
 		}

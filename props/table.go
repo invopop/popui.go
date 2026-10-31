@@ -60,6 +60,12 @@ const (
 	TableColumnAlignRight = "right"
 )
 
+// TableColumn sort directions.
+const (
+	TableColumnSortAscending  = "asc"
+	TableColumnSortDescending = "desc"
+)
+
 // TableColumn describes one column of a Table: its header, its width and
 // how it behaves. Clicking or right-clicking a header opens its menu, when
 // it has items: sorting, freezing (with the table's Freezable) and any
