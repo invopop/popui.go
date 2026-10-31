@@ -921,6 +921,29 @@ form {
   margin-left: -0.5rem;
 }
 
+/* Inline rows stack when their list is too narrow for a label column and a
+   readable value beside it, as in a two-column card on a smaller screen:
+   the value then gets the list's full width. The list is the container (see
+   DescriptionList), so this follows the space the list has, not the
+   window's. */
+@container (max-width: 320px) {
+  .popui-detail-row:not(.popui-detail-stacked) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .popui-detail-row:not(.popui-detail-stacked) > .popui-detail-label {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+  .popui-detail-row:not(.popui-detail-stacked) > .popui-detail-value-wrap {
+    align-items: center;
+    margin-left: -0.5rem;
+    min-height: 0;
+    padding-top: 0;
+  }
+}
+
 /* 16px icon button (ButtonSizeIconExtraSmall): icons ship at a fixed 16px
    (inline width/height on the wrapper), which would fill the bordered 16px box
    edge-to-edge. Scale the glyph to 12px so it reads as a centered icon with the
@@ -954,13 +977,14 @@ form {
 .popui-detail-row > .popui-detail-value-wrap:hover {
   background-color: var(--color-background-default-secondary);
 }
+/* Long values, such as email addresses, wrap rather than scroll. */
 .popui-detail-value {
   flex: 1 1 0%;
   min-width: 0;
   color: var(--color-foreground);
   font-weight: 500;
   font-size: 0.875rem;
-  overflow-x: auto;
+  overflow-wrap: anywhere;
 }
 
 /* Copyable value row: strip the copy Button's chrome so the value reads as

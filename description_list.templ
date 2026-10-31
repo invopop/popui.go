@@ -15,7 +15,9 @@ templ DescriptionList(opts ...props.DescriptionList) {
 		}
 		class={
 			tailwind.Merge(
-				"w-[400px] space-y-4",
+				// A size container, so inline detail rows can stack when the
+				// list is narrow (see components.css).
+				"@container w-[400px] space-y-4",
 				p.Class,
 			),
 		}
