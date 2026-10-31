@@ -448,6 +448,7 @@ Table
 - Tables are full-width within `Main` (no `Article` wrapper)
 - `TablePagination` supports rows-per-page options, navigation links, and custom action slots
 - Items label is customizable ("invoices", "orders", etc.)
+- For data tables with many columns, describe them with `Columns` (`props.TableColumn`: key, title, width, min width, alignment, frozen, sort) instead of writing the `<thead>`: the table gets fixed widths, sideways scrolling, frozen leading columns, and a header menu (sort, freeze with `Freezable`), and `Resizable` adds resize handles. Resizes and freezes are reported as `popui-table-column-resize` and `popui-table-columns-freeze` events for the page to save; never hand-roll `<colgroup>` widths or sticky column CSS
 
 ### Navigation
 

@@ -122,7 +122,23 @@ var urlAttributes = []string{"href", "src", "action", "formaction"}
 // URL prop in the registered components' props, including nested structs
 // such as Input.Tooltip.
 var urlKeys = sync.OnceValue(func() []string {
-	keys := slices.Clone(urlAttributes)
+	return propKeys(slices.Clone(urlAttributes), func(f reflect.StructField) bool {
+		return f.Type == safeURLType || slices.Contains(strings.Split(f.Tag.Get("jsonschema"), ","), "format="+URLFormat)
+	})
+})
+
+// attributeKeys returns the lower case names of every templ.Attributes prop
+// in the registered components' props, such as Attributes itself and
+// TableColumn.SortAscending.
+var attributeKeys = sync.OnceValue(func() []string {
+	return propKeys(nil, func(f reflect.StructField) bool {
+		return f.Type == attributesType
+	})
+})
+
+// propKeys adds to keys the lower case names of the fields matching match
+// in the registered components' props, including nested structs.
+func propKeys(keys []string, match func(reflect.StructField) bool) []string {
 	seen := map[reflect.Type]bool{}
 	var walk func(t reflect.Type)
 	walk = func(t reflect.Type) {
@@ -135,7 +151,7 @@ var urlKeys = sync.OnceValue(func() []string {
 		seen[t] = true
 		for i := range t.NumField() {
 			f := t.Field(i)
-			if f.Type == safeURLType || slices.Contains(strings.Split(f.Tag.Get("jsonschema"), ","), "format="+URLFormat) {
+			if match(f) {
 				if name := strings.ToLower(f.Name); !slices.Contains(keys, name) {
 					keys = append(keys, name)
 				}
@@ -147,9 +163,12 @@ var urlKeys = sync.OnceValue(func() []string {
 		walk(e.props)
 	}
 	return keys
-})
+}
 
-var safeURLType = reflect.TypeFor[templ.SafeURL]()
+var (
+	safeURLType    = reflect.TypeFor[templ.SafeURL]()
+	attributesType = reflect.TypeFor[templ.Attributes]()
+)
 
 // checkProps applies the strict checks to a node's own props, before the
 // renderer adds the x-model and x-on attributes generated from "model" and
@@ -200,7 +219,7 @@ func checkValue(at string, v any) error {
 	case map[string]any:
 		for k, val := range v {
 			key := strings.ToLower(k)
-			if key == "attributes" {
+			if slices.Contains(attributeKeys(), key) {
 				if err := checkAttributes(at+"."+k, val); err != nil {
 					return err
 				}

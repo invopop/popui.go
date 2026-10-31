@@ -62,6 +62,10 @@ func TestStrictRejectsScript(t *testing.T) {
 			`{"components":[{"is":"button","props":{"Attributes":{"OnClick":"alert(1)"}}}]}`,
 			`attribute "OnClick" is not allowed`,
 		},
+		"event handler in a table column's sort attributes": {
+			`{"components":[{"is":"table","props":{"columns":[{"title":"Code","sortAscending":{"onclick":"alert(1)"}}]}}]}`,
+			`table props.columns[0].sortAscending: attribute "onclick" is not allowed`,
+		},
 		"javascript href": {
 			`{"components":[{"is":"button","props":{"href":" JavaScript:alert(1)"}}]}`,
 			errUnsafeURL,

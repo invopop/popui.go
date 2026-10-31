@@ -1891,12 +1891,79 @@
         },
         "resizable": {
           "type": "boolean",
-          "description": "Resizable lets the user drag the right edge of each header cell to\nresize that column. The drag handles and behavior are provided by\npopui (CSS + popui.js); no consumer script is needed."
+          "description": "Resizable lets the user drag the right edge of each header cell to\nresize that column. The drag handles and behavior are provided by\npopui (CSS + popui.js); no consumer script is needed. With Columns,\neach drag ends by dispatching a bubbling popui-table-column-resize\nevent from the table, with detail {key, width}."
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/TableColumn"
+          },
+          "type": "array",
+          "description": "Columns describes the table's columns. When set, Table renders the\n\u003ccolgroup\u003e and the \u003cthead\u003e from them, so the children are just the\nrows (a \u003ctbody\u003e), and the table takes fixed column widths: it is as\nwide as its columns or its container, whichever is wider, the last\ncolumn takes any space left, it scrolls sideways when it doesn't\nfit, and cells truncate rather than wrap. ScrollHorizontal and\nStickyColumn are implied (use Frozen instead) and ignored."
+        },
+        "freezable": {
+          "type": "boolean",
+          "description": "Freezable adds Freeze and Unfreeze items to the header menu of each\ncolumn. Freezing a column freezes those before it too, and unfreezing\nit unfreezes those after it. Each change dispatches a bubbling\npopui-table-columns-freeze event from the table, with detail\n{frozen: [keys]}. Only applies with Columns."
         }
       },
       "additionalProperties": false,
       "type": "object",
       "description": "Table Templ component props."
+    },
+    "TableColumn": {
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Key identifies the column in events. Defaults to its position,\ncounting from 1."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title is the header's text."
+        },
+        "width": {
+          "type": "integer",
+          "description": "Width in pixels. Defaults to 150."
+        },
+        "minWidth": {
+          "type": "integer",
+          "description": "MinWidth in pixels is the narrowest a user can resize the column to.\nDefaults to 60, or Width if that's narrower."
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "",
+            "left",
+            "right"
+          ],
+          "description": "Align is \"left\" (default) or \"right\", for the header and cells\nalike, e.g. \"right\" for amounts."
+        },
+        "frozen": {
+          "type": "boolean",
+          "description": "Frozen keeps the column in place when the table scrolls sideways.\nOnly leading columns can be frozen, so this freezes every column\nbefore it too."
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "",
+            "asc",
+            "desc"
+          ],
+          "description": "Sort is the direction the table is sorted by this column, \"asc\" or\n\"desc\", or empty when it isn't. It marks the header with an arrow and\nthe matching menu item with a tick."
+        },
+        "sortAscending": {
+          "$ref": "#/$defs/Attributes",
+          "description": "SortAscending and SortDescending are the attributes of the \"Sort\nascending\" and \"Sort descending\" header menu items, typically htmx\nattributes (hx-get, hx-target, …) that reload the table sorted.\nColumns without them aren't sortable."
+        },
+        "sortDescending": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are added to the column's header cell."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TableColumn describes one column of a Table: its header, its width and how it behaves."
     },
     "Tabs": {
       "properties": {
@@ -4526,7 +4593,9 @@
               "scrollHorizontal",
               "stickyColumn",
               "stickyHeader",
-              "resizable"
+              "resizable",
+              "columns",
+              "freezable"
             ]
           },
           "type": "object",

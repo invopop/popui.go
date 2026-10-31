@@ -32,8 +32,73 @@ type Table struct {
 
 	// Resizable lets the user drag the right edge of each header cell to
 	// resize that column. The drag handles and behavior are provided by
-	// popui (CSS + popui.js); no consumer script is needed.
+	// popui (CSS + popui.js); no consumer script is needed. With Columns,
+	// each drag ends by dispatching a bubbling popui-table-column-resize
+	// event from the table, with detail {key, width}.
 	Resizable bool
+
+	// Columns describes the table's columns. When set, Table renders the
+	// <colgroup> and the <thead> from them, so the children are just the
+	// rows (a <tbody>), and the table takes fixed column widths: it is as
+	// wide as its columns or its container, whichever is wider, the last
+	// column takes any space left, it scrolls sideways when it doesn't
+	// fit, and cells truncate rather than wrap. ScrollHorizontal and
+	// StickyColumn are implied (use Frozen instead) and ignored.
+	Columns []TableColumn
+
+	// Freezable adds Freeze and Unfreeze items to the header menu of each
+	// column. Freezing a column freezes those before it too, and unfreezing
+	// it unfreezes those after it. Each change dispatches a bubbling
+	// popui-table-columns-freeze event from the table, with detail
+	// {frozen: [keys]}. Only applies with Columns.
+	Freezable bool
+}
+
+// TableColumn alignments.
+const (
+	TableColumnAlignLeft  = "left"
+	TableColumnAlignRight = "right"
+)
+
+// TableColumn describes one column of a Table: its header, its width and
+// how it behaves. Clicking or right-clicking a header opens its menu, when
+// it has items: sorting, freezing (with the table's Freezable) and any
+// MenuItems.
+type TableColumn struct {
+	// Key identifies the column in events. Defaults to its position,
+	// counting from 1.
+	Key string
+	// Title is the header's text.
+	Title string
+	// Header replaces Title with any content, e.g. a select-all Checkbox.
+	Header templ.Component
+	// Width in pixels. Defaults to 150.
+	Width int
+	// MinWidth in pixels is the narrowest a user can resize the column to.
+	// Defaults to 60, or Width if that's narrower.
+	MinWidth int
+	// Align is "left" (default) or "right", for the header and cells
+	// alike, e.g. "right" for amounts.
+	Align string `jsonschema:"enum=,enum=left,enum=right"`
+	// Frozen keeps the column in place when the table scrolls sideways.
+	// Only leading columns can be frozen, so this freezes every column
+	// before it too.
+	Frozen bool
+
+	// Sort is the direction the table is sorted by this column, "asc" or
+	// "desc", or empty when it isn't. It marks the header with an arrow and
+	// the matching menu item with a tick.
+	Sort string `jsonschema:"enum=,enum=asc,enum=desc"`
+	// SortAscending and SortDescending are the attributes of the "Sort
+	// ascending" and "Sort descending" header menu items, typically htmx
+	// attributes (hx-get, hx-target, …) that reload the table sorted.
+	// Columns without them aren't sortable.
+	SortAscending  templ.Attributes
+	SortDescending templ.Attributes
+	// MenuItems adds items to the end of the column's header menu.
+	MenuItems templ.Component
+	// Attributes are added to the column's header cell.
+	Attributes templ.Attributes
 }
 
 // TablePaginationElements defines custom attributes for pagination interactive elements

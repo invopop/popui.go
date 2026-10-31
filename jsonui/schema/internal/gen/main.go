@@ -369,10 +369,15 @@ func dropUnsupported(s *jsonschema.Schema) {
 	if s.Properties == nil {
 		return
 	}
+	// Collected first: deleting a pair while iterating ends the iteration.
+	var drop []string
 	for pair := s.Properties.Oldest(); pair != nil; pair = pair.Next() {
 		if pair.Value == unsupported || (pair.Value.Items != nil && pair.Value.Items == unsupported) {
-			s.Properties.Delete(pair.Key)
+			drop = append(drop, pair.Key)
 		}
+	}
+	for _, k := range drop {
+		s.Properties.Delete(k)
 	}
 }
 

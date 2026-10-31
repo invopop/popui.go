@@ -106,6 +106,13 @@ body {
   align-self: end;
 }
 
+/* Inside a table cell, Chrome resolves the stretch cap against the cell
+   rather than the viewport, collapsing the panel to its padding; use the
+   fixed cap there instead (with the bottom inset discarded, as above). */
+:is(th, td) [popover].context-menu.context-menu-scroll {
+  max-height: min(24rem, 70vh);
+}
+
 /* Fallback for browsers without anchor positioning support */
 @supports not (anchor-name: --test) {
   [popover].context-menu {
@@ -628,6 +635,91 @@ form {
    double line. */
 .popui-table-freeze-first.popui-table-col-dividers thead th:nth-child(2)::before {
   display: none;
+}
+
+/* Tables with Columns. Fixed layout, so the <col> widths hold whatever the
+   cells contain; the widths, the table's width and the frozen columns come
+   from the stylesheet Table writes for each shape of table (see
+   tableColumnsCSS in table_columns.go). Borders are separate so a frozen
+   cell's right border travels with it, as for StickyColumn above. */
+.popui-table-columns {
+  table-layout: fixed;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+/* The header cells hold their title (a menu trigger when the column has a
+   menu) and a resize handle; positioned for the handle and divider unless
+   the header is sticky, which positions them already. */
+.popui-table-columns:not(.popui-table-sticky-header) thead th {
+  position: relative;
+}
+/* The title fills the cell, so the whole cell opens the menu. */
+.popui-table-columns .popui-table-th {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 0.5rem;
+  min-width: 0;
+  text-align: inherit;
+}
+.popui-table-columns th:first-child .popui-table-th {
+  padding-left: 1rem;
+}
+.popui-table-columns th:last-child .popui-table-th {
+  padding-right: 1rem;
+}
+.popui-table-columns button.popui-table-th:hover,
+.popui-table-columns button.popui-table-th[aria-expanded='true'] {
+  color: var(--color-foreground);
+}
+.popui-table-columns .popui-table-sort-arrow {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--color-icon);
+}
+/* The header menu shows Freeze or Unfreeze for the column's state. */
+.popui-table-columns th[data-frozen] .popui-table-freeze-label,
+.popui-table-columns th:not([data-frozen]) .popui-table-unfreeze-label {
+  display: none;
+}
+/* Row hover over the opaque cell background, as the tint is alpha and the
+   frozen cells must stay opaque over the columns scrolling under them. */
+.popui-table-columns.popui-table-row-hover tbody tr:hover td {
+  background-color: var(--color-background);
+  background-image: linear-gradient(var(--color-background-default-secondary), var(--color-background-default-secondary));
+}
+/* Resize handle on the right edge of a header cell, a line while it's
+   hovered, dragged or focused. */
+.popui-table-columns .popui-table-col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+  z-index: 1;
+}
+.popui-table-columns .popui-table-col-resizer::after {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  right: 0;
+  width: 2px;
+  border-radius: 1px;
+}
+.popui-table-columns .popui-table-col-resizer:hover::after,
+.popui-table-columns .popui-table-col-resizer:focus-visible::after,
+.popui-table-columns .popui-table-col-resizer[data-dragging]::after {
+  background-color: var(--color-border-selected-bold);
+}
+.popui-table-columns .popui-table-col-resizer:focus-visible {
+  outline: none;
 }
 
 /* Card tables round their own corner cells: the wrapper's border-radius only
