@@ -38,7 +38,9 @@ func DescriptionList(opts ...props.DescriptionList) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
 		var templ_7745c5c3_Var2 = []any{tailwind.Merge(
-			"w-[400px] space-y-4",
+			// A size container, so inline detail rows can stack when the
+			// list is narrow (see components.css).
+			"@container w-[400px] space-y-4",
 			p.Class,
 		),
 		}
@@ -165,7 +167,7 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 45, Col: 13}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 47, Col: 13}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -217,7 +219,7 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 57, Col: 14}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 59, Col: 14}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -250,7 +252,7 @@ func DescriptionListItem(opts ...props.DescriptionListItem) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.Value)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 63, Col: 14}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 65, Col: 14}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -320,7 +322,7 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 78, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 80, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -359,7 +361,7 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(p.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 89, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 91, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -416,7 +418,7 @@ func descriptionListDetailItem(p props.DescriptionListItem) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 92, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 94, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -610,7 +612,7 @@ func DT(opts ...props.DT) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 153, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 155, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -703,7 +705,7 @@ func DD(opts ...props.DD) templ.Component {
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 172, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `description_list.templ`, Line: 174, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
