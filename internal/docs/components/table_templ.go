@@ -279,6 +279,32 @@ func Table() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.TableColumnsExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Columns",
+			Description: "Describe the columns with Columns and Table renders the header from them, with fixed widths: the last column takes any space left, the table scrolls sideways when the columns don't fit, and cells truncate. Frozen columns stay put while scrolling. Click or right-click a header for its menu: sorting (links the page provides), and freezing with Freezable. Resizable adds drag handles, also usable with the arrow keys. Resizing and freezing dispatch popui-table-column-resize and popui-table-columns-freeze events so the page can save them, and render them next time.",
+			Code:        examples.LoadExample("table_columns.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "Table",
 				Description: "A table component with automatic styling for borders, spacing, and typography. Full-width layout, row-hover tint, and column-title dividers are always applied — no configuration needed. Compose cells with plain <td> / <th>.",
@@ -291,13 +317,40 @@ func Table() templ.Component {
 					{Name: "ScrollHorizontal", Type: "bool", Default: "false", Description: "Wide, horizontally-scrolling table: the body scrolls sideways. Pair with StickyColumn to keep the first column pinned during the scroll"},
 					{Name: "StickyColumn", Type: "bool", Default: "false", Description: "Pin the first column to the left with a full-height divider so the identity column never detaches during a horizontal scroll. Only visible alongside ScrollHorizontal"},
 					{Name: "StickyHeader", Type: "bool", Default: "false", Description: "Pin the <thead> row to the top while the body scrolls. Requires RootClass to make the wrapper a bounded vertical scroll container"},
-					{Name: "Resizable", Type: "bool", Default: "false", Description: "Let the user drag the right edge of each header cell to resize the column. Drag handles + behavior are provided by popui (CSS + popui.js); no consumer script needed"},
+					{Name: "Resizable", Type: "bool", Default: "false", Description: "Let the user drag the right edge of each header cell to resize the column. Drag handles + behavior are provided by popui (CSS + popui.js); no consumer script needed. With Columns, each resize dispatches a bubbling popui-table-column-resize event with detail {key, width}"},
+					{Name: "Columns", Type: "[]TableColumn", Default: "", Description: "The table's columns. Table renders the <colgroup> and <thead> from them, so the children are the <tbody>, and lays them out at fixed widths: the last column takes any space left, the table scrolls sideways when they don't fit, and cells truncate. ScrollHorizontal and StickyColumn are ignored"},
+					{Name: "Freezable", Type: "bool", Default: "false", Description: "With Columns, adds Freeze / Unfreeze to each header menu. Only leading columns freeze: freezing a column freezes those before it. Dispatches a bubbling popui-table-columns-freeze event with detail {frozen: [keys]}"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "TableColumn",
+				Description: "One column of a Table with Columns. Its header opens a menu on click or right-click when it has items: sorting, freezing, and MenuItems.",
+				Items: []modules.APITableItem{
+					{Name: "Key", Type: "string", Default: "position", Description: "Identifies the column in events"},
+					{Name: "Title", Type: "string", Default: "", Description: "The header's text"},
+					{Name: "Header", Type: "templ.Component", Default: "", Description: "Replaces Title with any content, e.g. a select-all Checkbox"},
+					{Name: "Width", Type: "int", Default: "150", Description: "Width in pixels"},
+					{Name: "MinWidth", Type: "int", Default: "60", Description: "The narrowest the user can resize the column to, in pixels"},
+					{Name: "Align", Type: "string", Default: "left", Description: "'left' or 'right' (e.g. amounts), for the header and cells"},
+					{Name: "Frozen", Type: "bool", Default: "false", Description: "Keep the column in place when scrolling sideways. Freezes the columns before it too"},
+					{Name: "Sort", Type: "string", Default: "", Description: "'asc' or 'desc' when the table is sorted by this column: an arrow by the title and a tick on the menu item"},
+					{Name: "SortAscending", Type: "templ.Attributes", Default: "", Description: "Attributes of the 'Sort ascending' menu item, e.g. hx-get. Columns without either sort attribute aren't sortable"},
+					{Name: "SortDescending", Type: "templ.Attributes", Default: "", Description: "Attributes of the 'Sort descending' menu item"},
+					{Name: "MenuItems", Type: "templ.Component", Default: "", Description: "More MenuItems for the end of the header menu"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes for the header cell"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -325,7 +378,7 @@ func Table() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -348,7 +401,7 @@ func Table() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

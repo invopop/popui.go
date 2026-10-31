@@ -26,6 +26,12 @@ type CardDeck struct {
 	// `data-order` always matches the visible sequence.
 	Reorderable bool
 
+	// Handles keeps a Reorderable deck in reorder mode, with a drag handle
+	// always at each card's left edge. Cards are dragged by their handle
+	// alone, so their own links and controls keep working, and no
+	// CardDeckReorderButton is needed. Implies Reorderable.
+	Handles bool
+
 	// Name, on a reorderable deck, renders a hidden input holding the card
 	// ids in their current order, comma separated, so an enclosing form or
 	// HTMX submit carries the order. Regardless of Name, every committed

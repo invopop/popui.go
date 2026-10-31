@@ -481,6 +481,140 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   })
 
   // ------------------------------------------------------------------
+  // Tables with Columns
+  // ------------------------------------------------------------------
+  //
+  // The server renders these in their final shape: the column widths are
+  // the custom properties --popui-col-N on the table, and the frozen columns
+  // are listed in its data-frozen attribute. Everything here only updates
+  // those, and tells the page through events, so it is all delegated from
+  // the document and keeps working across htmx swaps.
+
+  // The table and the position (from 1) of a column's header cell.
+  function tableColumnOf(el) {
+    const th = el.closest('th')
+    const table = th && th.closest('table[data-popui-columns]')
+    if (!table) return null
+    return { table: table, th: th, index: th.cellIndex + 1 }
+  }
+
+  // Sets a column's width, no less than its minimum. The last column also
+  // fills the space the others leave, so it's held at that too: narrower
+  // wouldn't show, and the width reported would not be the one drawn.
+  function tableColumnWidth(col, width) {
+    let min = parseInt(col.th.dataset.minWidth, 10) || 0
+    if (!col.th.nextElementSibling && col.table.parentElement) {
+      const others = col.table.offsetWidth - col.th.offsetWidth
+      min = Math.max(min, col.table.parentElement.clientWidth - others)
+    }
+    width = Math.max(min, Math.round(width))
+    col.table.style.setProperty('--popui-col-' + col.index, width + 'px')
+    return width
+  }
+
+  function tableColumnResized(col, width) {
+    col.table.dispatchEvent(
+      new CustomEvent('popui-table-column-resize', {
+        bubbles: true,
+        detail: { key: col.th.dataset.key, width: width },
+      }),
+    )
+  }
+
+  // Resizes a column by dragging its handle. It starts from the width the
+  // column is drawn at, which for the last column can be more than its own
+  // as it takes any space left.
+  document.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0) return
+    const handle = e.target.closest('.popui-table-col-resizer')
+    const col = handle && tableColumnOf(handle)
+    if (!col) return
+    e.preventDefault()
+    const startX = e.clientX
+    const startWidth = col.th.getBoundingClientRect().width
+    let width = null
+    handle.setPointerCapture(e.pointerId)
+    handle.setAttribute('data-dragging', '')
+    document.body.style.cursor = 'col-resize'
+    function onMove(mv) {
+      width = tableColumnWidth(col, startWidth + mv.clientX - startX)
+    }
+    function onEnd() {
+      handle.removeEventListener('pointermove', onMove)
+      handle.removeEventListener('pointerup', onEnd)
+      handle.removeEventListener('pointercancel', onEnd)
+      handle.removeAttribute('data-dragging')
+      document.body.style.cursor = ''
+      if (width !== null && width !== Math.round(startWidth)) tableColumnResized(col, width)
+    }
+    handle.addEventListener('pointermove', onMove)
+    handle.addEventListener('pointerup', onEnd)
+    handle.addEventListener('pointercancel', onEnd)
+  })
+
+  // Resizes a column from the keyboard, with the arrow keys on its focused
+  // handle, 10px a press.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    if (!e.target.classList || !e.target.classList.contains('popui-table-col-resizer')) return
+    const col = tableColumnOf(e.target)
+    if (!col) return
+    e.preventDefault()
+    const from = col.th.getBoundingClientRect().width
+    const width = tableColumnWidth(col, from + (e.key === 'ArrowRight' ? 10 : -10))
+    if (width !== Math.round(from)) tableColumnResized(col, width)
+  })
+
+  // Freezes the first n columns of a table.
+  function freezeTableColumns(table, n) {
+    const ths = table.querySelectorAll(':scope > thead > tr > th')
+    const positions = []
+    const keys = []
+    ths.forEach(function (th, i) {
+      if (i < n) {
+        positions.push(i + 1)
+        keys.push(th.dataset.key)
+        th.setAttribute('data-frozen', '')
+      } else {
+        th.removeAttribute('data-frozen')
+      }
+    })
+    if (n > 0) {
+      table.setAttribute('data-frozen', positions.join(' '))
+      table.setAttribute('data-frozen-last', String(n))
+    } else {
+      table.removeAttribute('data-frozen')
+      table.removeAttribute('data-frozen-last')
+    }
+    table.dispatchEvent(
+      new CustomEvent('popui-table-columns-freeze', { bubbles: true, detail: { frozen: keys } }),
+    )
+  }
+
+  // The header menu's Freeze / Unfreeze item. Freezing a column freezes
+  // those before it, and unfreezing it unfreezes those after it.
+  document.addEventListener('click', function (e) {
+    const item = e.target.closest('[data-popui-table-freeze]')
+    const col = item && tableColumnOf(item)
+    if (!col) return
+    const popover = item.closest('[popover]')
+    if (popover) popover.hidePopover()
+    freezeTableColumns(col.table, col.th.hasAttribute('data-frozen') ? col.index - 1 : col.index)
+  })
+
+  // Right-clicking a header cell opens its menu, as clicking does.
+  document.addEventListener('contextmenu', function (e) {
+    const col = tableColumnOf(e.target)
+    if (!col) return
+    const trigger = col.th.querySelector('button[aria-haspopup="menu"]')
+    if (!trigger) return
+    e.preventDefault()
+    const popover = col.th.querySelector('[popover]')
+    if (popover && popover.matches(':popover-open')) return
+    trigger.click()
+  })
+
+  // ------------------------------------------------------------------
   // Card deck reordering
   // ------------------------------------------------------------------
 
@@ -2101,12 +2235,25 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     // handle, the cards' own links and controls are inert (CSS) and their
     // clicks are swallowed (onClick), so a card can be grabbed without
     // following it.
-    Alpine.data('cardDeckReorder', () => ({
+    //
+    // With handles, the mode is always on: each card gets a handle at its
+    // left edge, the only place it's dragged from, and keeps its controls.
+    Alpine.data('cardDeckReorder', (opts = {}) => ({
       reordering: false,
+      handles: !!opts.handles,
       order: [],
 
       init() {
         this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, true))
+        if (this.handles) {
+          cardDeckCards(this.$root).forEach((card) => {
+            if (card.querySelector(':scope > .popui-card-deck-handle')) return
+            const handle = document.createElement('span')
+            handle.className = 'popui-card-deck-handle'
+            handle.setAttribute('aria-hidden', 'true')
+            card.prepend(handle)
+          })
+        }
       },
       toggleReorder() {
         this.reordering = !this.reordering
@@ -2122,7 +2269,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         }))
       },
       onPointerDown(e) {
-        if (!this.reordering || e.button > 0) return
+        if (e.button > 0) return
+        if (this.handles) {
+          if (!e.target.closest || !e.target.closest('.popui-card-deck-handle')) return
+        } else if (!this.reordering) {
+          return
+        }
         const card = cardDeckOwnCard(this.$root, e.target)
         if (!card) return
         // Suppresses the text selection and native image drag that would
