@@ -1062,6 +1062,31 @@ form {
   border-color: var(--color-border);
 }
 
+/* A deck with handles is always reorderable: the handle shows at each
+   card's left edge, and is the card's only grab target, so the card's own
+   controls keep working. */
+.popui-card-deck-handles > [data-card] {
+  padding-left: 32px;
+  transition: transform 150ms ease, padding-left 150ms ease;
+}
+.popui-card-deck-handles > [data-card]::before {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.popui-card-deck-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  cursor: grab;
+  /* Vertical drags belong to the deck, not to the scroller. */
+  touch-action: none;
+}
+.popui-card-deck-dragging .popui-card-deck-handle {
+  cursor: grabbing;
+}
+
 /* The commit frame. The script reorders the cards and drops their offsets
    together here, two changes that cancel out — so they must not animate, or
    each displaced card slides a slot it has already travelled. Declared after
@@ -1083,7 +1108,8 @@ form {
 @media (prefers-reduced-motion: reduce) {
   .popui-card-deck-sortable > [data-card],
   .popui-card-deck-sortable > [data-card]::before,
-  .popui-card-deck-reordering > [data-card] {
+  .popui-card-deck-reordering > [data-card],
+  .popui-card-deck-handles > [data-card] {
     transition: none;
   }
 }

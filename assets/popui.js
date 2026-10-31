@@ -2235,12 +2235,25 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     // handle, the cards' own links and controls are inert (CSS) and their
     // clicks are swallowed (onClick), so a card can be grabbed without
     // following it.
-    Alpine.data('cardDeckReorder', () => ({
+    //
+    // With handles, the mode is always on: each card gets a handle at its
+    // left edge, the only place it's dragged from, and keeps its controls.
+    Alpine.data('cardDeckReorder', (opts = {}) => ({
       reordering: false,
+      handles: !!opts.handles,
       order: [],
 
       init() {
         this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, true))
+        if (this.handles) {
+          cardDeckCards(this.$root).forEach((card) => {
+            if (card.querySelector(':scope > .popui-card-deck-handle')) return
+            const handle = document.createElement('span')
+            handle.className = 'popui-card-deck-handle'
+            handle.setAttribute('aria-hidden', 'true')
+            card.prepend(handle)
+          })
+        }
       },
       toggleReorder() {
         this.reordering = !this.reordering
@@ -2256,7 +2269,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         }))
       },
       onPointerDown(e) {
-        if (!this.reordering || e.button > 0) return
+        if (e.button > 0) return
+        if (this.handles) {
+          if (!e.target.closest || !e.target.closest('.popui-card-deck-handle')) return
+        } else if (!this.reordering) {
+          return
+        }
         const card = cardDeckOwnCard(this.$root, e.target)
         if (!card) return
         // Suppresses the text selection and native image drag that would

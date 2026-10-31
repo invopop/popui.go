@@ -159,6 +159,7 @@ func CardDeck() templ.Component {
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with deck styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Reorderable", Type: "bool", Default: "false", Description: "Turn the deck into a drag-to-reorder list, toggled by a CardDeckReorderButton in the head. Give each child Card a data-card-id so the order can be read back (without one a card falls back to its element id, then to its 1-based position at load), and an Order to set the starting sequence"},
+					{Name: "Handles", Type: "bool", Default: "false", Description: "Keep the deck reorderable at all times, with a drag handle at each card's left edge: cards are dragged by it alone, so their own links and controls keep working, and no CardDeckReorderButton is needed. Implies Reorderable"},
 					{Name: "Name", Type: "string", Default: "", Description: "On a reorderable deck, renders a hidden input holding the card ids in their current order, comma separated, for a form or HTMX submit"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
