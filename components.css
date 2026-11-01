@@ -896,7 +896,11 @@ form {
 /* Detail rows (popui.DescriptionListItem with Inline/Actions) — console-ui-style
    label-on-left / value-on-right rows for side panels and drawers. Shipped
    here so any consuming app gets the styling without copying a <style> block. */
-.popui-detail-row { display: flex; gap: 0.5rem; align-items: center; }
+.popui-detail-row { display: flex; gap: 0.5rem; align-items: flex-start; }
+/* Inline: the label sits at the top of the row, padded down by the value
+   cell's top padding so it lines up with the value's first line when the
+   value wraps. */
+.popui-detail-row:not(.popui-detail-stacked) > .popui-detail-label { padding-top: 0.25rem; }
 /* Stacked variant: label above the value. */
 .popui-detail-row.popui-detail-stacked {
   flex-direction: column;
@@ -935,6 +939,7 @@ form {
   .popui-detail-row:not(.popui-detail-stacked) > .popui-detail-label {
     flex: 0 0 auto;
     min-width: 0;
+    padding-top: 0;
   }
   .popui-detail-row:not(.popui-detail-stacked) > .popui-detail-value-wrap {
     align-items: center;

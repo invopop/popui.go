@@ -177,6 +177,32 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.DescriptionListWrappingExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Wrapping Values",
+			Description: "Long values in inline rows wrap within the value column, and the label stays aligned with the value's first line.",
+			Code:        examples.LoadExample("description_list_wrapping.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "DescriptionList",
 				Description: "Container for definition list items (dl element).",
@@ -263,7 +289,7 @@ func DescriptionList() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
