@@ -41,6 +41,13 @@ templ DescriptionList() {
 	}) {
 		@examples.DescriptionListDetailViewExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Wrapping Values",
+		Description: "Long values in inline rows wrap within the value column, and the label stays aligned with the value's first line.",
+		Code:        examples.LoadExample("description_list_wrapping.templ"),
+	}) {
+		@examples.DescriptionListWrappingExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "DescriptionList",

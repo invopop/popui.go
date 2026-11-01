@@ -1,0 +1,23 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ DescriptionListWrappingExample() {
+	@popui.DescriptionList(props.DescriptionList{Class: "w-[360px] space-y-1"}) {
+		@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Name", Value: "Acme Corporation"})
+		@popui.DescriptionListItem(props.DescriptionListItem{
+			Inline: true,
+			Label:  "Address",
+			Value:  "Calle de Alcalá 123, 4º Izquierda, 28009 Madrid, Spain",
+		})
+		@popui.DescriptionListItem(props.DescriptionListItem{
+			Inline: true,
+			Label:  "Notes",
+			Value:  "Invoices are sent on the first working day of each month and are payable within 30 days by bank transfer.",
+		})
+		@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Email", Value: "billing@acme.example"})
+	}
+}
