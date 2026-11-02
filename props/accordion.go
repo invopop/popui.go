@@ -10,6 +10,13 @@ type Accordion struct {
 	Attributes templ.Attributes
 	Title      string
 	Open       bool
+
+	// Icon goes before the title, as an action's icon in a step.
+	Icon templ.Component
+	// Actions go after the title, before the chevron: a duration, a status
+	// or a button. Clicking a button or link there doesn't open or close
+	// the accordion.
+	Actions templ.Component
 }
 
 // AccordionGroup provides props for a container that visually joins several
