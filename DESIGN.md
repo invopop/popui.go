@@ -98,6 +98,7 @@ Some requests sound custom but map directly to PopUI components:
 | "insert a variable / pick an invoice field" | `FieldPicker` |
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a detail panel that opens over the page, or beside a list" | `SidePanel` (with `Docked: true` beside a list) |
+| "a date range for a list or report: last 30 days, this quarter, 2025" | `Period` (read its value with the `period` package) |
 | "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `Details` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |

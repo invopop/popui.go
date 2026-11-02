@@ -114,6 +114,12 @@ var groups = []*Group{
 				Template: components.Calendar(),
 			},
 			{
+				Title:    "Period",
+				Desc:     "Picks the window of time a list or report shows: rolling days, or days, weeks, months, quarters or years, alone or in a run.",
+				Path:     "period",
+				Template: components.Period(),
+			},
+			{
 				Title:    "Checkbox",
 				Desc:     "Checkbox inputs with optional toggle switch variant.",
 				Path:     "checkbox",

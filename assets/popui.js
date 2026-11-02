@@ -2171,6 +2171,369 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
     }))
 
+    // Period select: a window of time — rolling days, every time, or a run of days, weeks, months, quarters or
+    // years — kept as the period package's string ("365d", "2026-Q4", "2026-01..2026-03"). Windows of each
+    // unit are counted from the Unix epoch, so a run is two numbers and stepping through them is arithmetic.
+    const periodMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const periodMod = (a, b) => ((a % b) + b) % b
+    const periodPad = (n, w = 2) => String(n).padStart(w, '0')
+    const periodDay = (y, m, d) => Math.floor(Date.UTC(y, m - 1, d) / 86400000)
+    function periodDate(n) {
+      const t = new Date(n * 86400000)
+      return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() }
+    }
+    // ISO weeks: the epoch was a Thursday, so day -3 starts week 0, and a week's year is its Thursday's.
+    const periodWeekOf = (n) => Math.floor((n + 3) / 7)
+    function periodIsoWeek(w) {
+      const th = periodDate(w * 7)
+      return { y: th.y, w: Math.floor((w * 7 - periodDay(th.y, 1, 1)) / 7) + 1 }
+    }
+    // Each unit's first day of window n, and the window day n is in.
+    const periodUnits = {
+      day: { start: (n) => n, of: (d) => d },
+      week: { start: (n) => n * 7 - 3, of: periodWeekOf },
+      month: {
+        start: (n) => periodDay(Math.floor(n / 12), periodMod(n, 12) + 1, 1),
+        of: (d) => { const t = periodDate(d); return t.y * 12 + t.m - 1 },
+      },
+      quarter: {
+        start: (n) => periodDay(Math.floor(n / 4), periodMod(n, 4) * 3 + 1, 1),
+        of: (d) => { const t = periodDate(d); return t.y * 4 + Math.floor((t.m - 1) / 3) },
+      },
+      year: { start: (n) => periodDay(n, 1, 1), of: (d) => periodDate(d).y },
+    }
+    function periodKey(unit, n) {
+      switch (unit) {
+        case 'day': { const t = periodDate(n); return periodPad(t.y, 4) + '-' + periodPad(t.m) + '-' + periodPad(t.d) }
+        case 'week': { const t = periodIsoWeek(n); return periodPad(t.y, 4) + '-W' + periodPad(t.w) }
+        case 'month': return periodPad(Math.floor(n / 12), 4) + '-' + periodPad(periodMod(n, 12) + 1)
+        case 'quarter': return periodPad(Math.floor(n / 4), 4) + '-Q' + (periodMod(n, 4) + 1)
+      }
+      return periodPad(n, 4)
+    }
+    function periodWindow(s) {
+      let m
+      if ((m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s))) return { unit: 'day', n: periodDay(+m[1], +m[2], +m[3]) }
+      if ((m = /^(\d{4})-W(\d{2})$/.exec(s))) return { unit: 'week', n: periodWeekOf(periodDay(+m[1], 1, 4)) + +m[2] - 1 }
+      if ((m = /^(\d{4})-(\d{2})$/.exec(s))) return { unit: 'month', n: +m[1] * 12 + +m[2] - 1 }
+      if ((m = /^(\d{4})-Q([1-4])$/.exec(s))) return { unit: 'quarter', n: +m[1] * 4 + +m[2] - 1 }
+      if ((m = /^(\d{4})$/.exec(s))) return { unit: 'year', n: +m[1] }
+      return null
+    }
+    function periodParse(s) {
+      s = String(s || '')
+      if (s === 'all') return { all: true }
+      const m = /^([1-9]\d{0,4})d$/.exec(s)
+      if (m) return { days: +m[1] }
+      const [a, b = a] = s.split('..')
+      const x = periodWindow(a)
+      const y = periodWindow(b)
+      if (!x || !y || x.unit !== y.unit) return null
+      return { unit: x.unit, from: Math.min(x.n, y.n), to: Math.max(x.n, y.n) }
+    }
+    function periodString(p) {
+      if (p.all) return 'all'
+      if (p.days) return p.days + 'd'
+      const a = periodKey(p.unit, p.from)
+      return p.from === p.to ? a : a + '..' + periodKey(p.unit, p.to)
+    }
+    function periodYear(unit, n) {
+      switch (unit) {
+        case 'day': return periodDate(n).y
+        case 'week': return periodIsoWeek(n).y
+        case 'month': return Math.floor(n / 12)
+        case 'quarter': return Math.floor(n / 4)
+      }
+      return n
+    }
+    // Names window n, with its year or without, as the period package does.
+    function periodName(p, n, withYear) {
+      const y = withYear ? ' ' + periodYear(p.unit, n) : ''
+      switch (p.unit) {
+        case 'day': { const t = periodDate(n); return t.d + ' ' + periodMonths[t.m - 1].slice(0, 3) + y }
+        case 'week': return 'Week ' + periodIsoWeek(n).w + (withYear ? ',' + y : '')
+        case 'month': {
+          const name = periodMonths[periodMod(n, 12)]
+          return (withYear && p.from === p.to ? name : name.slice(0, 3)) + y
+        }
+        case 'quarter': return 'Q' + (periodMod(n, 4) + 1) + y
+      }
+      return String(n)
+    }
+    function periodLabel(p) {
+      if (p.all) return 'All time'
+      if (p.days === 1) return 'Today'
+      if (p.days) return 'Last ' + p.days + ' days'
+      if (p.from === p.to) return periodName(p, p.from, true)
+      if (periodYear(p.unit, p.from) !== periodYear(p.unit, p.to) || p.unit === 'year') {
+        return periodName(p, p.from, true) + ' – ' + periodName(p, p.to, true)
+      }
+      if (p.unit === 'week') {
+        return 'Weeks ' + periodIsoWeek(p.from).w + ' – ' + periodIsoWeek(p.to).w + ', ' + periodIsoWeek(p.to).y
+      }
+      return periodName(p, p.from, false) + ' – ' + periodName(p, p.to, true)
+    }
+    // Names the days from first to last, as "26 Oct – 1 Nov 2026".
+    function periodDates(first, last) {
+      const a = periodDate(first)
+      const b = periodDate(last)
+      const f = (t, y) => t.d + ' ' + periodMonths[t.m - 1].slice(0, 3) + (y ? ' ' + t.y : '')
+      return first === last ? f(a, true) : f(a, a.y !== b.y) + ' – ' + f(b, true)
+    }
+    // Moves a period by n of its lengths; rolling days become the run of days before or after them.
+    function periodShift(p, n, today) {
+      if (p.all) return p
+      if (p.days) return { unit: 'day', from: today - p.days + 1 + n * p.days, to: today + n * p.days }
+      const span = p.to - p.from + 1
+      return { unit: p.unit, from: p.from + n * span, to: p.to + n * span }
+    }
+
+    Alpine.data('periodSelect', (init) => ({
+      value: init.value,
+      def: init.default,
+      rolling: init.rolling || [7, 30, 90, 365],
+      disabled: !!init.disabled,
+      today: 0,
+      open: false,
+      // Whether the panel lines up with the button's right edge, as when the button is on the right of the page.
+      end: false,
+      unit: 'month',
+      // The page of windows shown: a month of days, a year of weeks or months, three years of quarters, or
+      // twelve years, by the last of them.
+      page: 0,
+      // The run being dragged across, the window a shift-click runs from, and the window under the pointer.
+      drag: null,
+      anchor: null,
+      hover: null,
+      units: [
+        { key: 'day', label: 'Days' },
+        { key: 'week', label: 'Weeks' },
+        { key: 'month', label: 'Months' },
+        { key: 'quarter', label: 'Quarters' },
+        { key: 'year', label: 'Years' },
+      ],
+      init() {
+        const [y, m, d] = String(init.today).split('-').map(Number)
+        this.today = periodDay(y, m, d)
+        const p = periodParse(this.value)
+        this.setUnit(p && p.unit ? p.unit : 'month')
+        this._release = () => this.release()
+        window.addEventListener('pointerup', this._release)
+      },
+      destroy() {
+        window.removeEventListener('pointerup', this._release)
+      },
+      label(v) {
+        const p = periodParse(v)
+        return p ? periodLabel(p) : v
+      },
+      // The first and last days of a period, or null for every time.
+      span(p) {
+        if (!p || p.all) return null
+        if (p.days) return [this.today - p.days + 1, this.today]
+        const u = periodUnits[p.unit]
+        return [u.start(p.from), u.start(p.to + 1) - 1]
+      },
+      dates(v) {
+        const s = this.span(periodParse(v))
+        return s ? periodDates(s[0], s[1]) : 'Any date'
+      },
+      // The dates of the run being dragged, the window under the pointer, or the period.
+      footer() {
+        const u = periodUnits[this.unit]
+        if (this.drag) {
+          return periodDates(u.start(Math.min(this.drag.from, this.drag.to)), u.start(Math.max(this.drag.from, this.drag.to) + 1) - 1)
+        }
+        if (this.hover === null) return this.dates(this.value)
+        return periodDates(u.start(this.hover), u.start(this.hover + 1) - 1)
+      },
+      toggle() {
+        if (this.disabled) return
+        if (this.open) {
+          this.close()
+          return
+        }
+        const p = periodParse(this.value)
+        this.setUnit(p && p.unit ? p.unit : this.unit)
+        const r = this.$root.getBoundingClientRect()
+        this.end = r.left + r.width / 2 > window.innerWidth / 2
+        this.open = true
+      },
+      close() {
+        // Hiding the panel with focus in it would drop focus to the page, so it goes back to the button.
+        const refocus = this.open && this.$refs.panel.contains(document.activeElement)
+        this.open = false
+        this.drag = null
+        this.hover = null
+        if (refocus) this.$refs.trigger.focus()
+      },
+      // Shows a unit's windows, from the page with the period's end or today.
+      setUnit(unit) {
+        this.unit = unit
+        const s = this.span(periodParse(this.value))
+        const n = periodUnits[unit].of(s ? s[1] : this.today)
+        switch (unit) {
+          case 'day': this.page = periodUnits.month.of(n); break
+          case 'week': this.page = periodIsoWeek(n).y; break
+          case 'month': this.page = Math.floor(n / 12); break
+          case 'quarter': this.page = Math.floor(n / 4); break
+          default: {
+            const cy = periodDate(this.today).y
+            this.page = cy - 12 * Math.floor((cy - n) / 12)
+          }
+        }
+      },
+      _step() {
+        return { quarter: 3, year: 12 }[this.unit] || 1
+      },
+      turn(dir) {
+        this.page += dir * this._step()
+      },
+      // Pages starting after today are left out.
+      canTurn(dir) {
+        const next = this.page + dir * this._step()
+        if (this.unit === 'day') return periodUnits.month.start(next) <= this.today
+        const y = next - this._step() + 1
+        // A year's weeks start on the Monday of its first ISO week, the one holding 4 January.
+        const first = this.unit === 'week' ? periodUnits.week.start(periodWeekOf(periodDay(y, 1, 4))) : periodDay(y, 1, 1)
+        return first <= this.today
+      },
+      pageTitle() {
+        switch (this.unit) {
+          case 'day': return periodMonths[periodMod(this.page, 12)] + ' ' + Math.floor(this.page / 12)
+          case 'quarter': return this.page + ' – ' + (this.page - 2)
+          case 'year': return this.page + ' – ' + (this.page - 11)
+        }
+        return String(this.page)
+      },
+      cols() {
+        return { day: 'repeat(7, 1fr)', week: 'auto repeat(5, 1fr)', quarter: 'auto repeat(4, 1fr)' }[this.unit] || 'repeat(4, 1fr)'
+      },
+      _tile(n, label) {
+        const u = periodUnits[this.unit]
+        const start = u.start(n)
+        const end = u.start(n + 1) - 1
+        return {
+          id: this.unit + n, kind: 'tile', n, label,
+          future: start > this.today,
+          current: start <= this.today && this.today <= end,
+          title: periodDates(start, end),
+        }
+      },
+      // The page's windows, newest first from the top left, with labels for rows and blanks to line them up.
+      // Days keep their weekdays in order, so a page of them is a calendar with its latest week on top.
+      cells() {
+        const out = []
+        const blank = () => out.push({ id: 'b' + out.length, kind: 'blank', label: '' })
+        const head = (label) => out.push({ id: 'h' + out.length, kind: 'head', label })
+        const y = this.page
+        switch (this.unit) {
+          case 'day': {
+            ;['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].forEach(head)
+            const first = periodUnits.month.start(y)
+            const last = periodUnits.month.start(y + 1) - 1
+            for (let mon = last - periodMod(last + 3, 7); mon + 6 >= first; mon -= 7) {
+              for (let n = mon; n < mon + 7; n++) {
+                if (n < first || n > last) blank()
+                else out.push(this._tile(n, String(periodDate(n).d)))
+              }
+            }
+            break
+          }
+          case 'week':
+            // Weeks are in the month of their Thursday, as ISO weeks are in the year of theirs.
+            for (let m = 12; m >= 1; m--) {
+              head(periodMonths[m - 1].slice(0, 3))
+              let w = periodWeekOf(periodDay(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, 1))
+              if (w * 7 >= periodDay(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, 1)) w--
+              let count = 0
+              for (; w * 7 >= periodDay(y, m, 1); w--, count++) out.push(this._tile(w, String(periodIsoWeek(w).w)))
+              for (; count < 5; count++) blank()
+            }
+            break
+          case 'month':
+            for (let m = 11; m >= 0; m--) out.push(this._tile(y * 12 + m, periodMonths[m].slice(0, 3)))
+            break
+          case 'quarter':
+            for (let yy = y; yy >= y - 2; yy--) {
+              head(String(yy))
+              for (let q = 3; q >= 0; q--) out.push(this._tile(yy * 4 + q, 'Q' + (q + 1)))
+            }
+            break
+          default:
+            for (let yy = y; yy >= y - 11; yy--) out.push(this._tile(yy, String(yy)))
+        }
+        return out
+      },
+      // A window's place in the run shown: the one being dragged, or the period's.
+      state(n) {
+        let lo, hi
+        if (this.drag) {
+          lo = Math.min(this.drag.from, this.drag.to)
+          hi = Math.max(this.drag.from, this.drag.to)
+        } else {
+          // The period shows in any unit whose windows it fills exactly, as Oct – Dec in quarters.
+          const s = this.span(periodParse(this.value))
+          const u = periodUnits[this.unit]
+          if (!s) return null
+          lo = u.of(s[0])
+          hi = u.of(s[1])
+          if (u.start(lo) !== s[0] || u.start(hi + 1) - 1 !== s[1]) return null
+        }
+        if (n < lo || n > hi) return null
+        if (lo === hi) return 'single'
+        // A run's left end is its newest window, but for days, whose weeks read left to right.
+        const [left, right] = this.unit === 'day' ? [lo, hi] : [hi, lo]
+        return n === left ? 'start' : n === right ? 'end' : 'middle'
+      },
+      press(n, e) {
+        // Only the primary button picks, as other buttons open menus; touch and pen report it too.
+        if (e.button !== 0 || periodUnits[this.unit].start(n) > this.today) return
+        // Touch holds the pointer on the tile it started on, so let go of it for the others to see it enter.
+        if (e.target.hasPointerCapture && e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId)
+        const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
+        this.drag = { from, to: n }
+      },
+      // Picks one window from the keyboard, whose Enter and Space fire a click with no pointer press before it.
+      // Shift picks the run from the anchor, as a shift-click does.
+      key(n, e) {
+        if (e.detail !== 0) return
+        const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
+        this.anchor = { unit: this.unit, n: from }
+        this.pick(periodString({ unit: this.unit, from: Math.min(from, n), to: Math.max(from, n) }))
+      },
+      enter(n) {
+        this.hover = n
+        if (this.drag && periodUnits[this.unit].start(n) <= this.today) this.drag.to = n
+      },
+      release() {
+        if (!this.drag) return
+        const { from, to } = this.drag
+        this.drag = null
+        this.anchor = { unit: this.unit, n: from }
+        this.pick(periodString({ unit: this.unit, from: Math.min(from, to), to: Math.max(from, to) }))
+      },
+      canShift(dir) {
+        const p = periodParse(this.value)
+        if (!p || p.all) return false
+        return dir < 0 || this.span(periodShift(p, dir, this.today))[0] <= this.today
+      },
+      shift(dir) {
+        const p = periodParse(this.value)
+        if (p && this.canShift(dir)) this.pick(periodString(periodShift(p, dir, this.today)))
+      },
+      // Picks a period and submits the form it's in, or tells the page it changed.
+      pick(v) {
+        this.close()
+        if (v === this.value) return
+        this.value = v
+        this.$nextTick(() => {
+          this.$refs.input.dispatchEvent(new Event('change', { bubbles: true }))
+          submitClosestForm(this.$root)
+        })
+      },
+    }))
+
     // Side panel opened and closed by popui-sidepanel-open/close window events whose detail matches the panel id.
     // The width is user-adjustable by dragging the panel's inner-edge handle.
     Alpine.data('sidePanel', (id, width = 400, anchor = 'right', open = false) => ({
