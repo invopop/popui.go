@@ -126,10 +126,16 @@ var groups = []*Group{
 				Template: components.Menu(),
 			},
 			{
-				Title:    "DescriptionList",
-				Desc:     "Semantic HTML definition list for displaying term-description pairs.",
-				Path:     "description-list",
-				Template: components.DescriptionList(),
+				Title:    "Details",
+				Desc:     "Labelled values, such as a document's or a party's, beside or above their labels.",
+				Path:     "details",
+				Template: components.Details(),
+			},
+			{
+				Title:    "Stats",
+				Desc:     "Figures with a label above them, such as a document's totals, in a wrapping row.",
+				Path:     "stats",
+				Template: components.Stats(),
 			},
 			{
 				Title:    "Fieldset",

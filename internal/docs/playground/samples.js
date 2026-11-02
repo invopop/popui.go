@@ -50,17 +50,17 @@
               is: "card_content",
               children: [
                 {
-                  is: "description_list",
+                  is: "details",
                   children: [
-                    { is: "description_list_item", props: { label: "Supplier", inline: true }, bind: { value: "invoice.supplier.name" } },
-                    { is: "description_list_item", props: { label: "Customer", inline: true }, bind: { value: "invoice.customer.name" } },
-                    { is: "description_list_item", props: { label: "Tax ID", inline: true, mono: true }, bind: { value: "invoice.customer.taxId" } },
+                    { is: "detail", props: { label: "Supplier" }, bind: { value: "invoice.supplier.name" } },
+                    { is: "detail", props: { label: "Customer" }, bind: { value: "invoice.customer.name" } },
+                    { is: "detail", props: { label: "Tax ID", mono: true }, bind: { value: "invoice.customer.taxId" } },
                     {
-                      is: "description_list_item",
-                      props: { label: "Document UUID", inline: true, mono: true, prefixLength: 8, suffixLength: 4 },
+                      is: "detail",
+                      props: { label: "Document UUID", mono: true, prefixLength: 8, suffixLength: 4 },
                       bind: { value: "invoice.uuid" },
                     },
-                    { is: "description_list_item", props: { label: "Total", inline: true }, bind: { value: "invoice.total" } },
+                    { is: "detail", props: { label: "Total" }, bind: { value: "invoice.total" } },
                   ],
                 },
               ],
@@ -717,13 +717,13 @@
           children: [
             { is: "status_badge", props: { label: i % 3 ? "Sent" : "Failed", status: i % 3 ? "success" : "failed" } },
             {
-              is: "description_list",
+              is: "details",
               children: [
-                { is: "description_list_item", props: { label: "Customer", value: `Customer ${i}`, inline: true } },
-                { is: "description_list_item", props: { label: "Tax ID", value: `B${10000000 + i}`, inline: true, mono: true } },
-                { is: "description_list_item", props: { label: "Currency", value: "EUR", inline: true } },
-                { is: "description_list_item", props: { label: "Lines", value: String((i % 9) + 1), inline: true } },
-                { is: "description_list_item", props: { label: "Total", value: `€${(i * 13.37).toFixed(2)}`, inline: true } },
+                { is: "detail", props: { label: "Customer", value: `Customer ${i}` } },
+                { is: "detail", props: { label: "Tax ID", value: `B${10000000 + i}`, mono: true } },
+                { is: "detail", props: { label: "Currency", value: "EUR" } },
+                { is: "detail", props: { label: "Lines", value: String((i % 9) + 1) } },
+                { is: "detail", props: { label: "Total", value: `€${(i * 13.37).toFixed(2)}` } },
               ],
             },
           ],

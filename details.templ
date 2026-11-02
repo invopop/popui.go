@@ -6,9 +6,15 @@ import (
 	"github.com/invopop/popui.go/tailwind"
 )
 
-// DescriptionList provides a wrapper for description lists (dl element).
-templ DescriptionList(opts ...props.DescriptionList) {
+// Details lists labelled values (a dl element), such as a document's or
+// a party's, as Detail children. For an expandable section, see Accordion.
+//
+// Details are inline by default: each label is in a column beside its
+// value, close together, as in a card or side panel. The "stacked" Layout
+// puts labels above values, spaced apart, unless a Detail sets Inline.
+templ Details(opts ...props.Details) {
 	{{ p := props.First(opts) }}
+	{{ inline := p.Layout != props.DetailsLayoutStacked }}
 	<dl
 		if p.ID != "" {
 			id={ p.ID }
@@ -17,30 +23,27 @@ templ DescriptionList(opts ...props.DescriptionList) {
 			tailwind.Merge(
 				// A size container, so inline detail rows can stack when the
 				// list is narrow (see components.css).
-				"@container w-[400px] space-y-4",
+				"@container w-full",
+				classes.If(inline, "space-y-1"),
+				classes.If(!inline, "space-y-4"),
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
-		{ children... }
+		@detailsInline(inline) {
+			{ children... }
+		}
 	</dl>
 }
 
-// DescriptionListItem provides a wrapper for description list items.
-// Renders a term (dt) and description (dd) with proper styling.
-// Use Label/Value props for simple text, DT/DD components for complex content,
-// or pick and mix as needed.
-//
-// Setting Inline or Actions switches to the detail-row rendering (the
-// popui-detail-* styles): a fixed-width label column, a hover-tinted value
-// cell filling the rest of the row, and hover-revealed action buttons pinned
-// to the row's right edge. Inline puts the label left of the value; otherwise
-// the label stacks above it.
-templ DescriptionListItem(opts ...props.DescriptionListItem) {
-	{{ p := props.First(opts) }}
+// detail renders a Detail with its children already rendered as content.
+// Without a Value, the content is the value. In a legacy
+// DescriptionListItem that isn't a row, the content is placed as is
+// between the label and the value, so it can hold its own DT and DD.
+templ detail(p props.Detail, content templ.Component, hasContent, legacy bool) {
 	if p.Inline || len(p.Actions) > 0 {
-		@descriptionListDetailItem(p)
+		@detailRow(p, content, hasContent)
 	} else {
 		<div
 			if p.ID != "" {
@@ -59,22 +62,31 @@ templ DescriptionListItem(opts ...props.DescriptionListItem) {
 					{ p.Label }
 				}
 			}
-			{ children... }
+			if legacy {
+				@content
+			}
 			if p.Value != "" {
 				@DD() {
 					{ p.Value }
+				}
+			} else if !legacy && hasContent {
+				@DD() {
+					@content
+				}
+			} else if !legacy {
+				@DD() {
+					{ "—" }
 				}
 			}
 		</div>
 	}
 }
 
-// descriptionListDetailItem renders the detail-row form of a
-// DescriptionListItem on the popui-detail-* styles — the same structure the
-// side-panel detail rows use: fixed-width label (dt), flex-1 value cell (dd)
-// with a hover tint, the value growing to pin hover-revealed action buttons to
-// the row's right edge. Non-Inline stacks the label above the value.
-templ descriptionListDetailItem(p props.DescriptionListItem) {
+// detailRow renders a Detail as a row on the popui-detail-* styles, as
+// side panels' details are: a fixed-width label (dt) and a value cell (dd)
+// with a hover tint, the value growing to pin hover-revealed action buttons
+// to the row's right edge. Without Inline the label is above the value.
+templ detailRow(p props.Detail, content templ.Component, hasContent bool) {
 	<div
 		if p.ID != "" {
 			id={ p.ID }
@@ -90,19 +102,25 @@ templ descriptionListDetailItem(p props.DescriptionListItem) {
 	>
 		<dt class="popui-detail-label">{ p.Label }</dt>
 		<dd class={ tailwind.Merge("popui-detail-value-wrap", classes.If(len(p.Actions) > 0, "popui-detail-copyable")) }>
-			<span class={ tailwind.Merge("popui-detail-value", classes.If(p.Mono, "font-mono")) }>
-				{ detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength) }
-			</span>
+			if p.Value != "" || !hasContent {
+				<span class={ tailwind.Merge("popui-detail-value", classes.If(p.Mono, "font-mono")) }>
+					{ detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength) }
+				</span>
+			} else {
+				<div class={ tailwind.Merge("popui-detail-value flex items-center gap-1.5 min-h-6", classes.If(p.Mono, "font-mono")) }>
+					@content
+				</div>
+			}
 			for _, a := range p.Actions {
-				@descriptionListActionButton(a, props.ButtonSizeIconSmall)
+				@detailActionButton(a, props.ButtonSizeIconSmall)
 			}
 		</dd>
 	</div>
 }
 
-// descriptionListActionButton renders one DescriptionListItem action: a copy
-// button (Copy set), an external-link anchor (URL set), or a plain button.
-templ descriptionListActionButton(a props.DescriptionListAction, size string) {
+// detailActionButton renders one Detail action: a copy button (Copy set),
+// an external-link anchor (URL set), or a plain button.
+templ detailActionButton(a props.DetailAction, size string) {
 	if a.Copy != "" {
 		@Button(props.Button{
 			Class: "popui-detail-action",
@@ -148,6 +166,8 @@ templ descriptionListActionButton(a props.DescriptionListAction, size string) {
 }
 
 // DT provides a definition term element with proper styling.
+//
+// Deprecated: Detail has a Label, and takes a component as its value.
 templ DT(opts ...props.DT) {
 	{{ p := props.First(opts) }}
 	<dt
@@ -167,6 +187,8 @@ templ DT(opts ...props.DT) {
 }
 
 // DD provides a definition description element with proper styling.
+//
+// Deprecated: Detail takes a component as its value.
 templ DD(opts ...props.DD) {
 	{{ p := props.First(opts) }}
 	<dd

@@ -1,0 +1,57 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Stats lays out Stat children in a row that wraps when it runs out of
+// space, such as a document's totals. A large Stat leads the row, and the
+// others follow it, or keep to the end of the group with the "end" Align.
+templ Stats(opts ...props.Stats) {
+	{{ p := props.First(opts) }}
+	<dl
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"flex flex-wrap items-end gap-x-12 gap-y-4 font-sans [&>[data-size=lg]]:me-auto",
+				classes.If(p.Align == props.AlignEnd, "justify-end [&>:not([data-size=lg])]:items-end [&>:not([data-size=lg])]:text-end"),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</dl>
+}
+
+// Stat shows a figure with a label above it, in Stats. Digits have
+// equal widths so figures line up.
+templ Stat(opts ...props.Stat) {
+	{{ p := props.First(opts) }}
+	{{ large := p.Size == props.StatSizeLarge }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if large {
+			data-size="lg"
+		}
+		class={ tailwind.Merge("flex flex-col min-w-0", classes.If(large, "gap-1"), p.Class) }
+		{ p.Attributes... }
+	>
+		<dt class={ classes.Join("text-foreground-default-secondary", classes.If(large, "text-base"), classes.If(!large, "text-sm")) }>
+			{ p.Label }
+		</dt>
+		<dd class={ classes.Join("text-foreground tabular-nums", classes.If(large, "text-xl font-medium"), classes.If(!large, "text-base")) }>
+			if p.Value != "" {
+				{ p.Value }
+			} else {
+				{ children... }
+			}
+		</dd>
+	</div>
+}

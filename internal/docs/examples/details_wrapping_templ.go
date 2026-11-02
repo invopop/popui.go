@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func DescriptionListWrappingExample() templ.Component {
+func DetailsWrappingExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,6 +34,10 @@ func DescriptionListWrappingExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-[360px]\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -46,19 +50,7 @@ func DescriptionListWrappingExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Name", Value: "Acme Corporation"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
-				Inline: true,
-				Label:  "Address",
-				Value:  "Calle de Alcalá 123, 4º Izquierda, 28009 Madrid, Spain",
-			}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Detail(props.Detail{Label: "Name", Value: "Acme Corporation"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -66,11 +58,7 @@ func DescriptionListWrappingExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
-				Inline: true,
-				Label:  "Notes",
-				Value:  "Invoices are sent on the first working day of each month and are payable within 30 days by bank transfer.",
-			}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Detail(props.Detail{Label: "Address", Value: "Calle de Alcalá 123, 4º Izquierda, 28009 Madrid, Spain"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -78,13 +66,28 @@ func DescriptionListWrappingExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Email", Value: "billing@acme.example"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Detail(props.Detail{
+				Label: "Notes",
+				Value: "Invoices are sent on the first working day of each month and are payable within 30 days by bank transfer.",
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = popui.Detail(props.Detail{Label: "Email", Value: "billing@acme.example"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.DescriptionList(props.DescriptionList{Class: "w-[360px] space-y-1"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Details().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

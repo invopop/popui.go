@@ -1,0 +1,36 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ DetailsDetailViewExample() {
+	<div class="w-[360px]">
+		@popui.Title(props.Title{Size: "base", Class: "py-3"}) {
+			Details
+		}
+		@popui.Details(props.Details{Class: "border-b border-border pb-4"}) {
+			@popui.Detail(props.Detail{Label: "Role", Value: "Seller"})
+			@popui.Detail(props.Detail{Label: "Status", Value: "Registered"})
+			@popui.Detail(props.Detail{Label: "Country"})
+			@popui.Detail(props.Detail{
+				Mono:         true,
+				Label:        "ID",
+				Value:        "01980ffb-94e1-7002-8f1d-3c5a2b7e9d44",
+				PrefixLength: 8,
+				SuffixLength: 4,
+				Actions: []props.DetailAction{
+					{Icon: icons.Duplicate(), Copy: "01980ffb-94e1-7002-8f1d-3c5a2b7e9d44", Attributes: templ.Attributes{"aria-label": "Copy"}},
+				},
+			})
+		}
+		@popui.Title(props.Title{Size: "base", Class: "py-3"}) {
+			Inboxes
+		}
+		@popui.Description() {
+			No inboxes
+		}
+	</div>
+}

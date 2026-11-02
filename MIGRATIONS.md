@@ -9,6 +9,56 @@ with the replacement and a before/after snippet.
 
 Entries are grouped by the release that removed them, newest first.
 
+## November 2026 Details
+
+Deprecated, still available until a later release removes them:
+
+| Deprecated | Replacement |
+|---|---|
+| `popui.DescriptionList`, `props.DescriptionList` | `popui.Details`, `props.Details` |
+| `popui.DescriptionListItem`, `props.DescriptionListItem` | `popui.Detail`, `props.Detail` |
+| `props.DescriptionListAction` | `props.DetailAction` |
+| `popui.DT`, `popui.DD`, `props.DT`, `props.DD` | `props.Detail.Label`, and the value as children of `popui.Detail` |
+
+In JSON UI, `description_list` and `description_list_item` are now
+`details` and `detail`, and `dt` and `dd` are gone.
+
+### DescriptionList → Details
+
+`Details` fill their container and are inline by default: labels in a
+column beside their values, close together. `DescriptionList` was 400px
+wide with labels above values. Set `Layout: "stacked"` for that, and a
+width with `Class` if it needs one.
+
+```templ
+// before
+@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-1"}) {
+	@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Name", Value: "Acme"})
+}
+// after
+@popui.Details() {
+	@popui.Detail(props.Detail{Label: "Name", Value: "Acme"})
+}
+```
+
+### DT / DD → Detail children
+
+A `Detail`'s children are its value. `DescriptionListItem` placed them
+between the label and the value, for its own `DT` and `DD`.
+
+```templ
+// before
+@popui.DescriptionListItem(props.DescriptionListItem{Label: "Email"}) {
+	@popui.DD() {
+		<a href="mailto:john@example.com">john@example.com</a>
+	}
+}
+// after
+@popui.Detail(props.Detail{Label: "Email"}) {
+	<a href="mailto:john@example.com">john@example.com</a>
+}
+```
+
 ## October 2026 Accordion simplification (PR #85)
 
 | Removed | Replacement |

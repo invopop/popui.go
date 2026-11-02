@@ -29,11 +29,11 @@ const jsonuiDetailsExample = `{
           "is": "card_content",
           "children": [
             {
-              "is": "description_list",
+              "is": "details",
               "children": [
-                { "is": "description_list_item", "props": { "label": "Status", "inline": true }, "bind": { "value": "invoice.status" } },
-                { "is": "description_list_item", "props": { "label": "Customer", "inline": true }, "bind": { "value": "invoice.customer" } },
-                { "is": "description_list_item", "props": { "label": "Total", "inline": true }, "bind": { "value": "invoice.total" } }
+                { "is": "detail", "props": { "label": "Status" }, "bind": { "value": "invoice.status" } },
+                { "is": "detail", "props": { "label": "Customer" }, "bind": { "value": "invoice.customer" } },
+                { "is": "detail", "props": { "label": "Total" }, "bind": { "value": "invoice.total" } }
               ]
             }
           ]

@@ -387,6 +387,20 @@
           "type": "integer",
           "description": "Colspan is the number of columns the cell spans, e.g. for a row that\nsays the table is empty."
         },
+        "align": {
+          "type": "string",
+          "enum": [
+            "",
+            "start",
+            "center",
+            "end"
+          ],
+          "description": "Align places the cell's content, see the popui Align constants.\nDefault is \"start\", or \"end\" for numeric cells."
+        },
+        "numeric": {
+          "type": "boolean",
+          "description": "Numeric is for cells of amounts and quantities: aligned to the end,\nkept on one line, with digits in equal widths so they line up. Set it\non the column's header cell as well."
+        },
         "attributes": {
           "$ref": "#/$defs/Attributes",
           "description": "Attributes are added to the cell."
@@ -443,38 +457,6 @@
       "type": "object",
       "description": "Checkbox defines the properties for checkbox inputs."
     },
-    "DD": {
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "class": {
-          "type": "string"
-        },
-        "attributes": {
-          "$ref": "#/$defs/Attributes"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "DD defines the props for the DD component (definition description)."
-    },
-    "DT": {
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "class": {
-          "type": "string"
-        },
-        "attributes": {
-          "$ref": "#/$defs/Attributes"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "DT defines the props for the DT component (definition term)."
-    },
     "Description": {
       "properties": {
         "id": {
@@ -485,49 +467,22 @@
         },
         "attributes": {
           "$ref": "#/$defs/Attributes"
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "sm",
+            "base"
+          ],
+          "description": "Size of the text, \"sm\" or \"base\". Default is \"base\"."
         }
       },
       "additionalProperties": false,
       "type": "object",
       "description": "Description defines the props for the Description component."
     },
-    "DescriptionList": {
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "class": {
-          "type": "string"
-        },
-        "attributes": {
-          "$ref": "#/$defs/Attributes"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "DescriptionList defines the props for the DescriptionList component."
-    },
-    "DescriptionListAction": {
-      "properties": {
-        "copy": {
-          "type": "string",
-          "description": "Copy, when set, wires the button to copy this text to the clipboard."
-        },
-        "url": {
-          "type": "string",
-          "format": "uri-reference",
-          "description": "URL, when set, renders the button as an anchor that opens the URL in a new\ntab (target=_blank, rel=noopener noreferrer)."
-        },
-        "attributes": {
-          "$ref": "#/$defs/Attributes",
-          "description": "Attributes wire extra behavior/extras on the button (aria-label, onclick,\n…) and override the defaults a Copy / URL action sets."
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "DescriptionListAction is one hover-revealed action button on a DescriptionListItem's value."
-    },
-    "DescriptionListItem": {
+    "Detail": {
       "properties": {
         "id": {
           "type": "string"
@@ -542,7 +497,8 @@
           "type": "string"
         },
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "Value is the text shown for the label. Without one, the detail's\nchildren are shown as the value, such as a TagStatus."
         },
         "inline": {
           "type": "boolean",
@@ -561,7 +517,7 @@
         },
         "actions": {
           "items": {
-            "$ref": "#/$defs/DescriptionListAction"
+            "$ref": "#/$defs/DetailAction"
           },
           "type": "array",
           "description": "Actions are hover-revealed buttons rendered next to the value (copy,\nexternal-link, …), in order of placement."
@@ -569,7 +525,52 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "DescriptionListItem defines the props for the DescriptionListItem component."
+      "description": "Detail defines the props for the Detail component."
+    },
+    "DetailAction": {
+      "properties": {
+        "copy": {
+          "type": "string",
+          "description": "Copy, when set, wires the button to copy this text to the clipboard."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "URL, when set, renders the button as an anchor that opens the URL in a new\ntab (target=_blank, rel=noopener noreferrer)."
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes wire extra behavior/extras on the button (aria-label, onclick,\n…) and override the defaults a Copy / URL action sets."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DetailAction is one hover-revealed action button on a Detail's value."
+    },
+    "Details": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "layout": {
+          "type": "string",
+          "enum": [
+            "",
+            "inline",
+            "stacked"
+          ],
+          "description": "Layout is \"inline\" for details whose labels are beside their values,\nclose together, as in a card or side panel, or \"stacked\" for details\nwhose labels are above their values, unless they set Inline. Default\nis \"inline\"."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Details defines the props for the Details component."
     },
     "Element": {
       "properties": {
@@ -1051,21 +1052,6 @@
           "if": {
             "properties": {
               "is": {
-                "const": "dd"
-              }
-            },
-            "required": [
-              "is"
-            ]
-          },
-          "then": {
-            "$ref": "#/$defs/node.dd"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "is": {
                 "const": "description"
               }
             },
@@ -1081,7 +1067,7 @@
           "if": {
             "properties": {
               "is": {
-                "const": "description_list"
+                "const": "detail"
               }
             },
             "required": [
@@ -1089,14 +1075,14 @@
             ]
           },
           "then": {
-            "$ref": "#/$defs/node.description_list"
+            "$ref": "#/$defs/node.detail"
           }
         },
         {
           "if": {
             "properties": {
               "is": {
-                "const": "description_list_item"
+                "const": "details"
               }
             },
             "required": [
@@ -1104,22 +1090,7 @@
             ]
           },
           "then": {
-            "$ref": "#/$defs/node.description_list_item"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "is": {
-                "const": "dt"
-              }
-            },
-            "required": [
-              "is"
-            ]
-          },
-          "then": {
-            "$ref": "#/$defs/node.dt"
+            "$ref": "#/$defs/node.details"
           }
         },
         {
@@ -1270,6 +1241,36 @@
           },
           "then": {
             "$ref": "#/$defs/node.separator"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "stat"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.stat"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "stats"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/node.stats"
           }
         },
         {
@@ -1525,11 +1526,9 @@
             "card_header",
             "card_progress_bar",
             "checkbox",
-            "dd",
             "description",
-            "description_list",
-            "description_list_item",
-            "dt",
+            "detail",
+            "details",
             "fieldset",
             "form",
             "input",
@@ -1540,6 +1539,8 @@
             "p",
             "select",
             "separator",
+            "stat",
+            "stats",
             "status_badge",
             "subtitle",
             "tab",
@@ -1618,6 +1619,31 @@
         },
         "attributes": {
           "$ref": "#/$defs/Attributes"
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "sm",
+            "base",
+            "lg",
+            "xl"
+          ],
+          "description": "Size of the text, see the TextSize constants. Default is \"base\"."
+        },
+        "tone": {
+          "type": "string",
+          "enum": [
+            "",
+            "default",
+            "secondary",
+            "tertiary"
+          ],
+          "description": "Tone is the colour of the text, see the TextTone constants. Default\nis \"default\"."
+        },
+        "numeric": {
+          "type": "boolean",
+          "description": "Numeric shows digits in equal widths so figures line up, for amounts."
         }
       },
       "additionalProperties": false,
@@ -1768,6 +1794,64 @@
       "additionalProperties": false,
       "type": "object",
       "description": "Separator defines the props for the Separator component."
+    },
+    "Stat": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "label": {
+          "type": "string",
+          "description": "Label says what the figure is, shown above it."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value is the figure. Without one, the stat's children are shown as\nthe value."
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "md",
+            "lg"
+          ],
+          "description": "Size is \"lg\" for the headline figure of a group, which leads its\nrow, or \"md\" for the others. Default is \"md\"."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Stat defines the props for the Stat component."
+    },
+    "Stats": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes"
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "",
+            "start",
+            "end"
+          ],
+          "description": "Align is \"end\" to keep the stats at the end of the group, with their\nlabels and figures aligned to it, also on the rows they wrap to,\nwhile a large stat leads at the start, as in a document's totals.\nDefault is \"start\"."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Stats defines the props for the Stats component."
     },
     "StatusBadge": {
       "properties": {
@@ -2125,6 +2209,15 @@
         },
         "attributes": {
           "$ref": "#/$defs/Attributes"
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "base",
+            "lg"
+          ],
+          "description": "Size of the title: \"lg\" for a page or card, or \"base\" for a section\nwithin one, in a medium weight. Default is \"lg\"."
         }
       },
       "additionalProperties": false,
@@ -3036,89 +3129,6 @@
       ],
       "description": "PopUI Checkbox component."
     },
-    "node.dd": {
-      "properties": {
-        "is": {
-          "const": "dd"
-        },
-        "props": {
-          "$ref": "#/$defs/DD"
-        },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
-        },
-        "bind": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "propertyNames": {
-            "enum": [
-              "id",
-              "class",
-              "attributes"
-            ]
-          },
-          "type": "object",
-          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
-        },
-        "on": {
-          "additionalProperties": {
-            "$ref": "#/$defs/Handler"
-          },
-          "propertyNames": {
-            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
-          },
-          "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
-        },
-        "each": {
-          "type": "string",
-          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
-        },
-        "show": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "additionalProperties": {
-                "items": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "type": "array",
-                "minItems": 1
-              },
-              "type": "object",
-              "minProperties": 1
-            }
-          ],
-          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "is"
-      ],
-      "description": "PopUI DD component."
-    },
     "node.description": {
       "properties": {
         "is": {
@@ -3142,7 +3152,8 @@
             "enum": [
               "id",
               "class",
-              "attributes"
+              "attributes",
+              "size"
             ]
           },
           "type": "object",
@@ -3202,96 +3213,13 @@
       ],
       "description": "PopUI Description component."
     },
-    "node.description_list": {
+    "node.detail": {
       "properties": {
         "is": {
-          "const": "description_list"
+          "const": "detail"
         },
         "props": {
-          "$ref": "#/$defs/DescriptionList"
-        },
-        "children": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array",
-          "description": "Children are rendered as the component's `{ children... }`."
-        },
-        "bind": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "propertyNames": {
-            "enum": [
-              "id",
-              "class",
-              "attributes"
-            ]
-          },
-          "type": "object",
-          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
-        },
-        "on": {
-          "additionalProperties": {
-            "$ref": "#/$defs/Handler"
-          },
-          "propertyNames": {
-            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
-          },
-          "type": "object",
-          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
-        },
-        "each": {
-          "type": "string",
-          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
-        },
-        "show": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "additionalProperties": {
-                "items": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "type": "array",
-                "minItems": 1
-              },
-              "type": "object",
-              "minProperties": 1
-            }
-          ],
-          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "is"
-      ],
-      "description": "PopUI DescriptionList component."
-    },
-    "node.description_list_item": {
-      "properties": {
-        "is": {
-          "const": "description_list_item"
-        },
-        "props": {
-          "$ref": "#/$defs/DescriptionListItem"
+          "$ref": "#/$defs/Detail"
         },
         "children": {
           "items": {
@@ -3373,15 +3301,15 @@
       "required": [
         "is"
       ],
-      "description": "PopUI DescriptionListItem component."
+      "description": "PopUI Detail component."
     },
-    "node.dt": {
+    "node.details": {
       "properties": {
         "is": {
-          "const": "dt"
+          "const": "details"
         },
         "props": {
-          "$ref": "#/$defs/DT"
+          "$ref": "#/$defs/Details"
         },
         "children": {
           "items": {
@@ -3398,7 +3326,8 @@
             "enum": [
               "id",
               "class",
-              "attributes"
+              "attributes",
+              "layout"
             ]
           },
           "type": "object",
@@ -3456,7 +3385,7 @@
       "required": [
         "is"
       ],
-      "description": "PopUI DT component."
+      "description": "PopUI Details component."
     },
     "node.fieldset": {
       "properties": {
@@ -4077,7 +4006,10 @@
             "enum": [
               "id",
               "class",
-              "attributes"
+              "attributes",
+              "size",
+              "tone",
+              "numeric"
             ]
           },
           "type": "object",
@@ -4317,6 +4249,176 @@
         "is"
       ],
       "description": "PopUI Separator component."
+    },
+    "node.stat": {
+      "properties": {
+        "is": {
+          "const": "stat"
+        },
+        "props": {
+          "$ref": "#/$defs/Stat"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "label",
+              "value",
+              "size"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Stat component."
+    },
+    "node.stats": {
+      "properties": {
+        "is": {
+          "const": "stats"
+        },
+        "props": {
+          "$ref": "#/$defs/Stats"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array",
+          "description": "Children are rendered as the component's `{ children... }`."
+        },
+        "bind": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "id",
+              "class",
+              "attributes",
+              "align"
+            ]
+          },
+          "type": "object",
+          "description": "Props to take from the panel data, as prop name → data path, e.g. {\"value\": \"customer.name\"}. Requires object data; resolved at render time."
+        },
+        "on": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Handler"
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+          },
+          "type": "object",
+          "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "each": {
+          "type": "string",
+          "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
+        },
+        "show": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              "type": "object",
+              "minProperties": 1
+            }
+          ],
+          "description": "Show renders the node only while a condition on the data holds: a data\npath that is true when its value is, optionally negated with \"!\", e.g.\n\"config.sandbox\", or an object of data paths to the values each may\nhave, all of which must match, e.g. {\"workflow.schema\":\n[\"bill/invoice\"]}. The node must render a single element."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "is"
+      ],
+      "description": "PopUI Stats component."
     },
     "node.status_badge": {
       "properties": {
@@ -4926,6 +5028,8 @@
             "enum": [
               "class",
               "colspan",
+              "align",
+              "numeric",
               "attributes"
             ]
           },
@@ -5162,6 +5266,8 @@
             "enum": [
               "class",
               "colspan",
+              "align",
+              "numeric",
               "attributes"
             ]
           },
@@ -5327,7 +5433,8 @@
             "enum": [
               "id",
               "class",
-              "attributes"
+              "attributes",
+              "size"
             ]
           },
           "type": "object",

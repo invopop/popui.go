@@ -25,6 +25,12 @@
 // rejected). Props that hold templ.Component values (icons, etc.) are not
 // supported yet. The JSON Schema in ./schema is generated from the same
 // registry and props structs.
+//
+// Panels are data, so Tailwind never sees the classes in them: rather than
+// "class", panels use the props that say what they mean, such as a list's
+// "layout" or a cell's "numeric", and components gain props for what
+// panels need. A node's "style" key is reserved for styles that hosts name
+// for their panels.
 package jsonui
 
 import (
@@ -217,10 +223,10 @@ func init() {
 	register("card_header", popui.CardHeader)
 	register("card_content", popui.CardContent)
 	register("card_progress_bar", popui.CardProgressBar)
-	register("description_list", popui.DescriptionList)
-	register("description_list_item", popui.DescriptionListItem)
-	register("dt", popui.DT)
-	register("dd", popui.DD)
+	register("details", popui.Details)
+	register("detail", popui.Detail)
+	register("stats", popui.Stats)
+	register("stat", popui.Stat)
 
 	// Status & identity
 	register("status_badge", popui.StatusBadge)

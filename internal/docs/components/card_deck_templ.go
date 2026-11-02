@@ -81,7 +81,7 @@ func CardDeck() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Address",
-			Description: "Single-card variant containing a DescriptionList. The head pairs a label with a small secondary action button.",
+			Description: "Single-card variant containing Details. The head pairs a label with a small secondary action button.",
 			Code:        examples.LoadExample("card_deck_address.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

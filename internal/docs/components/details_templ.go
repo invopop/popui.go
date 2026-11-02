@@ -16,7 +16,7 @@ import (
 	"github.com/invopop/popui.go/internal/docs/modules"
 )
 
-func DescriptionList() templ.Component {
+func Details() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,14 +49,15 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DescriptionListExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.DetailsExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Code: examples.LoadExample("description_list.templ"),
+			Description: "Details fill their container with each label in a column beside its value. A Detail without a Value shows its children as the value, such as a link or a TagStatus, and one with neither shows a dash.",
+			Code:        examples.LoadExample("details.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,16 +74,16 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DescriptionListCustomWidthExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.DetailsStackedExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Custom Width",
-			Description: "Override the default width to fit your layout.",
-			Code:        examples.LoadExample("description_list_custom_width.templ"),
+			Title:       "Stacked",
+			Description: "The stacked Layout puts labels above values, spaced apart, for longer values such as rich text.",
+			Code:        examples.LoadExample("details_stacked.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -99,16 +100,16 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DescriptionListRichTextExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.DetailsActionsExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Rich Text Content",
-			Description: "Use DT and DD components for complex HTML content.",
-			Code:        examples.LoadExample("description_list_rich_text.templ"),
+			Title:       "Actions",
+			Description: "Actions add hover-revealed buttons (copy, external-link) next to the value, and PrefixLength / SuffixLength truncate long values (the full value is still copied). In stacked Details, a detail with actions keeps the hover reveal with its label above the value.",
+			Code:        examples.LoadExample("details_actions.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -125,16 +126,16 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DescriptionListActionsExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.DetailsDetailViewExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Inline Rows & Actions",
-			Description: "Inline lays the item out label-left / value-right. Actions add hover-revealed buttons (copy, external-link) next to the value, and PrefixLength / SuffixLength truncate long values (the full value is still copied). Leaving Inline unset stacks the label above the value while keeping the hover reveal.",
-			Code:        examples.LoadExample("description_list_actions.templ"),
+			Title:       "Detail View",
+			Description: "A console-style side-panel detail view: section titles, rows with an em-dash for absent values, and a copyable mono id row.",
+			Code:        examples.LoadExample("details_detail_view.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -151,16 +152,16 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DescriptionListDetailViewExample().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = examples.DetailsWrappingExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Detail View",
-			Description: "A console-style side-panel detail view: section headings, inline rows with an em-dash for absent values, and a copyable mono id row.",
-			Code:        examples.LoadExample("description_list_detail_view.templ"),
+			Title:       "Wrapping Values",
+			Description: "Long values wrap within the value column, and the label stays aligned with the value's first line. Narrow Details put labels above values.",
+			Code:        examples.LoadExample("details_wrapping.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -177,39 +178,14 @@ func DescriptionList() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = examples.DescriptionListWrappingExample().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Title:       "Wrapping Values",
-			Description: "Long values in inline rows wrap within the value column, and the label stays aligned with the value's first line.",
-			Code:        examples.LoadExample("description_list_wrapping.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "DescriptionList",
-				Description: "Container for definition list items (dl element).",
+				Title:       "Details",
+				Description: "Labelled values (dl element). In JSON UI: \"details\". Replaces the deprecated DescriptionList, which is 400px wide and stacked by default.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the list element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with list styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+					{Name: "Layout", Type: "string", Default: "\"inline\"", Description: "\"inline\" puts each label beside its value, close together. \"stacked\" puts labels above values, unless a Detail sets Inline (DetailsLayout constants)."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -220,19 +196,19 @@ func DescriptionList() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "DescriptionListItem",
-				Description: "Individual item with label and value, rendered as dt/dd pair.",
+				Title:       "Detail",
+				Description: "A label and its value, rendered as a dt/dd pair. In JSON UI: \"detail\". Replaces the deprecated DescriptionListItem, whose children go between the label and the value.",
 				Items: []modules.APITableItem{
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the item element"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with item styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-					{Name: "Label", Type: "string", Default: "", Description: "The term or label to display (dt element)"},
-					{Name: "Value", Type: "string", Default: "", Description: "The description or value to display (dd element)"},
-					{Name: "Inline", Type: "bool", Default: "false", Description: "Lay the item out label-left / value-right instead of the default stacked (label above value)."},
+					{Name: "Label", Type: "string", Default: "", Description: "What the value is (dt element)"},
+					{Name: "Value", Type: "string", Default: "", Description: "The value as text (dd element). Without one, the children are shown as the value, or a dash when there are none."},
+					{Name: "Inline", Type: "bool", Default: "false", Description: "Put the label beside the value in stacked Details. Details in inline Details always are."},
 					{Name: "Mono", Type: "bool", Default: "false", Description: "Render the value in the monospace face (ids, hashes)."},
 					{Name: "PrefixLength", Type: "int", Default: "0", Description: "Truncate the DISPLAYED value to prefix…suffix (the full value is still copied). 0 with SuffixLength 0 shows it untruncated."},
 					{Name: "SuffixLength", Type: "int", Default: "0", Description: "Suffix length for prefix…suffix truncation; 0 renders prefix… only."},
-					{Name: "Actions", Type: "[]props.DescriptionListAction", Default: "", Description: "Hover-revealed action buttons rendered next to the value, in order of placement."},
+					{Name: "Actions", Type: "[]props.DetailAction", Default: "", Description: "Hover-revealed action buttons rendered next to the value, in order of placement."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -243,8 +219,8 @@ func DescriptionList() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "DescriptionListAction",
-				Description: "One hover-revealed action button on a DescriptionListItem's value. Provide an Icon plus a behavior: Copy (clipboard), URL (external link), or a plain button via Attributes.",
+				Title:       "DetailAction",
+				Description: "One hover-revealed action button on a Detail's value. Provide an Icon plus a behavior: Copy (clipboard), URL (external link), or a plain button via Attributes.",
 				Items: []modules.APITableItem{
 					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Glyph rendered inside the button (e.g. `icons.Duplicate()`, `icons.ExternalLink()`)."},
 					{Name: "Copy", Type: "string", Default: "", Description: "When set, the button copies this text to the clipboard."},
@@ -255,41 +231,9 @@ func DescriptionList() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "DT",
-				Description: "Definition term element (dt) with proper styling for use in DescriptionListItem.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
-				Title:       "DD",
-				Description: "Definition description element (dd) with proper styling for use in DescriptionListItem.",
-				Items: []modules.APITableItem{
-					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
-					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
-					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
-				},
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
