@@ -2393,9 +2393,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       canTurn(dir) {
         const next = this.page + dir * this._step()
         if (this.unit === 'day') return periodUnits.month.start(next) <= this.today
-        // A year's first ISO week can start up to three days before 1 January.
-        const first = periodDay(next - this._step() + 1, 1, 1)
-        return (this.unit === 'week' ? first - 3 : first) <= this.today
+        const y = next - this._step() + 1
+        // A year's weeks start on the Monday of its first ISO week, the one holding 4 January.
+        const first = this.unit === 'week' ? periodUnits.week.start(periodWeekOf(periodDay(y, 1, 4))) : periodDay(y, 1, 1)
+        return first <= this.today
       },
       pageTitle() {
         switch (this.unit) {
@@ -2486,7 +2487,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return n === left ? 'start' : n === right ? 'end' : 'middle'
       },
       press(n, e) {
-        if (periodUnits[this.unit].start(n) > this.today) return
+        // Only the primary button picks, as other buttons open menus; touch and pen report it too.
+        if (e.button !== 0 || periodUnits[this.unit].start(n) > this.today) return
         // Touch holds the pointer on the tile it started on, so let go of it for the others to see it enter.
         if (e.target.hasPointerCapture && e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId)
         const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n

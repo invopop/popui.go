@@ -175,6 +175,7 @@ templ Period(opts ...props.Period) {
 								class="popui-period-tile"
 								:disabled="c.future"
 								:data-state="state(c.n)"
+								:aria-pressed="state(c.n) ? 'true' : 'false'"
 								:data-current="c.current"
 								:title="c.title"
 								:aria-label="c.title"
