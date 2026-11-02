@@ -3,10 +3,12 @@ package jsonui
 import (
 	"context"
 	"io"
+	"maps"
 	"strconv"
 
 	"github.com/a-h/templ"
 	popui "github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
 )
 
 // Element is the props of the plain HTML elements that structure a table
@@ -24,8 +26,33 @@ type Cell struct {
 	// Colspan is the number of columns the cell spans, e.g. for a row that
 	// says the table is empty.
 	Colspan int
+	// Align places the cell's content, see the popui Align constants.
+	// Default is "start", or "end" for numeric cells.
+	Align string `jsonschema:"enum=,enum=start,enum=center,enum=end"`
+	// Numeric is for cells of amounts and quantities: aligned to the end,
+	// kept on one line, with digits in equal widths so they line up. Set it
+	// on the column's header cell as well.
+	Numeric bool
 	// Attributes are added to the cell.
 	Attributes templ.Attributes
+}
+
+// attributes adds the cell's alignment to its attributes, for the table's
+// styles.
+func (c Cell) attributes() templ.Attributes {
+	align := c.Align
+	if align == "" && c.Numeric {
+		align = props.AlignEnd
+	}
+	if align == "" {
+		return c.Attributes
+	}
+	attrs := templ.Attributes{"data-align": align}
+	if c.Numeric {
+		attrs["data-numeric"] = true
+	}
+	maps.Copy(attrs, c.Attributes)
+	return attrs
 }
 
 // elementComponent renders the named element with its children.
@@ -46,7 +73,7 @@ func cellComponent(tag string) func(...Cell) templ.Component {
 		if len(p) > 0 {
 			c = p[0]
 		}
-		return element(tag, c.Class, c.Colspan, c.Attributes)
+		return element(tag, c.Class, c.Colspan, c.attributes())
 	}
 }
 

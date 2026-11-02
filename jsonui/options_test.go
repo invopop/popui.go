@@ -35,8 +35,8 @@ func TestStrictRejectsScript(t *testing.T) {
 			`input props.tooltip.image: unsafe URL`,
 		},
 		"description list action URL": {
-			`{"components":[{"is":"description_list_item","props":{"label":"Site","actions":[{"url":"javascript:alert(1)"}]}}]}`,
-			`description_list_item props.actions[0].url: unsafe URL`,
+			`{"components":[{"is":"detail","props":{"label":"Site","actions":[{"url":"javascript:alert(1)"}]}}]}`,
+			`detail props.actions[0].url: unsafe URL`,
 		},
 		"text bind to a global": {
 			`{"data":{"a":1},"components":[{"is":"text","bind":"document.cookie"}]}`,
@@ -71,8 +71,8 @@ func TestStrictRejectsScript(t *testing.T) {
 			errUnsafeURL,
 		},
 		"javascript URL nested in actions": {
-			`{"components":[{"is":"description_list_item","props":{"actions":[{"url":"javascript:alert(1)"}]}}]}`,
-			`description_list_item props.actions[0].url: unsafe URL`,
+			`{"components":[{"is":"detail","props":{"actions":[{"url":"javascript:alert(1)"}]}}]}`,
+			`detail props.actions[0].url: unsafe URL`,
 		},
 		"javascript URL in attributes": {
 			`{"components":[{"is":"form","props":{"attributes":{"formaction":"javascript:alert(1)"}}}]}`,

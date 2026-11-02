@@ -34,6 +34,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Content card | `Card` > `CardHeader` + `CardContent` |
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
 | Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
+| Headline figures, such as totals | `Stats` > `Stat` (`Size: "lg"` for the one that leads) |
 | Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `FileDownload` > `FileDownloadInfo` |
@@ -59,7 +60,8 @@ Before writing any UI element, check whether PopUI already covers it:
 | Expandable section | `Accordion` with `Title`, grouped via `AccordionGroup` |
 | Dropdown/context actions | `Menu` > `MenuItem` (+ `MenuSeparator` between groups) |
 | Floating content panel | `Popover` |
-| Key-value data display | `DescriptionList` > `DescriptionListItem` |
+| Key-value data display | `Details` > `Detail` (`Layout: "stacked"` for labels above values) |
+| Section heading inside a card or panel | `Title` with `Size: "base"` |
 | Tab navigation | `Tabs` |
 | Horizontal divider | `Separator` |
 | Workflow/invoice status | `TagStatus` |
@@ -96,7 +98,7 @@ Some requests sound custom but map directly to PopUI components:
 | "insert a variable / pick an invoice field" | `FieldPicker` |
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a dropdown menu / three-dot menu" | `Menu` |
-| "a key-value list" | `DescriptionList` |
+| "a key-value list" | `Details` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
@@ -448,6 +450,7 @@ Table
 - Tables are full-width within `Main` (no `Article` wrapper)
 - `TablePagination` supports rows-per-page options, navigation links, and custom action slots
 - Items label is customizable ("invoices", "orders", etc.)
+- Amounts and quantities go in cells marked `data-numeric` (one line, equal-width digits) and `data-align="end"`, header cell included; JSON UI's `th`/`td` set these with `Numeric` and `Align`
 - For data tables with many columns, describe them with `Columns` (`props.TableColumn`: key, title, width, min width, alignment, frozen, sort) instead of writing the `<thead>`: the table gets fixed widths, sideways scrolling, frozen leading columns, and a header menu (sort, freeze with `Freezable`), and `Resizable` adds resize handles. Resizes and freezes are reported as `popui-table-column-resize` and `popui-table-columns-freeze` events for the page to save; never hand-roll `<colgroup>` widths or sticky column CSS
 
 ### Navigation
@@ -490,7 +493,8 @@ Breadcrumbs
 | `Accordion` / `AccordionGroup` | Native `details/summary` expandable sections, optionally grouped into one panel |
 | `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign`. Use `MenuSeparator` to divide item groups |
 | `SplitButton` | Main action button + attached chevron toggle opening a dropdown of related actions (`MenuItem` children); supports `RightAlign` and `DropUp` |
-| `DescriptionList` | `dl`-based term/value pairs for data display |
+| `Details` / `Detail` | `dl`-based labelled values that fill their container with label-left rows, or labels above values with `Layout: "stacked"`. A `Detail` without `Value` shows its children as the value (e.g. a `TagStatus`), or a dash with neither. Replaces the deprecated `DescriptionList`, `DescriptionListItem`, `DT` and `DD` |
+| `Stats` / `Stat` | Figures with a label above, in a wrapping row; a `Size: "lg"` stat leads it, and `Align: "end"` keeps the others at the end |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
 | `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |
@@ -500,6 +504,21 @@ Breadcrumbs
 | `PageState` | Empty/error state with illustration, title, description, CTA |
 | `Slider` | Range input |
 | `Tabs` | Tab navigation component |
+
+### JSON UI panels
+
+Panels are data, often stored and written by users, so Tailwind never scans them: a class that isn't used elsewhere is missing at runtime, and a class rename breaks saved panels silently. Panels describe what they mean with props, and PopUI decides how it looks. Use:
+
+| Instead of | Use |
+|------------|-----|
+| `w-full space-y-1` on lists, `inline` on every item | `details` > `detail`, inline rows by default |
+| `dt`/`dd` with `popui-detail-*` classes to put a component in a row | `detail` with the component as its child, and no `value` |
+| `p` with `font-medium` as a heading | `title` with `"size": "base"` |
+| `text-sm text-foreground-default-secondary` | `description` with `"size": "sm"`, or `p` with `size` and `tone` |
+| `text-right whitespace-nowrap tabular-nums` on cells | `th`/`td` with `"numeric": true`, or `"align"` |
+| flex rows of labelled figures | `stats` > `stat` |
+
+`class` is still accepted, but avoid it in panels. When a panel needs something these props don't cover, add a prop to the component rather than a class. Hosts may later name their own styles for panels, as `"style"` on a node, so that key is reserved.
 
 ---
 

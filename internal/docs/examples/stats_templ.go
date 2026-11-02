@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func DescriptionListCustomWidthExample() templ.Component {
+func StatsExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -46,10 +46,7 @@ func DescriptionListCustomWidthExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
-				Label: "Company",
-				Value: "Acme Corporation",
-			}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Stat(props.Stat{Label: "Total payable", Value: "€ 1.210,00", Size: props.StatSizeLarge}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -57,18 +54,21 @@ func DescriptionListCustomWidthExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
-				Label: "Address",
-				Value: "123 Main Street, City, Country",
-			}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popui.Stat(props.Stat{Label: "Net amount", Value: "€ 1.000,00"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = popui.Stat(props.Stat{Label: "Tax", Value: "€ 210,00"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.DescriptionList(props.DescriptionList{
-			Class: "w-full",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Stats(props.Stats{Align: props.AlignEnd}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

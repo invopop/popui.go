@@ -131,7 +131,7 @@ func Table() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Right-Aligned Cells",
-			Description: "Right-align specific columns using the Class prop with arbitrary variants like [&_th:last-child]:text-right.",
+			Description: "Mark cells with data-align (start, center or end) to place their content, and data-numeric for amounts and quantities, kept on one line with digits in equal widths. Mark the header cell as well. JSON UI's th and td cells have Align and Numeric props for these.",
 			Code:        examples.LoadExample("table_right_align.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

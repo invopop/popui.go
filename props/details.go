@@ -2,17 +2,27 @@ package props
 
 import "github.com/a-h/templ"
 
-// DescriptionList defines the props for the DescriptionList component.
-type DescriptionList struct {
+// Details layouts.
+const (
+	DetailsLayoutInline  = "inline"
+	DetailsLayoutStacked = "stacked"
+)
+
+// Details defines the props for the Details component.
+type Details struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+	// Layout is "inline" for details whose labels are beside their values,
+	// close together, as in a card or side panel, or "stacked" for details
+	// whose labels are above their values, unless they set Inline. Default
+	// is "inline".
+	Layout string `jsonschema:"enum=,enum=inline,enum=stacked"`
 }
 
-// DescriptionListAction is one hover-revealed action button on a
-// DescriptionListItem's value. Provide an Icon plus a behavior: Copy
+// DetailAction is one hover-revealed action button on a Detail's value. Provide an Icon plus a behavior: Copy
 // (clipboard), URL (external link), or a plain button driven by Attributes.
-type DescriptionListAction struct {
+type DetailAction struct {
 	// Icon is the glyph rendered inside the button — any popui icon component,
 	// e.g. icons.Duplicate() or icons.ExternalLink().
 	Icon templ.Component
@@ -26,13 +36,15 @@ type DescriptionListAction struct {
 	Attributes templ.Attributes
 }
 
-// DescriptionListItem defines the props for the DescriptionListItem component.
-type DescriptionListItem struct {
+// Detail defines the props for the Detail component.
+type Detail struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
 	Label      string
-	Value      string
+	// Value is the text shown for the label. Without one, the detail's
+	// children are shown as the value, such as a TagStatus.
+	Value string
 	// Inline lays the item out as label-left / value-right instead of the
 	// default stacked (label above value).
 	Inline bool
@@ -45,10 +57,12 @@ type DescriptionListItem struct {
 	SuffixLength int
 	// Actions are hover-revealed buttons rendered next to the value (copy,
 	// external-link, …), in order of placement.
-	Actions []DescriptionListAction
+	Actions []DetailAction
 }
 
 // DT defines the props for the DT component (definition term).
+//
+// Deprecated: Detail has a Label, and takes a component as its value.
 type DT struct {
 	ID         string
 	Class      string
@@ -56,8 +70,27 @@ type DT struct {
 }
 
 // DD defines the props for the DD component (definition description).
+//
+// Deprecated: Detail takes a component as its value.
 type DD struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
 }
+
+// DescriptionList defines the props for the DescriptionList component.
+//
+// Deprecated: use Details.
+type DescriptionList = Details
+
+// DescriptionListItem defines the props for the DescriptionListItem
+// component.
+//
+// Deprecated: use Detail.
+type DescriptionListItem = Detail
+
+// DescriptionListAction is one hover-revealed action button on a
+// DescriptionListItem's value.
+//
+// Deprecated: use DetailAction.
+type DescriptionListAction = DetailAction

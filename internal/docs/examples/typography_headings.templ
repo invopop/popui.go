@@ -1,11 +1,17 @@
 package examples
 
-import "github.com/invopop/popui.go"
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
 
 templ TypographyHeadingsExample() {
 	<div class="space-y-4">
 		@popui.Title() {
 			Page Title 
+		}
+		@popui.Title(props.Title{Size: "base"}) {
+			Section Title 
 		}
 		@popui.Subtitle() {
 			Section Subtitle 
