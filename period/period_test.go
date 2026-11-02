@@ -86,3 +86,49 @@ func TestShift(t *testing.T) {
 		}
 	}
 }
+
+func TestSplit(t *testing.T) {
+	today := time.Date(2026, 11, 2, 12, 0, 0, 0, time.UTC)
+	todayKey := today.Format(time.DateOnly)
+	tests := []struct {
+		in          string
+		max         int
+		n           int
+		first, last string
+	}{
+		{"7d", 31, 7, "2026-10-27", todayKey},
+		{"31d", 31, 31, "2026-10-03", todayKey},
+		{"90d", 31, 14, "2026-W32", "2026-W45"},
+		{"365d", 31, 13, "2025-11", "2026-11"},
+		{"2026-Q3", 31, 14, "2026-W27", "2026-W40"},
+		{"2026", 31, 12, "2026-01", "2026-12"},
+		{"2020..2026", 31, 28, "2020-Q1", "2026-Q4"},
+		{"2020..2026", 12, 7, "2020", "2026"},
+		{All, 31, 0, "", ""},
+	}
+	for _, tt := range tests {
+		p, _ := Parse(tt.in)
+		got := p.Split(today, tt.max)
+		if len(got) != tt.n {
+			t.Errorf("Parse(%q).Split(%d) gave %d windows, want %d", tt.in, tt.max, len(got), tt.n)
+			continue
+		}
+		if tt.n == 0 {
+			continue
+		}
+		if f, l := got[0].String(), got[len(got)-1].String(); f != tt.first || l != tt.last {
+			t.Errorf("Parse(%q).Split(%d) = %s … %s, want %s … %s", tt.in, tt.max, f, l, tt.first, tt.last)
+		}
+	}
+}
+
+func TestShort(t *testing.T) {
+	for in, want := range map[string]string{
+		"2026-11-03": "3 Nov", "2026-W44": "W44", "2026-10": "Oct", "2026-Q3": "Q3", "2025": "2025", "14d": "14d", All: "All",
+	} {
+		p, _ := Parse(in)
+		if got := p.Short(); got != want {
+			t.Errorf("Parse(%q).Short() = %q, want %q", in, got, want)
+		}
+	}
+}

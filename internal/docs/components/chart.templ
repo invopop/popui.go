@@ -1,0 +1,107 @@
+package components
+
+import (
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+var chartValueItems = []modules.APITableItem{
+	{Name: "Label", Type: "string", Default: "", Description: "Names the value on the chart: a column's axis label, or a bar's or part's name."},
+	{Name: "Title", Type: "string", Default: "Label", Description: "Names the value in full in its tooltip, as \"November 2026\"."},
+	{Name: "Value", Type: "float64", Default: "0", Description: "The number plotted, from zero."},
+	{Name: "Display", Type: "string", Default: "", Description: "The value as shown, as \"12.5%\". Defaults to the value with thousands separators."},
+	{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "Makes the value a link, such as to the rows it counts."},
+	{Name: "Color", Type: "string", Default: "", Description: "One of the TagStatus colors, for a value that stands for a status. Defaults to the accent color."},
+	{Name: "Partial", Type: "bool", Default: "false", Description: "Marks a value still adding up, such as the current month's, drawn lighter."},
+}
+
+templ Chart() {
+	@modules.Example(modules.ExampleProps{
+		Title:       "Metric",
+		Description: "A headline figure with its change on the previous period, colored by whether the change is good news, and a sparkline of its trend. Set Direction to \"bad\" for figures that should go down, such as failures.",
+		Code:        examples.LoadExample("chart_metric.templ"),
+		Stacked:     true,
+	}) {
+		@examples.ChartMetricExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Column chart",
+		Description: "Values over time from a common baseline, with round numbers on the value axis and the latest column labelled. Hover or focus a column for its title and figure. The current month, still adding up, is Partial.",
+		Code:        examples.LoadExample("chart_columns.templ"),
+		Stacked:     true,
+	}) {
+		@examples.ChartColumnsExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Bar list and segmented bar",
+		Description: "A bar list compares values, such as counts by type, and a segmented bar splits a whole into its parts, such as documents by state, in TagStatus colors.",
+		Code:        examples.LoadExample("chart_bars.templ"),
+		Stacked:     true,
+	}) {
+		@examples.ChartBarsExample()
+	}
+	@modules.Section("Guidelines", "guidelines") {
+		<ul class="list-disc ps-5 text-base text-foreground-default-secondary flex flex-col gap-1">
+			<li>Charts are drawn on the server with HTML, CSS and SVG, so they need no script, follow the theme and the workspace's accent, and survive htmx swaps.</li>
+			<li>Prefer a Metric for a single figure, a ColumnChart for change over time, a BarList to compare categories and a SegmentedBar for parts of a whole. There's no pie chart: bars are easier to compare.</li>
+			<li>Use status colors only for values that stand for a status; plain series use the accent.</li>
+			<li>Every chart lists its values in a table for screen readers; give it a Label to caption it.</li>
+		</ul>
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Metric",
+			Description: "A headline figure with its label, and optionally a note, its change on a previous period and a sparkline.",
+			Items: []modules.APITableItem{
+				{Name: "Label", Type: "string", Default: "", Description: "Says what the figure is, shown above it."},
+				{Name: "Value", Type: "string", Default: "", Description: "The figure, as shown."},
+				{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "Makes the metric a link."},
+				{Name: "Note", Type: "string", Default: "", Description: "Follows the value in smaller text, as \"4.2% of jobs\"."},
+				{Name: "Change", Type: "float64", Default: "0", Description: "The relative change on the previous period, 0.12 for 12% more. Shown when Previous is set."},
+				{Name: "Previous", Type: "string", Default: "", Description: "Names the period Change compares with, after \"vs\", as \"previous 30 days\" or \"Q3 2026\"."},
+				{Name: "NoChange", Type: "bool", Default: "false", Description: "Says there's nothing to compare with instead of showing a change."},
+				{Name: "Direction", Type: "string", Default: "\"\"", Description: "\"bad\" (MetricUpBad) when a rise is bad news, which colors the change."},
+				{Name: "Trend", Type: "[]float64", Default: "", Description: "Drawn as a sparkline below the figure."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "ColumnChart",
+			Description: "Values over time as columns, with a value axis and tooltips.",
+			Items: []modules.APITableItem{
+				{Name: "Label", Type: "string", Default: "", Description: "Names what the chart shows, for screen readers."},
+				{Name: "Columns", Type: "[]ChartValue", Default: "", Description: "The values, oldest first."},
+				{Name: "Height", Type: "int", Default: "160", Description: "Height of the plot in pixels."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "BarList",
+			Description: "Values to compare as horizontal bars under their labels, the longest filling the width.",
+			Items: []modules.APITableItem{
+				{Name: "Label", Type: "string", Default: "", Description: "Names what the list shows, for screen readers."},
+				{Name: "Bars", Type: "[]ChartValue", Default: "", Description: "The values, in the order shown."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SegmentedBar",
+			Description: "A whole split into its parts, as one bar with a legend.",
+			Items: []modules.APITableItem{
+				{Name: "Label", Type: "string", Default: "", Description: "Names the whole, for screen readers."},
+				{Name: "Parts", Type: "[]ChartValue", Default: "", Description: "The parts in the order drawn. Those of no value are left out."},
+				{Name: "NoLegend", Type: "bool", Default: "false", Description: "Leaves out the legend."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Sparkline",
+			Description: "The shape of a series as a line with no axes, filling its container's width.",
+			Items: []modules.APITableItem{
+				{Name: "Label", Type: "string", Default: "", Description: "Describes the trend for screen readers, which otherwise skip it."},
+				{Name: "Values", Type: "[]float64", Default: "", Description: "The series, oldest first."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "ChartValue",
+			Description: "One value in a ColumnChart, BarList or SegmentedBar.",
+			Items:       chartValueItems,
+		})
+	}
+}

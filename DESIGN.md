@@ -35,7 +35,8 @@ Before writing any UI element, check whether PopUI already covers it:
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
 | Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
 | Headline figures, such as totals | `Stats` > `Stat` (`Size: "lg"` for the one that leads) |
-| Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
+| Metric display | `Metric` (with its change and trend), or `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
+| Values over time, compared, or as parts of a whole | `ColumnChart`, `BarList`, `SegmentedBar` (see Charts) |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `FileDownload` > `FileDownloadInfo` |
 | Data table | `Table` |
@@ -99,6 +100,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a modal or drawer" (if side panel) | `Aside` |
 | "a detail panel that opens over the page, or beside a list" | `SidePanel` (with `Docked: true` beside a list) |
 | "a date range for a list or report: last 30 days, this quarter, 2025" | `Period` (read its value with the `period` package) |
+| "a chart / graph / dashboard figure / KPI tile" | `Metric`, `ColumnChart`, `BarList`, `SegmentedBar`, `Sparkline` — no pie charts |
 | "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `Details` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
@@ -497,6 +499,7 @@ Breadcrumbs
 | `SplitButton` | Main action button + attached chevron toggle opening a dropdown of related actions (`MenuItem` children); supports `RightAlign` and `DropUp` |
 | `Details` / `Detail` | `dl`-based labelled values that fill their container with label-left rows, or labels above values with `Layout: "stacked"`. A `Detail` without `Value` shows its children as the value (e.g. a `TagStatus`), or a dash with neither. Replaces the deprecated `DescriptionList`, `DescriptionListItem`, `DT` and `DD` |
 | `Stats` / `Stat` | Figures with a label above, in a wrapping row; a `Size: "lg"` stat leads it, and `Align: "end"` keeps the others at the end |
+| `Metric` / `ColumnChart` / `BarList` / `SegmentedBar` / `Sparkline` | Charts drawn on the server: a headline figure with its change and trend, columns over time with a value axis and tooltips, horizontal bars to compare, a whole split into parts in TagStatus colors, and a bare trend line. Values are `ChartValue`s, listed for screen readers in a table |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
 | `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |

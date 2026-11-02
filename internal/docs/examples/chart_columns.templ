@@ -1,0 +1,26 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ ChartColumnsExample() {
+	@popui.ColumnChart(props.ColumnChart{
+		Label: "Invoices created each month",
+		Columns: []props.ChartValue{
+			{Label: "Dec", Title: "December 2025", Value: 812, Href: "#"},
+			{Label: "Jan", Title: "January 2026", Value: 640, Href: "#"},
+			{Label: "Feb", Title: "February 2026", Value: 702, Href: "#"},
+			{Label: "Mar", Title: "March 2026", Value: 955, Href: "#"},
+			{Label: "Apr", Title: "April 2026", Value: 890, Href: "#"},
+			{Label: "May", Title: "May 2026", Value: 1012, Href: "#"},
+			{Label: "Jun", Title: "June 2026", Value: 1130, Href: "#"},
+			{Label: "Jul", Title: "July 2026", Value: 980, Href: "#"},
+			{Label: "Aug", Title: "August 2026", Value: 620, Href: "#"},
+			{Label: "Sep", Title: "September 2026", Value: 1204, Href: "#"},
+			{Label: "Oct", Title: "October 2026", Value: 1284, Href: "#"},
+			{Label: "Nov", Title: "November 2026, so far", Value: 96, Href: "#", Partial: true},
+		},
+	})
+}

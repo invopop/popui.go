@@ -288,6 +288,63 @@ func (p Period) Shift(n int, today time.Time) Period {
 	return Period{Unit: p.Unit, From: p.From + n*span, To: p.To + n*span}
 }
 
+// Split divides the period into the calendar windows of the finest unit
+// that gives at most limit of them, oldest first, as a chart's columns run:
+// days, weeks, months, quarters, or else years however many there are.
+// The first and last windows may reach past the period's ends: clamp each
+// window's Range to the period's own to count only what's in it. All has
+// no start to split from, so gives none.
+func (p Period) Split(today time.Time, limit int) []Period {
+	if p.All {
+		return nil
+	}
+	first, last := p.days(dayIndex(today))
+	for _, u := range []string{Day, Week, Month, Quarter, Year} {
+		a, b := windowOf(u, first), windowOf(u, last)
+		if b-a < limit || u == Year {
+			out := make([]Period, 0, b-a+1)
+			for n := a; n <= b; n++ {
+				out = append(out, Period{Unit: u, From: n, To: n})
+			}
+			return out
+		}
+	}
+	return nil
+}
+
+// Short names the period's first window briefly, for a chart's axis: "2
+// Nov", "W44", "Nov", "Q4" or "2026". Label names it in full.
+func (p Period) Short() string {
+	switch {
+	case p.All:
+		return "All"
+	case p.Days > 0:
+		return strconv.Itoa(p.Days) + "d"
+	case p.Unit == Week:
+		_, w := isoWeek(p.From)
+		return "W" + strconv.Itoa(w)
+	case p.Unit == Month:
+		return monthNames[p.From-floorDiv(p.From, 12)*12][:3]
+	}
+	return p.name(p.From, false)
+}
+
+// windowOf returns the window of the unit that day n is in.
+func windowOf(unit string, n int) int {
+	d := fromDay(n)
+	switch unit {
+	case Day:
+		return n
+	case Week:
+		return weekOf(n)
+	case Month:
+		return d.Year()*12 + int(d.Month()) - 1
+	case Quarter:
+		return d.Year()*4 + (int(d.Month())-1)/3
+	}
+	return d.Year()
+}
+
 func date(y, m, d int) time.Time {
 	return time.Date(y, time.Month(m), d, 0, 0, 0, 0, time.UTC)
 }
