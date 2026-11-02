@@ -2360,9 +2360,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         this.open = true
       },
       close() {
+        // Hiding the panel with focus in it would drop focus to the page, so it goes back to the button.
+        const refocus = this.open && this.$refs.panel.contains(document.activeElement)
         this.open = false
         this.drag = null
         this.hover = null
+        if (refocus) this.$refs.trigger.focus()
       },
       // Shows a unit's windows, from the page with the period's end or today.
       setUnit(unit) {
@@ -2483,16 +2486,19 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return n === left ? 'start' : n === right ? 'end' : 'middle'
       },
       press(n, e) {
+        if (periodUnits[this.unit].start(n) > this.today) return
         // Touch holds the pointer on the tile it started on, so let go of it for the others to see it enter.
         if (e.target.hasPointerCapture && e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId)
         const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
         this.drag = { from, to: n }
       },
       // Picks one window from the keyboard, whose Enter and Space fire a click with no pointer press before it.
+      // Shift picks the run from the anchor, as a shift-click does.
       key(n, e) {
         if (e.detail !== 0) return
-        this.anchor = { unit: this.unit, n }
-        this.pick(periodString({ unit: this.unit, from: n, to: n }))
+        const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
+        this.anchor = { unit: this.unit, n: from }
+        this.pick(periodString({ unit: this.unit, from: Math.min(from, n), to: Math.max(from, n) }))
       },
       enter(n) {
         this.hover = n

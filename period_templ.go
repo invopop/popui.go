@@ -273,7 +273,7 @@ func Period(opts ...props.Period) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div x-show=\"open\" x-cloak x-transition.opacity.duration.100ms @click.outside=\"close()\" :style=\"end ? { left: 'auto', right: 0 } : { left: 0, right: 'auto' }\" role=\"dialog\" aria-label=\"Period\" class=\"popui-period-panel context-menu absolute top-full z-50 mt-1 flex border border-border rounded-xl bg-background shadow-lg overflow-hidden\"><div class=\"flex flex-col gap-0.5 p-2 border-r border-border\"><template x-for=\"n in rolling\" :key=\"n\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"value === n + 'd'\" :data-label=\"label(n + 'd')\" x-text=\"label(n + 'd')\" @click=\"pick(n + 'd')\"></button></template>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div x-show=\"open\" x-cloak x-transition.opacity.duration.100ms @click.outside=\"close()\" :style=\"end ? { left: 'auto', right: 0 } : { left: 0, right: 'auto' }\" x-ref=\"panel\" role=\"dialog\" aria-label=\"Period\" class=\"popui-period-panel context-menu absolute top-full z-50 mt-1 flex border border-border rounded-xl bg-background shadow-lg overflow-hidden\"><div class=\"flex flex-col gap-0.5 p-2 border-r border-border\"><template x-for=\"n in rolling\" :key=\"n\"><button type=\"button\" class=\"popui-cal-preset\" :data-active=\"value === n + 'd'\" :data-label=\"label(n + 'd')\" x-text=\"label(n + 'd')\" @click=\"pick(n + 'd')\"></button></template>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -283,7 +283,7 @@ func Period(opts ...props.Period) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div class=\"flex flex-col gap-3 p-3 w-[300px]\"><div class=\"popui-period-units\" role=\"tablist\"><template x-for=\"u in units\" :key=\"u.key\"><button type=\"button\" role=\"tab\" class=\"popui-period-unit\" :aria-selected=\"unit === u.key\" x-text=\"u.label\" @click=\"setUnit(u.key)\"></button></template></div><div class=\"flex items-center justify-between\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div class=\"flex flex-col gap-3 p-3 w-[300px]\"><div class=\"popui-period-units\" role=\"group\" aria-label=\"Unit\"><template x-for=\"u in units\" :key=\"u.key\"><button type=\"button\" class=\"popui-period-unit\" :aria-pressed=\"unit === u.key\" x-text=\"u.label\" @click=\"setUnit(u.key)\"></button></template></div><div class=\"flex items-center justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

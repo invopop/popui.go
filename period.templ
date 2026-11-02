@@ -97,6 +97,7 @@ templ Period(opts ...props.Period) {
 			x-transition.opacity.duration.100ms
 			@click.outside="close()"
 			:style="end ? { left: 'auto', right: 0 } : { left: 0, right: 'auto' }"
+			x-ref="panel"
 			role="dialog"
 			aria-label="Period"
 			class="popui-period-panel context-menu absolute top-full z-50 mt-1 flex border border-border rounded-xl bg-background shadow-lg overflow-hidden"
@@ -123,13 +124,12 @@ templ Period(opts ...props.Period) {
 				}
 			</div>
 			<div class="flex flex-col gap-3 p-3 w-[300px]">
-				<div class="popui-period-units" role="tablist">
+				<div class="popui-period-units" role="group" aria-label="Unit">
 					<template x-for="u in units" :key="u.key">
 						<button
 							type="button"
-							role="tab"
 							class="popui-period-unit"
-							:aria-selected="unit === u.key"
+							:aria-pressed="unit === u.key"
 							x-text="u.label"
 							@click="setUnit(u.key)"
 						></button>
