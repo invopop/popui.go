@@ -352,7 +352,7 @@ func Period(opts ...props.Period) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><div class=\"popui-period-grid\" :style=\"{ 'grid-template-columns': cols() }\" @pointerleave=\"hover = null\"><template x-for=\"c in cells()\" :key=\"c.id\"><span class=\"contents\"><span x-show=\"c.kind !== 'tile'\" class=\"popui-period-head\" x-text=\"c.label\"></span> <button x-show=\"c.kind === 'tile'\" type=\"button\" class=\"popui-period-tile\" :disabled=\"c.future\" :data-state=\"state(c.n)\" :data-current=\"c.current\" :title=\"c.title\" x-text=\"c.label\" @pointerdown.prevent=\"press(c.n, $event)\" @pointerenter=\"enter(c.n)\"></button></span></template></div><div class=\"flex items-center justify-between gap-3 pt-2 border-t border-border text-xs\"><span class=\"text-foreground-default-secondary truncate\" x-text=\"footer()\"></span> <span class=\"text-foreground-default-tertiary whitespace-nowrap\">Drag or shift-click for a range</span></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><div class=\"popui-period-grid\" :style=\"{ 'grid-template-columns': cols() }\" @pointerleave=\"hover = null\"><template x-for=\"c in cells()\" :key=\"c.id\"><span class=\"contents\"><span x-show=\"c.kind !== 'tile'\" class=\"popui-period-head\" x-text=\"c.label\"></span> <button x-show=\"c.kind === 'tile'\" type=\"button\" class=\"popui-period-tile\" :disabled=\"c.future\" :data-state=\"state(c.n)\" :data-current=\"c.current\" :title=\"c.title\" :aria-label=\"c.title\" x-text=\"c.label\" @click=\"key(c.n, $event)\" @pointerdown.prevent=\"press(c.n, $event)\" @pointerenter=\"enter(c.n)\"></button></span></template></div><div class=\"flex items-center justify-between gap-3 pt-2 border-t border-border text-xs\"><span class=\"text-foreground-default-secondary truncate\" x-text=\"footer()\"></span> <span class=\"text-foreground-default-tertiary whitespace-nowrap\">Drag or shift-click for a range</span></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -366,6 +366,9 @@ func periodProps(p props.Period) props.Period {
 	}
 	if p.Default == "" {
 		p.Default = period.Default
+	}
+	if p.Value == "" {
+		p.Value = p.Default
 	}
 	if p.Today.IsZero() {
 		p.Today = time.Now()

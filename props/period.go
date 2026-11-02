@@ -33,7 +33,9 @@ type Period struct {
 
 	// Default is the period shown when none is picked, which isn't
 	// submitted so that the address stays short. Defaults to
-	// period.Default, the last 365 days.
+	// period.Default, the last 365 days. A server reading the value
+	// should use the same default when none is submitted, as
+	// period.Parse("") gives period.Default.
 	Default string
 
 	// Today is the current time in the time zone the data is read in,

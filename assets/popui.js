@@ -2389,8 +2389,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // Pages starting after today are left out.
       canTurn(dir) {
         const next = this.page + dir * this._step()
-        const first = this.unit === 'day' ? periodUnits.month.start(next) : periodDay(next - this._step() + 1, 1, 1) - 3
-        return first <= this.today
+        if (this.unit === 'day') return periodUnits.month.start(next) <= this.today
+        // A year's first ISO week can start up to three days before 1 January.
+        const first = periodDay(next - this._step() + 1, 1, 1)
+        return (this.unit === 'week' ? first - 3 : first) <= this.today
       },
       pageTitle() {
         switch (this.unit) {
@@ -2481,8 +2483,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return n === left ? 'start' : n === right ? 'end' : 'middle'
       },
       press(n, e) {
+        // Touch holds the pointer on the tile it started on, so let go of it for the others to see it enter.
+        if (e.target.hasPointerCapture && e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId)
         const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
         this.drag = { from, to: n }
+      },
+      // Picks one window from the keyboard, whose Enter and Space fire a click with no pointer press before it.
+      key(n, e) {
+        if (e.detail !== 0) return
+        this.anchor = { unit: this.unit, n }
+        this.pick(periodString({ unit: this.unit, from: n, to: n }))
       },
       enter(n) {
         this.hover = n
