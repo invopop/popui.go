@@ -72,6 +72,32 @@ func SidePanel() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.SidePanelDockedExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Docked",
+			Description: "With Docked, the side panel sits in the page beside its content instead of over it, taking its width from the row it's in while open. Open shows it as the page loads.",
+			Code:        examples.LoadExample("side_panel_docked.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
 				Title:       "SidePanel",
 				Description: "Fixed-position side panel that overlays one edge of the viewport. Open / close is driven by `popui-sidepanel-open` / `popui-sidepanel-close` window events whose `event.detail` must match the panel's ID. The panel's inner edge is a drag handle — it highlights on hover and dragging it adjusts the panel's width.",
@@ -81,6 +107,8 @@ func SidePanel() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes applied to the <aside> element."},
 					{Name: "Position", Type: "string", Default: "right", Description: "Edge of the viewport to anchor to. One of `props.SidePanelPositionRight` or `props.SidePanelPositionLeft`."},
 					{Name: "Width", Type: "int", Default: "400", Description: "Initial panel width in pixels. 0 falls back to 400. The user can resize by dragging the panel's inner edge; the adjusted width survives open/close cycles."},
+					{Name: "Docked", Type: "bool", Default: "false", Description: "Places the panel in the page beside its content instead of over it. Put it last in a flex row whose other children shrink (`min-w-0`)."},
+					{Name: "Open", Type: "bool", Default: "false", Description: "Shows the panel as the page loads, as when the page's address names what it shows."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -107,7 +135,7 @@ func SidePanel() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

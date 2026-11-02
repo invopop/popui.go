@@ -2173,8 +2173,8 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
     // Side panel opened and closed by popui-sidepanel-open/close window events whose detail matches the panel id.
     // The width is user-adjustable by dragging the panel's inner-edge handle.
-    Alpine.data('sidePanel', (id, width = 400, anchor = 'right') => ({
-      open: false,
+    Alpine.data('sidePanel', (id, width = 400, anchor = 'right', open = false) => ({
+      open,
       width,
       resizing: false,
       init() {

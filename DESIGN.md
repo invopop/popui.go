@@ -97,12 +97,13 @@ Some requests sound custom but map directly to PopUI components:
 | "a status badge / pill" | `TagStatus` (color dot) or `StatusBadge` (icon outcome: success/failed/warning/running) |
 | "insert a variable / pick an invoice field" | `FieldPicker` |
 | "a modal or drawer" (if side panel) | `Aside` |
+| "a detail panel that opens over the page, or beside a list" | `SidePanel` (with `Docked: true` beside a list) |
 | "a dropdown menu / three-dot menu" | `Menu` |
 | "a key-value list" | `Details` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
-| "a collapsible / expandable section" | `Accordion` |
+| "a collapsible / expandable section" | `Accordion` (with `Icon` and `Actions` for a list of steps) |
 | "a copy button for an ID or hash" | `Button` with `Copy` (PrefixLength/SuffixLength truncate the display) |
 
 ---
