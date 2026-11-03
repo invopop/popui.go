@@ -33,8 +33,8 @@ templ ColumnChart(opts ...props.ColumnChart) {
 		class={ tailwind.Merge("popui-chart flex flex-col gap-1.5 m-0 font-sans", p.Class) }
 		{ p.Attributes... }
 	>
-		<div class="flex" style={ "height: " + strconv.Itoa(height) + "px" } aria-hidden="true">
-			<div class="relative w-10 shrink-0 text-xs text-foreground-default-tertiary tabular-nums">
+		<div class="flex" style={ "height: " + strconv.Itoa(height) + "px" }>
+			<div class="relative w-10 shrink-0 text-xs text-foreground-default-tertiary tabular-nums" aria-hidden="true">
 				for _, t := range ticks {
 					<span class="absolute end-2 translate-y-1/2 leading-none" style={ "bottom: " + chartPercent(t, top) }>{ CompactNumber(t) }</span>
 				}
@@ -44,6 +44,7 @@ templ ColumnChart(opts ...props.ColumnChart) {
 					<div
 						class={ classes.Join("absolute inset-x-0 border-t", classes.If(t == 0, "border-border-default-tertiary"), classes.If(t != 0, "border-border-default-secondary opacity-60")) }
 						style={ "bottom: " + chartPercent(t, top) }
+						aria-hidden="true"
 					></div>
 				}
 				<div class="absolute inset-0 flex items-stretch">
@@ -75,7 +76,7 @@ templ chartColumn(c props.ChartValue, top float64, i, n int) {
 			@chartColumnBody(c, pct, i, n)
 		</a>
 	} else {
-		<div tabindex="0" { attrs... } aria-label={ chartTitle(c) + ": " + chartDisplay(c) }>
+		<div tabindex="0" role="img" { attrs... } aria-label={ chartTitle(c) + ": " + chartDisplay(c) }>
 			@chartColumnBody(c, pct, i, n)
 		</div>
 	}
@@ -85,9 +86,11 @@ templ chartColumnBody(c props.ChartValue, pct string, i, n int) {
 	<span
 		class={ classes.Join("block w-full max-w-6 rounded-t-[4px]", chartColor(c.Color), classes.If(c.Value > 0, "min-h-0.5"), classes.If(c.Partial, "opacity-50")) }
 		style={ "height: " + pct }
+		aria-hidden="true"
 	></span>
+	// The column's label says the same for screen readers.
 	<span
-		role="tooltip"
+		aria-hidden="true"
 		class={ classes.Join(
 			"popui-chart-tip absolute z-20 mb-1.5 w-max max-w-48 px-2 py-1.5 rounded-lg border border-border-inverse bg-background-default-negative shadow-lg text-xs pointer-events-none",
 			"invisible opacity-0 transition-opacity duration-100 group-hover/col:visible group-hover/col:opacity-100 group-focus-visible/col:visible group-focus-visible/col:opacity-100",
@@ -224,7 +227,7 @@ templ SegmentedBar(opts ...props.SegmentedBar) {
 				}
 			</ul>
 		}
-		@chartTable(p.Label, p.Parts)
+		@chartTable(p.Label, chartPositive(p.Parts))
 	</figure>
 }
 
@@ -247,9 +250,9 @@ func chartShare(v, whole float64) string {
 }
 
 // Sparkline draws the shape of a series of values as a line with a light
-// wash beneath, filling the width of its container, with the latest value
-// marked. Values are drawn from zero, or the lowest below it, so small
-// changes aren't exaggerated.
+// wash beneath, filling the width of its container. Values are drawn from
+// zero, or the lowest below it, so small changes aren't exaggerated.
+// Screen readers read its Label, or skip it without one.
 templ Sparkline(opts ...props.Sparkline) {
 	{{ p := props.First(opts) }}
 	<svg

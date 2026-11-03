@@ -96,7 +96,7 @@ func TestColumnChartRender(t *testing.T) {
 		t.Fatal(err)
 	}
 	html := buf.String()
-	for _, want := range []string{`href="/oct"`, `aria-label="October 2026: 40"`, "height: 25.00%", "opacity-50", "<caption>Invoices</caption>"} {
+	for _, want := range []string{`href="/oct"`, `aria-label="October 2026: 40"`, "height: 25.00%", "opacity-50", "<caption>Invoices</caption>", `role="img"`, `aria-label="November 2026: 10"`} {
 		if !strings.Contains(html, want) {
 			t.Errorf("chart is missing %q", want)
 		}

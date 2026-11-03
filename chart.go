@@ -245,3 +245,14 @@ func metricTone(p props.Metric) string {
 	}
 	return toneBad
 }
+
+// chartPositive returns the values above zero, which are the ones drawn.
+func chartPositive(values []props.ChartValue) []props.ChartValue {
+	out := make([]props.ChartValue, 0, len(values))
+	for _, v := range values {
+		if v.Value > 0 {
+			out = append(out, v)
+		}
+	}
+	return out
+}

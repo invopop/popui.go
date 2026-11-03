@@ -173,6 +173,28 @@ func (p Period) Range(today time.Time) (from, to time.Time) {
 	return at(first), at(last + 1)
 }
 
+// RangeWithin returns the part of the period's Range inside outer's, as
+// for a window from outer.Split, whose first and last windows may reach
+// past outer's ends. Both are zero when they don't overlap. All has no
+// bounds, so an outer All leaves the Range as it is.
+func (p Period) RangeWithin(outer Period, today time.Time) (from, to time.Time) {
+	from, to = p.Range(today)
+	if outer.All {
+		return from, to
+	}
+	of, ot := outer.Range(today)
+	if p.All || from.Before(of) {
+		from = of
+	}
+	if p.All || to.After(ot) {
+		to = ot
+	}
+	if !from.Before(to) {
+		return time.Time{}, time.Time{}
+	}
+	return from, to
+}
+
 // days returns the period's first and last days, from the Unix epoch.
 func (p Period) days(today int) (int, int) {
 	if p.Days > 0 {
@@ -291,11 +313,11 @@ func (p Period) Shift(n int, today time.Time) Period {
 // Split divides the period into the calendar windows of the finest unit
 // that gives at most limit of them, oldest first, as a chart's columns run:
 // days, weeks, months, quarters, or else years however many there are.
-// The first and last windows may reach past the period's ends: clamp each
-// window's Range to the period's own to count only what's in it. All has
-// no start to split from, so gives none.
+// The first and last windows may reach past the period's ends: use each
+// window's RangeWithin the period to count only what's in it. All has no
+// start to split from, so gives none, and nor does a limit below one.
 func (p Period) Split(today time.Time, limit int) []Period {
-	if p.All {
+	if p.All || limit < 1 {
 		return nil
 	}
 	first, last := p.days(dayIndex(today))

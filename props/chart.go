@@ -74,8 +74,11 @@ type Sparkline struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	// Label describes the trend, for screen readers, which otherwise skip
-	// it.
+	// Label describes the trend for screen readers, which otherwise skip
+	// it, with the figures that matter, such as "Rising from 12 to 40
+	// over 30 days". It can't hold the values as a table, as the other
+	// charts do. Leave it empty where the trend repeats a figure beside
+	// it, as in Metric.
 	Label  string
 	Values []float64
 }

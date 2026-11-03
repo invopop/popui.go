@@ -500,7 +500,7 @@ Breadcrumbs
 | `SplitButton` | Main action button + attached chevron toggle opening a dropdown of related actions (`MenuItem` children); supports `RightAlign` and `DropUp` |
 | `Details` / `Detail` | `dl`-based labelled values that fill their container with label-left rows, or labels above values with `Layout: "stacked"`. A `Detail` without `Value` shows its children as the value (e.g. a `TagStatus`), or a dash with neither. Replaces the deprecated `DescriptionList`, `DescriptionListItem`, `DT` and `DD` |
 | `Stats` / `Stat` | Figures with a label above, in a wrapping row; a `Size: "lg"` stat leads it, and `Align: "end"` keeps the others at the end |
-| `Metric` / `ColumnChart` / `BarList` / `SegmentedBar` / `Sparkline` | Charts drawn on the server: a headline figure with its change and trend, columns over time with a value axis and tooltips, horizontal bars to compare, a whole split into parts in TagStatus colors, and a bare trend line. Values are `ChartValue`s, listed for screen readers in a table |
+| `Metric` / `ColumnChart` / `BarList` / `SegmentedBar` / `Sparkline` | Charts drawn on the server: a headline figure with its change and trend, columns over time with a value axis and tooltips, horizontal bars to compare, a whole split into parts in TagStatus colors, and a bare trend line. Values are `ChartValue`s. For screen readers, `ColumnChart` and `SegmentedBar` list them in a table, `BarList` reads as a list, and `Sparkline` by its `Label`, which describes the trend |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
 | `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |
