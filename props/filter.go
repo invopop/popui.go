@@ -21,7 +21,7 @@ type Filter struct {
 
 	// BaseURL is the form's hx-get target (typically the path the page
 	// lives at). Filter values become query params on this URL.
-	BaseURL string
+	BaseURL string `jsonschema:"format=uri-reference"`
 
 	// Target is the hx-target selector — the region to swap when the
 	// form submits. If empty, no hx-target is emitted (HTMX defaults to

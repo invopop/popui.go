@@ -62,7 +62,7 @@ type Import struct {
 	// Name is the bare module specifier (e.g. "codemirror", "@codemirror/state").
 	Name string
 	// URL is the resolved URL for the module (e.g. "https://esm.sh/codemirror@6.0.1").
-	URL string
+	URL string `jsonschema:"format=uri-reference"`
 }
 
 // importmapData is the JSON structure for an ES module import map.

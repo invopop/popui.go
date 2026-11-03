@@ -8,10 +8,7 @@ package examples
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
-)
+import "github.com/invopop/popui.go"
 
 func TableRightAlignExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -46,15 +43,13 @@ func TableRightAlignExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Item</th><th>Quantity</th><th>Amount</th></tr></thead> <tbody><tr><td>Product A</td><td>3</td><td>$89.97</td></tr><tr><td>Product B</td><td>1</td><td>$39.99</td></tr><tr><td>Product C</td><td>2</td><td>$99.98</td></tr></tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Item</th><th data-numeric data-align=\"end\">Quantity</th><th data-numeric data-align=\"end\">Amount</th></tr></thead> <tbody><tr><td>Product A</td><td data-numeric data-align=\"end\">3</td><td data-numeric data-align=\"end\">$89.97</td></tr><tr><td>Product B</td><td data-numeric data-align=\"end\">1</td><td data-numeric data-align=\"end\">$39.99</td></tr><tr><td>Product C</td><td data-numeric data-align=\"end\">2</td><td data-numeric data-align=\"end\">$99.98</td></tr></tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Table(props.Table{
-			Class: "[&_th:last-child]:text-right [&_td:last-child]:text-right",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Table().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

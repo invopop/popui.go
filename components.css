@@ -106,6 +106,13 @@ body {
   align-self: end;
 }
 
+/* Inside a table cell, Chrome resolves the stretch cap against the cell
+   rather than the viewport, collapsing the panel to its padding; use the
+   fixed cap there instead (with the bottom inset discarded, as above). */
+:is(th, td) [popover].context-menu.context-menu-scroll {
+  max-height: min(24rem, 70vh);
+}
+
 /* Fallback for browsers without anchor positioning support */
 @supports not (anchor-name: --test) {
   [popover].context-menu {
@@ -630,6 +637,91 @@ form {
   display: none;
 }
 
+/* Tables with Columns. Fixed layout, so the <col> widths hold whatever the
+   cells contain; the widths, the table's width and the frozen columns come
+   from the stylesheet Table writes for each shape of table (see
+   tableColumnsCSS in table_columns.go). Borders are separate so a frozen
+   cell's right border travels with it, as for StickyColumn above. */
+.popui-table-columns {
+  table-layout: fixed;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+/* The header cells hold their title (a menu trigger when the column has a
+   menu) and a resize handle; positioned for the handle and divider unless
+   the header is sticky, which positions them already. */
+.popui-table-columns:not(.popui-table-sticky-header) thead th {
+  position: relative;
+}
+/* The title fills the cell, so the whole cell opens the menu. */
+.popui-table-columns .popui-table-th {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 0.5rem;
+  min-width: 0;
+  text-align: inherit;
+}
+.popui-table-columns th:first-child .popui-table-th {
+  padding-left: 1rem;
+}
+.popui-table-columns th:last-child .popui-table-th {
+  padding-right: 1rem;
+}
+.popui-table-columns button.popui-table-th:hover,
+.popui-table-columns button.popui-table-th[aria-expanded='true'] {
+  color: var(--color-foreground);
+}
+.popui-table-columns .popui-table-sort-arrow {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--color-icon);
+}
+/* The header menu shows Freeze or Unfreeze for the column's state. */
+.popui-table-columns th[data-frozen] .popui-table-freeze-label,
+.popui-table-columns th:not([data-frozen]) .popui-table-unfreeze-label {
+  display: none;
+}
+/* Row hover over the opaque cell background, as the tint is alpha and the
+   frozen cells must stay opaque over the columns scrolling under them. */
+.popui-table-columns.popui-table-row-hover tbody tr:hover td {
+  background-color: var(--color-background);
+  background-image: linear-gradient(var(--color-background-default-secondary), var(--color-background-default-secondary));
+}
+/* Resize handle on the right edge of a header cell, a line while it's
+   hovered, dragged or focused. */
+.popui-table-columns .popui-table-col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+  z-index: 1;
+}
+.popui-table-columns .popui-table-col-resizer::after {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  right: 0;
+  width: 2px;
+  border-radius: 1px;
+}
+.popui-table-columns .popui-table-col-resizer:hover::after,
+.popui-table-columns .popui-table-col-resizer:focus-visible::after,
+.popui-table-columns .popui-table-col-resizer[data-dragging]::after {
+  background-color: var(--color-border-selected-bold);
+}
+.popui-table-columns .popui-table-col-resizer:focus-visible {
+  outline: none;
+}
+
 /* Card tables round their own corner cells: the wrapper's border-radius only
    clips the cell backgrounds while its overflow is hidden, and a table
    hosting a menu or tooltip switches the wrapper to overflow-visible. 1px
@@ -801,10 +893,92 @@ form {
   pointer-events: none;
 }
 
+/* Period picker — tabs of units over a grid of windows (days, weeks,
+   months, quarters, years). A picked run is a band: solid ends, tinted
+   middle, with no gap between columns so it reads as one. The window
+   holding today is underlined, as the calendar's today is. */
+.popui-period-units {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 0.5rem;
+  background-color: var(--color-background-default-secondary);
+}
+.popui-period-unit {
+  flex: 1;
+  padding: 0.25rem 0;
+  border: 0;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-foreground-default-secondary);
+  background-color: transparent;
+  cursor: pointer;
+}
+.popui-period-unit:hover { color: var(--color-foreground); }
+.popui-period-unit[aria-pressed="true"] {
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.popui-period-grid {
+  display: grid;
+  row-gap: 0.25rem;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+}
+.popui-period-head {
+  padding: 0 0.5rem 0 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-foreground-default-tertiary);
+  text-align: center;
+}
+.popui-period-tile {
+  height: 2rem;
+  min-width: 2rem;
+  padding: 0 0.25rem;
+  border: 0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-foreground);
+  background-color: transparent;
+  cursor: pointer;
+}
+.popui-period-tile:hover:not(:disabled) { background-color: var(--color-background-default-tertiary-hover); }
+.popui-period-tile:disabled {
+  color: var(--color-foreground-default-tertiary);
+  opacity: 0.5;
+  cursor: default;
+}
+.popui-period-tile[data-current]:not([data-state]) {
+  border-radius: 0;
+  box-shadow: inset 0 -1px 0 0 var(--color-background-accent);
+}
+.popui-period-tile[data-state="middle"] {
+  border-radius: 0;
+  background-color: var(--color-background-default-secondary);
+}
+.popui-period-tile[data-state="start"],
+.popui-period-tile[data-state="end"],
+.popui-period-tile[data-state="single"],
+.popui-period-tile[data-state]:hover:not(:disabled) {
+  color: var(--color-foreground-inverse);
+  background-color: var(--color-background-accent);
+}
+.popui-period-tile[data-state="start"] { border-radius: 0.5rem 0 0 0.5rem; }
+.popui-period-tile[data-state="end"] { border-radius: 0 0.5rem 0.5rem 0; }
+
 /* Detail rows (popui.DescriptionListItem with Inline/Actions) — console-ui-style
    label-on-left / value-on-right rows for side panels and drawers. Shipped
    here so any consuming app gets the styling without copying a <style> block. */
-.popui-detail-row { display: flex; gap: 1.5rem; align-items: center; }
+.popui-detail-row { display: flex; gap: 0.5rem; align-items: flex-start; }
+/* Inline: the label sits at the top of the row, padded down by the value
+   cell's top padding so it lines up with the value's first line when the
+   value wraps. */
+.popui-detail-row:not(.popui-detail-stacked) > .popui-detail-label { padding-top: 0.25rem; }
 /* Stacked variant: label above the value. */
 .popui-detail-row.popui-detail-stacked {
   flex-direction: column;
@@ -827,6 +1001,30 @@ form {
 .popui-detail-row.popui-detail-stacked > .popui-detail-value-wrap {
   align-items: center;
   margin-left: -0.5rem;
+}
+
+/* Inline rows stack when their list is too narrow for a label column and a
+   readable value beside it, as in a two-column card on a smaller screen:
+   the value then gets the list's full width. The list is the container (see
+   DescriptionList), so this follows the space the list has, not the
+   window's. */
+@container (max-width: 320px) {
+  .popui-detail-row:not(.popui-detail-stacked) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .popui-detail-row:not(.popui-detail-stacked) > .popui-detail-label {
+    flex: 0 0 auto;
+    min-width: 0;
+    padding-top: 0;
+  }
+  .popui-detail-row:not(.popui-detail-stacked) > .popui-detail-value-wrap {
+    align-items: center;
+    margin-left: -0.5rem;
+    min-height: 0;
+    padding-top: 0;
+  }
 }
 
 /* 16px icon button (ButtonSizeIconExtraSmall): icons ship at a fixed 16px
@@ -862,13 +1060,14 @@ form {
 .popui-detail-row > .popui-detail-value-wrap:hover {
   background-color: var(--color-background-default-secondary);
 }
+/* Long values, such as email addresses, wrap rather than scroll. */
 .popui-detail-value {
   flex: 1 1 0%;
   min-width: 0;
   color: var(--color-foreground);
   font-weight: 500;
   font-size: 0.875rem;
-  overflow-x: auto;
+  overflow-wrap: anywhere;
 }
 
 /* Copyable value row: strip the copy Button's chrome so the value reads as
@@ -970,6 +1169,31 @@ form {
   border-color: var(--color-border);
 }
 
+/* A deck with handles is always reorderable: the handle shows at each
+   card's left edge, and is the card's only grab target, so the card's own
+   controls keep working. */
+.popui-card-deck-handles > [data-card] {
+  padding-left: 32px;
+  transition: transform 150ms ease, padding-left 150ms ease;
+}
+.popui-card-deck-handles > [data-card]::before {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.popui-card-deck-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  cursor: grab;
+  /* Vertical drags belong to the deck, not to the scroller. */
+  touch-action: none;
+}
+.popui-card-deck-dragging .popui-card-deck-handle {
+  cursor: grabbing;
+}
+
 /* The commit frame. The script reorders the cards and drops their offsets
    together here, two changes that cancel out — so they must not animate, or
    each displaced card slides a slot it has already travelled. Declared after
@@ -991,7 +1215,8 @@ form {
 @media (prefers-reduced-motion: reduce) {
   .popui-card-deck-sortable > [data-card],
   .popui-card-deck-sortable > [data-card]::before,
-  .popui-card-deck-reordering > [data-card] {
+  .popui-card-deck-reordering > [data-card],
+  .popui-card-deck-handles > [data-card] {
     transition: none;
   }
 }

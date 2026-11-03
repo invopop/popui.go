@@ -26,7 +26,10 @@ templ CardDeck(opts ...props.CardDeck) {
 		if p.ID != "" {
 			id={ p.ID }
 		}
-		if p.Reorderable {
+		if p.Handles {
+			x-data="cardDeckReorder({ handles: true })"
+			@pointerdown="onPointerDown"
+		} else if p.Reorderable {
 			x-data="cardDeckReorder()"
 			:class="{ 'popui-card-deck-reordering': reordering }"
 			@pointerdown="onPointerDown"
@@ -41,14 +44,15 @@ templ CardDeck(opts ...props.CardDeck) {
 				// Static, unlike the -reordering class: it gives each card its
 				// collapsed drag handle, which needs to exist up front to have
 				// something to animate in from.
-				classes.If(p.Reorderable, "popui-card-deck-sortable"),
+				classes.If(p.Reorderable || p.Handles, "popui-card-deck-sortable"),
+				classes.If(p.Handles, "popui-card-deck-handles"),
 				p.Class,
 			),
 		}
 		{ p.Attributes... }
 	>
 		{ children... }
-		if p.Reorderable && p.Name != "" {
+		if (p.Reorderable || p.Handles) && p.Name != "" {
 			<input type="hidden" name={ p.Name } :value="order.join(',')"/>
 		}
 	</div>
