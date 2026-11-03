@@ -73,34 +73,44 @@ var (
 	gridBorderBottom = [2]string{"border-b", "border-b [border-bottom-style:dashed]"}
 )
 
-// gridStackKey is the context key for the breakpoint of the grid a cell
-// is in.
-type gridStackKey struct{}
+// gridLayout is what a cell needs to know of the grid it's in: the
+// breakpoint its columns start at, and how many there are.
+type gridLayout struct {
+	bp      *gridBreakpoint
+	columns int
+}
 
-// gridStack returns the grid's breakpoint, defaulting to "md".
-func gridStack(p props.Grid) *gridBreakpoint {
-	if bp := gridBreakpoints[p.Stack]; bp != nil {
-		return bp
+// gridLayoutKey is the context key for the gridLayout of the grid a cell
+// is in.
+type gridLayoutKey struct{}
+
+// newGridLayout returns the grid's layout, with its columns and breakpoint
+// defaulting to 2 and "md".
+func newGridLayout(p props.Grid) gridLayout {
+	g := gridLayout{bp: gridBreakpoints[p.Stack], columns: p.Columns}
+	if g.bp == nil {
+		g.bp = gridBreakpoints[props.GridStackMedium]
 	}
-	return gridBreakpoints[props.GridStackMedium]
+	if g.columns < 1 || g.columns > 4 {
+		g.columns = 2
+	}
+	return g
 }
 
 // gridClass returns the classes of the grid's columns.
 func gridClass(p props.Grid) string {
-	n := p.Columns
-	if n < 1 || n > 4 {
-		n = 2
-	}
+	g := newGridLayout(p)
 	if p.Stack == props.GridStackNone {
-		return classes.Join("grid", gridStack(p).cols[n])
+		return classes.Join("grid", g.bp.cols[g.columns])
 	}
-	return classes.Join("grid grid-cols-1", gridStack(p).cols[n])
+	return classes.Join("grid grid-cols-1", g.bp.cols[g.columns])
 }
 
-// cellClass returns the classes of a cell in a grid with the breakpoint:
-// its spans and borders.
-func cellClass(bp *gridBreakpoint, p props.GridCell) string {
-	list := []string{bp.span[clampCount(p.Span)], bp.rows[clampCount(p.Rows)]}
+// cellClass returns the classes of a cell in the grid: its spans, at most
+// the grid's columns, and its borders.
+func cellClass(g gridLayout, p props.GridCell) string {
+	bp := g.bp
+	list := []string{bp.span[min(clampCount(p.Span), g.columns)], bp.rows[clampCount(p.Rows)]}
 	has := func(edge string) bool {
 		return slices.ContainsFunc(p.Borders, func(b props.Border) bool { return b.Edge == edge })
 	}
@@ -129,7 +139,7 @@ func cellClass(bp *gridBreakpoint, p props.GridCell) string {
 	return classes.Join(list...)
 }
 
-// clampCount keeps a span within the 1 to 4 a grid has columns for.
+// clampCount keeps a span within the 1 to 4 a grid may have.
 func clampCount(n int) int {
 	return min(max(n, 1), 4)
 }

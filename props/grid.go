@@ -44,7 +44,8 @@ type GridCell struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	// Span is the number of columns the cell takes. Default is 1.
+	// Span is the number of columns the cell takes, at most the grid's
+	// Columns. Default is 1.
 	Span int `jsonschema:"minimum=1,maximum=4"`
 	// Rows is the number of rows the cell takes, beside cells stacked in
 	// the other columns. Default is 1.

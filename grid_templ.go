@@ -112,7 +112,7 @@ func Grid(opts ...props.Grid) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = withGridStack(gridStack(p)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = withGridLayout(newGridLayout(p)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -148,7 +148,7 @@ func Cell(opts ...props.GridCell) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
-		var templ_7745c5c3_Var7 = []any{tailwind.Merge("flex flex-col gap-2 p-4 min-w-0 border-border", cellClass(cellStack(ctx), p), p.Class)}
+		var templ_7745c5c3_Var7 = []any{tailwind.Merge("flex flex-col gap-2 p-4 min-w-0 border-border", cellClass(cellLayout(ctx), p), p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -213,23 +213,23 @@ func Cell(opts ...props.GridCell) templ.Component {
 	})
 }
 
-// withGridStack renders its children knowing the breakpoint of the grid
+// withGridLayout renders its children knowing the layout of the grid
 // they're in, which places their spans and borders.
-func withGridStack(bp *gridBreakpoint) templ.Component {
+func withGridLayout(g gridLayout) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		children := templ.GetChildren(ctx)
-		ctx = context.WithValue(templ.ClearChildren(ctx), gridStackKey{}, bp)
+		ctx = context.WithValue(templ.ClearChildren(ctx), gridLayoutKey{}, g)
 		return children.Render(ctx, w)
 	})
 }
 
-// cellStack returns the breakpoint of the grid a cell is in, as a grid's
-// default for a cell outside one.
-func cellStack(ctx context.Context) *gridBreakpoint {
-	if bp, ok := ctx.Value(gridStackKey{}).(*gridBreakpoint); ok {
-		return bp
+// cellLayout returns the layout of the grid a cell is in, or a default
+// grid's for a cell outside one.
+func cellLayout(ctx context.Context) gridLayout {
+	if g, ok := ctx.Value(gridLayoutKey{}).(gridLayout); ok {
+		return g
 	}
-	return gridBreakpoints[props.GridStackMedium]
+	return newGridLayout(props.Grid{})
 }
 
 var _ = templruntime.GeneratedTemplate

@@ -885,7 +885,7 @@
           "type": "integer",
           "maximum": 4,
           "minimum": 1,
-          "description": "Span is the number of columns the cell takes. Default is 1."
+          "description": "Span is the number of columns the cell takes, at most the grid's\nColumns. Default is 1."
         },
         "rows": {
           "type": "integer",

@@ -35,7 +35,7 @@ func TestGrid(t *testing.T) {
 // TestCellStacked checks that a side border moves to the matching end of
 // the cell while the grid is stacked, unless the cell has its own there.
 func TestCellStacked(t *testing.T) {
-	bp := gridBreakpoints[props.GridStackLarge]
+	g := gridLayout{bp: gridBreakpoints[props.GridStackLarge], columns: 2}
 	tests := []struct {
 		name    string
 		borders []props.Border
@@ -61,7 +61,7 @@ func TestCellStacked(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := cellClass(bp, props.GridCell{Borders: tt.borders})
+			c := cellClass(g, props.GridCell{Borders: tt.borders})
 			for _, w := range tt.want {
 				if !hasClasses(c, w) {
 					t.Errorf("missing %s in %q", w, c)
@@ -89,6 +89,20 @@ func TestGridStackNone(t *testing.T) {
 	}
 	if strings.Contains(html, "max-") || strings.Contains(html, "md:") {
 		t.Errorf("unexpected breakpoint classes in:\n%s", html)
+	}
+}
+
+// TestCellSpan checks a cell spans no more columns than its grid has.
+func TestCellSpan(t *testing.T) {
+	html := renderWith(t, Grid(props.Grid{Columns: 3}), templ.Join(
+		renderedCell(props.GridCell{Span: 4, Rows: 9}),
+	))
+	if !hasClasses(html, "md:col-span-3 md:row-span-4") || strings.Contains(html, "col-span-4") {
+		t.Errorf("want the span clamped to 3 columns in:\n%s", html)
+	}
+	html = renderWith(t, Grid(props.Grid{Columns: 1}), templ.Join(renderedCell(props.GridCell{Span: 2})))
+	if strings.Contains(html, "col-span") {
+		t.Errorf("want no span in a single column in:\n%s", html)
 	}
 }
 
