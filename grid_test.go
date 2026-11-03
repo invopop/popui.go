@@ -20,9 +20,9 @@ func TestGrid(t *testing.T) {
 	for _, want := range []string{
 		"grid grid-cols-1 md:grid-cols-2",
 		"md:row-span-2",
-		"md:border-r md:[border-right-style:dashed]",
-		"max-md:border-b max-md:[border-bottom-style:dashed]",
-		"border-b [border-bottom-style:dashed]",
+		"md:[--popui-cell-r:var(--popui-dash-y)]",
+		"max-md:[--popui-cell-b:var(--popui-dash-x)]",
+		"[--popui-cell-b:var(--popui-dash-x)]",
 		"md:col-span-2",
 		"border-t",
 	} {
@@ -50,13 +50,13 @@ func TestCellStacked(t *testing.T) {
 		{
 			name:    "left dashed",
 			borders: []props.Border{{Edge: props.EdgeLeft, Style: props.BorderDashed}},
-			want:    []string{"lg:[border-left-style:dashed]", "max-lg:border-t max-lg:[border-top-style:dashed]"},
+			want:    []string{"lg:[--popui-cell-l:var(--popui-dash-y)] max-lg:[--popui-cell-t:var(--popui-dash-x)]"},
 		},
 		{
 			name:    "right with bottom",
 			borders: []props.Border{{Edge: props.EdgeRight, Style: props.BorderDashed}, {Edge: props.EdgeBottom}},
-			want:    []string{"lg:border-r lg:[border-right-style:dashed] border-b"},
-			not:     []string{"max-lg:border-b", "border-bottom-style"},
+			want:    []string{"lg:[--popui-cell-r:var(--popui-dash-y)] border-b"},
+			not:     []string{"max-lg:border-b", "--popui-cell-b"},
 		},
 	}
 	for _, tt := range tests {

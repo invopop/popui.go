@@ -86,6 +86,6 @@ func TestGrid(t *testing.T) {
 		{"is": "cell", "children": [{"is": "text", "text": "Customer"}]},
 		{"is": "cell", "props": {"span": 2, "borders": [{"edge": "top"}]}, "children": [{"is": "text", "text": "Totals"}]}
 	]}]}`)
-	assertContains(t, html, `data-grid`, `md:grid-cols-2`, `md:row-span-2`, `md:[border-right-style:dashed]`,
-		`max-md:[border-bottom-style:dashed]`, `md:col-span-2`, `>Document</div>`, `>Totals</div>`)
+	assertContains(t, html, `data-grid`, `md:grid-cols-2`, `md:row-span-2`, `md:[--popui-cell-r:var(--popui-dash-y)]`,
+		`max-md:[--popui-cell-b:var(--popui-dash-x)]`, `md:col-span-2`, `>Document</div>`, `>Totals</div>`)
 }

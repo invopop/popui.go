@@ -148,7 +148,7 @@ func Cell(opts ...props.GridCell) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		p := props.First(opts)
-		var templ_7745c5c3_Var7 = []any{tailwind.Merge("flex flex-col gap-2 p-4 min-w-0 border-border", cellClass(cellLayout(ctx), p), p.Class)}
+		var templ_7745c5c3_Var7 = []any{tailwind.Merge("popui-cell flex flex-col gap-2 p-4 min-w-0 border-border", cellClass(cellLayout(ctx), p), p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

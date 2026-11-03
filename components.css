@@ -1220,3 +1220,16 @@ form {
     transition: none;
   }
 }
+
+/* A Grid's Cell draws its dashed lines as backgrounds, as a dashed
+   border's dash length is up to the browser: 3px dashes with 4px gaps, as
+   in the design. Each edge's line is a variable the cell's classes set to
+   one of the dashes, so a cell may have any of them. */
+.popui-cell {
+  --popui-dash-x: repeating-linear-gradient(to right, var(--color-border-default-secondary) 0 3px, transparent 3px 7px);
+  --popui-dash-y: repeating-linear-gradient(to bottom, var(--color-border-default-secondary) 0 3px, transparent 3px 7px);
+  background-image: var(--popui-cell-t, none), var(--popui-cell-r, none), var(--popui-cell-b, none), var(--popui-cell-l, none);
+  background-position: top left, top right, bottom left, top left;
+  background-size: 100% 1px, 1px 100%, 100% 1px, 1px 100%;
+  background-repeat: no-repeat;
+}
