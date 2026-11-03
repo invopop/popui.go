@@ -547,7 +547,20 @@ func Button(p ...props.Button) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "\"> <span data-copy-text class=\"font-mono\"></span> <span data-copy-icon-duplicate class=\"shrink-0\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "\">  <span data-copy-text class=\"font-mono\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var26 string
+				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(copyText(btn.Copy, btn.CopyPrefixLength, btn.CopySuffixLength))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `button.templ`, Line: 133, Col: 107}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</span> <span data-copy-icon-duplicate class=\"shrink-0\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -555,7 +568,7 @@ func Button(p ...props.Button) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</span> <span class=\"hidden\" data-copy-icon-success>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</span> <span class=\"hidden\" data-copy-icon-success>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -563,7 +576,7 @@ func Button(p ...props.Button) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -572,13 +585,24 @@ func Button(p ...props.Button) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		return nil
 	})
+}
+
+// copyText shortens a ButtonCopy's value to "prefix...suffix" for display,
+// as formatButtonCopyText in popui.js does when the value changes.
+func copyText(value string, prefix, suffix int) string {
+	prefix, suffix = max(prefix, 0), max(suffix, 0)
+	runes := []rune(value)
+	if prefix+suffix == 0 || len(runes) <= prefix+suffix {
+		return value
+	}
+	return string(runes[:prefix]) + "..." + string(runes[len(runes)-suffix:])
 }
 
 func buttonBaseClasses() string {
@@ -592,6 +616,7 @@ func buttonClasses(variant string, size string) string {
 	// isIcon is true for any of the square icon-button sizes, which share
 	// glyph-centric padding and svg-color treatment.
 	isIcon := size == props.ButtonSizeIcon ||
+		size == props.ButtonSizeIconLarge ||
 		size == props.ButtonSizeIconSmall ||
 		size == props.ButtonSizeIconExtraSmall
 	return tailwind.Merge(
@@ -608,6 +633,9 @@ func buttonClasses(variant string, size string) string {
 		classes.If(size == props.ButtonSizeSmall, "text-sm rounded"),
 		classes.If(size == props.ButtonSizeLarge, "py-[5px] px-3 rounded-lg"),
 		classes.If(size == props.ButtonSizeIcon, "p-[5px] leading-none size-7"),
+		// 34px icon button — matches the default Input height and radius so it
+		// lines up flush beside form fields.
+		classes.If(size == props.ButtonSizeIconLarge, "p-2 leading-none size-[34px] rounded-lg"),
 		// 24px icon button — keeps the bordered chrome, glyph centered.
 		classes.If(size == props.ButtonSizeIconSmall, "p-1 leading-none size-6"),
 		// 16px icon button — keeps the standard bordered chrome (same as
@@ -615,6 +643,8 @@ func buttonClasses(variant string, size string) string {
 		// (otherwise 16px) icon down so it sits contained and centered inside
 		// the border instead of filling the box edge-to-edge.
 		classes.If(size == props.ButtonSizeIconExtraSmall, "popui-icon-xs p-0 leading-none size-4"),
+		// Icon buttons are fixed squares: never let a flex row squeeze them.
+		classes.If(isIcon, "shrink-0"),
 		// Icon color based on size
 		classes.If(!isIcon && variant != props.ButtonVariantPrimary && variant != props.ButtonVariantDanger && variant != props.ButtonVariantInverse, "[&_svg]:text-icon"),
 		classes.If(!isIcon && variant == props.ButtonVariantPrimary, "[&_svg]:text-icon-inverse"),

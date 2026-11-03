@@ -229,6 +229,84 @@ func Button() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.ButtonSplitExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Split Button",
+			Description: "SplitButton pairs a main action with a dropdown toggle exposing closely related actions. The main segment triggers the default action directly; the chevron opens a menu of alternatives built from MenuItem children.",
+			Code:        examples.LoadExample("button_split.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.ButtonSplitIconsExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Split Button with Icons",
+			Description: "Set the Icon prop to render an icon before the label in the main action segment.",
+			Code:        examples.LoadExample("button_split_icons.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.ButtonSplitSizesExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Split Button Sizes",
+			Description: "The Size on the Button prop applies to both segments; the dropdown toggle stays square at every size.",
+			Code:        examples.LoadExample("button_split_sizes.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = examples.ButtonCopyToClipboardExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -239,11 +317,11 @@ func Button() templ.Component {
 			Title:       "Copy to Clipboard",
 			Description: "Setting Copy turns the button into a copy-to-clipboard control: the value renders in mono with a duplicate icon that flips to a tick on success. CopyPrefixLength / CopySuffixLength truncate the displayed value; the full value is copied.",
 			Code:        examples.LoadExample("button_copy_to_clipboard.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -280,7 +358,7 @@ func Button() templ.Component {
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with button styles"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Variant", Type: "string", Default: "primary", Description: "Visual style: 'primary', 'secondary', 'danger', 'transparent', or 'inverse' (for dark surfaces)"},
-					{Name: "Size", Type: "string", Default: "md", Description: "Button size: 'sm', 'md' (default), 'lg', or 'icon'"},
+					{Name: "Size", Type: "string", Default: "md", Description: "Button size: 'sm', 'md' (default), 'lg', or the square icon sizes 'icon-xs' (16px), 'icon-sm' (24px), 'icon' (28px) and 'icon-lg' (34px, matches the default Input height)"},
 					{Name: "Type", Type: "string", Default: "", Description: "Button type: 'button', 'submit', or 'reset' (form buttons only)"},
 					{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission (form buttons only)"},
 					{Name: "Value", Type: "string", Default: "", Description: "Value attribute for form submission (form buttons only)"},
@@ -299,9 +377,33 @@ func Button() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = modules.APITable(modules.APITableProps{
+				Title:       "SplitButton",
+				Description: "Main action button with an attached chevron toggle that opens a dropdown of related actions. Children are the menu items — use MenuItem, exactly as within a Menu.",
+				Items: []modules.APITableItem{
+					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the element (auto-generated if empty)"},
+					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the wrapper styles"},
+					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+					{Name: "Label", Type: "string", Default: "", Description: "Text of the main action segment"},
+					{Name: "Icon", Type: "templ.Component", Default: "", Description: "Icon rendered before the label in the main action segment, e.g. icons.Download()"},
+					{Name: "Content", Type: "templ.Component", Default: "", Description: "Replaces Label with any component as the main action's content, e.g. an icon plus a <span> label"},
+					{Name: "Button", Type: "props.Button", Default: "", Description: "Configures the main action segment; Variant, Size, and Disabled also apply to the toggle, and Href makes the action an anchor"},
+					{Name: "ToggleLabel", Type: "string", Default: "More actions", Description: "Accessible name (aria-label) of the dropdown toggle"},
+					{Name: "RightAlign", Type: "bool", Default: "false", Description: "Aligns the dropdown panel with the right edge of the control"},
+					{Name: "DropUp", Type: "bool", Default: "false", Description: "Opens the panel above the control instead of below it"},
+					{Name: "MenuClass", Type: "string", Default: "", Description: "Additional CSS classes for the dropdown panel"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -228,30 +228,25 @@ templ Stress() {
 				// ---- Accordion ----
 				@popui.Section(props.Section{Title: "Accordion — constrained 320px", ID: "accordion"}) {
 					@stressBox() {
-						@popui.Accordion(props.Accordion{Open: true}) {
-							@popui.AccordionTrigger() {
-								{ stressName }
-							}
-							@popui.AccordionContent() {
-								<p>{ stressSentence }</p>
-								<p>{ stressToken }</p>
-							}
+						@popui.Accordion(props.Accordion{Title: stressName, Open: true}) {
+							<p>{ stressSentence }</p>
+							<p>{ stressToken }</p>
 						}
 					}
 				}
-				// ---- Description list ----
-				@popui.Section(props.Section{Title: "DescriptionList — plain + inline detail rows", ID: "dl"}) {
-					@popui.DescriptionList() {
-						@popui.DescriptionListItem(props.DescriptionListItem{Label: stressName, Value: stressToken})
-						@popui.DescriptionListItem(props.DescriptionListItem{
+				// ---- Details ----
+				@popui.Section(props.Section{Title: "Details — stacked + inline detail rows", ID: "dl"}) {
+					@popui.Details(props.Details{Layout: props.DetailsLayoutStacked}) {
+						@popui.Detail(props.Detail{Label: stressName, Value: stressToken})
+						@popui.Detail(props.Detail{
 							Label:  "Inline row",
 							Value:  stressToken,
 							Inline: true,
-							Actions: []props.DescriptionListAction{
+							Actions: []props.DetailAction{
 								{Copy: stressToken, Icon: icons.Duplicate()},
 							},
 						})
-						@popui.DescriptionListItem(props.DescriptionListItem{
+						@popui.Detail(props.Detail{
 							Label:  stressName,
 							Value:  stressSentence,
 							Inline: true,

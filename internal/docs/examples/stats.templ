@@ -1,0 +1,14 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ StatsExample() {
+	@popui.Stats(props.Stats{Align: props.AlignEnd}) {
+		@popui.Stat(props.Stat{Label: "Total payable", Value: "€ 1.210,00", Size: props.StatSizeLarge})
+		@popui.Stat(props.Stat{Label: "Net amount", Value: "€ 1.000,00"})
+		@popui.Stat(props.Stat{Label: "Tax", Value: "€ 210,00"})
+	}
+}

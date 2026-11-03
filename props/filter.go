@@ -21,7 +21,7 @@ type Filter struct {
 
 	// BaseURL is the form's hx-get target (typically the path the page
 	// lives at). Filter values become query params on this URL.
-	BaseURL string
+	BaseURL string `jsonschema:"format=uri-reference"`
 
 	// Target is the hx-target selector — the region to swap when the
 	// form submits. If empty, no hx-target is emitted (HTMX defaults to
@@ -62,7 +62,8 @@ const (
 	// FilterTypeCalendar renders a dual-month date-range calendar with a
 	// preset rail (this/last week, month, quarter + custom). The selected
 	// range is submitted as a single "YYYY-MM-DD..YYYY-MM-DD" value under
-	// Name. Operator: "is between".
+	// Name; an indefinite range (CalendarPresetIndefinite) submits
+	// "YYYY-MM-DD.." with an empty end. Operator: "is between".
 	FilterTypeCalendar string = "calendar"
 )
 

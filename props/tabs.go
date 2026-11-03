@@ -12,6 +12,9 @@ type TabItem struct {
 	// Count renders a counter after the label when greater than zero: "(n)" on
 	// the default variant, a small badge on the pill variant.
 	Count int
+	// Title is the trigger's accessible name and tooltip. Set it on an
+	// icon-only tab, where there is no Label to read out.
+	Title string
 }
 
 // Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks
@@ -31,7 +34,7 @@ type Tabs struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	Variant    string // "default" (underline) or "pill"
+	Variant    string `jsonschema:"enum=,enum=default,enum=pill"` // "default" (underline) or "pill"
 	// Model is the Alpine variable holding the active tab Value. Defaults to
 	// "tab" — match it on the child Tabs (their default is also "tab", so
 	// usually neither needs setting).

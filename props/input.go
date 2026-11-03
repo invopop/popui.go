@@ -24,7 +24,7 @@ type Input struct {
 	Tooltip Tooltip
 
 	// Set the height of the input field, see the InputSize constants.
-	Size string
+	Size string `jsonschema:"enum=,enum=sm,enum=lg"`
 
 	// Icon embeds the content inside the input field on the left side.
 	Icon templ.Component

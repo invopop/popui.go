@@ -47,7 +47,7 @@ type Tooltip struct {
 	Description string
 	// Image is the URL of an optional illustration shown above the title.
 	// The component applies the rounded corners and border to it.
-	Image string
+	Image string `jsonschema:"format=uri-reference"`
 	// Delay is how long the pointer must rest on the trigger, in
 	// milliseconds, before the card appears. Zero (the default) shows it
 	// immediately; set a few hundred for dense surfaces where a card on

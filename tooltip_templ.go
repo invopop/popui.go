@@ -251,7 +251,40 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				}
 			}
 			if p.Description != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "   <div class=\"text-sm text-foreground-inverse-secondary break-words [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs [&_code]:break-all\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "        ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 = []any{"text-sm text-foreground-inverse-secondary break-words",
+					"[&_p]:mb-1.5 [&_p:last-child]:mb-0",
+					"[&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_ul:last-child]:mb-0 [&_ol:last-child]:mb-0",
+					"[&_:is(h1,h2,h3,h4,h5,h6)]:font-semibold [&_:is(h1,h2,h3,h4,h5,h6)]:text-foreground-inverse [&_:is(h1,h2,h3,h4,h5,h6)]:text-sm [&_:is(h1,h2,h3,h4,h5,h6)]:mb-1 [&_:is(h1,h2,h3,h4,h5,h6)]:mt-1.5 [&_:is(h1,h2,h3,h4,h5,h6):first-child]:mt-0",
+					"[&_blockquote]:border-l-2 [&_blockquote]:border-border-inverse-secondary [&_blockquote]:pl-2 [&_blockquote]:mb-1.5 [&_blockquote:last-child]:mb-0",
+					"[&_hr]:border-border-inverse-secondary [&_hr]:my-1.5",
+					"[&_a]:underline [&_a]:text-foreground-inverse",
+					"[&_strong]:font-semibold [&_strong]:text-foreground-inverse",
+					"[&_em]:italic [&_del]:line-through",
+					"[&_code]:inline [&_code]:font-mono [&_code]:text-[11px] [&_code]:leading-4 [&_code]:text-foreground-inverse [&_code]:border-0 [&_code]:bg-background-selected-inverse [&_code]:rounded-sm [&_code]:px-1 [&_code]:py-px [&_code]:break-all",
+					"[&_pre]:block [&_pre]:border-0 [&_pre]:bg-background-selected-inverse [&_pre]:rounded-md [&_pre]:p-2 [&_pre]:mb-1.5 [&_pre:last-child]:mb-0 [&_pre]:overflow-x-auto [&_pre]:text-[11px] [&_pre]:leading-4 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:break-normal [&_pre_code]:whitespace-pre",
+				}
+				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var8).String())
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tooltip.templ`, Line: 1, Col: 0}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -259,12 +292,12 @@ func tooltipCard(p props.Tooltip) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -55,7 +55,7 @@ type InputFile struct {
 	Autofocus     bool
 	Required      bool
 	Disabled      bool
-	AvatarURL     string
+	AvatarURL     string `jsonschema:"format=uri-reference"`
 	AvatarAlt     string
 	Text          string
 	PreviewSquare bool
