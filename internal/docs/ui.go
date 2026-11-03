@@ -144,6 +144,12 @@ var groups = []*Group{
 				Template: components.Stats(),
 			},
 			{
+				Title:    "Charts",
+				Desc:     "Metrics, column charts, bar lists, segmented bars and sparklines, drawn on the server in the theme's colors.",
+				Path:     "charts",
+				Template: components.Chart(),
+			},
+			{
 				Title:    "Fieldset",
 				Desc:     "Groups form fields together with proper spacing and optional legend.",
 				Path:     "fieldset",
