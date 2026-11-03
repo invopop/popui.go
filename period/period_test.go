@@ -105,6 +105,8 @@ func TestSplit(t *testing.T) {
 		{"2020..2026", 31, 28, "2020-Q1", "2026-Q4"},
 		{"2020..2026", 12, 7, "2020", "2026"},
 		{All, 31, 0, "", ""},
+		{"90d", 0, 0, "", ""},
+		{"90d", -1, 0, "", ""},
 	}
 	for _, tt := range tests {
 		p, _ := Parse(tt.in)
@@ -129,6 +131,35 @@ func TestShort(t *testing.T) {
 		p, _ := Parse(in)
 		if got := p.Short(); got != want {
 			t.Errorf("Parse(%q).Short() = %q, want %q", in, got, want)
+		}
+	}
+}
+
+func TestRangeWithin(t *testing.T) {
+	today := time.Date(2026, 11, 2, 12, 0, 0, 0, time.UTC)
+	day := func(s string) time.Time { d, _ := time.Parse(time.DateOnly, s); return d }
+	tests := []struct {
+		window, outer string
+		from, to      string
+	}{
+		// 90 days to 2 November start on 5 August, a Wednesday in W32.
+		{"2026-W32", "90d", "2026-08-05", "2026-08-10"},
+		{"2026-W40", "90d", "2026-09-28", "2026-10-05"},
+		// The current week runs past today.
+		{"2026-W45", "90d", "2026-11-02", "2026-11-03"},
+		{"2026-W45", "all", "2026-11-02", "2026-11-09"},
+		{"2026-01", "2026-Q2", "", ""},
+	}
+	for _, tt := range tests {
+		w, _ := Parse(tt.window)
+		o, _ := Parse(tt.outer)
+		f, l := w.RangeWithin(o, today)
+		var wf, wl time.Time
+		if tt.from != "" {
+			wf, wl = day(tt.from), day(tt.to)
+		}
+		if !f.Equal(wf) || !l.Equal(wl) {
+			t.Errorf("%s.RangeWithin(%s) = %s, %s, want %s, %s", tt.window, tt.outer, f, l, wf, wl)
 		}
 	}
 }
