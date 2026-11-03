@@ -1,0 +1,35 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ AccordionIconExample() {
+	<div class="w-full space-y-2">
+		@popui.Accordion(props.Accordion{Title: "Generate PDF", Class: "rounded-xl", Icon: icons.Invoice(), Actions: accordionStepActions("21ms", false)}) {
+			@popui.Details() {
+				@popui.Detail(props.Detail{Label: "Action", Value: "pdf"})
+				@popui.Detail(props.Detail{Label: "Started at", Value: "2 Oct 2026, 10:51:22", Mono: true})
+			}
+		}
+		@popui.Accordion(props.Accordion{Title: "Send by email", Class: "rounded-xl", Icon: icons.Envelope(), Actions: accordionStepActions("", true)}) {
+			@popui.Description() {
+				Buttons and links among the actions work without opening or closing the accordion.
+			}
+		}
+	</div>
+}
+
+templ accordionStepActions(duration string, running bool) {
+	if running {
+		@popui.Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall}) {
+			Cancel
+		}
+		@popui.StatusBadge(props.StatusBadge{Status: "running"})
+	} else {
+		<span class="font-mono">{ duration }</span>
+		@popui.StatusBadge(props.StatusBadge{Status: "success"})
+	}
+}

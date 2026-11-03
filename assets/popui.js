@@ -543,6 +543,140 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   })
 
   // ------------------------------------------------------------------
+  // Tables with Columns
+  // ------------------------------------------------------------------
+  //
+  // The server renders these in their final shape: the column widths are
+  // the custom properties --popui-col-N on the table, and the frozen columns
+  // are listed in its data-frozen attribute. Everything here only updates
+  // those, and tells the page through events, so it is all delegated from
+  // the document and keeps working across htmx swaps.
+
+  // The table and the position (from 1) of a column's header cell.
+  function tableColumnOf(el) {
+    const th = el.closest('th')
+    const table = th && th.closest('table[data-popui-columns]')
+    if (!table) return null
+    return { table: table, th: th, index: th.cellIndex + 1 }
+  }
+
+  // Sets a column's width, no less than its minimum. The last column also
+  // fills the space the others leave, so it's held at that too: narrower
+  // wouldn't show, and the width reported would not be the one drawn.
+  function tableColumnWidth(col, width) {
+    let min = parseInt(col.th.dataset.minWidth, 10) || 0
+    if (!col.th.nextElementSibling && col.table.parentElement) {
+      const others = col.table.offsetWidth - col.th.offsetWidth
+      min = Math.max(min, col.table.parentElement.clientWidth - others)
+    }
+    width = Math.max(min, Math.round(width))
+    col.table.style.setProperty('--popui-col-' + col.index, width + 'px')
+    return width
+  }
+
+  function tableColumnResized(col, width) {
+    col.table.dispatchEvent(
+      new CustomEvent('popui-table-column-resize', {
+        bubbles: true,
+        detail: { key: col.th.dataset.key, width: width },
+      }),
+    )
+  }
+
+  // Resizes a column by dragging its handle. It starts from the width the
+  // column is drawn at, which for the last column can be more than its own
+  // as it takes any space left.
+  document.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0) return
+    const handle = e.target.closest('.popui-table-col-resizer')
+    const col = handle && tableColumnOf(handle)
+    if (!col) return
+    e.preventDefault()
+    const startX = e.clientX
+    const startWidth = col.th.getBoundingClientRect().width
+    let width = null
+    handle.setPointerCapture(e.pointerId)
+    handle.setAttribute('data-dragging', '')
+    document.body.style.cursor = 'col-resize'
+    function onMove(mv) {
+      width = tableColumnWidth(col, startWidth + mv.clientX - startX)
+    }
+    function onEnd() {
+      handle.removeEventListener('pointermove', onMove)
+      handle.removeEventListener('pointerup', onEnd)
+      handle.removeEventListener('pointercancel', onEnd)
+      handle.removeAttribute('data-dragging')
+      document.body.style.cursor = ''
+      if (width !== null && width !== Math.round(startWidth)) tableColumnResized(col, width)
+    }
+    handle.addEventListener('pointermove', onMove)
+    handle.addEventListener('pointerup', onEnd)
+    handle.addEventListener('pointercancel', onEnd)
+  })
+
+  // Resizes a column from the keyboard, with the arrow keys on its focused
+  // handle, 10px a press.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    if (!e.target.classList || !e.target.classList.contains('popui-table-col-resizer')) return
+    const col = tableColumnOf(e.target)
+    if (!col) return
+    e.preventDefault()
+    const from = col.th.getBoundingClientRect().width
+    const width = tableColumnWidth(col, from + (e.key === 'ArrowRight' ? 10 : -10))
+    if (width !== Math.round(from)) tableColumnResized(col, width)
+  })
+
+  // Freezes the first n columns of a table.
+  function freezeTableColumns(table, n) {
+    const ths = table.querySelectorAll(':scope > thead > tr > th')
+    const positions = []
+    const keys = []
+    ths.forEach(function (th, i) {
+      if (i < n) {
+        positions.push(i + 1)
+        keys.push(th.dataset.key)
+        th.setAttribute('data-frozen', '')
+      } else {
+        th.removeAttribute('data-frozen')
+      }
+    })
+    if (n > 0) {
+      table.setAttribute('data-frozen', positions.join(' '))
+      table.setAttribute('data-frozen-last', String(n))
+    } else {
+      table.removeAttribute('data-frozen')
+      table.removeAttribute('data-frozen-last')
+    }
+    table.dispatchEvent(
+      new CustomEvent('popui-table-columns-freeze', { bubbles: true, detail: { frozen: keys } }),
+    )
+  }
+
+  // The header menu's Freeze / Unfreeze item. Freezing a column freezes
+  // those before it, and unfreezing it unfreezes those after it.
+  document.addEventListener('click', function (e) {
+    const item = e.target.closest('[data-popui-table-freeze]')
+    const col = item && tableColumnOf(item)
+    if (!col) return
+    const popover = item.closest('[popover]')
+    if (popover) popover.hidePopover()
+    freezeTableColumns(col.table, col.th.hasAttribute('data-frozen') ? col.index - 1 : col.index)
+  })
+
+  // Right-clicking a header cell opens its menu, as clicking does.
+  document.addEventListener('contextmenu', function (e) {
+    const col = tableColumnOf(e.target)
+    if (!col) return
+    const trigger = col.th.querySelector('button[aria-haspopup="menu"]')
+    if (!trigger) return
+    e.preventDefault()
+    const popover = col.th.querySelector('[popover]')
+    if (popover && popover.matches(':popover-open')) return
+    trigger.click()
+  })
+
+  // ------------------------------------------------------------------
   // Card deck reordering
   // ------------------------------------------------------------------
 
@@ -736,6 +870,196 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     window.addEventListener('pointercancel', onUp)
   }
 
+
+  // ------------------------------------------------------------------
+  // Field selector helpers
+  // ------------------------------------------------------------------
+
+  // Splits text into matched and unmatched runs, so a field row can highlight
+  // the part of its path a query hit. Overlapping matches are merged rather
+  // than split twice. A term that only matched as a subsequence — `supname`
+  // in supplier.name — has each of its letters lit where they fell, so the
+  // row still shows why it is there.
+  function highlightParts(text, terms) {
+    const lower = text.toLowerCase()
+    const ranges = []
+
+    for (const term of terms) {
+      const needle = term.toLowerCase()
+      let from = lower.indexOf(needle)
+      if (from === -1) {
+        for (const at of subsequencePositions(needle, lower)) ranges.push([at, at + 1])
+        continue
+      }
+      while (from !== -1) {
+        ranges.push([from, from + needle.length])
+        from = lower.indexOf(needle, from + needle.length)
+      }
+    }
+
+    if (!ranges.length) return [{ m: false, t: text }]
+
+    ranges.sort((a, b) => a[0] - b[0])
+
+    const parts = []
+    let cursor = 0
+    for (const [start, end] of ranges) {
+      if (end <= cursor) continue
+      const from = Math.max(start, cursor)
+      if (from > cursor) parts.push({ m: false, t: text.slice(cursor, from) })
+      parts.push({ m: true, t: text.slice(from, end) })
+      cursor = end
+    }
+    if (cursor < text.length) parts.push({ m: false, t: text.slice(cursor) })
+
+    return parts
+  }
+
+  // Scores one field against the query's terms, or null when any term misses.
+  // Only the path is consulted: the description is prose, and matching it
+  // would surface fields for words that merely occur in their explanation.
+  // A term that is a whole segment of the path — `supplier` in
+  // supplier.name as much as `name` — outranks one that starts a segment,
+  // which outranks one found anywhere inside.
+  function scoreField(entry, terms) {
+    const path = entry.lower
+    const segments = entry.segments
+
+    // Shallow fields win ties: `code` should beat `lines[].item.code`.
+    let score = -entry.depth * 3
+
+    for (const term of terms) {
+      const index = path.indexOf(term)
+      if (index >= 0) {
+        score += 100 - Math.min(index, 60)
+        if (segments.includes(term)) score += 80
+        else if (segments.some((segment) => segment.startsWith(term))) score += 40
+        continue
+      }
+      if (isSubsequence(term, path)) {
+        score += 20
+        continue
+      }
+      return null
+    }
+
+    return score
+  }
+
+  const TYPE_ABBREVIATIONS = {
+    object: 'obj',
+    string: 'str',
+    array: 'arr',
+    integer: 'int',
+    number: 'num',
+    boolean: 'bool',
+  }
+
+  // Escapes text for x-html. Field names come from schemas, but a tree can
+  // be hand-written too.
+  function escapeHTML(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  }
+
+  // The positions in text at which the letters of needle fall when matched in
+  // order, greedily from the left — the match isSubsequence accepts. Empty
+  // when needle is not a subsequence.
+  function subsequencePositions(needle, text) {
+    const positions = []
+    let from = 0
+    for (const ch of needle) {
+      const at = text.indexOf(ch, from)
+      if (at === -1) return []
+      positions.push(at)
+      from = at + 1
+    }
+    return positions
+  }
+
+  // Reports whether the characters of term appear in text in order, which is
+  // what lets `supname` find `supplier.name`.
+  function isSubsequence(term, text) {
+    let cursor = 0
+    for (const character of text) {
+      if (character === term[cursor]) cursor++
+      if (cursor === term.length) return true
+    }
+    return false
+  }
+
+  // ------------------------------------------------------------------
+  // Template editor helpers (Contenteditable with a VariableFormat)
+  // ------------------------------------------------------------------
+
+  // Builds the regular expression that finds variables written in a format
+  // such as "{{.%s}}": everything in the format is literal except %s, which
+  // stands for the name.
+  function variablePattern(format, whole) {
+    const escaped = String(format).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const source = escaped.replace('%s', '(.+?)')
+    // The whole-string form is used with match(), which only reports the
+    // capture group — the variable's name — without the global flag.
+    return whole ? new RegExp('^' + source + '$') : new RegExp(source, 'g')
+  }
+
+  // The chip a variable is drawn as. data-variable carries the variable as
+  // written, so serialising the editor gives the template back verbatim.
+  function variableChipHTML(variable, name) {
+    return '<span class="tag" contenteditable="false" data-variable="' + escapeHTML(variable) + '">' + escapeHTML(name) + '</span>'
+  }
+
+  function variableChipNode(variable, name) {
+    const span = document.createElement('span')
+    span.className = 'tag'
+    span.setAttribute('contenteditable', 'false')
+    span.setAttribute('data-variable', variable)
+    span.textContent = name
+    return span
+  }
+
+  // Template text → editor HTML: variables become chips, newlines line breaks.
+  function renderTemplate(value, format) {
+    const pattern = variablePattern(format, false)
+    let html = ''
+    let last = 0
+    for (const m of String(value).matchAll(pattern)) {
+      html += escapeHTML(value.slice(last, m.index))
+      html += variableChipHTML(m[0], m[1])
+      last = m.index + m[0].length
+    }
+    html += escapeHTML(value.slice(last))
+    return html.replace(/\n/g, '<br>')
+  }
+
+  // Editor DOM → template text: chips give back the variable they carry,
+  // <br> and the <div>/<p> blocks browsers create on Enter become newlines,
+  // and the non-breaking spaces browsers put in contenteditables become
+  // ordinary ones.
+  function serializeTemplate(root) {
+    let out = ''
+    const walk = (node) => {
+      for (const child of node.childNodes) {
+        if (child.nodeType === 3) {
+          out += child.nodeValue.replace(/\u00a0/g, ' ')
+          continue
+        }
+        if (child.nodeType !== 1) continue
+        if (child.hasAttribute('data-variable')) {
+          out += child.getAttribute('data-variable')
+          continue
+        }
+        const tag = child.tagName
+        if (tag === 'BR') {
+          out += '\n'
+          continue
+        }
+        if ((tag === 'DIV' || tag === 'P') && out && !out.endsWith('\n')) out += '\n'
+        walk(child)
+      }
+    }
+    walk(root)
+    return out
+  }
 
   // ------------------------------------------------------------------
   // Alpine controllers
@@ -958,19 +1282,747 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
     }))
 
+
+    // Template editor: a Contenteditable that draws each variable as a chip and keeps the template text —
+    // variables written out — as its value. Rich view edits the chips in place; plain view edits the text.
+    // The characters that open a variable in a format: what is left of the
+    // part before %s once the name's own lead-in is trimmed — `{{` for
+    // {{.%s}}, `${` for ${%s}. Typing them in an editor is a request for a
+    // field.
+    function templateTrigger(format) {
+      const prefix = String(format || '').split('%s')[0]
+      return prefix.replace(/[\w.$\s]+$/, '')
+    }
+
+    // Where the caret of a textarea is on screen, measured off a hidden copy
+    // of its text up to the caret in the same metrics.
+    function textareaCaretRect(area) {
+      const style = getComputedStyle(area)
+      const mirror = document.createElement('div')
+      for (const prop of ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'paddingTop', 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderTopWidth', 'boxSizing', 'tabSize']) mirror.style[prop] = style[prop]
+      mirror.style.position = 'fixed'
+      mirror.style.top = '0'
+      mirror.style.left = '0'
+      mirror.style.visibility = 'hidden'
+      mirror.style.whiteSpace = 'pre-wrap'
+      mirror.style.overflowWrap = 'break-word'
+      mirror.style.width = area.clientWidth + 'px'
+      const at = area.selectionStart == null ? area.value.length : area.selectionStart
+      mirror.textContent = area.value.slice(0, at)
+      const marker = document.createElement('span')
+      marker.textContent = '\u200b'
+      mirror.appendChild(marker)
+      document.body.appendChild(mirror)
+      const m = marker.getBoundingClientRect()
+      const box = mirror.getBoundingClientRect()
+      const a = area.getBoundingClientRect()
+      mirror.remove()
+      const left = a.left + (m.left - box.left) - area.scrollLeft
+      const top = a.top + (m.top - box.top) - area.scrollTop
+      return { left, top, right: left, bottom: top + m.height, width: 0, height: m.height }
+    }
+
+    Alpine.data('templateEditor', (init) => ({
+      value: (init && init.value) || '',
+      format: (init && init.format) || '{{.%s}}',
+      view: (init && init.view) || 'rich',
+      // A read-only editor shows its template and is inserted into by
+      // nothing — a picker aimed at it is a no-op.
+      readonly: !!(init && init.readonly),
+      savedRange: null,
+
+      init() {
+        this.render()
+        // The chips are rebuilt from the value whenever the rich view comes
+        // back, since the plain view may have changed the text.
+        this.$watch('view', (view) => {
+          // The views trade places at the height the last one had, so the
+          // box does not jump: the rich one grows with its content while the
+          // textarea keeps whatever height it was given.
+          const from = view === 'rich' ? this.$refs.plain : this.$refs.editor
+          const to = view === 'rich' ? this.$refs.editor : this.$refs.plain
+          if (from && to && from.offsetHeight) to.style.minHeight = from.offsetHeight + 'px'
+          if (view === 'rich') this.$nextTick(() => this.render())
+        })
+        // Something else may set the value — an x-model from outside, a
+        // fetch — so a change that did not come from the editor redraws it.
+        this.$watch('value', (value) => { if (this.view === 'rich' && serializeTemplate(this.$refs.editor) !== value) this.render() })
+        // The caret is tracked while the editor has the selection: a picker
+        // that inserts into it takes focus first, and the insert has to go
+        // where the caret was.
+        this._onSelectionChange = () => {
+          const sel = window.getSelection()
+          if (!sel || !sel.rangeCount) return
+          const range = sel.getRangeAt(0)
+          if (this.$refs.editor && this.$refs.editor.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
+        }
+        document.addEventListener('selectionchange', this._onSelectionChange)
+      },
+      destroy() {
+        if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
+      },
+
+      render() {
+        if (this.$refs.editor) this.$refs.editor.innerHTML = renderTemplate(this.value, this.format)
+      },
+      // Called on every edit of the rich view. A variable typed out by hand
+      // — the closing brace just landed — is turned into a chip right away,
+      // which means redrawing the editor; the caret is carried across as an
+      // offset into the template text, which both the old and the new DOM
+      // serialise to.
+      sync() {
+        const editor = this.$refs.editor
+        this.value = serializeTemplate(editor)
+        if (this.hasTypedVariable(editor)) {
+          const offset = this.caretOffset(editor)
+          this.render()
+          if (offset !== null) this.setCaretOffset(editor, offset)
+        }
+        this.changed()
+        this.prompt()
+      },
+      // Typing the format's opening characters — {{ — asks for a field: a
+      // template-prompt event goes out from the root with where the caret
+      // is, and a FieldPicker aimed at this editor opens there. The picker
+      // replaces the characters with the pick.
+      prompt() {
+        const trigger = templateTrigger(this.format)
+        if (!trigger || this.readonly) return
+        const before = this.textBeforeCaret()
+        if (before === null || !before.endsWith(trigger)) return
+        const rect = this.caretRect()
+        if (!rect) return
+        this.$root.dispatchEvent(new CustomEvent('template-prompt', {
+          bubbles: true,
+          detail: { trigger, rect },
+        }))
+      },
+      // The template text up to the caret of whichever view is showing.
+      textBeforeCaret() {
+        if (this.view === 'plain') {
+          const area = this.$refs.plain
+          if (!area) return null
+          const at = area.selectionStart == null ? area.value.length : area.selectionStart
+          return area.value.slice(0, at)
+        }
+        const editor = this.$refs.editor
+        const sel = window.getSelection()
+        if (!editor || !sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        if (!editor.contains(range.startContainer)) return null
+        const before = document.createRange()
+        before.setStart(editor, 0)
+        before.setEnd(range.startContainer, range.startOffset)
+        return serializeTemplate(before.cloneContents())
+      },
+      // Where the caret is on screen, in viewport coordinates.
+      caretRect() {
+        if (this.view === 'plain') {
+          return this.$refs.plain ? textareaCaretRect(this.$refs.plain) : null
+        }
+        const sel = window.getSelection()
+        if (!sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        // A collapsed range often has no box of its own; the character just
+        // before it does.
+        if (range.collapsed && range.startContainer.nodeType === 3 && range.startOffset > 0) {
+          const probe = range.cloneRange()
+          probe.setStart(range.startContainer, range.startOffset - 1)
+          const r = probe.getBoundingClientRect()
+          if (r.height) return { left: r.right, top: r.top, right: r.right, bottom: r.bottom, width: 0, height: r.height }
+        }
+        const r = range.getBoundingClientRect()
+        if (r.height) return r
+        const e = this.$refs.editor.getBoundingClientRect()
+        return { left: e.left, top: e.top, right: e.left, bottom: e.top, width: 0, height: 0 }
+      },
+      // Gives the showing view the focus back, with the caret where it was.
+      refocus() {
+        if (this.view === 'plain') {
+          if (this.$refs.plain) this.$refs.plain.focus()
+          return
+        }
+        const editor = this.$refs.editor
+        if (!editor) return
+        editor.focus()
+        if (this.savedRange && editor.contains(this.savedRange.commonAncestorContainer)) {
+          const sel = window.getSelection()
+          sel.removeAllRanges()
+          sel.addRange(this.savedRange)
+        }
+      },
+      // Announces a change with an input event from the component root —
+      // after Alpine has carried the new value across an x-model on it, so
+      // a handler on the root reads page state that is already current.
+      // The views' own input events stop at them for the same reason: let
+      // through, they would reach the root a tick too early.
+      changed() {
+        this.$nextTick(() => this.$root.dispatchEvent(new Event('input', { bubbles: true })))
+      },
+      // Called on every edit of the plain view.
+      typed() {
+        this.changed()
+        this.prompt()
+      },
+      // Reports whether any text in the editor — outside the chips — is a
+      // complete variable.
+      hasTypedVariable(editor) {
+        editor.normalize()
+        const pattern = variablePattern(this.format, false)
+        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT)
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (node.parentElement && node.parentElement.closest('[data-variable]')) continue
+          pattern.lastIndex = 0
+          if (pattern.test(node.nodeValue)) return true
+        }
+        return false
+      },
+      // The caret's position as a number of characters into the template.
+      caretOffset(editor) {
+        const sel = window.getSelection()
+        if (!sel || !sel.rangeCount) return null
+        const range = sel.getRangeAt(0)
+        if (!editor.contains(range.startContainer)) return null
+        const before = document.createRange()
+        before.setStart(editor, 0)
+        before.setEnd(range.startContainer, range.startOffset)
+        return serializeTemplate(before.cloneContents()).length
+      },
+      // Puts the caret at a template offset in a freshly rendered editor,
+      // whose children are only text, chips and line breaks.
+      setCaretOffset(editor, offset) {
+        const place = (node, at) => {
+          const range = document.createRange()
+          range.setStart(node, at)
+          range.collapse(true)
+          const sel = window.getSelection()
+          sel.removeAllRanges()
+          sel.addRange(range)
+          this.savedRange = range.cloneRange()
+        }
+        let remaining = offset
+        const children = Array.from(editor.childNodes)
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i]
+          if (child.nodeType === 3) {
+            if (remaining <= child.nodeValue.length) return place(child, remaining)
+            remaining -= child.nodeValue.length
+            continue
+          }
+          if (child.nodeType !== 1) continue
+          const length = child.hasAttribute('data-variable') ? child.getAttribute('data-variable').length : child.tagName === 'BR' ? 1 : 0
+          if (remaining === 0) return place(editor, i)
+          if (remaining <= length) return place(editor, i + 1)
+          remaining -= length
+        }
+        place(editor, children.length)
+      },
+      isVariable(text) {
+        return variablePattern(this.format, true).test(text)
+      },
+      // Puts text at the caret of whichever view is showing. In the rich view
+      // a variable becomes a chip and anything else plain text; the caret
+      // ends up after it. This is what FieldPicker calls; replace is how
+      // many characters before the caret go first — the trigger the user
+      // typed to summon it.
+      insertText(text, replace = 0) {
+        if (this.readonly) return
+        if (this.view === 'plain') {
+          const area = this.$refs.plain
+          if (!area) return
+          let start = area.selectionStart == null ? area.value.length : area.selectionStart
+          const end = area.selectionEnd == null ? start : area.selectionEnd
+          start = Math.max(0, start - replace)
+          area.setRangeText(text, start, end, 'end')
+          area.focus()
+          this.value = area.value
+          this.changed()
+          return
+        }
+        const editor = this.$refs.editor
+        editor.focus()
+        const sel = window.getSelection()
+        let range = this.savedRange && editor.contains(this.savedRange.commonAncestorContainer) ? this.savedRange : null
+        if (!range) {
+          range = document.createRange()
+          range.selectNodeContents(editor)
+          range.collapse(false)
+        }
+        if (replace > 0 && range.startContainer.nodeType === 3) {
+          range.setStart(range.startContainer, Math.max(0, range.startOffset - replace))
+        }
+        range.deleteContents()
+        const match = String(text).match(variablePattern(this.format, true))
+        const node = match ? variableChipNode(text, match[1]) : document.createTextNode(text)
+        range.insertNode(node)
+        range.setStartAfter(node)
+        range.collapse(true)
+        sel.removeAllRanges()
+        sel.addRange(range)
+        this.savedRange = range.cloneRange()
+        this.sync()
+      },
+    }))
+
+    // Field picker over a nested data shape (usually a GOBL document): filters the whole tree by path, or browses it a level at a time.
+    // The tree arrives as JSON in a script element; paths are rebuilt here from each entry's parent index. Picking a field
+    // formats its path, inserts it at the caret of the target element when there is one, and raises field-select.
+    Alpine.data('fieldPicker', (init) => {
+      // The entries live here as plain objects as well as on the component,
+      // so the scorer reads them without going through Alpine's proxies —
+      // two thousand fields times a few properties per keystroke adds up.
+      const list = []
+      // rows is a getter, and the template asks for it once per row (every
+      // row's highlight compares against activeIndex, which reads rows), so
+      // without a cache one keystroke would rank the whole tree eighty times.
+      let rowsKey = null
+      let rowsCache = []
+      const isTextInput = (el) => !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')
+
+      return {
+        entries: [],
+        roots: [],
+        // Set while the panel was opened by the target editor's typed
+        // trigger rather than the button: what to replace with the pick,
+        // and where the caret was.
+        prompt: null,
+        value: (init && init.value) || '',
+        name: (init && init.name) || '',
+        // What a picked path is wrapped in: %s stands for the path. A field
+        // with a Value of its own skips it.
+        format: (init && init.format) || '%s',
+        // Selector of the element a pick is inserted into, if any.
+        target: (init && init.target) || '',
+        disabled: !!(init && init.disabled),
+        // Browse-only objects and arrays: they open but are not picked.
+        scalarsOnly: !!(init && init.scalarsOnly),
+        query: '',
+        open: false,
+        // The objects drilled into, root first, as entry indices.
+        trail: [],
+        // The keyboard highlight follows a path rather than a row index, so it
+        // survives the list changing underneath it.
+        activePath: '',
+        // The last caret position seen inside a contenteditable target. The
+        // filter box takes focus when the panel opens, which moves the
+        // document selection away from the target, so it is tracked while
+        // the target still has it.
+        savedRange: null,
+
+        init() {
+          const el = init && init.source ? document.getElementById(init.source) : null
+          let raw = []
+          if (el) {
+            try { raw = JSON.parse(el.textContent) || [] } catch (e) { raw = [] }
+          } else if (init && Array.isArray(init.fields)) {
+            raw = init.fields
+          }
+          list.length = 0
+          raw.forEach((e) => list.push({
+            name: e.n || '',
+            type: e.y || '',
+            description: e.d || '',
+            own: e.v || '',
+            icon: e.i || '',
+            parent: typeof e.p === 'number' ? e.p : -1,
+            array: !!(e.f & 1),
+            always: !!(e.f & 2),
+            children: !!(e.f & 4),
+            group: !!(e.f & 8),
+            divider: !!(e.f & 16),
+            path: '',
+            // The path the field emits: its path without the groups on the
+            // way, since a group is a heading over fields, not one of them.
+            key: '',
+            lower: '',
+            depth: 0,
+            kids: [],
+          }))
+          list.forEach((entry, i) => {
+            const parent = entry.parent >= 0 ? list[entry.parent] : null
+            entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            const base = parent ? parent.key : ''
+            entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            entry.lower = entry.path.toLowerCase()
+            entry.segments = entry.lower.split('.').map((segment) => segment.replace(/\[\]$/, ''))
+            entry.depth = parent ? parent.depth + 1 : 1
+            if (parent) parent.kids.push(i)
+            else this.roots.push(i)
+          })
+          this.entries = list
+          rowsKey = null
+
+          if (this.target) {
+            this._onSelectionChange = () => {
+              const target = this.targetEl()
+              if (!target || isTextInput(target)) return
+              const sel = window.getSelection()
+              if (!sel || !sel.rangeCount) return
+              const range = sel.getRangeAt(0)
+              if (target.contains(range.commonAncestorContainer)) this.savedRange = range.cloneRange()
+            }
+            document.addEventListener('selectionchange', this._onSelectionChange)
+            // A template editor that is the target announces the format's
+            // opening characters being typed; the picker opens at the caret.
+            this._onPrompt = (e) => {
+              const target = this.targetEl()
+              if (!target || !e.target || !e.target.contains(target)) return
+              this.openAt(e.detail)
+            }
+            document.addEventListener('template-prompt', this._onPrompt)
+          }
+        },
+        destroy() {
+          if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)
+          if (this._onPrompt) document.removeEventListener('template-prompt', this._onPrompt)
+        },
+        // Opens the panel at a point in the viewport rather than under the
+        // trigger: where the caret was when the editor asked for a field.
+        // The characters typed to ask are remembered, so the pick replaces
+        // them.
+        openAt(prompt) {
+          if (this.disabled || this.open || !prompt) return
+          this.prompt = { replace: prompt.trigger ? prompt.trigger.length : 0, rect: prompt.rect }
+          this.show()
+        },
+        // Positions the open panel at the prompt's caret: below it when there
+        // is room for the panel's floor, above otherwise, and kept inside
+        // the viewport sideways.
+        placeAtPrompt() {
+          const panel = this.$refs.panel
+          const rect = this.prompt && this.prompt.rect
+          if (!rect) return
+          const gap = 4
+          const margin = 12
+          panel.style.position = 'fixed'
+          const width = panel.offsetWidth
+          panel.style.left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin)) + 'px'
+          const below = window.innerHeight - rect.bottom - gap - margin
+          const above = rect.top - gap - margin
+          panel.style.minHeight = ''
+          const floor = parseFloat(getComputedStyle(panel).minHeight) || 0
+          const room = below >= floor || below >= above ? below : above
+          if (room === below) {
+            panel.style.top = rect.bottom + gap + 'px'
+            panel.style.bottom = 'auto'
+          } else {
+            panel.style.top = 'auto'
+            panel.style.bottom = window.innerHeight - rect.top + gap + 'px'
+          }
+          panel.style.maxHeight = room + 'px'
+          // The stylesheet's floor would win over a smaller max-height, so
+          // when neither side has that much room the floor gives way too.
+          if (room < floor) panel.style.minHeight = room + 'px'
+        },
+        // Returns the panel to the trigger-anchored position the stylesheet
+        // gives it.
+        unplace() {
+          const panel = this.$refs.panel
+          panel.style.position = ''
+          panel.style.left = ''
+          panel.style.top = ''
+          panel.style.bottom = ''
+          panel.style.maxHeight = ''
+          panel.style.minHeight = ''
+        },
+
+        get searching() {
+          return this.query.trim().length > 0
+        },
+        // The entries of the level currently browsed.
+        get level() {
+          if (!this.trail.length) return this.roots
+          return this.entries[this.trail[this.trail.length - 1]].kids
+        },
+        get rows() {
+          const key = this.query + '\n' + this.trail.join(',')
+          if (key !== rowsKey) {
+            rowsKey = key
+            rowsCache = this.searching ? this.match(this.query) : this.level.filter((i) => this.shown(i)).map((i) => ({ i, parts: null }))
+          }
+          return rowsCache
+        },
+        // With scalarsOnly, a non-scalar with nothing underneath — an array
+        // of strings, a free-form map — can be neither picked nor opened, so
+        // it is left out rather than shown disabled.
+        shown(i) {
+          return this.pickable(i) || this.entries[i].kids.length > 0
+        },
+        get activeIndex() {
+          const i = this.rows.findIndex((row) => this.entries[row.i].path === this.activePath)
+          return i === -1 ? 0 : i
+        },
+        get activeId() {
+          if (!this.open || !this.rows.length) return null
+          return this.$id('field-picker') + '-opt-' + this.activeIndex
+        },
+
+        // The value a field emits: its own override when it has one, otherwise
+        // its path wrapped in the format. Not named valueOf: Alpine resolves an
+        // expression's names against a proxy that inherits Object.prototype,
+        // so a method by that name is shadowed and silently returns the scope.
+        emitted(i) {
+          const entry = this.entries[i]
+          if (!entry) return ''
+          if (entry.own) return entry.own
+          return this.format.includes('%s') ? this.format.replace('%s', entry.key) : this.format + entry.key
+        },
+        isSelected(i) {
+          return !!this.value && this.emitted(i) === this.value
+        },
+        // Whether picking the field is allowed at all: a group is only ever
+        // opened, and with scalarsOnly so is an object or array.
+        pickable(i) {
+          const entry = this.entries[i]
+          if (!entry || entry.group) return false
+          return !this.scalarsOnly || (entry.type !== 'object' && entry.type !== 'array')
+        },
+        typeLabel(i) {
+          const entry = this.entries[i]
+          if (!entry || entry.group) return ''
+          return TYPE_ABBREVIATIONS[entry.type] || entry.type
+        },
+        // The icon a row's type is drawn with: the JSON Schema types fold to
+        // five, and a field with no type is shown as a string. A field with
+        // an icon of its own draws that instead.
+        typeKind(i) {
+          const entry = this.entries[i]
+          if (!entry || entry.group || entry.icon) return ''
+          const type = entry.type
+          if (type === 'integer' || type === 'number') return 'number'
+          if (type === 'object' || type === 'array' || type === 'boolean') return type
+          return 'string'
+        },
+        // The row's path as escaped HTML: the whole path while browsing, and
+        // while filtering the runs a term did not hit dimmed, so the ones it
+        // did still read at full strength.
+        labelHTML(row) {
+          const entry = this.entries[row.i]
+          if (!row.parts) return escapeHTML(entry.name + (entry.array ? '[]' : ''))
+          let html = ''
+          for (const part of row.parts) {
+            html += part.m ? escapeHTML(part.t) : '<span class="text-foreground-default-secondary">' + escapeHTML(part.t) + '</span>'
+          }
+          return html
+        },
+
+        // Ranks every field against the query. Terms are matched against the
+        // whole path, so `sup name` and `supplier.name` find the same field.
+        match(query, limit = 80) {
+          const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
+          if (!terms.length) return []
+
+          const found = []
+          for (let i = 0; i < list.length; i++) {
+            if (!this.shown(i)) continue
+            const score = scoreField(list[i], terms)
+            if (score === null) continue
+            found.push({ i, score })
+          }
+
+          found.sort((a, b) => {
+            const x = list[a.i]
+            const y = list[b.i]
+            return b.score - a.score || x.path.length - y.path.length || (x.path < y.path ? -1 : x.path > y.path ? 1 : 0)
+          })
+
+          // Only the rows that are rendered are worth highlighting.
+          return found.slice(0, limit).map((row) => ({ i: row.i, parts: highlightParts(list[row.i].path, terms) }))
+        },
+
+        move(delta) {
+          if (!this.rows.length) return
+          const next = (this.activeIndex + delta + this.rows.length) % this.rows.length
+          this.activePath = this.entries[this.rows[next].i].path
+          this.scrollActiveIntoView()
+        },
+        drill(i) {
+          const entry = this.entries[i]
+          if (!entry || !entry.kids.length) return
+          this.trail = [...this.trail, i]
+          this.query = ''
+          this.activePath = ''
+        },
+        back() {
+          if (!this.trail.length) return
+          const parent = this.trail[this.trail.length - 1]
+          this.trail = this.trail.slice(0, -1)
+          this.activePath = this.entries[parent].path
+        },
+        select(i) {
+          const entry = this.entries[i]
+          if (!entry) return
+          // A browse-only row's only action is to open it.
+          if (!this.pickable(i)) {
+            if (entry.kids.length) this.drill(i)
+            return
+          }
+          this.value = this.emitted(i)
+          const target = this.targetEl()
+          if (target) this.insert(this.value, target)
+          this.$root.dispatchEvent(new CustomEvent('field-select', {
+            bubbles: true,
+            detail: { path: entry.path, value: this.value, type: entry.type, inserted: !!target },
+          }))
+          this.$refs.panel.hidePopover()
+        },
+        targetEl() {
+          if (!this.target) return null
+          try { return document.querySelector(this.target) } catch (e) { return null }
+        },
+        // Puts text at the caret of an input, textarea or contenteditable
+        // element, replacing any selection there, and leaves the caret after
+        // it. The caret is where it was when the target last had focus:
+        // inputs remember that themselves, a contenteditable is tracked via
+        // savedRange, and with nothing to go on the text goes at the end.
+        insert(text, target = this.targetEl()) {
+          if (!target) return
+          // A template editor draws variables as chips, so it does the
+          // inserting itself.
+          if (target.hasAttribute('data-template-editor') && window.Alpine) {
+            const editor = window.Alpine.$data(target)
+            if (editor && typeof editor.insertText === 'function') {
+              editor.insertText(text, this.prompt ? this.prompt.replace : 0)
+              return
+            }
+          }
+          if (isTextInput(target)) {
+            const start = target.selectionStart == null ? target.value.length : target.selectionStart
+            const end = target.selectionEnd == null ? start : target.selectionEnd
+            target.setRangeText(text, start, end, 'end')
+            target.focus()
+            target.dispatchEvent(new Event('input', { bubbles: true }))
+            return
+          }
+          target.focus()
+          const sel = window.getSelection()
+          let range = this.savedRange && target.contains(this.savedRange.commonAncestorContainer) ? this.savedRange : null
+          if (!range) {
+            range = document.createRange()
+            range.selectNodeContents(target)
+            range.collapse(false)
+          }
+          sel.removeAllRanges()
+          sel.addRange(range)
+          // insertText keeps the edit on the undo stack and fires the input
+          // events itself; the manual path is for engines without it.
+          let done = false
+          try { done = document.execCommand('insertText', false, text) } catch (e) { done = false }
+          if (!done) {
+            range.deleteContents()
+            const node = document.createTextNode(text)
+            range.insertNode(node)
+            range.setStartAfter(node)
+            range.collapse(true)
+            sel.removeAllRanges()
+            sel.addRange(range)
+            target.dispatchEvent(new Event('input', { bubbles: true }))
+          }
+          if (sel.rangeCount) this.savedRange = sel.getRangeAt(0).cloneRange()
+        },
+        scrollActiveIntoView() {
+          this.$nextTick(() => {
+            const el = document.getElementById(this.activeId)
+            if (el) el.scrollIntoView({ block: 'nearest' })
+          })
+        },
+        // Opens where the current value lives rather than at the root.
+        openAtValue() {
+          this.trail = []
+          this.activePath = ''
+          if (!this.value) return
+          const found = this.entries.findIndex((_, i) => this.isSelected(i))
+          if (found === -1) return
+          this.activePath = this.entries[found].path
+          const trail = []
+          for (let i = this.entries[found].parent; i >= 0; i = this.entries[i].parent) trail.unshift(i)
+          this.trail = trail
+        },
+        show() {
+          if (this.disabled || this.open) return
+          this.$refs.panel.showPopover()
+        },
+
+        onKeydown(e) {
+          // Buttons inside the panel — the crumbs, Clear — keep their own Enter.
+          if (e.key === 'Enter' && e.target && e.target.tagName === 'BUTTON' && this.$refs.panel.contains(e.target)) return
+          if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            if (!this.open) this.show()
+            else this.move(1)
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            if (!this.open) this.show()
+            else this.move(-1)
+          } else if (e.key === 'Enter') {
+            if (!this.open) return
+            e.preventDefault()
+            const row = this.rows[this.activeIndex]
+            if (row) this.select(row.i)
+          } else if (e.key === 'Escape') {
+            if (!this.open) return
+            e.preventDefault()
+            // Escape clears the filter first, so a mistyped query does not cost
+            // the whole dropdown.
+            if (this.query) this.query = ''
+            else this.$refs.panel.hidePopover()
+          } else if (this.open && !this.searching && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+            // Left and Right move the caret while there is something to filter.
+            e.preventDefault()
+            const row = this.rows[this.activeIndex]
+            if (e.key === 'ArrowRight') { if (row) this.drill(row.i) } else this.back()
+          }
+        },
+        onToggle(e) {
+          if (e.newState === 'open') {
+            this.open = true
+            // At least as wide as the trigger, so a full-width field gets a
+            // panel to match. The stylesheet sets the floor for a button, and
+            // an inline width would override it, so only a wider trigger sets
+            // one.
+            const trigger = this.$refs.field.firstElementChild || this.$refs.field
+            const panel = this.$refs.panel
+            panel.style.minWidth = ''
+            const floor = parseFloat(getComputedStyle(panel).minWidth) || 0
+            if (trigger.offsetWidth > floor) panel.style.minWidth = trigger.offsetWidth + 'px'
+            if (this.prompt) this.placeAtPrompt()
+            this.query = ''
+            this.openAtValue()
+            this.$nextTick(() => { if (this.$refs.search) this.$refs.search.focus() })
+          } else {
+            this.open = false
+            this.query = ''
+            if (this.prompt) {
+              // Opened from the editor, so the editor gets the focus back,
+              // whether a field was picked or the panel was dismissed.
+              this.unplace()
+              this.prompt = null
+              const target = this.targetEl()
+              const editor = target && target.hasAttribute('data-template-editor') && window.Alpine ? window.Alpine.$data(target) : null
+              if (editor && typeof editor.refocus === 'function') editor.refocus()
+            }
+          }
+        },
+      }
+    })
+
     // Dual-month date-range picker with a preset rail and a Cancel / Confirm footer; only Confirm applies the pending selection.
     // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.
+    // An indefinite range is a start date with no end (to stays null, indefinite is true): the grid paints every day
+    // after the start, a day click moves the start, and the value submits as "from..". Seeding from without to starts indefinite.
     Alpine.data('rangeCalendar', (init) => ({
       name: (init && init.name) || '',
       single: !!(init && init.single),
       open: false,
-      preset: 'custom',
+      preset: (init && init.from && !init.to && !init.single) ? 'indefinite' : 'custom',
+      indefinite: !!(init && init.from && !init.to && !init.single),
       // Pending selection edited by the grids.
       from: (init && init.from) || null,
       to: (init && init.to) || null,
       // Committed selection exposed as rangeValue and summary.
       committedFrom: (init && init.from) || null,
       committedTo: (init && init.to) || null,
+      committedIndefinite: !!(init && init.from && !init.to && !init.single),
       viewY: 2000,
       viewM: 0,
       dows: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
@@ -1045,9 +2097,11 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
       // Returns a day's range state, with outside-month days always unstyled.
       // A one-day range (from === to) reports 'single' so it rounds on both sides.
+      // An indefinite range has no end: every day after the start is 'middle'.
       dayState(iso, outside) {
         if (outside) return null
         if (!this.from) return null
+        if (this.indefinite) return iso === this.from ? 'start' : (iso > this.from ? 'middle' : null)
         if (!this.to) return iso === this.from ? 'start' : null
         if (iso === this.from) return this.to === this.from ? 'single' : 'start'
         if (iso === this.to) return 'end'
@@ -1055,11 +2109,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return null
       },
       // Starts a new range, moves the start when clicking before it, or completes
-      // the range. In single mode a click just selects that day (from = to).
+      // the range. In single mode a click just selects that day (from = to);
+      // in indefinite mode it moves the open-ended start.
       selectDay(iso, outside) {
         if (outside) return
         if (this.single) {
           this.from = iso; this.to = iso
+          return
+        }
+        if (this.indefinite) {
+          this.from = iso; this.to = null
           return
         }
         if (!this.from || (this.from && this.to)) {
@@ -1070,26 +2129,48 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         if (iso < this.from) { this.from = iso }
         else { this.to = iso }
       },
-      // Applies a preset's date range and jumps the view to it.
+      // Applies a preset's date range and jumps the view to it. "This"/"last"
+      // presets are calendar-aligned; "next" presets roll from today to the same
+      // day N months out (17 Sep → 17 Oct). Indefinite keeps a half-picked start
+      // (a day clicked with no end yet), otherwise starts today, and has no end.
       setPreset(key) {
         this.preset = key
+        this.indefinite = key === 'indefinite'
+        const t = new Date(); t.setHours(0, 0, 0, 0)
         if (key === 'custom') {
-          const c = new Date(); c.setHours(0, 0, 0, 0)
-          this.from = this.iso(c); this.to = null
+          this.from = this.iso(t); this.to = null
           return
         }
-        const t = new Date(); t.setHours(0, 0, 0, 0)
+        if (key === 'indefinite') {
+          this.from = (this.from && !this.to) ? this.from : this.iso(t); this.to = null
+          const f = this.parse(this.from)
+          this.viewY = f.getFullYear(); this.viewM = f.getMonth()
+          return
+        }
         const sow = (d) => { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); return x }
+        const y = t.getFullYear(), m = t.getMonth()
+        // Whole calendar months: from the first of month m (0-based, may underflow the year) for n months.
+        const months = (mm, n) => { from = new Date(y, mm, 1); to = new Date(y, mm + n, 0) }
+        // Rolling from today to the same day n months ahead (clamped to that month's last day).
+        const ahead = (n) => { from = new Date(t); to = new Date(y, m + n, Math.min(t.getDate(), new Date(y, m + n + 1, 0).getDate())) }
         let from, to
         if (key === 'thisWeek') { from = sow(t); to = new Date(from); to.setDate(to.getDate() + 6) }
         else if (key === 'lastWeek') { to = sow(t); to.setDate(to.getDate() - 1); from = new Date(to); from.setDate(from.getDate() - 6) }
-        else if (key === 'thisMonth') { from = new Date(t.getFullYear(), t.getMonth(), 1); to = new Date(t.getFullYear(), t.getMonth() + 1, 0) }
-        else if (key === 'lastMonth') { from = new Date(t.getFullYear(), t.getMonth() - 1, 1); to = new Date(t.getFullYear(), t.getMonth(), 0) }
-        else if (key === 'thisQuarter') { const q = Math.floor(t.getMonth() / 3); from = new Date(t.getFullYear(), q * 3, 1); to = new Date(t.getFullYear(), q * 3 + 3, 0) }
-        else if (key === 'lastQuarter') { let q = Math.floor(t.getMonth() / 3) - 1, y = t.getFullYear(); if (q < 0) { q = 3; y-- } from = new Date(y, q * 3, 1); to = new Date(y, q * 3 + 3, 0) }
+        else if (key === 'thisMonth') months(m, 1)
+        else if (key === 'lastMonth') months(m - 1, 1)
+        else if (key === 'thisQuarter') months(Math.floor(m / 3) * 3, 3)
+        else if (key === 'lastQuarter') months(Math.floor(m / 3) * 3 - 3, 3)
+        else if (key === 'nextMonth') ahead(1)
+        else if (key === 'next3Months') ahead(3)
+        else if (key === 'next6Months') ahead(6)
+        else if (key === 'next12Months') ahead(12)
         else return
         this.from = this.iso(from); this.to = this.iso(to)
         this.viewY = from.getFullYear(); this.viewM = from.getMonth()
+      },
+      // Confirm needs a complete range, or just a start when the range is indefinite.
+      get canConfirm() {
+        return this.indefinite ? !!this.from : !!this.to
       },
       // Formats an ISO date as dd/mm/yyyy.
       fmt(iso) {
@@ -1097,13 +2178,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         return p[2] + '/' + p[1] + '/' + p[0]
       },
       get summary() {
+        if (this.committedFrom && this.committedIndefinite) return this.fmt(this.committedFrom) + ' → ∞'
         if (this.committedFrom && this.committedTo) {
           if (this.single) return this.fmt(this.committedFrom)
           return this.fmt(this.committedFrom) + ' → ' + this.fmt(this.committedTo)
         }
         return ''
       },
+      // "from..to" for a range, "from.." (empty end) for an indefinite one, "from" for a single date.
       get rangeValue() {
+        if (this.committedFrom && this.committedIndefinite) return this.committedFrom + '..'
         if (this.committedFrom && this.committedTo) {
           if (this.single) return this.committedFrom
           return this.committedFrom + '..' + this.committedTo
@@ -1120,13 +2204,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       clear() {
         this.from = null; this.to = null
         this.committedFrom = null; this.committedTo = null
+        this.indefinite = false; this.committedIndefinite = false
         this.preset = 'custom'
       },
       // Commits the pending range, closes the panel, announces it, and submits the enclosing form.
       confirm() {
-        if (!this.to) return
+        if (!this.canConfirm) return
         this.committedFrom = this.from
         this.committedTo = this.to
+        this.committedIndefinite = this.indefinite
         this.open = false
         if (this.$root) this.$root.dispatchEvent(new CustomEvent('popui-cal-confirm', { bubbles: true }))
         this._submit()
@@ -1136,6 +2222,7 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         const hadCommitted = !!(this.committedFrom || this.committedTo)
         this.from = null; this.to = null
         this.committedFrom = null; this.committedTo = null
+        this.indefinite = false; this.committedIndefinite = false
         this.preset = 'custom'
         this.open = false
         if (this.$root) this.$root.dispatchEvent(new CustomEvent('popui-cal-cancel', { bubbles: true }))
@@ -1146,10 +2233,373 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       },
     }))
 
+    // Period select: a window of time — rolling days, every time, or a run of days, weeks, months, quarters or
+    // years — kept as the period package's string ("365d", "2026-Q4", "2026-01..2026-03"). Windows of each
+    // unit are counted from the Unix epoch, so a run is two numbers and stepping through them is arithmetic.
+    const periodMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const periodMod = (a, b) => ((a % b) + b) % b
+    const periodPad = (n, w = 2) => String(n).padStart(w, '0')
+    const periodDay = (y, m, d) => Math.floor(Date.UTC(y, m - 1, d) / 86400000)
+    function periodDate(n) {
+      const t = new Date(n * 86400000)
+      return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() }
+    }
+    // ISO weeks: the epoch was a Thursday, so day -3 starts week 0, and a week's year is its Thursday's.
+    const periodWeekOf = (n) => Math.floor((n + 3) / 7)
+    function periodIsoWeek(w) {
+      const th = periodDate(w * 7)
+      return { y: th.y, w: Math.floor((w * 7 - periodDay(th.y, 1, 1)) / 7) + 1 }
+    }
+    // Each unit's first day of window n, and the window day n is in.
+    const periodUnits = {
+      day: { start: (n) => n, of: (d) => d },
+      week: { start: (n) => n * 7 - 3, of: periodWeekOf },
+      month: {
+        start: (n) => periodDay(Math.floor(n / 12), periodMod(n, 12) + 1, 1),
+        of: (d) => { const t = periodDate(d); return t.y * 12 + t.m - 1 },
+      },
+      quarter: {
+        start: (n) => periodDay(Math.floor(n / 4), periodMod(n, 4) * 3 + 1, 1),
+        of: (d) => { const t = periodDate(d); return t.y * 4 + Math.floor((t.m - 1) / 3) },
+      },
+      year: { start: (n) => periodDay(n, 1, 1), of: (d) => periodDate(d).y },
+    }
+    function periodKey(unit, n) {
+      switch (unit) {
+        case 'day': { const t = periodDate(n); return periodPad(t.y, 4) + '-' + periodPad(t.m) + '-' + periodPad(t.d) }
+        case 'week': { const t = periodIsoWeek(n); return periodPad(t.y, 4) + '-W' + periodPad(t.w) }
+        case 'month': return periodPad(Math.floor(n / 12), 4) + '-' + periodPad(periodMod(n, 12) + 1)
+        case 'quarter': return periodPad(Math.floor(n / 4), 4) + '-Q' + (periodMod(n, 4) + 1)
+      }
+      return periodPad(n, 4)
+    }
+    function periodWindow(s) {
+      let m
+      if ((m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s))) return { unit: 'day', n: periodDay(+m[1], +m[2], +m[3]) }
+      if ((m = /^(\d{4})-W(\d{2})$/.exec(s))) return { unit: 'week', n: periodWeekOf(periodDay(+m[1], 1, 4)) + +m[2] - 1 }
+      if ((m = /^(\d{4})-(\d{2})$/.exec(s))) return { unit: 'month', n: +m[1] * 12 + +m[2] - 1 }
+      if ((m = /^(\d{4})-Q([1-4])$/.exec(s))) return { unit: 'quarter', n: +m[1] * 4 + +m[2] - 1 }
+      if ((m = /^(\d{4})$/.exec(s))) return { unit: 'year', n: +m[1] }
+      return null
+    }
+    function periodParse(s) {
+      s = String(s || '')
+      if (s === 'all') return { all: true }
+      const m = /^([1-9]\d{0,4})d$/.exec(s)
+      if (m) return { days: +m[1] }
+      const [a, b = a] = s.split('..')
+      const x = periodWindow(a)
+      const y = periodWindow(b)
+      if (!x || !y || x.unit !== y.unit) return null
+      return { unit: x.unit, from: Math.min(x.n, y.n), to: Math.max(x.n, y.n) }
+    }
+    function periodString(p) {
+      if (p.all) return 'all'
+      if (p.days) return p.days + 'd'
+      const a = periodKey(p.unit, p.from)
+      return p.from === p.to ? a : a + '..' + periodKey(p.unit, p.to)
+    }
+    function periodYear(unit, n) {
+      switch (unit) {
+        case 'day': return periodDate(n).y
+        case 'week': return periodIsoWeek(n).y
+        case 'month': return Math.floor(n / 12)
+        case 'quarter': return Math.floor(n / 4)
+      }
+      return n
+    }
+    // Names window n, with its year or without, as the period package does.
+    function periodName(p, n, withYear) {
+      const y = withYear ? ' ' + periodYear(p.unit, n) : ''
+      switch (p.unit) {
+        case 'day': { const t = periodDate(n); return t.d + ' ' + periodMonths[t.m - 1].slice(0, 3) + y }
+        case 'week': return 'Week ' + periodIsoWeek(n).w + (withYear ? ',' + y : '')
+        case 'month': {
+          const name = periodMonths[periodMod(n, 12)]
+          return (withYear && p.from === p.to ? name : name.slice(0, 3)) + y
+        }
+        case 'quarter': return 'Q' + (periodMod(n, 4) + 1) + y
+      }
+      return String(n)
+    }
+    function periodLabel(p) {
+      if (p.all) return 'All time'
+      if (p.days === 1) return 'Today'
+      if (p.days) return 'Last ' + p.days + ' days'
+      if (p.from === p.to) return periodName(p, p.from, true)
+      if (periodYear(p.unit, p.from) !== periodYear(p.unit, p.to) || p.unit === 'year') {
+        return periodName(p, p.from, true) + ' – ' + periodName(p, p.to, true)
+      }
+      if (p.unit === 'week') {
+        return 'Weeks ' + periodIsoWeek(p.from).w + ' – ' + periodIsoWeek(p.to).w + ', ' + periodIsoWeek(p.to).y
+      }
+      return periodName(p, p.from, false) + ' – ' + periodName(p, p.to, true)
+    }
+    // Names the days from first to last, as "26 Oct – 1 Nov 2026".
+    function periodDates(first, last) {
+      const a = periodDate(first)
+      const b = periodDate(last)
+      const f = (t, y) => t.d + ' ' + periodMonths[t.m - 1].slice(0, 3) + (y ? ' ' + t.y : '')
+      return first === last ? f(a, true) : f(a, a.y !== b.y) + ' – ' + f(b, true)
+    }
+    // Moves a period by n of its lengths; rolling days become the run of days before or after them.
+    function periodShift(p, n, today) {
+      if (p.all) return p
+      if (p.days) return { unit: 'day', from: today - p.days + 1 + n * p.days, to: today + n * p.days }
+      const span = p.to - p.from + 1
+      return { unit: p.unit, from: p.from + n * span, to: p.to + n * span }
+    }
+
+    Alpine.data('periodSelect', (init) => ({
+      value: init.value,
+      def: init.default,
+      rolling: init.rolling || [7, 30, 90, 365],
+      disabled: !!init.disabled,
+      today: 0,
+      open: false,
+      // Whether the panel lines up with the button's right edge, as when the button is on the right of the page.
+      end: false,
+      unit: 'month',
+      // The page of windows shown: a month of days, a year of weeks or months, three years of quarters, or
+      // twelve years, by the last of them.
+      page: 0,
+      // The run being dragged across, the window a shift-click runs from, and the window under the pointer.
+      drag: null,
+      anchor: null,
+      hover: null,
+      units: [
+        { key: 'day', label: 'Days' },
+        { key: 'week', label: 'Weeks' },
+        { key: 'month', label: 'Months' },
+        { key: 'quarter', label: 'Quarters' },
+        { key: 'year', label: 'Years' },
+      ],
+      init() {
+        const [y, m, d] = String(init.today).split('-').map(Number)
+        this.today = periodDay(y, m, d)
+        const p = periodParse(this.value)
+        this.setUnit(p && p.unit ? p.unit : 'month')
+        this._release = () => this.release()
+        window.addEventListener('pointerup', this._release)
+      },
+      destroy() {
+        window.removeEventListener('pointerup', this._release)
+      },
+      label(v) {
+        const p = periodParse(v)
+        return p ? periodLabel(p) : v
+      },
+      // The first and last days of a period, or null for every time.
+      span(p) {
+        if (!p || p.all) return null
+        if (p.days) return [this.today - p.days + 1, this.today]
+        const u = periodUnits[p.unit]
+        return [u.start(p.from), u.start(p.to + 1) - 1]
+      },
+      dates(v) {
+        const s = this.span(periodParse(v))
+        return s ? periodDates(s[0], s[1]) : 'Any date'
+      },
+      // The dates of the run being dragged, the window under the pointer, or the period.
+      footer() {
+        const u = periodUnits[this.unit]
+        if (this.drag) {
+          return periodDates(u.start(Math.min(this.drag.from, this.drag.to)), u.start(Math.max(this.drag.from, this.drag.to) + 1) - 1)
+        }
+        if (this.hover === null) return this.dates(this.value)
+        return periodDates(u.start(this.hover), u.start(this.hover + 1) - 1)
+      },
+      toggle() {
+        if (this.disabled) return
+        if (this.open) {
+          this.close()
+          return
+        }
+        const p = periodParse(this.value)
+        this.setUnit(p && p.unit ? p.unit : this.unit)
+        const r = this.$root.getBoundingClientRect()
+        this.end = r.left + r.width / 2 > window.innerWidth / 2
+        this.open = true
+      },
+      close() {
+        // Hiding the panel with focus in it would drop focus to the page, so it goes back to the button.
+        const refocus = this.open && this.$refs.panel.contains(document.activeElement)
+        this.open = false
+        this.drag = null
+        this.hover = null
+        if (refocus) this.$refs.trigger.focus()
+      },
+      // Shows a unit's windows, from the page with the period's end or today.
+      setUnit(unit) {
+        this.unit = unit
+        const s = this.span(periodParse(this.value))
+        const n = periodUnits[unit].of(s ? s[1] : this.today)
+        switch (unit) {
+          case 'day': this.page = periodUnits.month.of(n); break
+          case 'week': this.page = periodIsoWeek(n).y; break
+          case 'month': this.page = Math.floor(n / 12); break
+          case 'quarter': this.page = Math.floor(n / 4); break
+          default: {
+            const cy = periodDate(this.today).y
+            this.page = cy - 12 * Math.floor((cy - n) / 12)
+          }
+        }
+      },
+      _step() {
+        return { quarter: 3, year: 12 }[this.unit] || 1
+      },
+      turn(dir) {
+        this.page += dir * this._step()
+      },
+      // Pages starting after today are left out.
+      canTurn(dir) {
+        const next = this.page + dir * this._step()
+        if (this.unit === 'day') return periodUnits.month.start(next) <= this.today
+        const y = next - this._step() + 1
+        // A year's weeks start on the Monday of its first ISO week, the one holding 4 January.
+        const first = this.unit === 'week' ? periodUnits.week.start(periodWeekOf(periodDay(y, 1, 4))) : periodDay(y, 1, 1)
+        return first <= this.today
+      },
+      pageTitle() {
+        switch (this.unit) {
+          case 'day': return periodMonths[periodMod(this.page, 12)] + ' ' + Math.floor(this.page / 12)
+          case 'quarter': return this.page + ' – ' + (this.page - 2)
+          case 'year': return this.page + ' – ' + (this.page - 11)
+        }
+        return String(this.page)
+      },
+      cols() {
+        return { day: 'repeat(7, 1fr)', week: 'auto repeat(5, 1fr)', quarter: 'auto repeat(4, 1fr)' }[this.unit] || 'repeat(4, 1fr)'
+      },
+      _tile(n, label) {
+        const u = periodUnits[this.unit]
+        const start = u.start(n)
+        const end = u.start(n + 1) - 1
+        return {
+          id: this.unit + n, kind: 'tile', n, label,
+          future: start > this.today,
+          current: start <= this.today && this.today <= end,
+          title: periodDates(start, end),
+        }
+      },
+      // The page's windows, newest first from the top left, with labels for rows and blanks to line them up.
+      // Days keep their weekdays in order, so a page of them is a calendar with its latest week on top.
+      cells() {
+        const out = []
+        const blank = () => out.push({ id: 'b' + out.length, kind: 'blank', label: '' })
+        const head = (label) => out.push({ id: 'h' + out.length, kind: 'head', label })
+        const y = this.page
+        switch (this.unit) {
+          case 'day': {
+            ;['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].forEach(head)
+            const first = periodUnits.month.start(y)
+            const last = periodUnits.month.start(y + 1) - 1
+            for (let mon = last - periodMod(last + 3, 7); mon + 6 >= first; mon -= 7) {
+              for (let n = mon; n < mon + 7; n++) {
+                if (n < first || n > last) blank()
+                else out.push(this._tile(n, String(periodDate(n).d)))
+              }
+            }
+            break
+          }
+          case 'week':
+            // Weeks are in the month of their Thursday, as ISO weeks are in the year of theirs.
+            for (let m = 12; m >= 1; m--) {
+              head(periodMonths[m - 1].slice(0, 3))
+              let w = periodWeekOf(periodDay(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, 1))
+              if (w * 7 >= periodDay(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, 1)) w--
+              let count = 0
+              for (; w * 7 >= periodDay(y, m, 1); w--, count++) out.push(this._tile(w, String(periodIsoWeek(w).w)))
+              for (; count < 5; count++) blank()
+            }
+            break
+          case 'month':
+            for (let m = 11; m >= 0; m--) out.push(this._tile(y * 12 + m, periodMonths[m].slice(0, 3)))
+            break
+          case 'quarter':
+            for (let yy = y; yy >= y - 2; yy--) {
+              head(String(yy))
+              for (let q = 3; q >= 0; q--) out.push(this._tile(yy * 4 + q, 'Q' + (q + 1)))
+            }
+            break
+          default:
+            for (let yy = y; yy >= y - 11; yy--) out.push(this._tile(yy, String(yy)))
+        }
+        return out
+      },
+      // A window's place in the run shown: the one being dragged, or the period's.
+      state(n) {
+        let lo, hi
+        if (this.drag) {
+          lo = Math.min(this.drag.from, this.drag.to)
+          hi = Math.max(this.drag.from, this.drag.to)
+        } else {
+          // The period shows in any unit whose windows it fills exactly, as Oct – Dec in quarters.
+          const s = this.span(periodParse(this.value))
+          const u = periodUnits[this.unit]
+          if (!s) return null
+          lo = u.of(s[0])
+          hi = u.of(s[1])
+          if (u.start(lo) !== s[0] || u.start(hi + 1) - 1 !== s[1]) return null
+        }
+        if (n < lo || n > hi) return null
+        if (lo === hi) return 'single'
+        // A run's left end is its newest window, but for days, whose weeks read left to right.
+        const [left, right] = this.unit === 'day' ? [lo, hi] : [hi, lo]
+        return n === left ? 'start' : n === right ? 'end' : 'middle'
+      },
+      press(n, e) {
+        // Only the primary button picks, as other buttons open menus; touch and pen report it too.
+        if (e.button !== 0 || periodUnits[this.unit].start(n) > this.today) return
+        // Touch holds the pointer on the tile it started on, so let go of it for the others to see it enter.
+        if (e.target.hasPointerCapture && e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId)
+        const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
+        this.drag = { from, to: n }
+      },
+      // Picks one window from the keyboard, whose Enter and Space fire a click with no pointer press before it.
+      // Shift picks the run from the anchor, as a shift-click does.
+      key(n, e) {
+        if (e.detail !== 0) return
+        const from = e.shiftKey && this.anchor && this.anchor.unit === this.unit ? this.anchor.n : n
+        this.anchor = { unit: this.unit, n: from }
+        this.pick(periodString({ unit: this.unit, from: Math.min(from, n), to: Math.max(from, n) }))
+      },
+      enter(n) {
+        this.hover = n
+        if (this.drag && periodUnits[this.unit].start(n) <= this.today) this.drag.to = n
+      },
+      release() {
+        if (!this.drag) return
+        const { from, to } = this.drag
+        this.drag = null
+        this.anchor = { unit: this.unit, n: from }
+        this.pick(periodString({ unit: this.unit, from: Math.min(from, to), to: Math.max(from, to) }))
+      },
+      canShift(dir) {
+        const p = periodParse(this.value)
+        if (!p || p.all) return false
+        return dir < 0 || this.span(periodShift(p, dir, this.today))[0] <= this.today
+      },
+      shift(dir) {
+        const p = periodParse(this.value)
+        if (p && this.canShift(dir)) this.pick(periodString(periodShift(p, dir, this.today)))
+      },
+      // Picks a period and submits the form it's in, or tells the page it changed.
+      pick(v) {
+        this.close()
+        if (v === this.value) return
+        this.value = v
+        this.$nextTick(() => {
+          this.$refs.input.dispatchEvent(new Event('change', { bubbles: true }))
+          submitClosestForm(this.$root)
+        })
+      },
+    }))
+
     // Side panel opened and closed by popui-sidepanel-open/close window events whose detail matches the panel id.
     // The width is user-adjustable by dragging the panel's inner-edge handle.
-    Alpine.data('sidePanel', (id, width = 400, anchor = 'right') => ({
-      open: false,
+    Alpine.data('sidePanel', (id, width = 400, anchor = 'right', open = false) => ({
+      open,
       width,
       resizing: false,
       init() {
@@ -1210,12 +2660,25 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     // handle, the cards' own links and controls are inert (CSS) and their
     // clicks are swallowed (onClick), so a card can be grabbed without
     // following it.
-    Alpine.data('cardDeckReorder', () => ({
+    //
+    // With handles, the mode is always on: each card gets a handle at its
+    // left edge, the only place it's dragged from, and keeps its controls.
+    Alpine.data('cardDeckReorder', (opts = {}) => ({
       reordering: false,
+      handles: !!opts.handles,
       order: [],
 
       init() {
         this.order = cardDeckOrderIds(cardDeckApplyOrder(this.$root, true))
+        if (this.handles) {
+          cardDeckCards(this.$root).forEach((card) => {
+            if (card.querySelector(':scope > .popui-card-deck-handle')) return
+            const handle = document.createElement('span')
+            handle.className = 'popui-card-deck-handle'
+            handle.setAttribute('aria-hidden', 'true')
+            card.prepend(handle)
+          })
+        }
       },
       toggleReorder() {
         this.reordering = !this.reordering
@@ -1231,7 +2694,12 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         }))
       },
       onPointerDown(e) {
-        if (!this.reordering || e.button > 0) return
+        if (e.button > 0) return
+        if (this.handles) {
+          if (!e.target.closest || !e.target.closest('.popui-card-deck-handle')) return
+        } else if (!this.reordering) {
+          return
+        }
         const card = cardDeckOwnCard(this.$root, e.target)
         if (!card) return
         // Suppresses the text selection and native image drag that would

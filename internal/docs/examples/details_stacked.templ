@@ -1,0 +1,23 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ DetailsStackedExample() {
+	<div class="w-[400px]">
+		@popui.Details(props.Details{Layout: props.DetailsLayoutStacked}) {
+			@popui.Detail(props.Detail{Label: "Company", Value: "Acme Corporation"})
+			@popui.Detail(props.Detail{Label: "Bio"}) {
+				@popui.Prose() {
+					<p>Software engineer with expertise in <strong>Go</strong> and <strong>TypeScript</strong>.</p>
+					<ul>
+						<li>10+ years experience</li>
+						<li>Open source contributor</li>
+					</ul>
+				}
+			}
+		}
+	</div>
+}

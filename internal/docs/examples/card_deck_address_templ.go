@@ -118,7 +118,7 @@ func CardDeckAddressExample() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+					templ_7745c5c3_Err = popui.Detail(props.Detail{
 						Label: "Company legal name",
 						Value: "Invopop S.L. Billing",
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -129,7 +129,7 @@ func CardDeckAddressExample() templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+					templ_7745c5c3_Err = popui.Detail(props.Detail{
 						Label: "Billing email",
 						Value: "juan@invopop.com",
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -152,65 +152,21 @@ func CardDeckAddressExample() templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-							if !templ_7745c5c3_IsBuffer {
-								defer func() {
-									templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-									if templ_7745c5c3_Err == nil {
-										templ_7745c5c3_Err = templ_7745c5c3_BufErr
-									}
-								}()
-							}
-							ctx = templ.InitializeContext(ctx)
-							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "Address")
-							if templ_7745c5c3_Err != nil {
-								return templ_7745c5c3_Err
-							}
-							return nil
-						})
-						templ_7745c5c3_Err = popui.DT().Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-							if !templ_7745c5c3_IsBuffer {
-								defer func() {
-									templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-									if templ_7745c5c3_Err == nil {
-										templ_7745c5c3_Err = templ_7745c5c3_BufErr
-									}
-								}()
-							}
-							ctx = templ.InitializeContext(ctx)
-							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span>Calle Pradillo 42, Madrid</span> <span>Madrid, 28002, ES</span>")
-							if templ_7745c5c3_Err != nil {
-								return templ_7745c5c3_Err
-							}
-							return nil
-						})
-						templ_7745c5c3_Err = popui.DD(props.DD{Class: "flex flex-col"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span class=\"flex flex-col\"><span>Calle Pradillo 42, Madrid</span> <span>Madrid, 28002, ES</span></span>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.DescriptionListItem().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.Detail(props.Detail{Label: "Address"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+					templ_7745c5c3_Err = popui.Detail(props.Detail{
 						Label: "Tax ID",
 						Value: "ESX3157928M",
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -219,7 +175,7 @@ func CardDeckAddressExample() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-3"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = popui.Details(props.Details{Layout: props.DetailsLayoutStacked, Class: "space-y-3"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

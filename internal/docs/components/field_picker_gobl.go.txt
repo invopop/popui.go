@@ -1,0 +1,17 @@
+import "github.com/invopop/popui.go/goblfields"
+
+// Built once and reused: a tree only changes when the gobl dependency does.
+var invoiceFields = goblfields.MustBuild("bill/invoice")
+
+// Or, with the depth capped and every error handled:
+fields, err := goblfields.Build("bill/invoice", goblfields.Options{MaxDepth: 3})
+if err != nil {
+    return err
+}
+
+// goblfields.List() gives every schema available to build from, and
+// goblfields.Flatten / goblfields.Trail walk a tree that is already built.
+
+// goblfields.Nest puts a tree under one field, rewriting its paths, for a
+// list that mixes an app's own variables with the document:
+fields := append(appVariables, goblfields.Nest("doc", invoiceFields))

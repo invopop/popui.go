@@ -11,9 +11,10 @@ import (
 // mark icon that reveals a Tooltip card on hover.
 //
 // The label itself is the tooltip's trigger and anchor, not just the icon:
-// hovering anywhere on the label reveals the card, and the card aligns to the
+// hovering the text or the icon reveals the card, and the card aligns to the
 // label's leading edge rather than to the middle of a 16px icon sitting at the
-// end of the text.
+// end of the text. The label shrinks to its content so the empty space to the
+// right of the text does not act as a trigger.
 templ Label(opts ...props.Label) {
 	{{ p := props.First(opts) }}
 	{{ tip := p.LabelTooltip() }}
@@ -25,8 +26,11 @@ templ Label(opts ...props.Label) {
 			tailwind.Merge(
 				"font-sans text-sm font-medium text-foreground-default-secondary flex items-center gap-0.5",
 				// The label hosts the card, so it carries the group and the
-				// positioning context the card is placed against.
-				classes.If(!tip.Empty(), "group/tooltip relative"),
+				// positioning context the card is placed against. It is also
+				// sized to its content so only the text and icon trigger the
+				// card; an explicit width also keeps a flex column from
+				// stretching it, so no self-start that would misalign it in rows.
+				classes.If(!tip.Empty(), "group/tooltip relative w-fit"),
 				p.Class,
 			),
 		}

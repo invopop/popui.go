@@ -23,6 +23,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Any clickable action | `Button` (variants: default, primary, secondary, danger, transparent) |
 | Icon-only action | `Button` with `Size: "icon"` |
 | Group of buttons | `ButtonGroup` |
+| Action with related alternatives | `SplitButton` (main action + dropdown of `MenuItem`s) |
 | Copy-to-clipboard | `Button` with `Copy` |
 | Page/app shell | `App` |
 | Top bar with actions | `Header` |
@@ -33,6 +34,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Content card | `Card` > `CardHeader` + `CardContent` |
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
 | Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
+| Headline figures, such as totals | `Stats` > `Stat` (`Size: "lg"` for the one that leads) |
 | Metric display | `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
 | Progress bar | `CardProgressBar` |
 | File attachment display | `FileDownload` > `FileDownloadInfo` |
@@ -42,6 +44,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Multi-line text | `Textarea` |
 | Dropdown / select | `Select` |
 | Multi-select with tag chips | `Select` with `Multiple: true` |
+| Pick a field of a document, or insert it into a template | `FieldPicker` (trees built with `goblfields`) |
 | Checkbox | `Checkbox` |
 | Toggle switch | `Checkbox` with `Variant: "switch"` |
 | Radio buttons | `Radio` |
@@ -54,10 +57,11 @@ Before writing any UI element, check whether PopUI already covers it:
 | User avatar | `Avatar` |
 | File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
-| Expandable section | `Accordion` > `AccordionTrigger` + `AccordionContent` |
+| Expandable section | `Accordion` with `Title`, grouped via `AccordionGroup` |
 | Dropdown/context actions | `Menu` > `MenuItem` (+ `MenuSeparator` between groups) |
 | Floating content panel | `Popover` |
-| Key-value data display | `DescriptionList` > `DescriptionListItem` |
+| Key-value data display | `Details` > `Detail` (`Layout: "stacked"` for labels above values) |
+| Section heading inside a card or panel | `Title` with `Size: "base"` |
 | Tab navigation | `Tabs` |
 | Horizontal divider | `Separator` |
 | Workflow/invoice status | `TagStatus` |
@@ -91,13 +95,16 @@ Some requests sound custom but map directly to PopUI components:
 | "a settings gear icon button" | `Button` with `Variant: "transparent"`, `Size: "icon"`, `@icons.Settings()` |
 | "a toggle / on-off switch" | `Checkbox` with `Variant: "switch"` |
 | "a status badge / pill" | `TagStatus` (color dot) or `StatusBadge` (icon outcome: success/failed/warning/running) |
+| "insert a variable / pick an invoice field" | `FieldPicker` |
 | "a modal or drawer" (if side panel) | `Aside` |
+| "a detail panel that opens over the page, or beside a list" | `SidePanel` (with `Docked: true` beside a list) |
+| "a date range for a list or report: last 30 days, this quarter, 2025" | `Period` (read its value with the `period` package) |
 | "a dropdown menu / three-dot menu" | `Menu` |
-| "a key-value list" | `DescriptionList` |
+| "a key-value list" | `Details` |
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
-| "a collapsible / expandable section" | `Accordion` |
+| "a collapsible / expandable section" | `Accordion` (with `Icon` and `Actions` for a list of steps) |
 | "a copy button for an ID or hash" | `Button` with `Copy` (PrefixLength/SuffixLength truncate the display) |
 
 ---
@@ -110,7 +117,7 @@ The palette is a neutral off-white/off-black range with semantic color layers fo
 
 **Key Characteristics:**
 - Light-mode native with a white/near-white canvas
-- Inter for all UI text; CommitMono for code and mono labels
+- Inter for all UI text; Geist Mono (shipped with popui) for code and mono labels
 - Semantic token system: colors are named by role (`foreground`, `background`, `border`, `icon`), not by value
 - Configurable workspace accent color (`--workspace-accent-color`)
 - Moderate border radius scale (4px–12px); no pill shapes except in specific badge contexts
@@ -247,7 +254,7 @@ Workflow and invoice statuses each have their own token. Use these for `TagStatu
 | Token | Family | Use |
 |-------|--------|-----|
 | `font-sans` | Inter, sans-serif | All UI text |
-| `font-mono` | CommitMono, monospace | Code, technical labels, IDs |
+| `font-mono` | Geist Mono, monospace | Code, technical labels, IDs |
 
 ### Font Weights
 
@@ -289,7 +296,7 @@ Letter spacing is tied to size — tighter at larger sizes, slightly looser at s
 
 - Use `text-foreground` for primary content, `text-foreground-default-secondary` for supporting text, `text-foreground-default-tertiary` for muted/placeholder text
 - Apply negative letter-spacing at large sizes (`text-2xl`, `text-xl`) — this is deliberate
-- `font-mono` / CommitMono is reserved for code, IDs, hash values, and technical labels. Never use it for regular content
+- `font-mono` / Geist Mono is reserved for code, IDs, hash values, and technical labels. Never use it for regular content
 
 ---
 
@@ -381,7 +388,7 @@ entirely on borders.
 
 - Buttons are grouped in `ButtonGroup` containers with `gap-2` spacing
 - `ButtonGroup` supports `Align` prop: `left` (default), `center`, `right`
-- Icon-only buttons use `Size: "icon"` with a single icon child
+- Icon-only buttons use `Size: "icon"` with a single icon child; use `Size: "icon-lg"` (34px) when the button sits beside a default-height `Input`
 - Buttons can render as `<a>` by setting `Href`
 
 **Usage patterns:**
@@ -445,6 +452,8 @@ Table
 - Tables are full-width within `Main` (no `Article` wrapper)
 - `TablePagination` supports rows-per-page options, navigation links, and custom action slots
 - Items label is customizable ("invoices", "orders", etc.)
+- Amounts and quantities go in cells marked `data-numeric` (one line, equal-width digits) and `data-align="end"`, header cell included; JSON UI's `th`/`td` set these with `Numeric` and `Align`
+- For data tables with many columns, describe them with `Columns` (`props.TableColumn`: key, title, width, min width, alignment, frozen, sort) instead of writing the `<thead>`: the table gets fixed widths, sideways scrolling, frozen leading columns, and a header menu (sort, freeze with `Freezable`), and `Resizable` adds resize handles. Resizes and freezes are reported as `popui-table-column-resize` and `popui-table-columns-freeze` events for the page to save; never hand-roll `<colgroup>` widths or sticky column CSS
 
 ### Navigation
 
@@ -483,17 +492,35 @@ Breadcrumbs
 | Component | Description |
 |-----------|-------------|
 | `Avatar` | Circular user avatar; `Size: "lg"` or default (small). Accepts `Initial` text or `Image` child |
-| `Accordion` | Native `details/summary` expandable sections |
+| `Accordion` / `AccordionGroup` | Native `details/summary` expandable sections, optionally grouped into one panel |
 | `Menu` | Trigger button + dropdown menu of actions; supports `RightAlign`. Use `MenuSeparator` to divide item groups |
-| `DescriptionList` | `dl`-based term/value pairs for data display |
+| `SplitButton` | Main action button + attached chevron toggle opening a dropdown of related actions (`MenuItem` children); supports `RightAlign` and `DropUp` |
+| `Details` / `Detail` | `dl`-based labelled values that fill their container with label-left rows, or labels above values with `Layout: "stacked"`. A `Detail` without `Value` shows its children as the value (e.g. a `TagStatus`), or a dash with neither. Replaces the deprecated `DescriptionList`, `DescriptionListItem`, `DT` and `DD` |
+| `Stats` / `Stat` | Figures with a label above, in a wrapping row; a `Size: "lg"` stat leads it, and `Align: "end"` keeps the others at the end |
 | `Separator` | Dashed horizontal divider |
 | `Toast` | Dark floating notification with type icon, optional description and action; shown via `popui.showToast(id)` or `data-toast-trigger` |
 | `StatusBadge` | Icon-led outcome pill: success, failed, warning, running |
 | `Popover` | Floating content panel |
+| `FieldPicker` | Picker for one field of a nested data shape: filters a whole tree by path or browses it a level at a time, and inserts the pick into an editable at the caret. Any trigger goes in its children slot. `goblfields.Build` makes the tree from the GOBL schemas embedded in `gobl` |
 | `Notification` | In-app notification display |
 | `PageState` | Empty/error state with illustration, title, description, CTA |
 | `Slider` | Range input |
 | `Tabs` | Tab navigation component |
+
+### JSON UI panels
+
+Panels are data, often stored and written by users, so Tailwind never scans them: a class that isn't used elsewhere is missing at runtime, and a class rename breaks saved panels silently. Panels describe what they mean with props, and PopUI decides how it looks. Use:
+
+| Instead of | Use |
+|------------|-----|
+| `w-full space-y-1` on lists, `inline` on every item | `details` > `detail`, inline rows by default |
+| `dt`/`dd` with `popui-detail-*` classes to put a component in a row | `detail` with the component as its child, and no `value` |
+| `p` with `font-medium` as a heading | `title` with `"size": "base"` |
+| `text-sm text-foreground-default-secondary` | `description` with `"size": "sm"`, or `p` with `size` and `tone` |
+| `text-right whitespace-nowrap tabular-nums` on cells | `th`/`td` with `"numeric": true`, or `"align"` |
+| flex rows of labelled figures | `stats` > `stat` |
+
+`class` is still accepted, but avoid it in panels. When a panel needs something these props don't cover, add a prop to the component rather than a class. Hosts may later name their own styles for panels, as `"style"` on a node, so that key is reserved.
 
 ---
 
@@ -723,7 +750,7 @@ templ AppWithTableExample() {
 - Use `border border-dashed border-border-document-png bg-background-document-png rounded-2xl text-foreground-default-tertiary` for placeholder/empty content zones — this is the canonical pattern
 - Use `gap-2` between buttons in `ButtonGroup`, `space-y-4` between form fields
 - Apply `tracking-tightest` at `text-2xl`, `tracking-tighter` at `text-xl` — negative tracking at large sizes is intentional
-- Use `font-mono` (CommitMono) for IDs, hashes, codes, and technical values
+- Use `font-mono` (Geist Mono) for IDs, hashes, codes, and technical values
 - Use `TagStatus` with `status-{state}` tokens for any workflow/invoice state display
 - Wrap form fields in `Fieldset` with `Variant: "card"` for grouped settings sections
 - Use `Variant: "transparent"` + `Size: "icon"` for toolbar/contextual icon buttons
@@ -736,7 +763,7 @@ templ AppWithTableExample() {
 - Don't use Tailwind color utilities like `text-gray-500`, `bg-blue-100` — use semantic tokens instead
 - Don't use font-bold (700) — the system uses 400, 500, 600 only
 - Don't use `rounded-full` / pill shapes for product UI elements
-- Don't use CommitMono for UI labels, navigation, or headings — Inter only
+- Don't use Geist Mono for UI labels, navigation, or headings — Inter only
 - Don't add box-shadows to cards or containers — only buttons use shadows
 - Don't add color sections or gradient backgrounds — the product UI is white/neutral throughout
 - Don't place Footer content left-aligned — Footer is always `justify-end`
