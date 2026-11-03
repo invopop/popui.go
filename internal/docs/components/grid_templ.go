@@ -54,7 +54,7 @@ func Grid() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
-			Description: "A document's card: its details take two rows beside the supplier and the customer, with dashed lines between them, and the totals a row of their own below a solid line. On narrow screens the cells stack, and the details' right border is drawn below them instead.",
+			Description: "The sections of a document: its details take two rows beside the supplier and the customer, with dashed lines between them, and the totals a row of their own below a solid line. On narrow screens the cells stack, and the details' right border is drawn below them instead.",
 			Code:        examples.LoadExample("grid.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
