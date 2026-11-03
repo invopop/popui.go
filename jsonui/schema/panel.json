@@ -891,6 +891,10 @@
           "type": "string",
           "description": "Prefix adds a text just before the input field inside a @Description."
         },
+        "iso": {
+          "type": "boolean",
+          "description": "ISO turns a datetime-local input into a text field holding an RFC 3339\ntimestamp, such as \"2026-09-20T12:30:00Z\", so the value can be read,\ncopied, and pasted directly. The calendar button opens a single-date\npopui.Calendar seeded from the field's yyyy-mm-dd prefix; Confirm\nreplaces only that prefix, leaving the time and zone exactly as typed\n(an empty field becomes midnight UTC on the chosen day). Time is edited\nby hand and no timezone conversion is applied. The field is validated\nagainst an RFC 3339 pattern on submit; an empty field submits an empty\nstring. Only used when Type is \"datetime-local\"."
+        },
         "autofocus": {
           "type": "boolean"
         },
@@ -3589,6 +3593,7 @@
               "tooltip",
               "size",
               "prefix",
+              "iso",
               "autofocus",
               "readonly",
               "required",

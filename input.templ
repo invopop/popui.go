@@ -34,9 +34,11 @@ import (
 //
 // Setting ISO on a datetime-local input renders a text field holding an
 // RFC 3339 timestamp, so the value can be read, copied, pasted, and deleted
-// directly (no clear button). The calendar button opens a native
-// datetime-local picker that fills the field with the chosen instant in the
-// browser's local offset (popui.js).
+// directly (no clear button). The calendar button opens a single-date
+// popui.Calendar popover seeded from the field's yyyy-mm-dd prefix; Confirm
+// swaps only that prefix into the field, leaving the time and zone as typed.
+// Time is edited by hand. No timezone conversion is applied (the
+// `isoDateTime` Alpine controller in popui.js).
 templ Input(p ...props.Input) {
 	{{ prp := props.First(p) }}
 	{{ clearable := inputClearable(prp) }}
@@ -48,7 +50,12 @@ templ Input(p ...props.Input) {
 				{ prp.Label }
 			}
 		}
-		<div class="flex items-center gap-2 relative">
+		<div
+			class="flex items-center gap-2 relative"
+			if iso && pickable {
+				x-data="isoDateTime()"
+			}
+		>
 			if prp.Prefix != "" {
 				@Description() {
 					{ prp.Prefix }
@@ -81,9 +88,11 @@ templ Input(p ...props.Input) {
 					data-pickable
 				}
 				if iso {
-					data-datetime-iso
 					pattern={ inputISOPattern }
 					spellcheck="false"
+				}
+				if iso && pickable {
+					x-ref="field"
 				}
 				if prp.Placeholder != "" {
 					placeholder={ prp.Placeholder }
@@ -110,16 +119,6 @@ templ Input(p ...props.Input) {
 				}
 				{ prp.Attributes... }
 			/>
-			if iso && pickable {
-				<input
-					type="datetime-local"
-					data-pickable
-					data-datetime-iso-picker
-					tabindex="-1"
-					aria-hidden="true"
-					class="absolute right-1.5 top-1/2 -translate-y-1/2 size-5 opacity-0 pointer-events-none"
-				/>
-			}
 			if clearable {
 				<button
 					type="button"
@@ -139,12 +138,28 @@ templ Input(p ...props.Input) {
 			if pickable {
 				<button
 					type="button"
-					data-input-picker
-					aria-label="Open picker"
+					if iso {
+						@click="togglePanel()"
+						aria-label="Pick date"
+					} else {
+						data-input-picker
+						aria-label="Open picker"
+					}
 					class="absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer flex items-center justify-center text-foreground-default-secondary hover:text-foreground"
 				>
 					@icons.Calendar()
 				</button>
+			}
+			if iso && pickable {
+				<div
+					x-ref="panel"
+					x-show="open"
+					x-cloak
+					style="top:100%;z-index:50"
+					class="context-menu border border-border rounded-xl mt-1 bg-background absolute left-0 overflow-hidden shadow-lg"
+				>
+					@Calendar(props.Calendar{Single: true})
+				</div>
 			}
 		</div>
 		if !prp.Error.Empty() {
@@ -222,7 +237,7 @@ func inputPickable(p props.Input) bool {
 }
 
 // inputISO reports whether the input is a text field holding an RFC 3339
-// timestamp with a native datetime-local picker beside it; only datetime-local
+// timestamp with a popui.Calendar date picker beside it; only datetime-local
 // inputs with ISO set are.
 func inputISO(p props.Input) bool {
 	return p.Type == "datetime-local" && p.ISO
