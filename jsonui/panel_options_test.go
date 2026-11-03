@@ -76,3 +76,16 @@ func TestTextOptions(t *testing.T) {
 		}
 	}
 }
+
+// TestGrid checks a grid of cells with borders, laid out as a document's
+// card: details beside the parties, and the totals below.
+func TestGrid(t *testing.T) {
+	html := mustRender(t, `{"components": [{"is": "grid", "props": {"columns": 2}, "children": [
+		{"is": "cell", "props": {"rows": 2, "borders": [{"edge": "right", "style": "dashed"}]}, "children": [{"is": "text", "text": "Document"}]},
+		{"is": "cell", "props": {"borders": [{"edge": "bottom", "style": "dashed"}]}, "children": [{"is": "text", "text": "Supplier"}]},
+		{"is": "cell", "children": [{"is": "text", "text": "Customer"}]},
+		{"is": "cell", "props": {"span": 2, "borders": [{"edge": "top"}]}, "children": [{"is": "text", "text": "Totals"}]}
+	]}]}`)
+	assertContains(t, html, `data-grid`, `md:grid-cols-2`, `md:row-span-2`, `md:[border-right-style:dashed]`,
+		`max-md:[border-bottom-style:dashed]`, `md:col-span-2`, `>Document</div>`, `>Totals</div>`)
+}

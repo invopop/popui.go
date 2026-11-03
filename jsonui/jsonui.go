@@ -217,6 +217,8 @@ func init() {
 	register("description", popui.Description)
 	register("p", popui.P)
 	register("separator", popui.Separator)
+	register("grid", popui.Grid)
+	register("cell", popui.Cell)
 
 	// Cards & details
 	register("card", popui.Card)
