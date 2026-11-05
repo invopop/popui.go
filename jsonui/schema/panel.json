@@ -891,6 +891,10 @@
           "type": "string",
           "description": "Prefix adds a text just before the input field inside a @Description."
         },
+        "local": {
+          "type": "boolean",
+          "description": "Local shows date, time, datetime-local, week, and month inputs in the\nbrowser's own control, formatted for its locale. By default they're\ntext fields holding the ISO 8601 value as written, such as\n\"2026-09-20\", with the system picker behind a calendar button;\ndatetime-local inputs then hold an RFC 3339 timestamp with a zone, such\nas \"2026-09-20T12:30:00Z\". Other values are submitted the same either\nway."
+        },
         "autofocus": {
           "type": "boolean"
         },
@@ -3576,6 +3580,7 @@
               "tooltip",
               "size",
               "prefix",
+              "local",
               "autofocus",
               "readonly",
               "required",
