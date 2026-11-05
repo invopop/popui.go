@@ -1,0 +1,49 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ GridExample() {
+	<div class="max-w-[746px]">
+		@popui.Grid(props.Grid{Columns: 2}) {
+			@popui.Cell(props.GridCell{Rows: 2, Borders: []props.Border{{Edge: props.EdgeRight, Style: props.BorderDashed}}}) {
+				@popui.Title(props.Title{Size: "base"}) {
+					Document
+				}
+				@popui.Details() {
+					@popui.Detail(props.Detail{Label: "Issue date", Value: "2025-01-15"})
+					@popui.Detail(props.Detail{Label: "Due date", Value: "2025-02-15"})
+					@popui.Detail(props.Detail{Label: "Currency", Value: "Euro (EUR)"})
+					@popui.Detail(props.Detail{Label: "Purchase order", Value: "PO-0001"})
+				}
+			}
+			@popui.Cell(props.GridCell{Borders: []props.Border{{Edge: props.EdgeBottom, Style: props.BorderDashed}}}) {
+				@popui.Title(props.Title{Size: "base"}) {
+					Supplier
+				}
+				@popui.Details() {
+					@popui.Detail(props.Detail{Label: "Name", Value: "Example Supplier SL"})
+					@popui.Detail(props.Detail{Label: "Tax code", Value: "ES B00000000"})
+				}
+			}
+			@popui.Cell() {
+				@popui.Title(props.Title{Size: "base"}) {
+					Customer
+				}
+				@popui.Details() {
+					@popui.Detail(props.Detail{Label: "Name", Value: "Example Customer SA"})
+					@popui.Detail(props.Detail{Label: "Tax code", Value: "ES A00000000"})
+				}
+			}
+			@popui.Cell(props.GridCell{Span: 2, Borders: []props.Border{{Edge: props.EdgeTop}}}) {
+				@popui.Stats(props.Stats{Align: props.AlignEnd}) {
+					@popui.Stat(props.Stat{Label: "Total payable", Value: "€1,210.00", Size: props.StatSizeLarge})
+					@popui.Stat(props.Stat{Label: "Net amount", Value: "€1,000.00"})
+					@popui.Stat(props.Stat{Label: "VAT", Value: "€210.00"})
+				}
+			}
+		}
+	</div>
+}
