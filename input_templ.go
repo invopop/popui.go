@@ -616,23 +616,33 @@ func inputPlaceholder(p props.Input) string {
 	return p.Placeholder
 }
 
-// Parts of the ISO patterns.
+// Parts of the ISO patterns. isoDate only matches days that exist: 31 in
+// January, March, May, July, August, October and December, 30 in April,
+// June, September and November, 28 in February, and the 29th of February
+// in leap years, which are divisible by 4 but not 100 (isoLeapYY after two
+// digits), or divisible by 400 (isoLeapCC before "00").
 const (
-	isoDate = `\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])`
+	isoLeapYY = `([02468][48]|[2468]0|[13579][26])`
+	isoLeapCC = `([02468][048]|[13579][26])`
+	isoDate   = `(\d{4}-(0[13578]|1[02])-(0[1-9]|[12]\d|3[01])` +
+		`|\d{4}-(0[469]|11)-(0[1-9]|[12]\d|30)` +
+		`|\d{4}-02-(0[1-9]|1\d|2[0-8])` +
+		`|(\d{2}` + isoLeapYY + `|` + isoLeapCC + `00)-02-29)`
 	isoTime = `([01]\d|2[0-3]):[0-5]\d`
 )
 
 // inputISOPatterns are the native validation patterns of ISO fields, with
 // each part in range. Datetimes are RFC 3339 timestamps: "T" or "t" between
-// the date and time, as its grammar requires, optional seconds (up to 60 for
-// leap seconds) and fraction, and a mandatory zone. Days missing from their
-// month, such as 2026-02-30, and week 53 of years without one are rejected
-// by popui.js, as a pattern can't tell. Browsers compile patterns with the
-// "v" flag, so the "-" in [+\-] must stay escaped.
+// the date and time, as its grammar requires, optional seconds and
+// fraction, and a mandatory zone. Leap seconds (second 60) are rejected,
+// as Go's time.Parse rejects them and native pickers can't produce them.
+// Week 53 of years without one is rejected by popui.js, as a pattern can't
+// tell. Browsers compile patterns with the "v" flag, so the "-" in [+\-]
+// must stay escaped.
 var inputISOPatterns = map[string]string{
 	inputDate:          isoDate,
 	inputTime:          isoTime + `(:[0-5]\d(\.\d{1,3})?)?`,
-	inputDateTimeLocal: isoDate + `[Tt]` + isoTime + `(:([0-5]\d|60)(\.\d+)?)?([Zz]|[+\-]([01]\d|2[0-3]):[0-5]\d)`,
+	inputDateTimeLocal: isoDate + `[Tt]` + isoTime + `(:[0-5]\d(\.\d+)?)?([Zz]|[+\-]([01]\d|2[0-3]):[0-5]\d)`,
 	inputWeek:          `\d{4}-W(0[1-9]|[1-4]\d|5[0-3])`,
 	inputMonth:         `\d{4}-(0[1-9]|1[0-2])`,
 }

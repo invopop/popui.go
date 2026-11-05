@@ -355,46 +355,37 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     field.dispatchEvent(new Event('change', { bubbles: true }))
   })
 
-  // isoInvalid returns why an ISO value in the right format is still not a
-  // date, such as 2026-02-30 or week 53 of a year with 52, or '' when it is.
-  // Values out of range are left to the field's pattern.
-  function isoInvalid(type, v) {
-    if (type === 'week') {
-      const m = /^(\d{4})-W53$/.exec(v)
-      if (!m) return ''
-      // A year has 53 weeks when it starts on a Thursday, or on a Wednesday
-      // in a leap year.
-      const y = Number(m[1])
-      const jan1 = new Date(0)
-      jan1.setUTCFullYear(y, 0, 1)
-      const day = jan1.getUTCDay()
-      const leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
-      return day === 4 || (leap && day === 3) ? '' : `${m[1]} has 52 weeks`
-    }
-    if (type !== 'date' && type !== 'datetime-local') return ''
-    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v)
+  // isoWeekInvalid returns why an ISO week is not a week of its year, as
+  // with week 53 of a year with 52, or '' when it is. The field's pattern
+  // checks everything else, including the days of each month, so only
+  // week fields hold a custom validity message.
+  function isoWeekInvalid(v) {
+    const m = /^(\d{4})-W53$/.exec(v)
     if (!m) return ''
-    const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])]
-    if (mo < 1 || mo > 12 || d < 1 || d > 31) return ''
-    // Day 0 of the next month is the last day of this one; setUTCFullYear,
-    // unlike Date.UTC, keeps years 0-99 as written.
-    const last = new Date(0)
-    last.setUTCFullYear(y, mo, 0)
-    const days = last.getUTCDate()
-    return d > days ? `${m[1]}-${m[2]} has ${days} days` : ''
+    // A year has 53 weeks when it starts on a Thursday, or on a Wednesday
+    // in a leap year. setUTCFullYear, unlike Date.UTC, keeps years 0-99 as
+    // written.
+    const y = Number(m[1])
+    const jan1 = new Date(0)
+    jan1.setUTCFullYear(y, 0, 1)
+    const day = jan1.getUTCDay()
+    const leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+    return day === 4 || (leap && day === 3) ? '' : `${m[1]} has 52 weeks`
   }
 
-  function checkISO(field) {
-    field.setCustomValidity(isoInvalid(field.dataset.iso, field.value.trim()))
+  function checkISOWeek(field) {
+    if (field.dataset.iso === 'week') field.setCustomValidity(isoWeekInvalid(field.value.trim()))
   }
 
-  // Checks every ISO field, and hides the calendar button of those whose
-  // type the browser has no picker for, such as week in Safari and Firefox.
+  // Checks every ISO week, and hides the calendar button of fields whose
+  // picker the browser can't open: types it has no control for, such as
+  // week in Safari and Firefox, or no showPicker, as the hidden picker
+  // can't be clicked.
   function initISOInputs() {
     document.querySelectorAll('input[data-iso]').forEach((field) => {
-      checkISO(field)
+      checkISOWeek(field)
       const picker = field.parentElement.querySelector('input[data-iso-picker]')
-      if (picker && picker.type !== field.dataset.iso) {
+      if (picker && (picker.type !== field.dataset.iso || typeof picker.showPicker !== 'function')) {
         const btn = field.parentElement.querySelector('[data-input-picker]')
         if (btn) btn.hidden = true
       }
@@ -403,7 +394,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
   document.addEventListener('input', (e) => {
     const t = e.target
-    if (t instanceof HTMLInputElement && t.hasAttribute('data-iso')) checkISO(t)
+    if (t instanceof HTMLInputElement && t.hasAttribute('data-iso')) checkISOWeek(t)
+  })
+
+  // A form reset restores values without input events, after the reset
+  // event, so weeks are checked again once it's done.
+  document.addEventListener('reset', (e) => {
+    const form = e.target
+    if (!(form instanceof HTMLFormElement)) return
+    setTimeout(() => form.querySelectorAll('input[data-iso="week"]').forEach(checkISOWeek))
   })
 
   // ------------------------------------------------------------------
