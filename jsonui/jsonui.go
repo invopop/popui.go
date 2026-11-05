@@ -274,10 +274,12 @@ func (d *Panel) Component(opts Options) (templ.Component, error) {
 	if d.Components == nil {
 		return nil, errors.New("panel: missing components")
 	}
-	b := &panelBuilder{opts: opts, validator: opts.Validator}
+	b := &panelBuilder{opts: opts}
 	schemas := ""
-	if b.validator != nil {
-		schemas = b.validator.json
+	// A validator without schemas validates nothing, so the panel doesn't
+	// need popui.wasm to check its data.
+	if v := opts.Validator; v != nil && len(v.paths) > 0 {
+		b.validator, schemas = v, v.json
 	}
 	xdata := ""
 	if len(d.Data) > 0 {

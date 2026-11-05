@@ -181,6 +181,32 @@ func TestPanelsWithoutSchemas(t *testing.T) {
 	}
 }
 
+// TestEmptyValidator checks that a validator without schemas renders
+// panels as if there were none, so they don't need popui.wasm.
+func TestEmptyValidator(t *testing.T) {
+	doc := `{"data": {"name": "x"}, "components": [{"is": "text", "bind": "name"}]}`
+	for _, schemas := range []map[string]json.RawMessage{nil, {}} {
+		v, err := NewValidator(schemas)
+		if err != nil {
+			t.Fatal(err)
+		}
+		html, err := render(t, Options{Validator: v}, doc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(html, "jsonui-errors") {
+			t.Errorf("errors tracked with an empty validator in:\n%s", html)
+		}
+	}
+	// Fields still track the errors actions report, without schemas.
+	v := mustValidator(t, `{}`)
+	html, err := render(t, Options{Validator: v}, `{"data": {"name": ""}, "components": [{"is": "input", "model": "name"}]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertContains(t, html, `x-jsonui-errors=""`)
+}
+
 // TestValidatorReused checks that one validator renders several panels.
 func TestValidatorReused(t *testing.T) {
 	opts := Options{Validator: mustValidator(t, `{"config": {"type": "object"}}`)}

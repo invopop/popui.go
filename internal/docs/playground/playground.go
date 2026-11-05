@@ -169,6 +169,10 @@ func Handler() http.Handler {
 				http.Error(w, "schemas: "+err.Error(), http.StatusBadRequest)
 				return
 			}
+			if raw == nil {
+				http.Error(w, "schemas must be an object", http.StatusBadRequest)
+				return
+			}
 			if opts.Validator, err = jsonui.NewValidator(raw); err != nil {
 				http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 				return

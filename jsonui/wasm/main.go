@@ -24,6 +24,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"syscall/js"
 
 	"github.com/invopop/popui.go/jsonui"
@@ -91,18 +92,33 @@ func options(v js.Value) (jsonui.Options, error) {
 	switch s := v.Get("schemas"); s.Type() {
 	case js.TypeUndefined, js.TypeNull:
 	case js.TypeString, js.TypeObject:
-		raw := s
+		raw := s.String()
 		if s.Type() == js.TypeObject {
-			raw = js.Global().Get("JSON").Call("stringify", s)
+			var err error
+			if raw, err = stringify(s); err != nil {
+				return o, err
+			}
 		}
 		var err error
-		if o.Validator, err = validators.get(raw.String()); err != nil {
+		if o.Validator, err = validators.get(raw); err != nil {
 			return o, err
 		}
 	default:
 		return o, errors.New("schemas must be an object or a JSON string")
 	}
 	return o, nil
+}
+
+// stringify returns the JSON of a JS value, or the error JSON.stringify
+// throws, such as for a circular object, which would otherwise panic and
+// stop the Go runtime.
+func stringify(v js.Value) (s string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("schemas: %v", r)
+		}
+	}()
+	return js.Global().Get("JSON").Call("stringify", v).String(), nil
 }
 
 // validators keeps the validators of the schemas panels are rendered and
@@ -123,6 +139,9 @@ func (c *validatorCache) get(schemas string) (*jsonui.Validator, error) {
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal([]byte(schemas), &raw); err != nil {
 		return nil, err
+	}
+	if raw == nil {
+		return nil, errors.New("schemas must be an object")
 	}
 	v, err := jsonui.NewValidator(raw)
 	if err != nil {
