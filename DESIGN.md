@@ -443,6 +443,7 @@ Form
 - `OptionGroup` wraps multiple checkboxes or radios with a shared label
 - `Label` can be separate from `Input` for custom hint/link patterns
 - `Checkbox` supports `Variant: "switch"` for toggle switches
+- Date, time, datetime-local, week and month `Input`s show their ISO value (`2026-09-20`, `2026-09-20T12:30:00Z`) in a text field with the system picker behind the calendar button; `Local: true` shows the browser's locale-formatted control instead
 
 ### Tables
 

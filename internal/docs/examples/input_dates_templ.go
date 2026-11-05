@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-func InputDateTimeISOExample() templ.Component {
+func InputDatesExample() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,10 +35,8 @@ func InputDateTimeISOExample() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = popui.Input(props.Input{
-			ID:    "starts-at",
 			Name:  "starts_at",
 			Type:  "datetime-local",
-			ISO:   true,
 			Label: "Starts at",
 			Value: "2026-09-20T12:30:00Z",
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -46,11 +44,19 @@ func InputDateTimeISOExample() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
-			ID:    "ends-at",
-			Name:  "ends_at",
-			Type:  "datetime-local",
-			ISO:   true,
-			Label: "Ends at",
+			Name:  "issue_date",
+			Type:  "date",
+			Label: "Issue date",
+			Value: "2026-09-20",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
+			Name:  "cutoff",
+			Type:  "time",
+			Label: "Cut-off time",
+			Value: "17:30",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

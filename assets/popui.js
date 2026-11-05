@@ -294,13 +294,21 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   })
 
   // Opens the native picker for inputs whose calendar indicator is replaced
-  // by the popui calendar button.
+  // by the popui calendar button. ISO fields open the hidden native input
+  // behind the button, seeded with the field's value.
   document.addEventListener('click', (e) => {
     const btn = e.target.closest ? e.target.closest('[data-input-picker]') : null
     if (!btn) return
-    const input = btn.parentElement.querySelector('input[data-pickable]')
+    const field = btn.parentElement.querySelector('input[data-iso]')
+    const picker = field ? btn.parentElement.querySelector('input[data-iso-picker]') : null
+    const input = picker || btn.parentElement.querySelector('input[data-pickable]')
     if (!input) return
-    input.focus()
+    if (picker) {
+      picker.value = isoToPicker(field)
+      field.focus()
+    } else {
+      input.focus()
+    }
     if (typeof input.showPicker === 'function') {
       try {
         input.showPicker()
@@ -308,6 +316,94 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // showPicker can throw (e.g. cross-origin iframe); focus is enough.
       }
     }
+  })
+
+  // ------------------------------------------------------------------
+  // ISO date and time inputs
+  // ------------------------------------------------------------------
+
+  // Matches an RFC 3339 timestamp, splitting it into the wall-clock digits a
+  // datetime-local input accepts and the zone suffix.
+  const ISO_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})[Tt](\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)([Zz]|[+\-]\d{2}:\d{2})$/
+
+  // Returns an ISO field's value as its hidden picker takes it: the same
+  // value, except datetimes, which drop their zone. Nothing is converted,
+  // so the browser's timezone never shifts the digits.
+  function isoToPicker(field) {
+    const v = field.value.trim()
+    if (field.dataset.iso !== 'datetime-local') return v
+    const m = ISO_DATETIME_RE.exec(v)
+    return m ? m[1] + 'T' + m[2] : ''
+  }
+
+  // Writes the value picked into the ISO field, keeping a datetime's zone
+  // (Z when it had none) and writing its seconds so it stays RFC 3339.
+  document.addEventListener('change', (e) => {
+    const picker = e.target
+    if (!(picker instanceof HTMLInputElement) || !picker.hasAttribute('data-iso-picker')) return
+    const field = picker.parentElement.querySelector('input[data-iso]')
+    if (!field) return
+    let v = picker.value
+    if (v && field.dataset.iso === 'datetime-local') {
+      const m = ISO_DATETIME_RE.exec(field.value.trim())
+      if (v.length === 16) v += ':00'
+      v += m ? m[3] : 'Z'
+    }
+    if (v === field.value) return
+    field.value = v
+    field.dispatchEvent(new Event('input', { bubbles: true }))
+    field.dispatchEvent(new Event('change', { bubbles: true }))
+  })
+
+  // isoInvalid returns why an ISO value in the right format is still not a
+  // date, such as 2026-02-30 or week 53 of a year with 52, or '' when it is.
+  // Values out of range are left to the field's pattern.
+  function isoInvalid(type, v) {
+    if (type === 'week') {
+      const m = /^(\d{4})-W53$/.exec(v)
+      if (!m) return ''
+      // A year has 53 weeks when it starts on a Thursday, or on a Wednesday
+      // in a leap year.
+      const y = Number(m[1])
+      const jan1 = new Date(0)
+      jan1.setUTCFullYear(y, 0, 1)
+      const day = jan1.getUTCDay()
+      const leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+      return day === 4 || (leap && day === 3) ? '' : `${m[1]} has 52 weeks`
+    }
+    if (type !== 'date' && type !== 'datetime-local') return ''
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v)
+    if (!m) return ''
+    const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])]
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) return ''
+    // Day 0 of the next month is the last day of this one; setUTCFullYear,
+    // unlike Date.UTC, keeps years 0-99 as written.
+    const last = new Date(0)
+    last.setUTCFullYear(y, mo, 0)
+    const days = last.getUTCDate()
+    return d > days ? `${m[1]}-${m[2]} has ${days} days` : ''
+  }
+
+  function checkISO(field) {
+    field.setCustomValidity(isoInvalid(field.dataset.iso, field.value.trim()))
+  }
+
+  // Checks every ISO field, and hides the calendar button of those whose
+  // type the browser has no picker for, such as week in Safari and Firefox.
+  function initISOInputs() {
+    document.querySelectorAll('input[data-iso]').forEach((field) => {
+      checkISO(field)
+      const picker = field.parentElement.querySelector('input[data-iso-picker]')
+      if (picker && picker.type !== field.dataset.iso) {
+        const btn = field.parentElement.querySelector('[data-input-picker]')
+        if (btn) btn.hidden = true
+      }
+    })
+  }
+
+  document.addEventListener('input', (e) => {
+    const t = e.target
+    if (t instanceof HTMLInputElement && t.hasAttribute('data-iso')) checkISO(t)
   })
 
   // ------------------------------------------------------------------
@@ -365,13 +461,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     initButtonCopies()
     attachTableResizers()
     initInputClears()
+    initISOInputs()
   })
 
-  // Rewires ButtonCopies, table resizers and input clear buttons inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers, input clear buttons and ISO inputs inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
     initInputClears()
+    initISOInputs()
   })
 
   // Clears button loading spinners when the page becomes visible again.
@@ -1948,11 +2046,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     // With single: true it becomes a single-date picker: one month grid, no presets, and a day click sets from = to.
     // An indefinite range is a start date with no end (to stays null, indefinite is true): the grid paints every day
     // after the start, a day click moves the start, and the value submits as "from..". Seeding from without to starts indefinite.
-    // With submit: false, confirming or cancelling does not submit the enclosing form.
-    const rangeCalendarData = (init) => ({
+    Alpine.data('rangeCalendar', (init) => ({
       name: (init && init.name) || '',
       single: !!(init && init.single),
-      submit: !(init && init.submit === false),
       open: false,
       preset: (init && init.from && !init.to && !init.single) ? 'indefinite' : 'custom',
       indefinite: !!(init && init.from && !init.to && !init.single),
@@ -2169,78 +2265,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         if (hadCommitted) this._submit()
       },
       _submit() {
-        if (!this.submit) return
         this.$nextTick(() => submitClosestForm(this.$root))
       },
-    })
-    Alpine.data('rangeCalendar', rangeCalendarData)
-
-    // Date picker for an ISO datetime text field (popui.Input with ISO set):
-    // a single-date rangeCalendar whose popover is seeded from the field's
-    // yyyy-mm-dd prefix and whose Confirm writes only that prefix back, leaving
-    // the time and zone as typed. No Date conversion touches the field value.
-    const ISO_DATE_PREFIX_RE = /^\d{4}-\d{2}-\d{2}/
-    Alpine.data('isoDateTime', () => {
-      const cal = rangeCalendarData({ single: true, submit: false })
-      const baseConfirm = cal.confirm
-      const baseInit = cal.init
-      // The field's pattern checks each part is in range; this rejects days
-      // missing from their month, such as 2026-02-30, which a pattern can't.
-      // Out of range months and days are left to the pattern's message.
-      const checkDay = (field) => {
-        const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(field.value.trim())
-        let msg = ''
-        if (m) {
-          const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])]
-          // Day 0 of the next month is the last day of this one;
-          // setUTCFullYear, unlike Date.UTC, keeps years 0-99 as written.
-          const last = new Date(0)
-          last.setUTCFullYear(y, mo, 0)
-          const days = last.getUTCDate()
-          if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && d > days) {
-            msg = `${m[1]}-${m[2]} has ${days} days`
-          }
-        }
-        field.setCustomValidity(msg)
-      }
-      cal.init = function () {
-        baseInit.call(this)
-        // The field's x-ref is registered after this component's init runs.
-        this.$nextTick(() => {
-          const field = this.$refs.field
-          if (!field) return
-          checkDay(field)
-          field.addEventListener('input', () => checkDay(field))
-        })
-      }
-      // Seeds the pending and committed day from the field, jumps the view there, and opens the popover.
-      cal.openPanel = function () {
-        const field = this.$refs.field
-        const m = field ? ISO_DATE_PREFIX_RE.exec(field.value.trim()) : null
-        const day = m ? m[0] : null
-        this.from = day; this.to = day
-        this.committedFrom = day; this.committedTo = day
-        const base = day ? this.parse(day) : new Date()
-        this.viewY = base.getFullYear(); this.viewM = base.getMonth()
-        this.open = true
-        this.$nextTick(() => clampPanelX(this.$refs.panel))
-      }
-      // Commits the day, then swaps it into the field's date prefix. A field
-      // without a date prefix becomes midnight UTC on the chosen day.
-      cal.confirm = function () {
-        if (!this.to) return
-        baseConfirm.call(this)
-        const field = this.$refs.field
-        if (!field || !this.committedFrom) return
-        const day = this.committedFrom
-        const v = field.value.trim()
-        field.value = ISO_DATE_PREFIX_RE.test(v) ? v.replace(ISO_DATE_PREFIX_RE, day) : day + 'T00:00:00Z'
-        field.dispatchEvent(new Event('input', { bubbles: true }))
-        field.dispatchEvent(new Event('change', { bubbles: true }))
-        field.focus()
-      }
-      return cal
-    })
+    }))
 
     // Period select: a window of time — rolling days, every time, or a run of days, weeks, months, quarters or
     // years — kept as the period package's string ("365d", "2026-Q4", "2026-01..2026-03"). Windows of each

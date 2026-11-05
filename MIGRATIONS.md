@@ -10,6 +10,28 @@ with the replacement and a before/after snippet.
 Entries are grouped by the release that removed them, newest first.
 Dependency upgrades that change how your app behaves are listed here too.
 
+## November 2026 Date and time inputs show ISO values
+
+`popui.Input` with `Type` `date`, `time`, `datetime-local`, `week` or
+`month` now renders a monospace text field holding the ISO 8601 value,
+such as `2026-09-20`, with the system picker behind its calendar button,
+instead of the browser's locale-formatted control. Date, time, week and
+month values are submitted exactly as before. `datetime-local` fields now
+hold an RFC 3339 timestamp with a zone, such as `2026-09-20T12:30:00Z`,
+so handlers that parse the zone-less `2026-09-20T12:30` need updating.
+
+The field is `type="text"`, so code that selects `input[type="date"]` or
+uses `valueAsDate` or `valueAsNumber` on it no longer finds the native
+control. Set `Local` to keep it:
+
+```go
+// Before: native control, formatted for the browser's locale
+popui.Input(props.Input{Type: "date", Name: "issued"})
+
+// After: the same control
+popui.Input(props.Input{Type: "date", Name: "issued", Local: true})
+```
+
 ## November 2026 JSON UI schemas move out of panels
 
 `jsonui.Panel.Schemas` is removed, and panels with a `"schemas"` key are
