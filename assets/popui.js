@@ -2183,6 +2183,36 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     Alpine.data('isoDateTime', () => {
       const cal = rangeCalendarData({ single: true, submit: false })
       const baseConfirm = cal.confirm
+      const baseInit = cal.init
+      // The field's pattern checks each part is in range; this rejects days
+      // missing from their month, such as 2026-02-30, which a pattern can't.
+      // Out of range months and days are left to the pattern's message.
+      const checkDay = (field) => {
+        const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(field.value.trim())
+        let msg = ''
+        if (m) {
+          const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])]
+          // Day 0 of the next month is the last day of this one;
+          // setUTCFullYear, unlike Date.UTC, keeps years 0-99 as written.
+          const last = new Date(0)
+          last.setUTCFullYear(y, mo, 0)
+          const days = last.getUTCDate()
+          if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && d > days) {
+            msg = `${m[1]}-${m[2]} has ${days} days`
+          }
+        }
+        field.setCustomValidity(msg)
+      }
+      cal.init = function () {
+        baseInit.call(this)
+        // The field's x-ref is registered after this component's init runs.
+        this.$nextTick(() => {
+          const field = this.$refs.field
+          if (!field) return
+          checkDay(field)
+          field.addEventListener('input', () => checkDay(field))
+        })
+      }
       // Seeds the pending and committed day from the field, jumps the view there, and opens the popover.
       cal.openPanel = function () {
         const field = this.$refs.field

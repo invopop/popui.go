@@ -44,6 +44,7 @@ templ Input(p ...props.Input) {
 	{{ clearable := inputClearable(prp) }}
 	{{ pickable := inputPickable(prp) }}
 	{{ iso := inputISO(prp) }}
+	{{ placeholder := inputPlaceholder(prp) }}
 	<div class="flex flex-col space-y-2 w-full">
 		if prp.Label != "" {
 			@Label(props.Label{ID: prp.ID, Tooltip: prp.Tooltip}) {
@@ -94,10 +95,8 @@ templ Input(p ...props.Input) {
 				if iso && pickable {
 					x-ref="field"
 				}
-				if prp.Placeholder != "" {
-					placeholder={ prp.Placeholder }
-				} else if iso {
-					placeholder="YYYY-MM-DDThh:mm:ss+hh:mm"
+				if placeholder != "" {
+					placeholder={ placeholder }
 				}
 				if prp.Autofocus {
 					autofocus
@@ -240,12 +239,34 @@ func inputPickable(p props.Input) bool {
 // timestamp with a popui.Calendar date picker beside it; only datetime-local
 // inputs with ISO set are.
 func inputISO(p props.Input) bool {
-	return p.Type == "datetime-local" && p.ISO
+	return p.Type == inputDateTimeLocal && p.ISO
+}
+
+// inputDateTimeLocal is the input type that ISO applies to.
+const inputDateTimeLocal = "datetime-local"
+
+// inputISOPlaceholder is the placeholder of ISO datetime fields without one.
+const inputISOPlaceholder = "YYYY-MM-DDThh:mm:ss+hh:mm"
+
+// inputPlaceholder returns the input's placeholder: its own, or the ISO
+// format for ISO datetime fields. It's worked out here rather than with an
+// "else if" in the attribute block, which templ renders as an "else"
+// attribute.
+func inputPlaceholder(p props.Input) string {
+	if p.Placeholder == "" && inputISO(p) {
+		return inputISOPlaceholder
+	}
+	return p.Placeholder
 }
 
 // inputISOPattern is the native validation pattern for ISO datetime fields:
-// an RFC 3339 timestamp with optional seconds and a mandatory zone.
-const inputISOPattern = `\d{4}-\d{2}-\d{2}[Tt ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?([Zz]|[+\-]\d{2}:\d{2})`
+// an RFC 3339 timestamp with optional seconds and a mandatory zone, with
+// each field in range (seconds up to 60 for leap seconds). Days that don't
+// exist in their month, such as 2026-02-30, are rejected by the
+// isoDateTime controller in popui.js. The date and time are separated by
+// "T" or "t" only, as RFC 3339's grammar requires. Browsers compile
+// patterns with the "v" flag, so the "-" in [+\-] must stay escaped.
+const inputISOPattern = `\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])[Tt]([01]\d|2[0-3]):[0-5]\d(:([0-5]\d|60)(\.\d+)?)?([Zz]|[+\-]([01]\d|2[0-3]):[0-5]\d)`
 
 func inputType(p props.Input) string {
 	if inputISO(p) {

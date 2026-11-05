@@ -39,8 +39,9 @@ type Input struct {
 	// replaces only that prefix, leaving the time and zone exactly as typed
 	// (an empty field becomes midnight UTC on the chosen day). Time is edited
 	// by hand and no timezone conversion is applied. The field is validated
-	// against an RFC 3339 pattern on submit; an empty field submits an empty
-	// string. Only used when Type is "datetime-local".
+	// as an RFC 3339 timestamp on submit, with "T" between the date and time
+	// and a zone; an empty field submits an empty string. Only used when Type
+	// is "datetime-local".
 	ISO bool
 
 	Autofocus bool
