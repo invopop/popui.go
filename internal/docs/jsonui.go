@@ -117,22 +117,23 @@ const jsonuiListsExample = `{
   ]
 }`
 
+const jsonuiSchemasExample = `{
+  "config": {
+    "type": "object",
+    "required": ["to"],
+    "properties": {
+      "to": {
+        "type": "string",
+        "format": "email",
+        "errorMessage": { "format": "Enter an email address" }
+      },
+      "format": { "enum": ["html", "text"] }
+    }
+  }
+}`
+
 const jsonuiValidationExample = `{
   "data": { "config": { "to": "", "format": "html" } },
-  "schemas": {
-    "config": {
-      "type": "object",
-      "required": ["to"],
-      "properties": {
-        "to": {
-          "type": "string",
-          "format": "email",
-          "errorMessage": { "format": "Enter an email address" }
-        },
-        "format": { "enum": ["html", "text"] }
-      }
-    }
-  },
   "handlers": {
     "update": [{ "action": "validate", "silent": true }, { "action": "step.update" }]
   },
@@ -158,12 +159,25 @@ const jsonuiErrorsExample = `<script>
   });
 </script>`
 
-const jsonuiValidatorExample = `v, err := jsonui.NewValidator(doc.Schemas)
+const jsonuiValidatorExample = `// Schemas are kept with the data they describe, apart from any panel.
+var schemas map[string]json.RawMessage
+if err := json.Unmarshal(schemasJSON, &schemas); err != nil {
+	return err
+}
+// Build the validator once, and reuse it.
+v, err := jsonui.NewValidator(schemas)
 if err != nil {
 	return err
 }
-// Data is JSON shaped like the panel's, with each schema's value at its
-// path, e.g. {"config": {...}} with the config being saved.
+
+// Panels that edit the data validate it as it changes...
+opts := jsonui.Options{Validator: v}
+if err := opts.Render(ctx, panel, w); err != nil {
+	return err
+}
+
+// ...and the app checks it again when it's saved. Data is JSON with each
+// schema's value at its path, e.g. {"config": {...}} with the config.
 errs, err := v.ValidateJSON(data)
 if err != nil {
 	return err
@@ -198,6 +212,7 @@ const jsonuiBrowserExample = `<link rel="stylesheet" href="https://assets.invopo
 
   const { html, error } = popuiRender(JSON.stringify(doc), {
     actions: ["alert", "set", "reset", "dispatch", "ui.notify"],
+    schemas, // optional: data paths mapped to JSON Schemas, as an object or JSON
   });
   if (error) throw new Error(error);
   document.getElementById("app").innerHTML = html; // Alpine initialises it

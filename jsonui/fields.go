@@ -4,8 +4,8 @@ import "github.com/invopop/popui.go/classes"
 
 // Form controls with a "model" are fields: they show the error for their
 // model's path, which jsonui.js finds by validating the data against the
-// panel's schemas, or which actions report, such as a host saving the
-// data. Errors from schemas are only shown once the field has been changed
+// schemas of Options.Validator, or which actions report, such as a host
+// saving the data. Errors from schemas are only shown once the field has been changed
 // or left, or after the "validate" action, so a new form isn't covered in
 // them.
 

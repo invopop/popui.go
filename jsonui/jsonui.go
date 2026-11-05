@@ -74,15 +74,6 @@ type Panel struct {
 	// action, the name of one of the panel's handlers, or a list of
 	// either, e.g. "update" so the host receives the initial data.
 	Init json.RawMessage `json:"init,omitempty"`
-	// Schemas map data paths, such as "config", to the JSON Schema their
-	// value must match. The data is validated as it changes, and errors are
-	// shown with the form control whose "model" is their path, or after the
-	// panel for paths without one. Labels and options are defined by
-	// components independently of the schemas. Schemas can only
-	// refer to themselves with "$ref". A schema's "errorMessage" replaces the
-	// messages of its errors: one message, or one for each keyword, such as
-	// {"format": "Enter an email address"}.
-	Schemas map[string]json.RawMessage `json:"schemas,omitempty"`
 }
 
 // Node is a single element in the JSON component tree.
@@ -284,15 +275,11 @@ func (d *Panel) Component(opts Options) (templ.Component, error) {
 		return nil, errors.New("panel: missing components")
 	}
 	b := &panelBuilder{opts: opts}
-	var schemas string
-	if len(d.Schemas) > 0 {
-		var err error
-		if b.validator, err = NewValidator(d.Schemas); err != nil {
-			return nil, err
-		}
-		if schemas, err = compactSchemas(d.Schemas); err != nil {
-			return nil, err
-		}
+	schemas := ""
+	// A validator without schemas validates nothing, so the panel doesn't
+	// need popui.wasm to check its data.
+	if v := opts.Validator; v != nil && len(v.paths) > 0 {
+		b.validator, schemas = v, v.json
 	}
 	xdata := ""
 	if len(d.Data) > 0 {
@@ -340,21 +327,6 @@ func (d *Panel) Component(opts Options) (templ.Component, error) {
 	return withChildren(panelRoot(xdata, xinit, hasErrors, schemas), body), nil
 }
 
-// compactSchemas returns the schemas as the compact JSON jsonui.js
-// validates the data with.
-func compactSchemas(schemas map[string]json.RawMessage) (string, error) {
-	out := make(map[string]json.RawMessage, len(schemas))
-	for k, raw := range schemas {
-		var buf bytes.Buffer
-		if err := json.Compact(&buf, raw); err != nil {
-			return "", fmt.Errorf("schemas %s: %w", k, err)
-		}
-		out[k] = buf.Bytes()
-	}
-	data, err := json.Marshal(out)
-	return string(data), err
-}
-
 // parseData returns the compact x-data JSON for the panel along with
 // its decoded value for resolving binds and models.
 func parseData(raw json.RawMessage) (string, map[string]any, error) {
@@ -389,7 +361,7 @@ type panelBuilder struct {
 	conds []string
 	// sel is the state of the single select whose options are being built.
 	sel *selectState
-	// validator checks the data against the panel's schemas, if any.
+	// validator checks the data against the schemas in the options, if any.
 	validator *Validator
 	// fields counts the form controls that show errors for their model.
 	fields int
