@@ -110,6 +110,17 @@ type FieldPicker struct {
 	Root string
 	// Fields is the tree to pick from.
 	Fields []Field
+	// Scope narrows the panel to one Group of the tree: the group's path
+	// ("Invoice", or "Invoice.Lines" one level down), whose fields then
+	// stand at the root, with the group's name as the first crumb, and
+	// whose paths read from there — customer_name, doc.supplier.name. For a
+	// tree with a group per document schema on a page that learns which
+	// schema applies only once it is running: the component root carries
+	// the scope as an Alpine property, so an x-effect among Attributes —
+	// "scope = schemaGroup" — sets it from the page's own state, and
+	// changes it as that state does. A scope that names no group leaves
+	// the whole tree on show.
+	Scope string
 	// Format wraps a picked path, %s standing for the path: "{{.doc.%s}}"
 	// turns supplier.name into {{.doc.supplier.name}}. Defaults to "%s". A
 	// field with a Value of its own is emitted as is.

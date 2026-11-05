@@ -169,11 +169,7 @@ templ fieldPicker(prp props.FieldPicker, trigger string) {
 					@click="trail = []"
 					class="shrink-0 px-1.5 py-0.5 rounded-md font-sans text-sm font-medium text-foreground-default-secondary hover:bg-background-default-secondary"
 				>
-					if prp.Root != "" {
-						{ prp.Root }
-					} else {
-						root
-					}
+					<span x-text="rootLabel"></span>
 				</button>
 				<template x-for="(entry, index) in trail" :key="entry">
 					<span class="flex items-center gap-0.5 shrink-0">
@@ -418,13 +414,16 @@ func appendFieldPickerEntries(ctx context.Context, entries []fieldPickerEntry, f
 
 // fieldPickerData builds the x-data="fieldPicker({...})" snippet: where to
 // read the field tree from, the initial value, the hidden input's name, the
-// format a pick is wrapped in, and the element it is inserted into.
+// format a pick is wrapped in, the element it is inserted into, the root
+// crumb's label and the group the panel is scoped to.
 func fieldPickerData(p props.FieldPicker) string {
 	source, _ := json.Marshal(fieldPickerFieldsID(p))
 	value, _ := json.Marshal(p.Value)
 	name, _ := json.Marshal(p.Name)
 	format, _ := json.Marshal(p.Format)
 	target, _ := json.Marshal(p.Target)
-	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, disabled: %s, scalarsOnly: %s})",
-		source, value, name, format, target, boolStr(p.Disabled), boolStr(p.ScalarsOnly))
+	root, _ := json.Marshal(p.Root)
+	scope, _ := json.Marshal(p.Scope)
+	return fmt.Sprintf("fieldPicker({source: %s, value: %s, name: %s, format: %s, target: %s, root: %s, scope: %s, disabled: %s, scalarsOnly: %s})",
+		source, value, name, format, target, root, scope, boolStr(p.Disabled), boolStr(p.ScalarsOnly))
 }
