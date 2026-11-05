@@ -1,6 +1,7 @@
 // Sample JSON panels for the jsonui playground.
 // Wrapped in a function so its helpers stay out of the page's global scope;
-// only window.SAMPLES is exported.
+// only window.SAMPLES, and window.SCHEMAS for the samples that validate
+// their data, are exported.
 (() => {
   // The schema's "$id" (schema.ID in Go), as real panels use. The editor
   // loads the playground's own panel.json in its place, so the schema always
@@ -604,14 +605,10 @@
   //   - the playground's config.save stands in for the app's API, rejecting
   //     addresses at example.com with an error for the field, and an error
   //     for a path without one, which is shown after the panel.
-  window.SAMPLES.validation = {
-    $schema: SCHEMA,
-    data: {
-      config: { connection_id: "", to: "", subject: "Invoice {{.Code}}", format: "html", attach_pdf: true },
-      connections: [],
-      loading: false,
-    },
-    schemas: {
+  // The schema describes the config rather than the panel, so it isn't part
+  // of it: the host gives it to the renderer, here from window.SCHEMAS.
+  window.SCHEMAS = {
+    validation: {
       config: {
         type: "object",
         required: ["connection_id", "to", "subject"],
@@ -623,6 +620,15 @@
           attach_pdf: { type: "boolean" },
         },
       },
+    },
+  };
+
+  window.SAMPLES.validation = {
+    $schema: SCHEMA,
+    data: {
+      config: { connection_id: "", to: "", subject: "Invoice {{.Code}}", format: "html", attach_pdf: true },
+      connections: [],
+      loading: false,
     },
     handlers: {
       update: [

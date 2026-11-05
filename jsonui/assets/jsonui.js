@@ -16,7 +16,7 @@
 //
 // Form controls with a "model" show the error for their path, kept by
 // panel in $errors. Errors come from validating the data against the
-// panel's schemas with popuiValidate, from popui.wasm, as it changes, and
+// schemas the panel was rendered with, using popuiValidate from popui.wasm, as it changes, and
 // from actions that throw an error with an "errors" list, such as a host
 // whose server rejected the data:
 //
@@ -194,7 +194,8 @@
   };
 
   let unavailable = false;
-  // validate updates the errors found in the data by the panel's schemas.
+  // validate updates the errors found in the data by the schemas the panel
+  // was rendered with.
   // It needs popuiValidate from popui.wasm.
   const validate = (root, s, data) => {
     const schemas = root.getAttribute("x-jsonui-errors");

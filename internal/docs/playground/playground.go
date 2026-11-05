@@ -8,6 +8,7 @@ package playground
 import (
 	"bytes"
 	"embed"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -161,6 +162,18 @@ func Handler() http.Handler {
 			return
 		}
 		opts := jsonui.Options{Actions: actions, Trusted: r.URL.Query().Get("trusted") == "1"}
+		// Schemas aren't part of panels; the page sends them alongside.
+		if s := r.URL.Query().Get("schemas"); s != "" {
+			var raw map[string]json.RawMessage
+			if err := json.Unmarshal([]byte(s), &raw); err != nil {
+				http.Error(w, "schemas: "+err.Error(), http.StatusBadRequest)
+				return
+			}
+			if opts.Validator, err = jsonui.NewValidator(raw); err != nil {
+				http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+				return
+			}
+		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := opts.Render(r.Context(), body, w); err != nil {
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
