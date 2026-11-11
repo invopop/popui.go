@@ -173,6 +173,28 @@ func (p Period) Range(today time.Time) (from, to time.Time) {
 	return at(first), at(last + 1)
 }
 
+// RangeWithin returns the part of the period's Range inside outer's, as
+// for a window from outer.Split, whose first and last windows may reach
+// past outer's ends. Both are zero when they don't overlap. All has no
+// bounds, so an outer All leaves the Range as it is.
+func (p Period) RangeWithin(outer Period, today time.Time) (from, to time.Time) {
+	from, to = p.Range(today)
+	if outer.All {
+		return from, to
+	}
+	of, ot := outer.Range(today)
+	if p.All || from.Before(of) {
+		from = of
+	}
+	if p.All || to.After(ot) {
+		to = ot
+	}
+	if !from.Before(to) {
+		return time.Time{}, time.Time{}
+	}
+	return from, to
+}
+
 // days returns the period's first and last days, from the Unix epoch.
 func (p Period) days(today int) (int, int) {
 	if p.Days > 0 {
@@ -286,6 +308,63 @@ func (p Period) Shift(n int, today time.Time) Period {
 	}
 	span := p.To - p.From + 1
 	return Period{Unit: p.Unit, From: p.From + n*span, To: p.To + n*span}
+}
+
+// Split divides the period into the calendar windows of the finest unit
+// that gives at most limit of them, oldest first, as a chart's columns run:
+// days, weeks, months, quarters, or else years however many there are.
+// The first and last windows may reach past the period's ends: use each
+// window's RangeWithin the period to count only what's in it. All has no
+// start to split from, so gives none, and nor does a limit below one.
+func (p Period) Split(today time.Time, limit int) []Period {
+	if p.All || limit < 1 {
+		return nil
+	}
+	first, last := p.days(dayIndex(today))
+	for _, u := range []string{Day, Week, Month, Quarter, Year} {
+		a, b := windowOf(u, first), windowOf(u, last)
+		if b-a < limit || u == Year {
+			out := make([]Period, 0, b-a+1)
+			for n := a; n <= b; n++ {
+				out = append(out, Period{Unit: u, From: n, To: n})
+			}
+			return out
+		}
+	}
+	return nil
+}
+
+// Short names the period's first window briefly, for a chart's axis: "2
+// Nov", "W44", "Nov", "Q4" or "2026". Label names it in full.
+func (p Period) Short() string {
+	switch {
+	case p.All:
+		return "All"
+	case p.Days > 0:
+		return strconv.Itoa(p.Days) + "d"
+	case p.Unit == Week:
+		_, w := isoWeek(p.From)
+		return "W" + strconv.Itoa(w)
+	case p.Unit == Month:
+		return monthNames[p.From-floorDiv(p.From, 12)*12][:3]
+	}
+	return p.name(p.From, false)
+}
+
+// windowOf returns the window of the unit that day n is in.
+func windowOf(unit string, n int) int {
+	d := fromDay(n)
+	switch unit {
+	case Day:
+		return n
+	case Week:
+		return weekOf(n)
+	case Month:
+		return d.Year()*12 + int(d.Month()) - 1
+	case Quarter:
+		return d.Year()*4 + (int(d.Month())-1)/3
+	}
+	return d.Year()
 }
 
 func date(y, m, d int) time.Time {

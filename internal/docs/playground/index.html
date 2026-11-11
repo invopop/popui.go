@@ -83,6 +83,7 @@
 		#code { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
 		#code .cm-editor { height: 100%; font-size: 12px; }
 		#code .cm-scroller { overflow: auto; }
+		#schemas { font-family: var(--font-mono, monospace); font-size: 12px; padding: 8px; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); resize: vertical; }
 		.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
 		.controls select, .controls button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); cursor: pointer; }
 		.controls button.primary { background: var(--color-background-accent); color: var(--color-foreground-inverse); border-color: transparent; }
@@ -134,6 +135,8 @@
 				<a href="panel.json" target="_blank">schema</a>
 			</div>
 			<div id="code"></div>
+			<label for="schemas" class="note">Schemas: data paths mapped to the JSON Schemas their values must match. They describe the data rather than the panel, so the host passes them to the renderer as options.schemas.</label>
+			<textarea id="schemas" rows="8" spellcheck="false" placeholder='{ "config": { "type": "object" } }'></textarea>
 			<div id="editor-note" class="note" hidden></div>
 			<div id="error" class="error"></div>
 		</div>
@@ -161,11 +164,19 @@
 		function loadSample(name) {
 			const doc = name === "stress" ? SAMPLES.stress(200) : name === "stress1000" ? SAMPLES.stress(1000) : SAMPLES[name];
 			setJSON(JSON.stringify(doc, null, 2));
+			const schemas = SCHEMAS[name];
+			$("schemas").value = schemas ? JSON.stringify(schemas, null, 2) : "";
 		}
 
-		let rendered; // the JSON last rendered
+		// getSchemas returns the schemas to render with, or "" for none.
+		const getSchemas = () => $("schemas").value.trim();
+		// state is what a render depends on, to skip renders that change nothing.
+		const state = () => `${getJSON()}\0${getSchemas()}`;
+
+		let rendered; // the state last rendered
 		function render() {
-			const json = (rendered = getJSON());
+			rendered = state();
+			const json = getJSON();
 			let t = performance.now();
 			const res = popuiRender(json, renderOptions());
 			const renderMs = performance.now() - t;
@@ -180,7 +191,11 @@
 		}
 
 		// renderOptions are passed to the renderer; strict is the default.
-		const renderOptions = () => ({ actions: ACTIONS, trusted: !$("strict").checked });
+		const renderOptions = () => {
+			const opts = { actions: ACTIONS, trusted: !$("strict").checked };
+			if (getSchemas()) opts.schemas = getSchemas();
+			return opts;
+		};
 
 		let timer;
 		function scheduleRender() {
@@ -188,7 +203,7 @@
 			clearTimeout(timer);
 			// Skip text the page loaded and has rendered, such as a sample, or
 			// the panel would start again and repeat its init.
-			timer = setTimeout(() => getJSON() !== rendered && render(), 150);
+			timer = setTimeout(() => state() !== rendered && render(), 150);
 		}
 
 		// serverRender times a server-side render of the same panel. Only
@@ -196,7 +211,10 @@
 		async function serverRender(json) {
 			const t = performance.now();
 			try {
-				const r = await fetch(`render${$("strict").checked ? "" : "?trusted=1"}`, { method: "POST", body: json });
+				const q = new URLSearchParams();
+				if (!$("strict").checked) q.set("trusted", "1");
+				if (getSchemas()) q.set("schemas", getSchemas());
+				const r = await fetch(`render?${q}`, { method: "POST", body: json });
 				await r.text();
 				if (r.status === 404 || r.status === 405) return null;
 			} catch {
@@ -247,6 +265,7 @@
 		$("sample").addEventListener("change", (e) => { loadSample(e.target.value); render(); });
 		$("render").addEventListener("click", render);
 		$("strict").addEventListener("change", render);
+		$("schemas").addEventListener("input", scheduleRender);
 		$("bench").addEventListener("click", bench);
 
 		loadSample("details");
