@@ -45,7 +45,7 @@ func TableClickableExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Product</th><th>Status</th><th>Price</th></tr></thead> <tbody><tr tabindex=\"0\" onclick=\"alert('Widget A')\" onkeydown=\"if (event.key === 'Enter') this.click()\"><td>Widget A</td><td>Available</td><td>$29.99</td></tr><tr tabindex=\"0\" onclick=\"alert('Widget B')\" onkeydown=\"if (event.key === 'Enter') this.click()\"><td>Widget B</td><td>Out of Stock</td><td>$39.99</td></tr><tr id=\"popui-clickable-row\" tabindex=\"0\" data-clickable><td>Widget C</td><td>Available</td><td>$49.99</td></tr></tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Product</th><th>Status</th><th>Price</th></tr></thead> <tbody><tr onclick=\"alert('Widget A')\"><td><button type=\"button\" class=\"text-left\">Widget A</button></td><td>Available</td><td>$29.99</td></tr><tr onclick=\"alert('Widget B')\"><td><button type=\"button\" class=\"text-left\">Widget B</button></td><td>Out of Stock</td><td>$39.99</td></tr><tr id=\"popui-clickable-row\" data-clickable><td><button type=\"button\" class=\"text-left\">Widget C</button></td><td>Available</td><td>$49.99</td></tr></tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -55,7 +55,7 @@ func TableClickableExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<script>\n\t\t(function() {\n\t\t\tconst row = document.getElementById(\"popui-clickable-row\");\n\t\t\trow.addEventListener(\"click\", function() { alert(\"Widget C\"); });\n\t\t\trow.addEventListener(\"keydown\", function(e) { if (e.key === \"Enter\") row.click(); });\n\t\t})();\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<script>\n\t\tdocument.getElementById(\"popui-clickable-row\").addEventListener(\"click\", function() { alert(\"Widget C\"); });\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
