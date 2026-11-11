@@ -47,10 +47,10 @@ The experimental `jsonui` package renders panels of PopUI components described i
 
 ## Development
 
-JSON UI action and validation runtime tests use Node.js without additional dependencies:
+JSON UI and popui.js runtime tests use Node.js without additional dependencies:
 
 ```bash
-node --test jsonui/tests/*.test.cjs
+node --test jsonui/tests/*.test.cjs tests/*.test.cjs
 ```
 
 ### Building

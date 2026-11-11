@@ -111,7 +111,8 @@ type FieldPicker struct {
 	// Fields is the tree to pick from.
 	Fields []Field
 	// Scope narrows the panel to one Group of the tree: the group's path
-	// ("Invoice", or "Invoice.Lines" one level down), whose fields then
+	// ("Invoice", or "Invoice.Lines" one level down, an array on the way
+	// marked as the panel shows it: "Invoice.lines[].meta"), whose fields then
 	// stand at the root, with the group's name as the first crumb, and
 	// whose paths read from there — customer_name, doc.supplier.name. For a
 	// tree with a group per document schema on a page that learns which

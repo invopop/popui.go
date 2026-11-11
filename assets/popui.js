@@ -1714,8 +1714,10 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // is the group's full path, groups above it included, as the user
         // reads it while browsing the whole tree.
         build() {
+          // Built as entry.path is below, arrays marked [], so the scope
+          // matches the path the user reads.
           const paths = []
-          raw.forEach((e, i) => { paths.push((e.parent >= 0 ? paths[e.parent] + '.' : '') + e.name) })
+          raw.forEach((e) => { paths.push((e.parent >= 0 ? paths[e.parent] + '.' : '') + e.name + (e.array ? '[]' : '')) })
           const top = this.scope ? raw.findIndex((e, i) => e.group && paths[i] === this.scope) : -1
           this.scoped = top
           // The entries kept, each with its new index: every one without a

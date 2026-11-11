@@ -707,7 +707,7 @@
         },
         "scope": {
           "type": "string",
-          "description": "Scope narrows the panel to one Group of the tree: the group's path\n(\"Invoice\", or \"Invoice.Lines\" one level down), whose fields then\nstand at the root, with the group's name as the first crumb, and\nwhose paths read from there — customer_name, doc.supplier.name. For a\ntree with a group per document schema on a page that learns which\nschema applies only once it is running: the component root carries\nthe scope as an Alpine property, so an x-effect among Attributes —\n\"scope = schemaGroup\" — sets it from the page's own state, and\nchanges it as that state does. A scope that names no group leaves\nthe whole tree on show."
+          "description": "Scope narrows the panel to one Group of the tree: the group's path\n(\"Invoice\", or \"Invoice.Lines\" one level down, an array on the way\nmarked as the panel shows it: \"Invoice.lines[].meta\"), whose fields then\nstand at the root, with the group's name as the first crumb, and\nwhose paths read from there — customer_name, doc.supplier.name. For a\ntree with a group per document schema on a page that learns which\nschema applies only once it is running: the component root carries\nthe scope as an Alpine property, so an x-effect among Attributes —\n\"scope = schemaGroup\" — sets it from the page's own state, and\nchanges it as that state does. A scope that names no group leaves\nthe whole tree on show."
         },
         "format": {
           "type": "string",
