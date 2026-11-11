@@ -45,13 +45,17 @@ func TableClickableExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Product</th><th>Status</th><th>Price</th></tr></thead> <tbody><tr onclick=\"alert('Widget A')\"><td>Widget A</td><td>Available</td><td>$29.99</td></tr><tr onclick=\"alert('Widget B')\"><td>Widget B</td><td>Out of Stock</td><td>$39.99</td></tr><tr data-clickable><td>Widget C</td><td>Available</td><td>$49.99</td></tr></tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<thead><tr><th>Product</th><th>Status</th><th>Price</th></tr></thead> <tbody><tr tabindex=\"0\" onclick=\"alert('Widget A')\" onkeydown=\"if (event.key === 'Enter') this.click()\"><td>Widget A</td><td>Available</td><td>$29.99</td></tr><tr tabindex=\"0\" onclick=\"alert('Widget B')\" onkeydown=\"if (event.key === 'Enter') this.click()\"><td>Widget B</td><td>Out of Stock</td><td>$39.99</td></tr><tr id=\"popui-clickable-row\" tabindex=\"0\" data-clickable><td>Widget C</td><td>Available</td><td>$49.99</td></tr></tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = popui.Table().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<script>\n\t\t(function() {\n\t\t\tconst row = document.getElementById(\"popui-clickable-row\");\n\t\t\trow.addEventListener(\"click\", function() { alert(\"Widget C\"); });\n\t\t\trow.addEventListener(\"keydown\", function(e) { if (e.key === \"Enter\") row.click(); });\n\t\t})();\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

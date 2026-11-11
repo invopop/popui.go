@@ -14,23 +14,32 @@ templ TableClickableExample() {
 			</tr>
 		</thead>
 		<tbody>
-			<tr onclick="alert('Widget A')">
+			// tabindex and the Enter handler make each row reachable and
+			// usable from the keyboard, not only with a pointer.
+			<tr tabindex="0" onclick="alert('Widget A')" onkeydown="if (event.key === 'Enter') this.click()">
 				<td>Widget A</td>
 				<td>Available</td>
 				<td>$29.99</td>
 			</tr>
-			<tr onclick="alert('Widget B')">
+			<tr tabindex="0" onclick="alert('Widget B')" onkeydown="if (event.key === 'Enter') this.click()">
 				<td>Widget B</td>
 				<td>Out of Stock</td>
 				<td>$39.99</td>
 			</tr>
 			// Rows whose listener is attached programmatically opt in
 			// with data-clickable to get the same pointer cursor.
-			<tr data-clickable>
+			<tr id="popui-clickable-row" tabindex="0" data-clickable>
 				<td>Widget C</td>
 				<td>Available</td>
 				<td>$49.99</td>
 			</tr>
 		</tbody>
 	}
+	<script>
+		(function() {
+			const row = document.getElementById("popui-clickable-row");
+			row.addEventListener("click", function() { alert("Widget C"); });
+			row.addEventListener("keydown", function(e) { if (e.key === "Enter") row.click(); });
+		})();
+	</script>
 }
