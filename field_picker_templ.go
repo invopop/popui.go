@@ -253,7 +253,7 @@ func fieldPicker(prp props.FieldPicker, trigger string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 = []any{tailwind.Merge(
-			"field-picker-panel flex flex-col min-w-[min(20rem,calc(100vw-2rem))] min-h-[18.75rem] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg",
+			"field-picker-panel flex flex-col min-w-[min(366px,calc(100vw-2rem))] min-h-[18.75rem] max-w-[min(28rem,calc(100vw-2rem))] border border-border rounded-xl mt-1 p-1 bg-background shadow-lg",
 			classes.If(prp.Align == props.FieldPickerAlignEnd, "field-picker-panel-end"),
 		)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)

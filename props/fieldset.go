@@ -13,5 +13,5 @@ type Fieldset struct {
 	Class      string
 	Attributes templ.Attributes
 	Legend     string
-	Variant    string
+	Variant    string `jsonschema:"enum=,enum=card"`
 }

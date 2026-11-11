@@ -8,6 +8,7 @@ type TagStatus struct {
 	Class      string
 	Attributes templ.Attributes
 	Label      string
-	Status     string // grey, green, yellow, red, orange, blue, purple, olive, teal, crimson, steelBlue, empty
-	Dot        bool
+	// Status is the colour of the tag.
+	Status string `jsonschema:"enum=grey,enum=green,enum=yellow,enum=red,enum=orange,enum=blue,enum=purple,enum=olive,enum=teal,enum=crimson,enum=steelBlue,enum=empty"`
+	Dot    bool
 }

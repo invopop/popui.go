@@ -33,9 +33,11 @@ templ Tabs(p ...props.Tabs) {
 		class={ tailwind.Merge("flex flex-col", prp.Class) }
 		{ prp.Attributes... }
 	>
+		// No margin below the row: each Tab panel pads its own content, so a
+		// margin here would stack on top of it.
 		<div
 			role="tablist"
-			class={ tailwind.Merge("inline-flex w-full mb-4", tabsClasses(prp.Variant)) }
+			class={ tailwind.Merge("inline-flex w-full", tabsClasses(prp.Variant)) }
 		>
 			for _, t := range prp.Tabs {
 				<button

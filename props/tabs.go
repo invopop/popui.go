@@ -34,7 +34,7 @@ type Tabs struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	Variant    string // "default" (underline) or "pill"
+	Variant    string `jsonschema:"enum=,enum=default,enum=pill"` // "default" (underline) or "pill"
 	// Model is the Alpine variable holding the active tab Value. Defaults to
 	// "tab" — match it on the child Tabs (their default is also "tab", so
 	// usually neither needs setting).

@@ -107,9 +107,26 @@ templ tooltipCard(p props.Tooltip) {
 				if p.Description != "" {
 					// A div, not a p: the description is Markdown, so it may
 					// produce paragraphs and lists, which cannot nest inside a p.
-					// Tailwind resets list styling, hence the element rules here.
+					// Tailwind resets element styling, hence the per-element
+					// rules here: every block Markdown can emit (paragraphs,
+					// lists, headings, quotes, rules, code blocks) and the
+					// inline marks (emphasis, strong, code, links) get a look
+					// that works on the dark card. Code sits on a slightly
+					// lighter chip so it reads as code against the card.
 					<div
-						class="text-sm text-foreground-inverse-secondary break-words [&_p]:mb-1.5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_a]:underline [&_strong]:font-semibold [&_strong]:text-foreground-inverse [&_code]:font-mono [&_code]:text-xs [&_code]:break-all"
+						class={
+							"text-sm text-foreground-inverse-secondary break-words",
+							"[&_p]:mb-1.5 [&_p:last-child]:mb-0",
+							"[&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-0.5 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_ul:last-child]:mb-0 [&_ol:last-child]:mb-0",
+							"[&_:is(h1,h2,h3,h4,h5,h6)]:font-semibold [&_:is(h1,h2,h3,h4,h5,h6)]:text-foreground-inverse [&_:is(h1,h2,h3,h4,h5,h6)]:text-sm [&_:is(h1,h2,h3,h4,h5,h6)]:mb-1 [&_:is(h1,h2,h3,h4,h5,h6)]:mt-1.5 [&_:is(h1,h2,h3,h4,h5,h6):first-child]:mt-0",
+							"[&_blockquote]:border-l-2 [&_blockquote]:border-border-inverse-secondary [&_blockquote]:pl-2 [&_blockquote]:mb-1.5 [&_blockquote:last-child]:mb-0",
+							"[&_hr]:border-border-inverse-secondary [&_hr]:my-1.5",
+							"[&_a]:underline [&_a]:text-foreground-inverse",
+							"[&_strong]:font-semibold [&_strong]:text-foreground-inverse",
+							"[&_em]:italic [&_del]:line-through",
+							"[&_code]:inline [&_code]:font-mono [&_code]:text-[11px] [&_code]:leading-4 [&_code]:text-foreground-inverse [&_code]:border-0 [&_code]:bg-background-selected-inverse [&_code]:rounded-sm [&_code]:px-1 [&_code]:py-px [&_code]:break-all",
+							"[&_pre]:block [&_pre]:border-0 [&_pre]:bg-background-selected-inverse [&_pre]:rounded-md [&_pre]:p-2 [&_pre]:mb-1.5 [&_pre:last-child]:mb-0 [&_pre]:overflow-x-auto [&_pre]:text-[11px] [&_pre]:leading-4 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:break-normal [&_pre_code]:whitespace-pre",
+						}
 					>
 						@markdown(p.Description)
 					</div>

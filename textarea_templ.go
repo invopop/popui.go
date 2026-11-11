@@ -480,7 +480,7 @@ func templateEditor(prp props.Textarea) templ.Component {
 				templ_7745c5c3_Err = Tabs(props.Tabs{
 					Variant: "pill",
 					Active:  templateEditorView(prp),
-					Class:   "ml-auto w-fit [&>[role=tablist]]:mb-0",
+					Class:   "ml-auto w-fit",
 					Attributes: templ.Attributes{
 						"x-modelable": "tab",
 						"x-model":     "view",

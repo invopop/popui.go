@@ -1,0 +1,345 @@
+package popui
+
+import (
+	"strconv"
+
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// ColumnChart shows values over time as columns from a common baseline,
+// such as documents created each month, with a value axis of round
+// numbers and the latest column labelled along the time axis, then every
+// so often before it. Hovering or focusing a column shows its title and
+// figure, and columns with an Href are links. Partial columns, still
+// adding up, are drawn lighter. Screen readers read the values from a
+// table. Drawn with HTML and CSS alone, so it needs no script and follows
+// the theme.
+templ ColumnChart(opts ...props.ColumnChart) {
+	{{ p := props.First(opts) }}
+	{{ top, ticks := chartTicks(chartMax(p.Columns)) }}
+	{{ height := p.Height }}
+	{{
+		if height <= 0 {
+			height = 160
+		}
+	}}
+	<figure
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("popui-chart flex flex-col gap-1.5 m-0 font-sans", p.Class) }
+		{ p.Attributes... }
+	>
+		<div class="flex" style={ "height: " + strconv.Itoa(height) + "px" }>
+			<div class="relative w-10 shrink-0 text-xs text-foreground-default-tertiary tabular-nums" aria-hidden="true">
+				for _, t := range ticks {
+					<span class="absolute end-2 translate-y-1/2 leading-none" style={ "bottom: " + chartPercent(t, top) }>{ CompactNumber(t) }</span>
+				}
+			</div>
+			<div class="relative flex-1 min-w-0">
+				for _, t := range ticks {
+					<div
+						class={ classes.Join("absolute inset-x-0 border-t", classes.If(t == 0, "border-border-default-tertiary"), classes.If(t != 0, "border-border-default-secondary opacity-60")) }
+						style={ "bottom: " + chartPercent(t, top) }
+						aria-hidden="true"
+					></div>
+				}
+				<div class="absolute inset-0 flex items-stretch">
+					for i, c := range p.Columns {
+						@chartColumn(c, top, i, len(p.Columns))
+					}
+				</div>
+			</div>
+		</div>
+		<div class="flex ps-10 text-xs text-foreground-default-tertiary" aria-hidden="true">
+			for i, c := range p.Columns {
+				<span class="flex-1 min-w-0 text-center whitespace-nowrap overflow-visible">
+					if chartLabelled(i, len(p.Columns)) {
+						{ c.Label }
+					}
+				</span>
+			}
+		</div>
+		@chartTable(p.Label, p.Columns)
+	</figure>
+}
+
+// chartColumn is one column, its hover target the column's whole slot.
+templ chartColumn(c props.ChartValue, top float64, i, n int) {
+	{{ pct := chartPercent(c.Value, top) }}
+	{{ attrs := templ.Attributes{"class": "popui-chart-col group/col relative flex-1 min-w-0 flex items-end justify-center px-px rounded-t-md hover:bg-background-default-secondary focus-visible:bg-background-default-secondary outline-none"} }}
+	if c.Href != "" {
+		<a href={ c.Href } { attrs... } aria-label={ chartTitle(c) + ": " + chartDisplay(c) }>
+			@chartColumnBody(c, pct, i, n)
+		</a>
+	} else {
+		<div tabindex="0" role="img" { attrs... } aria-label={ chartTitle(c) + ": " + chartDisplay(c) }>
+			@chartColumnBody(c, pct, i, n)
+		</div>
+	}
+}
+
+templ chartColumnBody(c props.ChartValue, pct string, i, n int) {
+	<span
+		class={ classes.Join("block w-full max-w-6 rounded-t-[4px]", chartColor(c.Color), classes.If(c.Value > 0, "min-h-0.5"), classes.If(c.Partial, "opacity-50")) }
+		style={ "height: " + pct }
+		aria-hidden="true"
+	></span>
+	// The column's label says the same for screen readers.
+	<span
+		aria-hidden="true"
+		class={ classes.Join(
+			"popui-chart-tip absolute z-20 mb-1.5 w-max max-w-48 px-2 py-1.5 rounded-lg border border-border-inverse bg-background-default-negative shadow-lg text-xs pointer-events-none",
+			"invisible opacity-0 transition-opacity duration-100 group-hover/col:visible group-hover/col:opacity-100 group-focus-visible/col:visible group-focus-visible/col:opacity-100",
+			chartTipAlign(i, n),
+		) }
+		style={ "bottom: " + pct }
+	>
+		<span class="block text-foreground-inverse-secondary">{ chartTitle(c) }</span>
+		<span class="block text-foreground-inverse font-medium tabular-nums">{ chartDisplay(c) }</span>
+	</span>
+}
+
+// chartTipAlign keeps the tooltips of the columns at the ends inside the
+// chart.
+func chartTipAlign(i, n int) string {
+	switch {
+	case n > 3 && i < 2:
+		return "left-0"
+	case n > 3 && i >= n-2:
+		return "right-0"
+	}
+	return "left-1/2 -translate-x-1/2"
+}
+
+// chartTable lists a chart's values for screen readers.
+templ chartTable(label string, values []props.ChartValue) {
+	<table class="sr-only">
+		if label != "" {
+			<caption>{ label }</caption>
+		}
+		<tbody>
+			for _, v := range values {
+				<tr>
+					<th scope="row">{ chartTitle(v) }</th>
+					<td>{ chartDisplay(v) }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+// BarList shows values to compare, such as counts by category, each as a
+// label above a horizontal bar, with its figure at the end. The longest
+// bar fills the width. Bars with an Href are links.
+templ BarList(opts ...props.BarList) {
+	{{ p := props.First(opts) }}
+	{{ top := chartMax(p.Bars) }}
+	<ul
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Label != "" {
+			aria-label={ p.Label }
+		}
+		class={ tailwind.Merge("popui-bar-list flex flex-col gap-1 m-0 p-0 list-none font-sans", p.Class) }
+		{ p.Attributes... }
+	>
+		for _, b := range p.Bars {
+			<li>
+				if b.Href != "" {
+					<a href={ b.Href } class="flex flex-col gap-1 px-2 py-1.5 -mx-2 rounded-md hover:bg-background-default-secondary">
+						@barListItem(b, top)
+					</a>
+				} else {
+					<div class="flex flex-col gap-1 px-2 py-1.5 -mx-2">
+						@barListItem(b, top)
+					</div>
+				}
+			</li>
+		}
+	</ul>
+}
+
+templ barListItem(b props.ChartValue, top float64) {
+	<span class="flex items-baseline justify-between gap-3 text-sm">
+		<span class="truncate text-foreground">{ b.Label }</span>
+		<span class="shrink-0 tabular-nums text-foreground-default-secondary">{ chartDisplay(b) }</span>
+	</span>
+	<span class="block h-1.5 rounded-full bg-background-default-tertiary" aria-hidden="true">
+		<span
+			class={ classes.Join("block h-full rounded-full", chartColor(b.Color), classes.If(b.Value > 0, "min-w-1.5"), classes.If(b.Partial, "opacity-50")) }
+			style={ "width: " + chartPercent(b.Value, top) }
+		></span>
+	</span>
+}
+
+// SegmentedBar shows a whole split into its parts, such as documents by
+// state, as one bar of the parts' colors with a 2px gap between them, and
+// a legend below of each part's name and figure. Parts of no value are
+// left out. Hovering a part, or its legend entry, names it, and legend
+// entries with an Href are links.
+templ SegmentedBar(opts ...props.SegmentedBar) {
+	{{ p := props.First(opts) }}
+	{{ total := 0.0 }}
+	{{
+		for _, s := range p.Parts {
+			total += max(s.Value, 0)
+		}
+	}}
+	<figure
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("popui-segmented-bar flex flex-col gap-3 m-0 font-sans", p.Class) }
+		{ p.Attributes... }
+	>
+		<div class="flex h-2 gap-0.5 rounded-full overflow-hidden bg-background-default-tertiary" aria-hidden="true">
+			for _, s := range p.Parts {
+				if s.Value > 0 {
+					<span
+						class={ classes.Join("block h-full min-w-1 first:rounded-s-full last:rounded-e-full", chartColor(s.Color)) }
+						style={ "flex: " + strconv.FormatFloat(s.Value, 'f', -1, 64) + " 1 0" }
+						title={ chartTitle(s) + ": " + chartDisplay(s) + " (" + chartShare(s.Value, total) + ")" }
+					></span>
+				}
+			}
+		</div>
+		if !p.NoLegend {
+			<ul class="flex flex-wrap gap-x-4 gap-y-1 m-0 p-0 list-none text-sm">
+				for _, s := range p.Parts {
+					if s.Value > 0 {
+						<li>
+							if s.Href != "" {
+								<a href={ s.Href } class="flex items-center gap-1.5 -mx-1 px-1 rounded hover:bg-background-default-secondary">
+									@segmentLegend(s, total)
+								</a>
+							} else {
+								<span class="flex items-center gap-1.5">
+									@segmentLegend(s, total)
+								</span>
+							}
+						</li>
+					}
+				}
+			</ul>
+		}
+		@chartTable(p.Label, chartPositive(p.Parts))
+	</figure>
+}
+
+templ segmentLegend(s props.ChartValue, total float64) {
+	<span class={ classes.Join("w-2 h-2 rounded-xs shrink-0", chartColor(s.Color)) } aria-hidden="true"></span>
+	<span class="text-foreground">{ s.Label }</span>
+	<span class="tabular-nums text-foreground-default-secondary" title={ chartShare(s.Value, total) }>{ chartDisplay(s) }</span>
+}
+
+// chartShare writes v's share of the whole, as "46%".
+func chartShare(v, whole float64) string {
+	if whole <= 0 {
+		return "0%"
+	}
+	pct := v / whole * 100
+	if pct > 0 && pct < 1 {
+		return "<1%"
+	}
+	return strconv.FormatFloat(pct, 'f', 0, 64) + "%"
+}
+
+// Sparkline draws the shape of a series of values as a line with a light
+// wash beneath, filling the width of its container. Values are drawn from
+// zero, or the lowest below it, so small changes aren't exaggerated.
+// Screen readers read its Label, or skip it without one.
+templ Sparkline(opts ...props.Sparkline) {
+	{{ p := props.First(opts) }}
+	<svg
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		viewBox="0 0 100 32"
+		preserveAspectRatio="none"
+		class={ tailwind.Merge("popui-sparkline block w-full h-8 overflow-visible text-background-accent", p.Class) }
+		if p.Label != "" {
+			role="img"
+			aria-label={ p.Label }
+		} else {
+			aria-hidden="true"
+		}
+		{ p.Attributes... }
+	>
+		if len(p.Values) > 1 {
+			<polygon points={ sparklineArea(p.Values) } fill="currentColor" fill-opacity="0.1"></polygon>
+			<polyline
+				points={ sparklinePoints(p.Values) }
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linejoin="round"
+				stroke-linecap="round"
+				vector-effect="non-scaling-stroke"
+			></polyline>
+		}
+	</svg>
+}
+
+// Metric shows a headline figure with its label above it, such as a count
+// for a period, and optionally a note after it, its change on the
+// previous period, colored by whether that's good news, and a sparkline of
+// its trend. With an Href the whole metric is a link.
+templ Metric(opts ...props.Metric) {
+	{{ p := props.First(opts) }}
+	{{ attrs := templ.Attributes{"class": tailwind.Merge("popui-metric flex flex-col gap-1 min-w-0 font-sans", classes.If(p.Href != "", "rounded-lg -m-2 p-2 hover:bg-background-default-secondary"), p.Class)} }}
+	if p.ID != "" {
+		{{ attrs["id"] = p.ID }}
+	}
+	if p.Href != "" {
+		<a href={ p.Href } { attrs... } { p.Attributes... }>
+			@metricBody(p)
+		</a>
+	} else {
+		<div { attrs... } { p.Attributes... }>
+			@metricBody(p)
+		</div>
+	}
+}
+
+templ metricBody(p props.Metric) {
+	<span class="text-sm text-foreground-default-secondary truncate">{ p.Label }</span>
+	<span class="flex items-baseline gap-2 min-w-0">
+		<span class="text-2xl font-medium text-foreground">{ p.Value }</span>
+		if p.Note != "" {
+			<span class="text-sm text-foreground-default-tertiary truncate">{ p.Note }</span>
+		}
+	</span>
+	if p.Previous != "" {
+		<span class="flex items-center gap-1 text-xs text-foreground-default-tertiary min-w-0">
+			if p.NoChange {
+				<span class="truncate">None in { p.Previous } to compare</span>
+			} else {
+				{{ tone := metricTone(p) }}
+				<span
+					class={ classes.Join(
+						"inline-flex items-center gap-0.5 font-medium tabular-nums [&>svg]:size-3.5",
+						classes.If(tone == toneGood, "text-foreground-success"),
+						classes.If(tone == toneBad, "text-foreground-critical"),
+						classes.If(tone == toneFlat, "text-foreground-default-secondary"),
+					) }
+				>
+					if p.Change > 0 && tone != toneFlat {
+						@icons.ArrowUp()
+					} else if p.Change < 0 && tone != toneFlat {
+						@icons.ArrowDown()
+					}
+					{ metricChange(p.Change) }
+				</span>
+				<span class="truncate">vs { p.Previous }</span>
+			}
+		</span>
+	}
+	if len(p.Trend) > 1 {
+		@Sparkline(props.Sparkline{Values: p.Trend, Class: "mt-1"})
+	}
+}

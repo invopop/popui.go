@@ -94,7 +94,7 @@ func SignaturePad(opts ...props.SignaturePad) templ.Component {
 		templ_7745c5c3_Err = Tabs(props.Tabs{
 			ID:      "popui-sign-tabs",
 			Variant: "pill",
-			Class:   "[&>[role=tablist]]:h-8 [&>[role=tablist]]:mb-0 [&>[role=tablist]]:px-1",
+			Class:   "[&>[role=tablist]]:h-8 [&>[role=tablist]]:px-1",
 			Tabs: []props.TabItem{
 				{Value: "generated", Label: p.TabTyped},
 				{Value: "draw", Label: p.TabDraw},

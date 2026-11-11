@@ -1,0 +1,235 @@
+package popui
+
+import (
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Details lists labelled values (a dl element), such as a document's or
+// a party's, as Detail children. For an expandable section, see Accordion.
+//
+// Details are inline by default: each label is in a column beside its
+// value, close together, as in a card or side panel. The "stacked" Layout
+// puts labels above values, spaced apart, unless a Detail sets Inline.
+templ Details(opts ...props.Details) {
+	{{ p := props.First(opts) }}
+	{{ inline := p.Layout != props.DetailsLayoutStacked }}
+	<dl
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				// A size container, so inline detail rows can stack when the
+				// list is narrow (see components.css).
+				"@container w-full",
+				classes.If(inline, "space-y-1"),
+				classes.If(!inline, "space-y-4"),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		@detailsInline(inline) {
+			{ children... }
+		}
+	</dl>
+}
+
+// detail renders a Detail with its children already rendered as content.
+// Without a Value, the content is the value. In a legacy
+// DescriptionListItem that isn't a row, the content is placed as is
+// between the label and the value, so it can hold its own DT and DD.
+templ detail(p props.Detail, content templ.Component, hasContent, legacy bool) {
+	if p.Inline || len(p.Actions) > 0 {
+		@detailRow(p, content, hasContent)
+	} else {
+		<div
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				tailwind.Merge(
+					"space-y-1.5",
+					p.Class,
+				),
+			}
+			{ p.Attributes... }
+		>
+			if p.Label != "" {
+				@DT() {
+					{ p.Label }
+				}
+			}
+			if legacy {
+				@content
+			}
+			if p.Value != "" {
+				@DD() {
+					{ p.Value }
+				}
+			} else if !legacy && hasContent {
+				@DD() {
+					@content
+				}
+			} else if !legacy {
+				@DD() {
+					{ "—" }
+				}
+			}
+		</div>
+	}
+}
+
+// detailRow renders a Detail as a row on the popui-detail-* styles, as
+// side panels' details are: a fixed-width label (dt) and a value cell (dd)
+// with a hover tint, the value growing to pin hover-revealed action buttons
+// to the row's right edge. Without Inline the label is above the value.
+templ detailRow(p props.Detail, content templ.Component, hasContent bool) {
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"popui-detail-row",
+				classes.If(!p.Inline, "popui-detail-stacked"),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<dt class="popui-detail-label">{ p.Label }</dt>
+		<dd class={ tailwind.Merge("popui-detail-value-wrap", classes.If(len(p.Actions) > 0, "popui-detail-copyable")) }>
+			if p.Value != "" || !hasContent {
+				<span class={ tailwind.Merge("popui-detail-value", classes.If(p.Mono, "font-mono")) }>
+					{ detailCopyDisplay(p.Value, p.PrefixLength, p.SuffixLength) }
+				</span>
+			} else {
+				<div class={ tailwind.Merge("popui-detail-value flex items-center gap-1.5 min-h-6", classes.If(p.Mono, "font-mono")) }>
+					@content
+				</div>
+			}
+			for _, a := range p.Actions {
+				@detailActionButton(a, props.ButtonSizeIconSmall)
+			}
+		</dd>
+	</div>
+}
+
+// detailActionButton renders one Detail action: a copy button (Copy set),
+// an external-link anchor (URL set), or a plain button.
+templ detailActionButton(a props.DetailAction, size string) {
+	if a.Copy != "" {
+		@Button(props.Button{
+			Class: "popui-detail-action",
+			Size:  size,
+			Attributes: mergeAttributes(
+				templ.Attributes{
+					"type":            "button",
+					"aria-label":      "Copy",
+					"data-popui-copy": a.Copy,
+					"onclick":         "navigator.clipboard.writeText(this.getAttribute('data-popui-copy'))",
+				},
+				a.Attributes,
+			),
+		}) {
+			if a.Icon != nil {
+				@a.Icon
+			}
+		}
+	} else if a.URL != "" {
+		@Button(props.Button{
+			Class:      "popui-detail-action",
+			Size:       size,
+			Href:       a.URL,
+			Target:     "_blank",
+			Rel:        "noopener noreferrer",
+			Attributes: a.Attributes,
+		}) {
+			if a.Icon != nil {
+				@a.Icon
+			}
+		}
+	} else {
+		@Button(props.Button{
+			Class:      "popui-detail-action",
+			Size:       size,
+			Attributes: a.Attributes,
+		}) {
+			if a.Icon != nil {
+				@a.Icon
+			}
+		}
+	}
+}
+
+// DT provides a definition term element with proper styling.
+//
+// Deprecated: Detail has a Label, and takes a component as its value.
+templ DT(opts ...props.DT) {
+	{{ p := props.First(opts) }}
+	<dt
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				"font-sans text-sm font-medium text-foreground-default-secondary flex items-center gap-0.5",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</dt>
+}
+
+// DD provides a definition description element with proper styling.
+//
+// Deprecated: Detail takes a component as its value.
+templ DD(opts ...props.DD) {
+	{{ p := props.First(opts) }}
+	<dd
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			tailwind.Merge(
+				// break-words keeps unbroken values (IDs, URLs) inside the list.
+				"text-base text-foreground font-medium break-words",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</dd>
+}
+
+// detailCopyDisplay returns the value truncated to "prefix…suffix" (or
+// "prefix…" when suffix is 0), or the value unchanged when neither is set.
+// Empty falls back to the em-dash placeholder.
+func detailCopyDisplay(value string, prefix, suffix int) string {
+	if value == "" {
+		return "—"
+	}
+	if prefix <= 0 && suffix <= 0 {
+		return value
+	}
+	if prefix < 0 {
+		prefix = 0
+	}
+	if suffix < 0 {
+		suffix = 0
+	}
+	runes := []rune(value)
+	if prefix+suffix >= len(runes) {
+		return value
+	}
+	if suffix == 0 {
+		return string(runes[:prefix]) + "…"
+	}
+	return string(runes[:prefix]) + "…" + string(runes[len(runes)-suffix:])
+}

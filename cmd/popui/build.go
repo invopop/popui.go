@@ -10,6 +10,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/internal/docs"
+	"github.com/invopop/popui.go/internal/docs/playground"
 	"github.com/spf13/cobra"
 )
 
@@ -98,6 +99,12 @@ func (s *buildOpts) run(_ *cobra.Command, _ []string) error {
 		log.Fatalf("Error: %v", err)
 	}
 	log.Printf("Docs JS file published")
+
+	// Experimental jsonui playground, including its WebAssembly build
+	if err := playground.Publish(path.Join(buildOutputPath, playground.Path)); err != nil {
+		log.Fatalf("Error publishing jsonui playground: %v", err)
+	}
+	log.Printf("jsonui playground published")
 
 	return nil
 }

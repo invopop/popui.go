@@ -19,6 +19,13 @@ templ Accordion() {
 	}) {
 		@examples.AccordionGroupExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Icons and actions",
+		Description: "Icon goes before the title, and Actions after it, as for the steps a job ran: how long each took, its status, or a button.",
+		Code:        examples.LoadExample("accordion_icon.templ"),
+	}) {
+		@examples.AccordionIconExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Accordion",
@@ -29,6 +36,8 @@ templ Accordion() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the details element"},
 				{Name: "Open", Type: "bool", Default: "false", Description: "Whether the accordion is initially expanded"},
 				{Name: "Title", Type: "string", Default: "", Description: "Text shown in the trigger"},
+				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Shown in a small tile before the title, such as an icon or an image"},
+				{Name: "Actions", Type: "templ.Component", Default: "", Description: "Shown after the title, before the chevron. Clicking a button or link there doesn't open or close the accordion"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

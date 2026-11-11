@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>PopUI JSON Playground</title>
+	<link rel="stylesheet" href="/_popui/assets/popui.css"/>
+	<script src="/_popui/assets/popui.js"></script>
+	<!-- jsonui.js runs the actions panels reference; the page can add its own. -->
+	<script src="jsonui.js"></script>
+	<script>
+		// Host-defined actions. Panels may only use actions the host both
+		// registers here and allows when rendering (see ACTIONS below).
+		popui.actions.register("save", ({ snapshot }) =>
+			alert(`Host action "save" received:\n${JSON.stringify(snapshot(), null, 2)}`));
+
+		// Console-style actions, named after the console SDK topics. Embedded
+		// in the console these would call its handlers; here they log what
+		// the console would receive in the "Host messages" panel.
+		popui.actions.register("step.update", ({ params, snapshot }) =>
+			hostLog("step.update", { config: snapshot().config, summary: params.summary }));
+		popui.actions.register("asset.choose", ({ params }) =>
+			new Promise((resolve) => {
+				// Resolves with the chosen file's URL, or undefined if cancelled.
+				const input = Object.assign(document.createElement("input"), { type: "file", accept: params.accept || "" });
+				input.addEventListener("change", () => {
+					const file = input.files[0];
+					hostLog("asset.choose", file ? { name: file.name, type: file.type } : { cancelled: true });
+					resolve(file ? URL.createObjectURL(file) : undefined);
+				});
+				input.addEventListener("cancel", () => resolve(undefined));
+				input.click();
+			}));
+		// app.request is how the console reaches an app's API. Here it answers
+		// from the static APP_RESPONSES in samples.js after a short delay.
+		popui.actions.register("app.request", ({ params }) =>
+			new Promise((resolve, reject) => setTimeout(() => {
+				hostLog("app.request", params);
+				const res = window.APP_RESPONSES?.[params.path];
+				if (res === undefined) reject(new Error(`no sample response for ${params.path}`));
+				else resolve(structuredClone(res));
+			}, 600)));
+		// config.save stands in for an app saving the config, which checks it
+		// again. It rejects addresses at example.com, reporting errors by
+		// path for the panel to show.
+		popui.actions.register("config.save", ({ snapshot }) =>
+			new Promise((resolve, reject) => setTimeout(() => {
+				const { config } = snapshot();
+				hostLog("config.save", config);
+				if (!String(config.to).endsWith("@example.com")) return resolve();
+				reject(Object.assign(new Error("invalid config"), {
+					errors: [
+						{ path: "config.to", message: "example.com addresses can't receive email" },
+						{ path: "config", message: "The config wasn't saved" },
+					],
+				}));
+			}, 400)));
+		const ACTIONS = ["alert", "set", "reset", "dispatch", "validate", "save", "step.update", "asset.choose", "app.request", "config.save"];
+
+		function hostLog(topic, body) {
+			const log = document.getElementById("host-log");
+			const entry = document.createElement("div");
+			entry.textContent = `${new Date().toLocaleTimeString()} ${topic} ${JSON.stringify(body)}`;
+			log.prepend(entry);
+			while (log.children.length > 20) log.lastChild.remove();
+			document.getElementById("host").hidden = false;
+		}
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js" defer></script>
+	<!-- CodeMirror with JSON Schema support, as used by gobl.dev's editor,
+	     bundled from the editor package with npm. -->
+	<script type="module" src="editor.js"></script>
+	<script src="wasm_exec.js"></script>
+	<script src="samples.js"></script>
+	<style>
+		/* Playground chrome only; everything inside #preview is PopUI output. */
+		body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+		.bar { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--color-border); }
+		.stats { display: flex; flex-wrap: wrap; gap: 4px 20px; font-family: var(--font-mono, monospace); font-size: 12px; color: var(--color-foreground-default-secondary); }
+		.stats b { font-weight: 500; color: var(--color-foreground); }
+		.panes { display: grid; grid-template-columns: minmax(320px, 2fr) 3fr; min-height: 0; }
+		.editor { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-right: 1px solid var(--color-border); min-height: 0; }
+		#code { flex: 1; min-height: 0; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; }
+		#code .cm-editor { height: 100%; font-size: 12px; }
+		#code .cm-scroller { overflow: auto; }
+		#schemas { font-family: var(--font-mono, monospace); font-size: 12px; padding: 8px; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); resize: vertical; }
+		.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+		.controls select, .controls button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); cursor: pointer; }
+		.controls button.primary { background: var(--color-background-accent); color: var(--color-foreground-inverse); border-color: transparent; }
+		.note { font-size: 12px; color: var(--color-foreground-default-secondary); }
+		.note[hidden] { display: none; }
+		.error { color: var(--color-foreground-critical); font-size: 12px; white-space: pre-wrap; }
+		.preview { overflow: auto; padding: 24px; background: var(--color-background-default-secondary); }
+		.preview > div { max-width: 640px; margin: 0 auto; }
+		/* The host lays out a panel's top-level nodes; its root is display: contents. */
+		#preview { display: flex; flex-direction: column; gap: 16px; }
+		.host { margin-top: 24px; border-top: 1px solid var(--color-border); padding-top: 12px; font-size: 12px; }
+		.host strong { font-weight: 500; }
+		#host-log { margin-top: 8px; max-height: 200px; overflow: auto; font-family: var(--font-mono, monospace); color: var(--color-foreground-default-secondary); word-break: break-all; }
+		#host-log > div { padding: 2px 0; }
+		@media (max-width: 800px) { .panes { grid-template-columns: 1fr; grid-template-rows: 45vh 1fr; } .editor { border-right: 0; border-bottom: 1px solid var(--color-border); } }
+	</style>
+</head>
+<body class="bg-background text-foreground font-sans">
+	<div class="bar">
+		<a href="/" class="text-sm text-foreground-default-secondary">← PopUI docs</a>
+		<strong class="font-semibold">JSON UI playground</strong>
+		<div class="stats">
+			<span>wasm <b id="s-size">…</b></span>
+			<span>load <b id="s-load">…</b></span>
+			<span>render <b id="s-render">–</b></span>
+			<span>DOM <b id="s-dom">–</b></span>
+			<span id="server-stat" hidden>server round-trip <b id="s-server">–</b></span>
+			<span>html <b id="s-html">–</b></span>
+		</div>
+	</div>
+	<div class="panes">
+		<div class="editor">
+			<div class="controls">
+				<select id="sample">
+					<option value="details">Invoice details (data-driven)</option>
+					<option value="interactive">Interactive: customer form</option>
+					<option value="pdf">PDF step config (from pdf.go)</option>
+					<option value="lists">Lists loaded by the host</option>
+					<option value="validation">Validation with a JSON Schema</option>
+					<option value="form">Customer form</option>
+					<option value="stress">Stress: 200 cards</option>
+					<option value="stress1000">Stress: 1000 cards</option>
+					<option value="blocked">Strict mode: blocked script</option>
+				</select>
+				<button id="render" class="primary" disabled>Render</button>
+				<button id="bench" disabled>Benchmark ×50</button>
+				<label><input type="checkbox" id="live" checked/> live</label>
+				<label title="Reject script in props and allow only the listed actions"><input type="checkbox" id="strict" checked/> strict</label>
+				<a href="panel.json" target="_blank">schema</a>
+			</div>
+			<div id="code"></div>
+			<label for="schemas" class="note">Schemas: data paths mapped to the JSON Schemas their values must match. They describe the data rather than the panel, so the host passes them to the renderer as options.schemas.</label>
+			<textarea id="schemas" rows="8" spellcheck="false" placeholder='{ "config": { "type": "object" } }'></textarea>
+			<div id="editor-note" class="note" hidden></div>
+			<div id="error" class="error"></div>
+		</div>
+		<div class="preview">
+			<div id="preview"></div>
+			<div id="host" class="host" hidden>
+				<strong>Host messages</strong> (what the console would receive)
+				<div id="host-log"></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const $ = (id) => document.getElementById(id);
+		const fmtMs = (ms) => `${ms.toFixed(ms < 10 ? 2 : 1)}ms`;
+		const fmtKB = (b) => (b > 1048576 ? `${(b / 1048576).toFixed(2)}MB` : `${(b / 1024).toFixed(1)}KB`);
+
+		// The editor is attached once editor.js, a module, has loaded; until
+		// then the panel is kept in pending.
+		let editor = null;
+		let pending = "";
+		const getJSON = () => (editor ? editor.getValue() : pending);
+		const setJSON = (s) => (editor ? editor.setValue(s) : (pending = s));
+
+		function loadSample(name) {
+			const doc = name === "stress" ? SAMPLES.stress(200) : name === "stress1000" ? SAMPLES.stress(1000) : SAMPLES[name];
+			setJSON(JSON.stringify(doc, null, 2));
+			const schemas = SCHEMAS[name];
+			$("schemas").value = schemas ? JSON.stringify(schemas, null, 2) : "";
+		}
+
+		// getSchemas returns the schemas to render with, or "" for none.
+		const getSchemas = () => $("schemas").value.trim();
+		// state is what a render depends on, to skip renders that change nothing.
+		const state = () => `${getJSON()}\0${getSchemas()}`;
+
+		let rendered; // the state last rendered
+		function render() {
+			rendered = state();
+			const json = getJSON();
+			let t = performance.now();
+			const res = popuiRender(json, renderOptions());
+			const renderMs = performance.now() - t;
+			$("error").textContent = res.error || "";
+			if (res.error) return;
+			t = performance.now();
+			$("preview").innerHTML = res.html;
+			const domMs = performance.now() - t;
+			$("s-render").textContent = fmtMs(renderMs);
+			$("s-dom").textContent = fmtMs(domMs);
+			$("s-html").textContent = fmtKB(res.html.length);
+		}
+
+		// renderOptions are passed to the renderer; strict is the default.
+		const renderOptions = () => {
+			const opts = { actions: ACTIONS, trusted: !$("strict").checked };
+			if (getSchemas()) opts.schemas = getSchemas();
+			return opts;
+		};
+
+		let timer;
+		function scheduleRender() {
+			if (!$("live").checked || $("render").disabled) return;
+			clearTimeout(timer);
+			// Skip text the page loaded and has rendered, such as a sample, or
+			// the panel would start again and repeat its init.
+			timer = setTimeout(() => state() !== rendered && render(), 150);
+		}
+
+		// serverRender times a server-side render of the same panel. Only
+		// `popui serve` offers it; the published static site resolves to null.
+		async function serverRender(json) {
+			const t = performance.now();
+			try {
+				const q = new URLSearchParams();
+				if (!$("strict").checked) q.set("trusted", "1");
+				if (getSchemas()) q.set("schemas", getSchemas());
+				const r = await fetch(`render?${q}`, { method: "POST", body: json });
+				await r.text();
+				if (r.status === 404 || r.status === 405) return null;
+			} catch {
+				return null;
+			}
+			return performance.now() - t;
+		}
+
+		async function bench() {
+			const json = getJSON();
+			const n = 50;
+			let t = performance.now();
+			for (let i = 0; i < n; i++) popuiRender(json, renderOptions());
+			const wasm = (performance.now() - t) / n;
+			$("s-render").textContent = `${fmtMs(wasm)} avg`;
+			if ($("server-stat").hidden) return;
+			let server = 0;
+			for (let i = 0; i < n; i++) server += await serverRender(json);
+			$("s-server").textContent = `${fmtMs(server / n)} avg`;
+		}
+
+		async function boot() {
+			const go = new Go();
+			const t = performance.now();
+			const ready = new Promise((r) => addEventListener("popui:ready", r, { once: true }));
+			const { instance } = await WebAssembly.instantiateStreaming(fetch("popui.wasm"), go.importObject);
+			go.run(instance);
+			await ready;
+			$("s-load").textContent = fmtMs(performance.now() - t);
+			const entry = performance.getEntriesByName(new URL("popui.wasm", location).href)[0];
+			if (entry) $("s-size").textContent = `${fmtKB(entry.decodedBodySize)} (${fmtKB(entry.encodedBodySize)} gz)`;
+			$("render").disabled = $("bench").disabled = false;
+			render();
+			serverRender(getJSON()).then((ms) => {
+				if (ms === null) return;
+				$("server-stat").hidden = false;
+				$("s-server").textContent = fmtMs(ms);
+			});
+		}
+
+		// attachEditor is called by editor.js with the CodeMirror editor.
+		window.attachEditor = (api) => {
+			api.setValue(pending);
+			api.onChange(scheduleRender);
+			editor = api;
+		};
+
+		$("sample").addEventListener("change", (e) => { loadSample(e.target.value); render(); });
+		$("render").addEventListener("click", render);
+		$("strict").addEventListener("change", render);
+		$("schemas").addEventListener("input", scheduleRender);
+		$("bench").addEventListener("click", bench);
+
+		loadSample("details");
+		boot().catch((e) => ($("error").textContent = `Failed to load WASM: ${e}`));
+	</script>
+</body>
+</html>

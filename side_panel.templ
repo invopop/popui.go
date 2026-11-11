@@ -9,7 +9,8 @@ import (
 )
 
 // SidePanel renders a floating, fixed-position side panel that overlays
-// one edge of the viewport. See props.SidePanel for the field reference.
+// one edge of the viewport, or with Docked, one beside the page's content.
+// See props.SidePanel for the field reference.
 // Open/close is driven by the `popui-sidepanel-open` /
 // `popui-sidepanel-close` window events — both expect `event.detail` to
 // equal the panel's ID. Backed by the `sidePanel` Alpine controller in
@@ -68,11 +69,70 @@ templ SidePanel(opts ...props.SidePanel) {
 			handleEdge = "right-0"
 		}
 	}}
+	{{ data := "sidePanel('" + jsSingleQuoteEscape(p.ID) + "', " + strconv.Itoa(width) + ", '" + anchor + "', " + strconv.FormatBool(p.Open) + ")" }}
+	if p.Docked {
+		@dockedSidePanel(p, data, width, borderSide, handleEdge) {
+			{ children... }
+		}
+	} else {
+		@floatingSidePanel(p, data, width, anchorEdge, borderSide, offEdge, handleEdge) {
+			{ children... }
+		}
+	}
+}
+
+// dockedSidePanel is a SidePanel in the page's flow. The aside's width
+// opens and closes it, while its content keeps the panel's width so it
+// doesn't reflow as it slides.
+templ dockedSidePanel(p props.SidePanel, data string, width int, borderSide, handleEdge string) {
+	{{
+		edge := "border-left-width"
+		if borderSide == "border-r" {
+			edge = "border-right-width"
+		}
+		shown, line := 0, 0
+		if p.Open {
+			shown, line = width, 1
+		}
+	}}
 	<aside
 		if p.ID != "" {
 			id={ p.ID }
 		}
-		x-data={ "sidePanel('" + jsSingleQuoteEscape(p.ID) + "', " + strconv.Itoa(width) + ", '" + anchor + "')" }
+		x-data={ data }
+		style={ "position: relative; flex: none; height: 100%; width: " + strconv.Itoa(shown) + "px; " + edge + ": " + strconv.Itoa(line) + "px; transition: width 300ms ease;" }
+		:style={ "{ width: (open ? width : 0) + 'px', '" + edge + "': open ? '1px' : '0px', transition: resizing ? 'none' : 'width 300ms ease' }" }
+		class={
+			tailwind.Merge(
+				"flex bg-background border-border overflow-hidden",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<div
+			x-show="open"
+			class={ "absolute top-0 bottom-0 z-20 w-1 cursor-col-resize transition-colors hover:bg-border-selected-bold " + handleEdge }
+			:class="resizing ? 'bg-border-selected-bold' : ''"
+			@pointerdown="startResize($event)"
+			aria-hidden="true"
+		></div>
+		<div
+			class="flex flex-col flex-none h-full min-h-0"
+			style={ "width: " + strconv.Itoa(width) + "px;" }
+			:style="{ width: width + 'px' }"
+		>
+			{ children... }
+		</div>
+	</aside>
+}
+
+templ floatingSidePanel(p props.SidePanel, data string, width int, anchorEdge, borderSide, offEdge, handleEdge string) {
+	<aside
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		x-data={ data }
 		x-cloak
 		style={ "position: fixed; " + anchorEdge + " top: 0; bottom: 0; z-index: 50; width: " + strconv.Itoa(width) + "px; transition: transform 300ms ease, opacity 300ms ease, visibility 300ms ease; will-change: transform;" }
 		:style={ "{ width: width + 'px', transform: open ? 'translateX(0)' : 'translateX(" + offEdge + ")', opacity: open ? 1 : 0, visibility: open ? 'visible' : 'hidden' }" }

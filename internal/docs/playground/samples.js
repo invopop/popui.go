@@ -1,0 +1,740 @@
+// Sample JSON panels for the jsonui playground.
+// Wrapped in a function so its helpers stay out of the page's global scope;
+// only window.SAMPLES, and window.SCHEMAS for the samples that validate
+// their data, are exported.
+(() => {
+  // The schema's "$id" (schema.ID in Go), as real panels use. The editor
+  // loads the playground's own panel.json in its place, so the schema always
+  // matches the renderer: popui serve, a deploy preview or production.
+  const SCHEMA = "https://assets.invopop.com/popui/v0/panel.json";
+
+  const text = (t) => ({ is: "text", text: t });
+
+  window.SAMPLES = {
+    // Data-driven: every value comes from "data" through "bind" (prop name →
+    // data path), resolved by the renderer so the HTML is complete up front.
+    details: {
+      $schema: SCHEMA,
+      data: {
+        invoice: {
+          code: "INV-2026-0142",
+          issued: "Issued 27 Oct 2026",
+          status: { label: "Sent", state: "success" },
+          country: "Spain",
+          regime: "VeriFactu",
+          supplier: { name: "Provide One S.L." },
+          customer: { name: "Sample Consumer S.A.", taxId: "B98602642" },
+          uuid: "0190e6e5-6c5a-7a1e-9f1c-2d3c4b5a6f70",
+          total: "€1,815.00",
+        },
+        quota: { used: 342, limit: 500 },
+      },
+      components: [
+        {
+          is: "card",
+          children: [
+            { is: "card_header", bind: { title: "invoice.code", subtitle: "invoice.issued" } },
+            {
+              is: "card_content",
+              children: [
+                {
+                  is: "button_group",
+                  children: [
+                    { is: "status_badge", bind: { label: "invoice.status.label", status: "invoice.status.state" } },
+                    { is: "tag_status", props: { status: "blue", dot: true }, bind: { label: "invoice.country" } },
+                    { is: "tag_status", props: { status: "purple" }, bind: { label: "invoice.regime" } },
+                  ],
+                },
+              ],
+            },
+            {
+              is: "card_content",
+              children: [
+                {
+                  is: "details",
+                  children: [
+                    { is: "detail", props: { label: "Supplier" }, bind: { value: "invoice.supplier.name" } },
+                    { is: "detail", props: { label: "Customer" }, bind: { value: "invoice.customer.name" } },
+                    { is: "detail", props: { label: "Tax ID", mono: true }, bind: { value: "invoice.customer.taxId" } },
+                    {
+                      is: "detail",
+                      props: { label: "Document UUID", mono: true, prefixLength: 8, suffixLength: 4 },
+                      bind: { value: "invoice.uuid" },
+                    },
+                    { is: "detail", props: { label: "Total" }, bind: { value: "invoice.total" } },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          is: "card",
+          children: [
+            { is: "card_header", props: { title: "Monthly quota" } },
+            {
+              is: "card_content",
+              children: [
+                {
+                  is: "card_progress_bar",
+                  props: { title: "Invoices", subtitle: "This month" },
+                  bind: { current: "quota.used", total: "quota.limit" },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          is: "button_group",
+          props: { align: "right" },
+          children: [
+            { is: "button", props: { variant: "secondary" }, children: [text("Download PDF")] },
+            { is: "button", props: { variant: "primary" }, children: [text("Send again")] },
+          ],
+        },
+      ],
+    },
+
+    // Interactive: form controls are bound to "data" with "model", and events
+    // run named actions with "on". The JSON holds no code: "alert" and "reset"
+    // are built into jsonui.js, "save" is registered by this page's own JS.
+    interactive: {
+      $schema: SCHEMA,
+      data: {
+        customer: { name: "Acme S.L.", email: "billing@acme.com", country: "es", einvoice: true, notes: "" },
+      },
+      components: [
+        {
+          is: "form",
+          on: {
+            "submit.prevent": {
+              action: "alert",
+              message: "Saving {{customer.name}} <{{customer.email}}>\nCountry: {{customer.country}}\nE-invoices: {{customer.einvoice}}\nNotes: {{customer.notes}}",
+            },
+          },
+          children: [
+            { is: "title_group", props: { title: "Customer", description: "Edit the fields, then save." } },
+            {
+              is: "fieldset",
+              props: { legend: "Identity", variant: "card" },
+              children: [
+                { is: "input", props: { name: "name", label: "Legal name", required: true }, model: "customer.name" },
+                { is: "input", props: { name: "email", type: "email", label: "Email" }, model: "customer.email" },
+                {
+                  is: "select",
+                  props: {
+                    name: "country",
+                    label: "Country",
+                    options: [
+                      { value: "es", label: "Spain" },
+                      { value: "pt", label: "Portugal" },
+                      { value: "fr", label: "France" },
+                      { value: "de", label: "Germany" },
+                    ],
+                  },
+                  model: "customer.country",
+                },
+              ],
+            },
+            {
+              is: "fieldset",
+              props: { legend: "Preferences", variant: "card" },
+              children: [
+                {
+                  is: "checkbox",
+                  props: { name: "einvoice", variant: "switch", label: "Send e-invoices", description: "Deliver through the national network." },
+                  model: "customer.einvoice",
+                },
+                { is: "textarea", props: { name: "notes", label: "Notes", rows: 3 }, model: "customer.notes" },
+              ],
+            },
+            {
+              is: "description",
+              children: [text("Preview: "), { is: "text", bind: "customer.name" }, text(" · "), { is: "text", bind: "customer.email" }],
+            },
+            {
+              is: "button_group",
+              props: { align: "right" },
+              children: [
+                { is: "button", props: { variant: "secondary", type: "button" }, on: { click: { action: "reset" } }, children: [text("Reset")] },
+                { is: "button", props: { variant: "secondary", type: "button" }, on: { click: { action: "save" } }, children: [text("Send to host")] },
+                { is: "button", children: [text("Save")] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    form: {
+      $schema: SCHEMA,
+      components: [
+        {
+          is: "form",
+          props: { id: "party-form", action: "#" },
+          children: [
+            {
+              is: "title_group",
+              props: { title: "Customer details", description: "Used on every invoice issued to this party." },
+            },
+            {
+              is: "fieldset",
+              props: { legend: "Identity", variant: "card" },
+              children: [
+                { is: "input", props: { name: "name", label: "Legal name", placeholder: "Acme S.L.", required: true } },
+                { is: "input", props: { name: "tax_id", label: "Tax ID", value: "B98602642" } },
+                {
+                  is: "select",
+                  props: {
+                    name: "country",
+                    label: "Country",
+                    options: [
+                      { value: "es", label: "Spain", selected: true },
+                      { value: "pt", label: "Portugal" },
+                      { value: "fr", label: "France" },
+                      { value: "de", label: "Germany" },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              is: "fieldset",
+              props: { legend: "Contact", variant: "card" },
+              children: [
+                { is: "input", props: { name: "email", type: "email", label: "Email", placeholder: "billing@acme.com" } },
+                { is: "textarea", props: { name: "notes", label: "Notes", rows: 3 } },
+                {
+                  is: "checkbox",
+                  props: { name: "einvoice", variant: "switch", label: "Send e-invoices", description: "Deliver through the national network.", checked: true },
+                },
+              ],
+            },
+            {
+              is: "button_group",
+              props: { align: "right" },
+              children: [
+                { is: "button", props: { variant: "secondary", type: "reset" }, children: [text("Reset")] },
+                { is: "button", children: [text("Save")] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  };
+
+  // pdf mirrors the PDF step configuration form from invopop/pdf.go
+  // (internal/interfaces/web/components/provider.templ), which the console
+  // shows in an iframe and drives through the console SDK. Here:
+  //
+  //   - "data" is the step's config, which the console would supply (no
+  //     fetchStep); the components define the fields and their options;
+  //   - every change is sent with the host's "step.update" action, defined
+  //     once as the "update" handler and used from one "on" on the tabs
+  //     container instead of one per field;
+  //   - "init" runs the same handler when the form starts, so the host
+  //     saves the defaults and the summary straight away;
+  //   - the logo uses the host's "asset.choose" action, writing the result
+  //     into config.logo_url and flagging ui.uploading while it runs.
+  const options = (pairs) => pairs.map(([value, label]) => ({ value, label }));
+  const currencyDefault = ["", "Currency default"];
+
+  window.SAMPLES.pdf = {
+    $schema: SCHEMA,
+    data: {
+      config: {
+        logo_url: "",
+        logo_height: 40,
+        locale: "en",
+        date_format: "%Y-%m-%d",
+        time_format: "%H:%M",
+        hide_promo: false,
+        layout: "A4",
+        private: false,
+        scripting: false,
+        label: "",
+        watermark: "",
+        adjustment_mode: false,
+        currency_template: "",
+        negative_template: "",
+        thousands_separator: "",
+        decimal_mark: "",
+        duplicate: false,
+      },
+      ui: { uploading: false },
+    },
+    handlers: {
+      update: { action: "step.update", summary: "{{config.locale}} · {{config.layout}}" },
+    },
+    init: "update",
+    components: [
+      {
+        is: "tabs",
+        props: {
+          variant: "pill",
+          tabs: [
+            { value: "content", label: "Content" },
+            { value: "currency", label: "Currency" },
+          ],
+        },
+        // Field events bubble up to here: selects and switches fire "change",
+        // text and number inputs fire "input" (debounced while typing).
+        on: { change: "update", "input.debounce.300ms": "update" },
+        children: [
+          {
+            is: "tab",
+            props: { value: "content" },
+            children: [
+              {
+                is: "fieldset",
+                children: [
+                  {
+                    is: "upload_file",
+                    model: "config.logo_url",
+                    props: { loading: "ui.uploading" },
+                    on: {
+                      select: [{ action: "asset.choose", accept: "image/*", into: "config.logo_url", busy: "ui.uploading" }, "update"],
+                      remove: [{ action: "set", path: "config.logo_url", value: "" }, "update"],
+                    },
+                  },
+                  {
+                    is: "input",
+                    props: { name: "logo_height", label: "Logo height", type: "number", attributes: { min: "10", max: "50" } },
+                    model: "config.logo_height",
+                  },
+                  {
+                  is: "select",
+                  props: {
+                    name: "locale",
+                    label: "Locale",
+                    options: options([
+                      ["ar", "ar - Arabic"],
+                      ["ca", "ca - Catalan"],
+                      ["de", "de - German"],
+                      ["el", "el - Greek"],
+                      ["en", "en - English"],
+                      ["es", "es - Spanish"],
+                      ["eu", "eu - Basque"],
+                      ["fr", "fr - French"],
+                      ["gl", "gl - Galician"],
+                      ["it", "it - Italian"],
+                      ["pl", "pl - Polish"],
+                      ["pt", "pt - Portuguese"],
+                    ]),
+                  },
+                  model: "config.locale",
+                },
+                  {
+                    is: "select",
+                    props: {
+                      name: "date_format",
+                      label: "Date format",
+                      options: options([
+                        ["%Y-%m-%d", "2022-05-18"],
+                        ["%d/%m/%Y", "18/05/2022"],
+                        ["%m/%d/%Y", "05/18/2022"],
+                        ["%d.%m.%Y", "18.05.2022"],
+                        ["%m.%d.%Y", "05.18.2022"],
+                      ]),
+                    },
+                    model: "config.date_format",
+                  },
+                  {
+                    is: "select",
+                    props: {
+                      name: "time_format",
+                      label: "Time format",
+                      options: options([
+                        ["%H:%M", "14:30"],
+                        ["%H:%M:%S", "14:30:45"],
+                        ["%I:%M %p", "2:30 PM"],
+                      ]),
+                    },
+                    model: "config.time_format",
+                  },
+                  {
+                    is: "select",
+                    props: { name: "layout", label: "Layout", options: options([["A4", "A4"], ["Letter", "Letter"], ["DIN5008", "DIN5008"]]) },
+                    model: "config.layout",
+                  },
+                  { is: "input", props: { name: "label", label: "Title badge", placeholder: "e.g. original" }, model: "config.label" },
+                  { is: "input", props: { name: "watermark", label: "Background watermark", placeholder: "e.g. draft" }, model: "config.watermark" },
+                  {
+                    is: "checkbox",
+                    props: { name: "hide_promo", variant: "switch", label: 'Hide "Powered by Invopop"' },
+                    model: "config.hide_promo",
+                  },
+                  {
+                    is: "checkbox",
+                    props: {
+                      name: "private",
+                      variant: "switch",
+                      label: "Disable public download URLs",
+                      description: "By default Invopop will generate public URLs with a secure hash that can be shared with customers",
+                    },
+                    model: "config.private",
+                  },
+                  {
+                    is: "checkbox",
+                    props: {
+                      name: "adjustment_mode",
+                      variant: "switch",
+                      label: 'Generate "Adjustment invoices"',
+                      description: "With negative amounts instead of credit and debit notes",
+                    },
+                    model: "config.adjustment_mode",
+                  },
+                  {
+                    is: "checkbox",
+                    props: {
+                      name: "duplicate",
+                      variant: "switch",
+                      label: "Flag as duplicate",
+                      description: "To avoid overwriting another PDF generated by a previous step",
+                    },
+                    model: "config.duplicate",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            is: "tab",
+            props: { value: "currency" },
+            children: [
+              {
+                is: "fieldset",
+                children: [
+                  {
+                    is: "select",
+                    props: {
+                      name: "currency_template",
+                      label: "Currency template",
+                      options: options([currencyDefault, ["%u%n", "€100"], ["%n %u", "100 €"]]),
+                    },
+                    model: "config.currency_template",
+                  },
+                  {
+                    is: "select",
+                    props: {
+                      name: "negative_template",
+                      label: "Negative currency template",
+                      options: options([
+                        currencyDefault,
+                        ["%u-%n", "€-100"],
+                        ["-%u%n", "-€100"],
+                        ["-%n %u", "-100 €"],
+                        ["%u(%n)", "€(100)"],
+                        ["(%n) %u", "(100) €"],
+                      ]),
+                    },
+                    model: "config.negative_template",
+                  },
+                  {
+                    is: "select",
+                    props: {
+                      name: "thousands_separator",
+                      label: "Thousands separator",
+                      options: options([currencyDefault, [",", "Comma (,)"], [".", "Dot (.)"], [" ", "Space ( )"], ["_", "Underscore (_)"]]),
+                    },
+                    model: "config.thousands_separator",
+                  },
+                  {
+                    is: "select",
+                    props: {
+                      name: "decimal_mark",
+                      label: "Decimal mark",
+                      options: options([currencyDefault, [".", "Dot (.)"], [",", "Comma (,)"]]),
+                    },
+                    model: "config.decimal_mark",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  // lists renders data a host action loads after the panel starts, as the
+  // console's step configuration does with "app.request", which the console
+  // sends to the app's API. In the playground, app.request answers from
+  // APP_RESPONSES below after a short delay, so the loading state shows.
+  //   - "init" loads both lists into the data with "into", flagging
+  //     "loading" with "busy" while they arrive;
+  //   - the select's options come from "each", and the saved connection
+  //     (c2) stays selected whether the list or the choice changes. Drop it
+  //     from the list and it's shown as unavailable instead of cleared;
+  //   - the table repeats a row per workflow, with an empty row from
+  //     "show" on the list's length;
+  //   - the list items combine "each" with a "show" on each item.
+  window.APP_RESPONSES = {
+    "/config/connections": [
+      { id: "default", name: "Invopop <noreply@invopop.com>", description: "Sent by Invopop's own email service" },
+      { id: "c1", name: "billing@acme.com", description: "Sent through the SMTP server smtp.acme.com" },
+      { id: "c2", name: "Acme <sales@acme.com>", description: "Sent through Resend" },
+    ],
+    "/workflows": [
+      { id: "w1", name: "Send invoice", schema: "bill/invoice" },
+      { id: "w2", name: "Sync party", schema: "org/party" },
+      { id: "w3", name: "Archive invoice", schema: "bill/invoice" },
+    ],
+  };
+
+  window.SAMPLES.lists = {
+    $schema: SCHEMA,
+    data: {
+      config: { connection_id: "c2" },
+      connections: [],
+      workflows: [],
+      loading: { connections: false, workflows: false },
+    },
+    handlers: {
+      load: [
+        { action: "app.request", path: "/config/connections", into: "connections", busy: "loading.connections" },
+        { action: "app.request", path: "/workflows", into: "workflows", busy: "loading.workflows" },
+      ],
+      update: { action: "step.update", summary: "Via {{config.connection_id}}" },
+    },
+    init: "load",
+    components: [
+      {
+        is: "card",
+        children: [
+          { is: "card_header", props: { title: "Connection", subtitle: "Options from a list loaded by the host" } },
+          {
+            is: "card_content",
+            children: [
+              {
+                is: "select",
+                props: { name: "connection_id", label: "Send with" },
+                model: "config.connection_id",
+                bind: { disabled: "loading.connections" },
+                on: { change: "update" },
+                children: [
+                  { is: "option", props: { value: "", label: "First connection" } },
+                  { is: "option", each: "connections", bind: { value: "item.id", label: "item.name" } },
+                ],
+              },
+              { is: "p", show: "loading.connections", children: [text("Loading connections…")] },
+              {
+                is: "button_group",
+                children: [
+                  { is: "button", props: { variant: "secondary" }, bind: { disabled: "loading.connections" }, on: { click: "load" }, children: [text("Reload")] },
+                  {
+                    is: "button",
+                    props: { variant: "secondary" },
+                    on: {
+                      click: {
+                        action: "set",
+                        path: "connections",
+                        value: [{ id: "c3", name: "ops@acme.com", description: "Sent through Sendgrid" }],
+                      },
+                    },
+                    children: [text("Replace the list")],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        is: "card",
+        children: [
+          { is: "card_header", props: { title: "Workflows", subtitle: "Table rows and list items from a list" } },
+          {
+            is: "table",
+            children: [
+              {
+                is: "thead",
+                children: [{ is: "tr", children: [{ is: "th", children: [text("Name")] }, { is: "th", children: [text("Schema")] }] }],
+              },
+              {
+                is: "tbody",
+                children: [
+                  {
+                    is: "tr",
+                    each: "workflows",
+                    children: [
+                      { is: "td", children: [{ is: "text", bind: "item.name" }] },
+                      { is: "td", children: [{ is: "text", bind: "item.schema" }] },
+                    ],
+                  },
+                  {
+                    is: "tr",
+                    show: "!workflows.length",
+                    children: [{ is: "td", props: { colspan: 2 }, children: [text("No workflows")] }],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            is: "card_content",
+            children: [
+              { is: "p", children: [text("Invoice workflows:")] },
+              {
+                is: "ul",
+                props: { class: "list-disc pl-5" },
+                children: [{ is: "li", each: "workflows", show: { "item.schema": ["bill/invoice"] }, children: [{ is: "text", bind: "item.name" }] }],
+              },
+              {
+                is: "button",
+                props: { variant: "secondary" },
+                on: { click: { action: "set", path: "workflows", value: [] } },
+                children: [text("Clear workflows")],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  // validation checks an email step's config against a JSON Schema, which
+  // the email app would also check it with when it's saved:
+  //   - each field shows the error for its model's path once it's been
+  //     changed or left; "Save" runs "validate", which shows them all and
+  //     stops the save while there are any;
+  //   - components define their labels and options independently of the schema;
+  //   - changes reach the host with step.update only while the config is
+  //     valid, through a silent "validate";
+  //   - the playground's config.save stands in for the app's API, rejecting
+  //     addresses at example.com with an error for the field, and an error
+  //     for a path without one, which is shown after the panel.
+  // The schema describes the config rather than the panel, so it isn't part
+  // of it: the host gives it to the renderer, here from window.SCHEMAS.
+  window.SCHEMAS = {
+    validation: {
+      config: {
+        type: "object",
+        required: ["connection_id", "to", "subject"],
+        properties: {
+          connection_id: { type: "string", minLength: 1, errorMessage: "Choose a connection to send with" },
+          to: { type: "string", format: "email", errorMessage: { format: "Enter an email address" } },
+          subject: { type: "string", minLength: 1, maxLength: 40 },
+          format: { enum: ["html", "text"] },
+          attach_pdf: { type: "boolean" },
+        },
+      },
+    },
+  };
+
+  window.SAMPLES.validation = {
+    $schema: SCHEMA,
+    data: {
+      config: { connection_id: "", to: "", subject: "Invoice {{.Code}}", format: "html", attach_pdf: true },
+      connections: [],
+      loading: false,
+    },
+    handlers: {
+      update: [
+        { action: "validate", silent: true },
+        { action: "step.update", summary: "To {{config.to}}" },
+      ],
+    },
+    init: { action: "app.request", path: "/config/connections", into: "connections", busy: "loading" },
+    components: [
+      {
+        is: "card",
+        children: [
+          { is: "card_header", props: { title: "Send by email", subtitle: "Validated against the config's JSON Schema" } },
+          {
+            is: "card_content",
+            children: [
+              {
+                is: "form",
+                on: { "submit.prevent": [{ action: "validate" }, { action: "config.save" }] },
+                children: [
+                  {
+                    is: "fieldset",
+                    children: [
+                      {
+                        is: "select",
+                        model: "config.connection_id",
+                        props: { label: "Send with" },
+                        bind: { disabled: "loading" },
+                        on: { change: "update" },
+                        children: [
+                          { is: "option", props: { value: "", label: "Choose…" } },
+                          { is: "option", each: "connections", bind: { value: "item.id", label: "item.name" } },
+                        ],
+                      },
+                      { is: "input", model: "config.to", props: { type: "email", label: "To", tooltip: { description: "Who receives the email" } }, on: { change: "update" } },
+                      { is: "input", model: "config.subject", props: { label: "Subject" }, on: { change: "update" } },
+                      { is: "select", model: "config.format", props: { label: "Format", options: [{ value: "html", label: "HTML" }, { value: "text", label: "Plain text" }] }, on: { change: "update" } },
+                      { is: "checkbox", model: "config.attach_pdf", props: { label: "Attach the PDF" }, on: { change: "update" } },
+                    ],
+                  },
+                  {
+                    is: "button_group",
+                    children: [
+                      { is: "button", props: { type: "submit" }, children: [text("Save")] },
+                      { is: "button", props: { type: "button", variant: "secondary" }, on: { click: { action: "reset" } }, children: [text("Reset")] },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  // blocked shows what strict mode rejects: Alpine directives in attributes,
+  // javascript: URLs and actions the host hasn't allowed. Untick "strict" to
+  // render it as a trusted panel.
+  window.SAMPLES.blocked = {
+    $schema: SCHEMA,
+    data: { name: "Acme" },
+    components: [
+      {
+        is: "card",
+        children: [
+          { is: "card_header", props: { title: "Untrusted panel" } },
+          {
+            is: "card_content",
+            children: [
+              {
+                is: "button",
+                props: { attributes: { "@click": "alert('Script ran from panel attributes: ' + document.title)" } },
+                children: [text("Run inline script")],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  // stress builds n invoice cards, each with a header, badge and five rows.
+  window.SAMPLES.stress = (n = 200) => ({
+    $schema: SCHEMA,
+    components: Array.from({ length: n }, (_, i) => ({
+      is: "card",
+      children: [
+        { is: "card_header", props: { title: `Invoice INV-${String(i + 1).padStart(5, "0")}`, subtitle: "Issued 27 Oct 2026" } },
+        {
+          is: "card_content",
+          children: [
+            { is: "status_badge", props: { label: i % 3 ? "Sent" : "Failed", status: i % 3 ? "success" : "failed" } },
+            {
+              is: "details",
+              children: [
+                { is: "detail", props: { label: "Customer", value: `Customer ${i}` } },
+                { is: "detail", props: { label: "Tax ID", value: `B${10000000 + i}`, mono: true } },
+                { is: "detail", props: { label: "Currency", value: "EUR" } },
+                { is: "detail", props: { label: "Lines", value: String((i % 9) + 1) } },
+                { is: "detail", props: { label: "Total", value: `€${(i * 13.37).toFixed(2)}` } },
+              ],
+            },
+          ],
+        },
+      ],
+    })),
+  });
+})();
