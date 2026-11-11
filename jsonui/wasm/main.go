@@ -2,16 +2,19 @@
 
 // Command wasm exposes the jsonui renderer to the browser:
 //
-//	popuiRender(json, { actions: ["alert", "ui.notify"], trusted: false })
+//	popuiRender(json, { actions: ["alert", "ui.notify"], trusted: false, schemas: {...} })
 //	  → { html } or { error }
 //
 // Options are optional and default to strict mode with the built-in actions.
+// "schemas" maps data paths to the JSON Schemas their values must match, as
+// an object or its JSON, like jsonui.NewValidator, and the panel validates
+// its data against them as it changes.
 //
 //	popuiValidate(schemas, data)
 //	  → { errors: [{ path, message }] } or { error }
 //
-// validates panel data, as JSON, against a panel's schemas, as the
-// JSON object of data paths to schemas jsonui.js finds on panels.
+// validates panel data, as JSON, against schemas, as the JSON object of
+// data paths to schemas jsonui.js finds on panels.
 //
 //	GOOS=js GOARCH=wasm go build -o popui.wasm ./jsonui/wasm
 package main
@@ -20,6 +23,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"syscall/js"
 
 	"github.com/invopop/popui.go/jsonui"
@@ -32,7 +37,10 @@ func main() {
 		}
 		var opts jsonui.Options
 		if len(args) > 1 && args[1].Type() == js.TypeObject {
-			opts = options(args[1])
+			var err error
+			if opts, err = options(args[1]); err != nil {
+				return map[string]any{"error": err.Error()}
+			}
 		}
 		var buf bytes.Buffer
 		if err := opts.Render(context.Background(), []byte(args[0].String()), &buf); err != nil {
@@ -70,7 +78,7 @@ func main() {
 }
 
 // options reads jsonui.Options from a JS object.
-func options(v js.Value) jsonui.Options {
+func options(v js.Value) (jsonui.Options, error) {
 	var o jsonui.Options
 	if t := v.Get("trusted"); t.Type() == js.TypeBoolean {
 		o.Trusted = t.Bool()
@@ -81,11 +89,40 @@ func options(v js.Value) jsonui.Options {
 			o.Actions[i] = a.Index(i).String()
 		}
 	}
-	return o
+	switch s := v.Get("schemas"); s.Type() {
+	case js.TypeUndefined, js.TypeNull:
+	case js.TypeString, js.TypeObject:
+		raw := s.String()
+		if s.Type() == js.TypeObject {
+			var err error
+			if raw, err = stringify(s); err != nil {
+				return o, err
+			}
+		}
+		var err error
+		if o.Validator, err = validators.get(raw); err != nil {
+			return o, err
+		}
+	default:
+		return o, errors.New("schemas must be an object or a JSON string")
+	}
+	return o, nil
 }
 
-// validators keeps the validators of the panels' schemas, as the same
-// ones validate the data every time it changes.
+// stringify returns the JSON of a JS value, or the error JSON.stringify
+// throws, such as for a circular object, which would otherwise panic and
+// stop the Go runtime.
+func stringify(v js.Value) (s string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("schemas: %v", r)
+		}
+	}()
+	return js.Global().Get("JSON").Call("stringify", v).String(), nil
+}
+
+// validators keeps the validators of the schemas panels are rendered and
+// validated with, as the same ones validate the data every time it changes.
 var validators = validatorCache{byJSON: map[string]*jsonui.Validator{}}
 
 type validatorCache struct {
@@ -102,6 +139,9 @@ func (c *validatorCache) get(schemas string) (*jsonui.Validator, error) {
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal([]byte(schemas), &raw); err != nil {
 		return nil, err
+	}
+	if raw == nil {
+		return nil, errors.New("schemas must be an object")
 	}
 	v, err := jsonui.NewValidator(raw)
 	if err != nil {

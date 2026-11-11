@@ -42,7 +42,6 @@ templ jsonUI() {
 					{Name: "components", Type: "[]node", Required: true, Description: "The components to render, in order."},
 					{Name: "data", Type: "object", Description: "The panel's state. It becomes the Alpine.js `x-data` of the panel, is where `bind` and `model` read from, and is what actions change."},
 					{Name: "handlers", Type: "object", Description: "Named actions, or lists of actions, that `on` can refer to by name, so a handler used in several places is defined once."},
-					{Name: "schemas", Type: "object", Description: "Data paths mapped to the JSON Schema their value must match, e.g. `{\"config\": {...}}`. See Validation below."},
 					{Name: "init", Type: "handler", Description: "Runs once when the panel starts, like an `on` handler: an action, a handler name or a list of them, e.g. `\"update\"` so the host receives the initial data."},
 					{Name: "$schema", Type: "string", Description: "The JSON Schema of the format, for editors. Ignored when rendering."},
 				},
@@ -71,7 +70,10 @@ templ jsonUI() {
 		}
 		@modules.Section("Validation", "json-ui-validation") {
 			@popui.Description() {
-				"schemas" describe what the data must be with JSON Schemas, so a panel can check its data as it's edited and an app can check it again with the same schemas when it's saved. They also tell anyone writing the data without the form, such as an LLM, what it must be.
+				JSON Schemas describe what the data must be, so a panel can check its data as it's edited and an app can check it again with the same schemas when it's saved. They also tell anyone writing the data without the form, such as an LLM, what it must be.
+			}
+			@popui.Description() {
+				Schemas describe the data, not the UI, so they aren't part of the panel: an app keeps them with the data they describe, maps each data path to its schema, and passes them to the renderer, as a jsonui.Validator in Go or the schemas option of popuiRender in the browser. One set of schemas serves every panel that edits the data, and the code that saves it.
 			}
 			<ul class="list-disc pl-5 flex flex-col gap-1 text-foreground-default-secondary">
 				<li>Each form control with a "model" shows the error for its path once it's been changed or left, or after the validate action. Errors for paths without a control are shown after the panel.</li>
@@ -81,7 +83,14 @@ templ jsonUI() {
 				<li>Schemas can only refer to themselves with "$ref". Data is validated in the browser by popui.wasm. Explicit validate actions stop if validation cannot run and show a panel-level error unless silent is true.</li>
 			</ul>
 			@popui.Description() {
-				$errors.checked reports whether the current data has been validated successfully; $errors.valid is true only after a successful check with no schema errors. Both are false while validation is pending or unavailable. Panels without schemas are considered checked and valid.
+				$errors.checked reports whether the current data has been validated successfully; $errors.valid is true only after a successful check with no schema errors. Both are false while validation is pending or unavailable. Panels rendered without schemas are considered checked and valid.
+			}
+			@popui.Description() {
+				The schemas, keyed by data path:
+			}
+			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiSchemasExample, Language: "json"})
+			@popui.Description() {
+				A panel that edits the config:
 			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiValidationExample, Language: "json"})
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiErrorsExample, Language: "markup"})
@@ -102,7 +111,7 @@ templ jsonUI() {
 					{Name: "alert", Type: "message", Description: "Shows `message` in the browser's alert dialog."},
 					{Name: "set", Type: "path, value", Description: "Sets the data at `path` to `value`."},
 					{Name: "reset", Type: "", Description: "Restores the panel's data to its initial values, and clears its errors."},
-					{Name: "validate", Type: "silent", Description: "Validates the data against the panel's schemas and stops the actions after it while there are errors or validation cannot run. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
+					{Name: "validate", Type: "silent", Description: "Validates the data against the schemas the panel was rendered with and stops the actions after it while there are errors or validation cannot run. Every error is shown, unless `silent` is true, e.g. to only pass valid data to the host as it changes."},
 					{Name: "dispatch", Type: "event, detail", Description: "Dispatches a bubbling DOM event named `event`, with `detail` or else a snapshot of the data, for the host page to handle."},
 				},
 			})
@@ -134,6 +143,7 @@ templ jsonUI() {
 				Items: []modules.APITableItem{
 					{Name: "Actions", Type: "[]string", Default: "BuiltinActions", Description: "The actions panels may use. An empty slice allows none."},
 					{Name: "Trusted", Type: "bool", Default: "false", Description: "Turns the strict checks off, for panels from a trusted source."},
+					{Name: "Validator", Type: "*Validator", Default: "nil", Description: "Validates the panel data against JSON Schemas as it changes. Build it once with `NewValidator` and reuse it for every panel and save of the data."},
 				},
 			})
 		}
@@ -144,7 +154,7 @@ templ jsonUI() {
 			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiAssetsExample, Language: "go"})
 			@popui.Description() {
-				Apps validate data they receive against a panel's schemas with the same messages:
+				The same validator checks the data apps receive, with the same messages:
 			}
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiValidatorExample, Language: "go"})
 		}

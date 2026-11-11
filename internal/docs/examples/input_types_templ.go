@@ -97,6 +97,13 @@ func InputTypesExample() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = popui.Input(props.Input{
+			Type:  "datetime-local",
+			Label: "Date and time",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = popui.Input(props.Input{
 			Type:  "week",
 			Label: "Week",
 		}).Render(ctx, templ_7745c5c3_Buffer)
