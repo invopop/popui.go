@@ -31,8 +31,8 @@ jobs:
           cache: npm
           cache-dependency-path: internal/docs/playground/editor/package-lock.json
 
-      - name: Test JSON UI runtime
-        run: node --test jsonui/tests/*.test.cjs
+      - name: Test JavaScript runtime
+        run: node --test jsonui/tests/*.test.cjs tests/*.test.cjs
 
       # The docs site, as Netlify builds it, including the playground's
       # editor bundle.
