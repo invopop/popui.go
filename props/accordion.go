@@ -10,6 +10,10 @@ type Accordion struct {
 	Attributes templ.Attributes
 	Title      string
 	Open       bool
+	// Variant is "default", or "panel": a panel of a page's side column,
+	// with a compact header divided from its content, a plain icon, and a
+	// shadow that sets it apart from a white work area.
+	Variant string `jsonschema:"enum=,enum=default,enum=panel"`
 
 	// Icon goes before the title, as an action's icon in a step.
 	Icon templ.Component

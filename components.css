@@ -1233,3 +1233,68 @@ form {
   background-size: 100% 1px, 1px 100%, 100% 1px, 1px 100%;
   background-repeat: no-repeat;
 }
+
+/* Primary tabs: the tabs of a page, in a tinted group at the start of the
+   row. The active tab is joined to the work area below: its body opens the
+   row's bottom line, its lower corners curve out into it, and both are
+   raised over the row with the work area's shadow. */
+.popui-tabs-primary {
+  position: relative;
+  align-items: flex-end;
+  padding-inline: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+/* The work area's shadow, on the row above it. The box that casts it is
+   under the row, and only what falls above the line is shown. */
+.popui-tabs-primary::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: 2.5rem;
+  box-shadow: 0 8px 30px 0 rgba(10, 10, 10, 0.08);
+  clip-path: inset(-2.5rem 0 100% 0);
+  pointer-events: none;
+}
+.popui-tabs-primary > [role="tab"] {
+  position: relative;
+  flex: none;
+  background-color: var(--color-background-default-secondary);
+}
+.popui-tabs-primary > [role="tab"]:first-child {
+  border-top-left-radius: 10px;
+}
+.popui-tabs-primary > [role="tab"]:last-child {
+  border-top-right-radius: 10px;
+}
+.popui-tabs-primary > [role="tab"][data-state="active"] {
+  z-index: 1;
+}
+/* The active tab's body, down to its foot. */
+.popui-tabs-primary > [role="tab"][data-state="active"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 11px 0;
+  z-index: -1;
+  border: 1px solid var(--color-border);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background-color: var(--color-background);
+  box-shadow: 0 8px 30px 0 rgba(10, 10, 10, 0.08);
+  clip-path: inset(-2.5rem -2.5rem 0 -2.5rem);
+}
+/* Its foot, over the row's line: the work area's color under the body,
+   and at each side a square of it with a quarter circle cut out, edged
+   with the border, which curves the tab out into the work area. */
+.popui-tabs-primary > [role="tab"][data-state="active"]::after {
+  content: "";
+  position: absolute;
+  inset: auto -12px -1px -12px;
+  height: 12px;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 0 0, transparent 11px, var(--color-border) 11px, var(--color-border) 12px, var(--color-background) 12px) left / 12px 12px no-repeat,
+    radial-gradient(circle at 100% 0, transparent 11px, var(--color-border) 11px, var(--color-border) 12px, var(--color-background) 12px) right / 12px 12px no-repeat,
+    linear-gradient(var(--color-background), var(--color-background)) center / calc(100% - 24px) 100% no-repeat;
+  pointer-events: none;
+}

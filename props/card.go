@@ -13,6 +13,9 @@ type Card struct {
 	Attributes templ.Attributes
 	Href       templ.SafeURL
 	Disabled   bool
+	// Elevated gives the card a soft shadow, for cards on a white work
+	// area, where the border alone doesn't set them apart.
+	Elevated bool
 
 	// Order positions the card inside a reorderable CardDeck, 1-based, and
 	// renders as `data-order`. The deck sorts its cards by it on load and

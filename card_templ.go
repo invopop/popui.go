@@ -658,7 +658,10 @@ func CardProgressBar(p ...props.CardProgressBar) templ.Component {
 }
 
 func cardClasses(card props.Card) string {
-	return classes.If(card.Disabled, "bg-background-default-secondary pointer-events-none")
+	return tailwind.Merge(
+		classes.If(card.Elevated, "shadow-sm"),
+		classes.If(card.Disabled, "bg-background-default-secondary pointer-events-none"),
+	)
 }
 
 func percentageStyle(percent int64, color string) templ.CSSClass {

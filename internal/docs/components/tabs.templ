@@ -28,6 +28,20 @@ templ Tabs() {
 		@examples.TabsVariantsExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Primary",
+		Description: "The primary variant is for the tabs of a page, straight under its header: the active tab is joined to the work area below and raised over the others with a shadow.",
+		Code:        examples.LoadExample("tabs_primary.templ"),
+	}) {
+		@examples.TabsPrimaryExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Links",
+		Description: "A TabItem with an Href is a link, for tabs that are each a page of their own. The Tabs' Active says which page is being shown.",
+		Code:        examples.LoadExample("tabs_links.templ"),
+	}) {
+		@examples.TabsLinksExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "With Icons",
 		Description: "Tabs can contain icons alongside text.",
 		Code:        examples.LoadExample("tabs_with_icons.templ"),
@@ -49,7 +63,7 @@ templ Tabs() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the tabs element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the tabs container"},
-				{Name: "Variant", Type: "string", Default: "default", Description: "Style variant: \"default\" for underline tabs or \"pill\" for pill-style tabs"},
+				{Name: "Variant", Type: "string", Default: "default", Description: "Style variant: \"default\" for underline tabs, \"pill\" for pill-style tabs, or \"primary\" for the tabs of a page"},
 				{Name: "Model", Type: "string", Default: "tab", Description: "The Alpine variable holding the active tab Value. Match it on the child Tabs (their default is also \"tab\")."},
 				{Name: "Active", Type: "string", Default: "first tab", Description: "Tab Value selected on first render. Defaults to the first tab's Value."},
 				{Name: "Tabs", Type: "[]props.TabItem", Default: "", Description: "The ordered trigger row."},
@@ -64,6 +78,7 @@ templ Tabs() {
 				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Optional leading icon rendered before the label."},
 				{Name: "Count", Type: "int", Default: "0", Description: "Counter rendered after the label when greater than zero: \"(n)\" on the default variant, a small badge on the pill variant."},
 				{Name: "Title", Type: "string", Default: "", Description: "Accessible name and tooltip of the trigger. Set it on an icon-only tab, where there is no Label to read out"},
+				{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "Makes the trigger a link, for tabs that are each a page of their own. The tab whose Value is the Tabs' Active is the page being shown"},
 			},
 		})
 		@modules.APITable(modules.APITableProps{

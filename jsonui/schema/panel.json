@@ -326,6 +326,10 @@
         "disabled": {
           "type": "boolean"
         },
+        "elevated": {
+          "type": "boolean",
+          "description": "Elevated gives the card a soft shadow, for cards on a white work\narea, where the border alone doesn't set them apart."
+        },
         "order": {
           "type": "integer",
           "description": "Order positions the card inside a reorderable CardDeck, 1-based, and\nrenders as `data-order`. The deck sorts its cards by it on load and\nrenumbers every card to 1..n after each move, so the attribute, the\nDOM sequence and the visible sequence are always the same list — read\nit back to persist an order. Cards without one sink to the end of the\ndeck, keeping the sequence they were rendered in. Ignored outside a\nreorderable deck, where the rendered sequence is already the order."
@@ -2064,6 +2068,11 @@
         "title": {
           "type": "string",
           "description": "Title is the trigger's accessible name and tooltip. Set it on an\nicon-only tab, where there is no Label to read out."
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Href makes the trigger a link, for tabs that are each a page of\ntheir own: the page being shown is the one whose Value is the Tabs'\nActive, and following another loads its page instead of switching\npanels."
         }
       },
       "additionalProperties": false,
@@ -2192,9 +2201,10 @@
           "enum": [
             "",
             "default",
-            "pill"
+            "pill",
+            "primary"
           ],
-          "description": "\"default\" (underline) or \"pill\""
+          "description": "Variant is \"default\" (underline), \"pill\", or \"primary\": the tabs of a\npage, where the active tab is joined to the page's content below it\nand raised over the others with a shadow. Primary tabs go straight\nunder the page's header, on a white work area."
         },
         "model": {
           "type": "string",
@@ -2852,6 +2862,7 @@
               "attributes",
               "href",
               "disabled",
+              "elevated",
               "order"
             ]
           },

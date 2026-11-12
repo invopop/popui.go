@@ -15,6 +15,11 @@ type TabItem struct {
 	// Title is the trigger's accessible name and tooltip. Set it on an
 	// icon-only tab, where there is no Label to read out.
 	Title string
+	// Href makes the trigger a link, for tabs that are each a page of
+	// their own: the page being shown is the one whose Value is the Tabs'
+	// Active, and following another loads its page instead of switching
+	// panels.
+	Href templ.SafeURL
 }
 
 // Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks
@@ -34,7 +39,11 @@ type Tabs struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
-	Variant    string `jsonschema:"enum=,enum=default,enum=pill"` // "default" (underline) or "pill"
+	// Variant is "default" (underline), "pill", or "primary": the tabs of a
+	// page, where the active tab is joined to the page's content below it
+	// and raised over the others with a shadow. Primary tabs go straight
+	// under the page's header, on a white work area.
+	Variant string `jsonschema:"enum=,enum=default,enum=pill,enum=primary"`
 	// Model is the Alpine variable holding the active tab Value. Defaults to
 	// "tab" — match it on the child Tabs (their default is also "tab", so
 	// usually neither needs setting).
