@@ -153,24 +153,27 @@ templ templateEditor(prp props.Textarea) {
 					// The picker's trigger is an icon button the height of
 					// the toggle's pill, at the row's right; the panel hangs
 					// from its right edge. The picker is aimed at this
-					// editor, so a pick lands at the caret.
-					@FieldPicker(templateEditorPicker(prp)) {
-						@Button(props.Button{
-							Type:     "button",
-							Size:     props.ButtonSizeIcon,
-							Disabled: prp.Disabled || prp.Readonly,
-							Class:    classes.If(!prp.ViewToggle, "ml-auto"),
-							Attributes: templ.Attributes{
-								"aria-label":     "Insert field",
-								"title":          "Insert field",
-								"aria-haspopup":  "listbox",
-								":aria-expanded": "open",
-								":aria-controls": "$id('field-picker') + '-listbox'",
-							},
-						}) {
-							@icons.Brackets()
+					// editor, so a pick lands at the caret. Without a toggle
+					// to push it over, the wrapper takes the margin: the
+					// FieldPicker root is the row's child, not the button.
+					<div class={ classes.If(!prp.ViewToggle, "ml-auto") }>
+						@FieldPicker(templateEditorPicker(prp)) {
+							@Button(props.Button{
+								Type:     "button",
+								Size:     props.ButtonSizeIcon,
+								Disabled: prp.Disabled || prp.Readonly,
+								Attributes: templ.Attributes{
+									"aria-label":     "Insert field",
+									"title":          "Insert field",
+									"aria-haspopup":  "listbox",
+									":aria-expanded": "open",
+									":aria-controls": "$id('field-picker') + '-listbox'",
+								},
+							}) {
+								@icons.Brackets()
+							}
 						}
-					}
+					</div>
 				}
 			</div>
 		}
