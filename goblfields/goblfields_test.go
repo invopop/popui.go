@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+	"text/template"
 
 	"github.com/invopop/popui.go/goblfields"
 	"github.com/invopop/popui.go/props"
@@ -444,5 +445,43 @@ func TestTrailLooksThroughGroups(t *testing.T) {
 	equal(t, paths(trail), []string{"Invoice", linesPath, lineItemPath, lineItemName})
 	if got := goblfields.Trail(fields, "nope"); len(got) != 0 {
 		t.Fatalf("unknown path = %v", paths(got))
+	}
+}
+
+const supplierNamePath = "supplier.name"
+
+func TestGoTemplateLeavesOutArrays(t *testing.T) {
+	opts := testOptions
+	opts.GoTemplate = true
+	fields := build(t, invoiceSchema, opts)
+	for _, path := range []string{addonsPath, linesPath, lineItemName, complementsPath} {
+		if has(fields, path) {
+			t.Errorf("%s should be left out", path)
+		}
+	}
+	for _, path := range []string{uuidPath, supplierNamePath} {
+		if !has(fields, path) {
+			t.Errorf("%s should stay", path)
+		}
+	}
+}
+
+func TestGoTemplateEveryFieldParses(t *testing.T) {
+	for schema, kept := range map[string]string{invoiceSchema: supplierNamePath, "bill/status": "code", "org/party": "name"} {
+		fields, err := goblfields.Build(schema, goblfields.Options{GoTemplate: true})
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, f := range goblfields.Flatten(fields) {
+			if _, err := template.New("").Parse("{{." + f.Path + "}}"); err != nil {
+				t.Errorf("%s: %v", schema, err)
+			}
+		}
+		if !has(fields, kept) {
+			t.Errorf("%s: %s should stay", schema, kept)
+		}
+		if has(fields, "$regime") {
+			t.Errorf("%s: $regime should be left out", schema)
+		}
 	}
 }

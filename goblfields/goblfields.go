@@ -22,6 +22,7 @@ import (
 	"path"
 	"sort"
 	"strings"
+	"text/template"
 
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/popui.go/props"
@@ -62,6 +63,10 @@ type Options struct {
 	// Source overrides where schema documents are read from. Defaults to
 	// Schemas, the documents embedded in the gobl module.
 	Source fs.FS
+	// GoTemplate leaves out the fields that a Go template cannot print as
+	// {{.<path>}}: arrays with everything beneath them, and keys such as
+	// $regime. An object left with no fields is left out too.
+	GoTemplate bool
 }
 
 // Build returns the selectable field tree for a GOBL schema, given either as a
@@ -92,7 +97,28 @@ func Build(schema string, opts ...Options) ([]props.Field, error) {
 		return nil, fmt.Errorf("goblfields: %s: could not resolve the root definition", SchemaPath(docID))
 	}
 
-	return b.walk(root, "", 1, map[string]bool{root.key: true}, true), nil
+	fields := b.walk(root, "", 1, map[string]bool{root.key: true}, true)
+	if o.GoTemplate {
+		fields = goTemplateFields(fields)
+	}
+	return fields, nil
+}
+
+func goTemplateFields(fields []props.Field) []props.Field {
+	out := make([]props.Field, 0, len(fields))
+	for _, f := range fields {
+		if _, err := template.New("").Parse("{{." + f.Path + "}}"); err != nil {
+			continue
+		}
+		if len(f.Children) > 0 {
+			f.Children = goTemplateFields(f.Children)
+			if len(f.Children) == 0 {
+				continue
+			}
+		}
+		out = append(out, f)
+	}
+	return out
 }
 
 // MustBuild is Build for a schema known to be there, panicking when it is
