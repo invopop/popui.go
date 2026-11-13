@@ -7,7 +7,7 @@ require (
 	github.com/a-h/templ v0.3.1001
 	github.com/dchest/uniuri v1.2.0
 	github.com/google/uuid v1.6.0
-	github.com/invopop/gobl v0.308.0
+	github.com/invopop/gobl v0.500.0
 	github.com/invopop/icons v0.19.0
 	github.com/invopop/jsonschema v0.14.0
 	github.com/labstack/echo/v4 v4.16.3
