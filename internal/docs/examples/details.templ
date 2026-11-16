@@ -1,0 +1,22 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ DetailsExample() {
+	<div class="w-[360px]">
+		@popui.Details() {
+			@popui.Detail(props.Detail{Label: "Name", Value: "John Doe"})
+			@popui.Detail(props.Detail{Label: "Email"}) {
+				<a href="mailto:john@example.com" class="underline-offset-2 hover:underline">john@example.com</a>
+			}
+			@popui.Detail(props.Detail{Label: "State"}) {
+				@popui.TagStatus(props.TagStatus{Label: "Sent", Status: "green", Dot: true})
+			}
+			@popui.Detail(props.Detail{Label: "Version", Value: "3", Mono: true})
+			@popui.Detail(props.Detail{Label: "Folder"})
+		}
+	</div>
+}

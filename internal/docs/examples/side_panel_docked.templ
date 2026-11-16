@@ -1,0 +1,32 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ SidePanelDockedExample() {
+	<div class="flex h-80 w-full overflow-hidden rounded-lg border border-border">
+		<div class="flex flex-1 min-w-0 flex-col items-start gap-3 p-4">
+			@popui.Description() {
+				A docked side panel sits beside the content, which makes room for it.
+			}
+			@popui.Button(props.Button{
+				Attributes: templ.Attributes{
+					"@click": "window.dispatchEvent(new CustomEvent('popui-sidepanel-open', {detail: 'side-panel-docked'}))",
+				},
+			}) {
+				Open docked panel
+			}
+		</div>
+		@popui.SidePanel(props.SidePanel{ID: "side-panel-docked", Width: 320, Docked: true, Open: true}) {
+			@popui.SidePanelHeader(props.SidePanelHeader{SidePanelID: "side-panel-docked", Title: "Job detail"})
+			<div class="flex-1 min-h-0 overflow-y-auto p-4">
+				@popui.Details() {
+					@popui.Detail(props.Detail{Label: "Status", Value: "Completed"})
+					@popui.Detail(props.Detail{Label: "Duration", Value: "2.3s", Mono: true})
+				}
+			</div>
+		}
+	</div>
+}

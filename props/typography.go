@@ -7,6 +7,13 @@ type P struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+	// Size of the text, see the TextSize constants. Default is "base".
+	Size string `jsonschema:"enum=,enum=sm,enum=base,enum=lg,enum=xl"`
+	// Tone is the colour of the text, see the TextTone constants. Default
+	// is "default".
+	Tone string `jsonschema:"enum=,enum=default,enum=secondary,enum=tertiary"`
+	// Numeric shows digits in equal widths so figures line up, for amounts.
+	Numeric bool
 }
 
 // Title defines the props for the Title component.
@@ -14,6 +21,9 @@ type Title struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+	// Size of the title: "lg" for a page or card, or "base" for a section
+	// within one, in a medium weight. Default is "lg".
+	Size string `jsonschema:"enum=,enum=base,enum=lg"`
 }
 
 // TitleGroup defines the props for the TitleGroup component: a title with
@@ -42,6 +52,8 @@ type Description struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+	// Size of the text, "sm" or "base". Default is "base".
+	Size string `jsonschema:"enum=,enum=sm,enum=base"`
 }
 
 // Info defines the props for the Info component.

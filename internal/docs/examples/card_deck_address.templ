@@ -14,25 +14,22 @@ templ CardDeckAddressExample() {
 			}
 		}
 		@popui.Card(props.Card{Class: "p-3"}) {
-			@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-3"}) {
-				@popui.DescriptionListItem(props.DescriptionListItem{
+			@popui.Details(props.Details{Layout: props.DetailsLayoutStacked, Class: "space-y-3"}) {
+				@popui.Detail(props.Detail{
 					Label: "Company legal name",
 					Value: "Invopop S.L. Billing",
 				})
-				@popui.DescriptionListItem(props.DescriptionListItem{
+				@popui.Detail(props.Detail{
 					Label: "Billing email",
 					Value: "juan@invopop.com",
 				})
-				@popui.DescriptionListItem() {
-					@popui.DT() {
-						Address
-					}
-					@popui.DD(props.DD{Class: "flex flex-col"}) {
+				@popui.Detail(props.Detail{Label: "Address"}) {
+					<span class="flex flex-col">
 						<span>Calle Pradillo 42, Madrid</span>
 						<span>Madrid, 28002, ES</span>
-					}
+					</span>
 				}
-				@popui.DescriptionListItem(props.DescriptionListItem{
+				@popui.Detail(props.Detail{
 					Label: "Tax ID",
 					Value: "ESX3157928M",
 				})

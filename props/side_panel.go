@@ -40,6 +40,17 @@ type SidePanel struct {
 	// inner edge; the adjusted width survives open/close cycles but
 	// resets to Width on the next page load.
 	Width int
+
+	// Docked places the side panel in the page beside its content, instead
+	// of over it: it takes its width from the flex row it's in while open,
+	// and none while closed. Put it last in a row whose other children
+	// shrink (min-w-0) to make room. It opens, closes and resizes as the
+	// floating side panel does.
+	Docked bool
+
+	// Open shows the side panel as the page loads, as when the page's
+	// address names what it shows.
+	Open bool
 }
 
 // SidePanelHeader renders a sticky header bar at the top of a popui.SidePanel:

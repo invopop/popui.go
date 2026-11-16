@@ -22,3 +22,8 @@ storybook-static
 node_modules/
 package.json
 package-lock.json
+
+# The jsonui playground's editor is bundled with npm; its manifest and lock
+# file are kept, while node_modules and dist (above) are not.
+!/internal/docs/playground/editor/package.json
+!/internal/docs/playground/editor/package-lock.json

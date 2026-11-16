@@ -8,5 +8,6 @@ type StatusBadge struct {
 	Class      string
 	Attributes templ.Attributes
 	Label      string
-	Status     string // success, failed, warning, running
+	// Status is the state the badge shows.
+	Status string `jsonschema:"enum=success,enum=failed,enum=warning,enum=running"`
 }

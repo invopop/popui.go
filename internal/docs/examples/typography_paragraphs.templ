@@ -1,6 +1,9 @@
 package examples
 
-import "github.com/invopop/popui.go"
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
 
 templ TypographyParagraphsExample() {
 	<div class="space-y-2">
@@ -9,6 +12,12 @@ templ TypographyParagraphsExample() {
 		}
 		@popui.Description() {
 			This is a description with secondary text color. 
+		}
+		@popui.Description(props.Description{Size: props.TextSizeSmall}) {
+			This is a smaller description, for notes below a value. 
+		}
+		@popui.P(props.P{Tone: props.TextToneTertiary, Numeric: true}) {
+			Updated 12:04, 3 of 120 
 		}
 	</div>
 }

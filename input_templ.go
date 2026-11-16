@@ -27,16 +27,30 @@ import (
 //   - url
 //   - date
 //   - time
+//   - datetime-local
 //   - week
 //   - month
 //   - number
 //
 // If the Label property is provided, a simple label will be rendered above the input.
 //
-// Search, date, and time inputs render a clear button on the right while they
-// hold a value (wired up by popui.js), replacing the native browser controls.
-// Date, time, week, and month inputs replace the native calendar indicator
-// with a calendar icon button that opens the native picker via showPicker().
+// Date, time, datetime-local, week, and month inputs show their value in
+// ISO 8601 by default: a monospace text field holding the value as written,
+// such as "2026-09-20", "12:30", "2026-W38" or "2026-09", so it can be read,
+// copied, and pasted directly. Datetimes hold an RFC 3339 timestamp with a
+// zone, such as "2026-09-20T12:30:00Z", which a native datetime-local input
+// can't. A calendar icon button opens the system picker from an invisible
+// native input of the same type behind it, seeded with the field's value;
+// picking writes the value back, keeping a datetime's zone (Z when it had
+// none). Values are never converted, so the browser's timezone doesn't
+// shift them. Each field is validated against its format on submit.
+//
+// Local shows the browser's own control instead, formatted for its locale.
+// Local search, date, time, and datetime-local inputs render a clear button
+// on the right while they hold a value (wired up by popui.js), and local
+// date, time, datetime-local, week, and month inputs replace the native
+// calendar indicator with a calendar icon button that opens the native
+// picker via showPicker().
 func Input(p ...props.Input) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -61,6 +75,8 @@ func Input(p ...props.Input) templ.Component {
 		prp := props.First(p)
 		clearable := inputClearable(prp)
 		pickable := inputPickable(prp)
+		iso := inputISO(prp)
+		placeholder := inputPlaceholder(prp)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col space-y-2 w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -81,7 +97,7 @@ func Input(p ...props.Input) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 39, Col: 15}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 55, Col: 15}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -114,7 +130,7 @@ func Input(p ...props.Input) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Prefix)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 45, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 61, Col: 17}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -148,6 +164,7 @@ func Input(p ...props.Input) templ.Component {
 			classes.If(clearable || pickable, "pr-8"),
 			classes.If(clearable && pickable, "pr-14"),
 			classes.If(prp.Type == "file", inputFileClasses()),
+			classes.If(iso, "font-mono"),
 			prp.Class,
 		),
 		}
@@ -162,7 +179,7 @@ func Input(p ...props.Input) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(prp.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 54, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 70, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -173,9 +190,9 @@ func Input(p ...props.Input) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(inputType(prp.Type))
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(inputType(prp))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 55, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 71, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -204,89 +221,121 @@ func Input(p ...props.Input) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if inputPickableType(prp.Type) {
+		if inputPickableType(prp.Type) && !iso {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " data-pickable")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		if prp.Placeholder != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " placeholder=\"")
+		if iso {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " data-iso=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Placeholder)
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Type)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 74, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 91, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if prp.Autofocus {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " autofocus")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if prp.Disabled {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " disabled")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if prp.Readonly {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " readonly")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if prp.Required {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " required")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if prp.Name != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, " name=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" pattern=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(inputISOPatterns[prp.Type])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 89, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 92, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" spellcheck=\"false\" autocomplete=\"off\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		if prp.Value != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " value=\"")
+		if placeholder != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " placeholder=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Value)
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 92, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 97, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if prp.Autofocus {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " autofocus")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if prp.Disabled {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, " disabled")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if prp.Readonly {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " readonly")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if prp.Required {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " required")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if prp.Name != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " name=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 112, Col: 20}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if prp.Value != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Value)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 115, Col: 22}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -295,34 +344,34 @@ func Input(p ...props.Input) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if clearable {
-			var templ_7745c5c3_Var13 = []any{tailwind.Merge(
+			var templ_7745c5c3_Var15 = []any{tailwind.Merge(
 				"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer flex items-center justify-center text-foreground-default-secondary hover:text-foreground",
 				classes.If(pickable, "right-8"),
 			),
 			}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<button type=\"button\" data-input-clear aria-label=\"Clear input\" hidden class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<button type=\"button\" data-input-clear aria-label=\"Clear input\" hidden class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var13).String())
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var15).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -330,13 +379,40 @@ func Input(p ...props.Input) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</button> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if iso && pickable {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<input type=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(prp.Type)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 137, Col: 20}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" data-iso-picker tabindex=\"-1\" aria-hidden=\"true\" class=\"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 opacity-0 pointer-events-none\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, inputPickerAttributes(prp))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if pickable {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<button type=\"button\" data-input-picker aria-label=\"Open picker\" class=\"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer flex items-center justify-center text-foreground-default-secondary hover:text-foreground\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<button type=\"button\" data-input-picker aria-label=\"Open picker\" class=\"absolute right-1.5 top-1/2 -translate-y-1/2 size-5 shrink-0 cursor-pointer flex items-center justify-center text-foreground-default-secondary hover:text-foreground\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -344,12 +420,12 @@ func Input(p ...props.Input) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -359,7 +435,7 @@ func Input(p ...props.Input) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -401,30 +477,30 @@ func InputError(e props.Error) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var16 = []any{tailwind.Merge("font-sans text-sm text-foreground-critical flex items-center space-x-1 pl-[20px] bg-no-repeat bg-left bg-[length:16px_16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCQk8cGF0aAoJCQlmaWxsLXJ1bGU9ImV2ZW5vZGQiCgkJCWNsaXAtcnVsZT0iZXZlbm9kZCIKCQkJZD0iTTggMTQuNUMxMS41ODk5IDE0LjUgMTQuNSAxMS41ODk5IDE0LjUgOEMxNC41IDQuNDEwMTUgMTEuNTg5OSAxLjUgOCAxLjVDNC40MTAxNSAxLjUgMS41IDQuNDEwMTUgMS41IDhDMS41IDExLjU4OTkgNC40MTAxNSAxNC41IDggMTQuNVpNNy45OTk5OSA5LjM1QzcuNjY4NjIgOS4zNSA3LjM5OTk5IDkuMDgxMzcgNy4zOTk5OSA4Ljc1VjQuNzVDNy4zOTk5OSA0LjQxODYzIDcuNjY4NjIgNC4xNSA3Ljk5OTk5IDQuMTVDOC4zMzEzNyA0LjE1IDguNTk5OTkgNC40MTg2MyA4LjU5OTk5IDQuNzVMOC41OTk5OSA4Ljc1QzguNTk5OTkgOS4wODEzNyA4LjMzMTM2IDkuMzUgNy45OTk5OSA5LjM1Wk04Ljc1IDExQzguNzUgMTEuNDE0MiA4LjQxNDIxIDExLjc1IDggMTEuNzVDNy41ODU3OSAxMS43NSA3LjI1IDExLjQxNDIgNy4yNSAxMUM3LjI1IDEwLjU4NTggNy41ODU3OSAxMC4yNSA4IDEwLjI1QzguNDE0MjEgMTAuMjUgOC43NSAxMC41ODU4IDguNzUgMTFaIgoJCQlmaWxsPSIjQzkyRDQ1IgoJCT48L3BhdGg+Cgk8L3N2Zz4=')]", e.Class)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
+		var templ_7745c5c3_Var19 = []any{tailwind.Merge("font-sans text-sm text-foreground-critical flex items-center space-x-1 pl-[20px] bg-no-repeat bg-left bg-[length:16px_16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCQk8cGF0aAoJCQlmaWxsLXJ1bGU9ImV2ZW5vZGQiCgkJCWNsaXAtcnVsZT0iZXZlbm9kZCIKCQkJZD0iTTggMTQuNUMxMS41ODk5IDE0LjUgMTQuNSAxMS41ODk5IDE0LjUgOEMxNC41IDQuNDEwMTUgMTEuNTg5OSAxLjUgOCAxLjVDNC40MTAxNSAxLjUgMS41IDQuNDEwMTUgMS41IDhDMS41IDExLjU4OTkgNC40MTAxNSAxNC41IDggMTQuNVpNNy45OTk5OSA5LjM1QzcuNjY4NjIgOS4zNSA3LjM5OTk5IDkuMDgxMzcgNy4zOTk5OSA4Ljc1VjQuNzVDNy4zOTk5OSA0LjQxODYzIDcuNjY4NjIgNC4xNSA3Ljk5OTk5IDQuMTVDOC4zMzEzNyA0LjE1IDguNTk5OTkgNC40MTg2MyA4LjU5OTk5IDQuNzVMOC41OTk5OSA4Ljc1QzguNTk5OTkgOS4wODEzNyA4LjMzMTM2IDkuMzUgNy45OTk5OSA5LjM1Wk04Ljc1IDExQzguNzUgMTEuNDE0MiA4LjQxNDIxIDExLjc1IDggMTEuNzVDNy41ODU3OSAxMS43NSA3LjI1IDExLjQxNDIgNy4yNSAxMUM3LjI1IDEwLjU4NTggNy41ODU3OSAxMC4yNSA4IDEwLjI1QzguNDE0MjEgMTAuMjUgOC43NSAxMC41ODU4IDguNzUgMTFaIgoJCQlmaWxsPSIjQzkyRDQ1IgoJCT48L3BhdGg+Cgk8L3N2Zz4=')]", e.Class)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var19...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var16).String())
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var19).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -432,32 +508,32 @@ func InputError(e props.Error) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if e.Error != nil {
-			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(e.Error.Error())
+			var templ_7745c5c3_Var21 string
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(e.Error.Error())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 150, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 183, Col: 20}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var19 string
-			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(e.Text)
+			var templ_7745c5c3_Var22 string
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(e.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 152, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `input.templ`, Line: 185, Col: 11}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -473,10 +549,15 @@ func inputFileClasses() string {
 }
 
 // inputClearable reports whether the input renders a clear button: search,
-// date, and time inputs get one, unless the field cannot be edited.
+// date, time, and datetime-local inputs get one, unless the field cannot be
+// edited. ISO fields are plain text, so their value can be deleted directly
+// and they get no clear button.
 func inputClearable(p props.Input) bool {
+	if inputISO(p) {
+		return false
+	}
 	switch p.Type {
-	case "search", "date", "time":
+	case "search", "date", "time", "datetime-local":
 		return !p.Disabled && !p.Readonly
 	}
 	return false
@@ -486,7 +567,7 @@ func inputClearable(p props.Input) bool {
 // whose indicator is replaced by the popui calendar button.
 func inputPickableType(typ string) bool {
 	switch typ {
-	case "date", "time", "week", "month":
+	case inputDate, inputTime, inputDateTimeLocal, inputWeek, inputMonth:
 		return true
 	}
 	return false
@@ -500,10 +581,101 @@ func inputPickable(p props.Input) bool {
 	return inputPickableType(p.Type) && !p.Disabled && !p.Readonly
 }
 
-func inputType(typ string) string {
-	switch typ {
-	case "email", "file", "search", "password", "tel", "url", "date", "time", "week", "month", "number":
-		return typ
+// inputISO reports whether the input is a text field holding an ISO value
+// with the system picker behind its calendar button: date and time inputs
+// are, unless Local is set.
+func inputISO(p props.Input) bool {
+	return inputPickableType(p.Type) && !p.Local
+}
+
+// Input types with a native picker.
+const (
+	inputDate          = "date"
+	inputTime          = "time"
+	inputDateTimeLocal = "datetime-local"
+	inputWeek          = "week"
+	inputMonth         = "month"
+)
+
+// inputISOPlaceholders are the placeholders of ISO fields without one.
+var inputISOPlaceholders = map[string]string{
+	inputDate:          "YYYY-MM-DD",
+	inputTime:          "hh:mm",
+	inputDateTimeLocal: "YYYY-MM-DDThh:mm:ss+hh:mm",
+	inputWeek:          "YYYY-Www",
+	inputMonth:         "YYYY-MM",
+}
+
+// inputPlaceholder returns the input's placeholder: its own, or the format
+// of ISO fields. It's worked out here rather than with an "else if" in the
+// attribute block, which templ renders as an "else" attribute.
+func inputPlaceholder(p props.Input) string {
+	if p.Placeholder == "" && inputISO(p) {
+		return inputISOPlaceholders[p.Type]
+	}
+	return p.Placeholder
+}
+
+// Parts of the ISO patterns. isoDate only matches days that exist: 31 in
+// January, March, May, July, August, October and December, 30 in April,
+// June, September and November, 28 in February, and the 29th of February
+// in leap years, which are divisible by 4 but not 100 (isoLeapYY after two
+// digits), or divisible by 400 (isoLeapCC before "00").
+const (
+	isoLeapYY = `([02468][48]|[2468]0|[13579][26])`
+	isoLeapCC = `([02468][048]|[13579][26])`
+	isoDate   = `(\d{4}-(0[13578]|1[02])-(0[1-9]|[12]\d|3[01])` +
+		`|\d{4}-(0[469]|11)-(0[1-9]|[12]\d|30)` +
+		`|\d{4}-02-(0[1-9]|1\d|2[0-8])` +
+		`|(\d{2}` + isoLeapYY + `|` + isoLeapCC + `00)-02-29)`
+	isoTime = `([01]\d|2[0-3]):[0-5]\d`
+)
+
+// inputISOPatterns are the native validation patterns of ISO fields, with
+// each part in range. Datetimes are RFC 3339 timestamps: "T" or "t" between
+// the date and time, as its grammar requires, optional seconds and
+// fraction, and a mandatory zone. Leap seconds (second 60) are rejected,
+// as Go's time.Parse rejects them and native pickers can't produce them.
+// Week 53 of years without one is rejected by popui.js, as a pattern can't
+// tell. Browsers compile patterns with the "v" flag, so the "-" in [+\-]
+// must stay escaped.
+var inputISOPatterns = map[string]string{
+	inputDate:          isoDate,
+	inputTime:          isoTime + `(:[0-5]\d(\.\d{1,3})?)?`,
+	inputDateTimeLocal: isoDate + `[Tt]` + isoTime + `(:[0-5]\d(\.\d+)?)?([Zz]|[+\-]([01]\d|2[0-3]):[0-5]\d)`,
+	inputWeek:          `\d{4}-W(0[1-9]|[1-4]\d|5[0-3])`,
+	inputMonth:         `\d{4}-(0[1-9]|1[0-2])`,
+}
+
+// stepAttribute is the attribute holding the picker's step.
+const stepAttribute = "step"
+
+// pickerAttributes are the Attributes of an input that its picker takes.
+var pickerAttributes = []string{"min", "max", stepAttribute}
+
+// inputPickerAttributes are the attributes of an ISO field's hidden picker:
+// the min, max, and step given in the input's Attributes, which a text field
+// ignores, and a step of one second for times so the picker keeps seconds.
+func inputPickerAttributes(p props.Input) templ.Attributes {
+	out := templ.Attributes{}
+	for _, k := range pickerAttributes {
+		if v, ok := p.Attributes[k]; ok {
+			out[k] = v
+		}
+	}
+	if _, ok := out[stepAttribute]; !ok && (p.Type == inputTime || p.Type == inputDateTimeLocal) {
+		out[stepAttribute] = "1"
+	}
+	return out
+}
+
+func inputType(p props.Input) string {
+	if inputISO(p) {
+		return "text"
+	}
+	switch p.Type {
+	case "email", "file", "search", "password", "tel", "url", "date", "time", "datetime-local", "week", "month", "number":
+		return p.Type
 	default:
 		return "text"
 	}

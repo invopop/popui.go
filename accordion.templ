@@ -24,28 +24,49 @@ templ Accordion(p ...props.Accordion) {
 		}
 		{ prp.Attributes... }
 	>
+		// Buttons and links in the actions do their own thing, instead of
+		// opening or closing the accordion.
 		<summary
 			class={
-				"flex w-full cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-left select-none",
+				"flex w-full cursor-pointer list-none items-center justify-between gap-3 text-left select-none",
 				"text-base font-medium leading-5 text-foreground break-words",
 				"hover:bg-background-default-secondary group-open:hover:bg-background transition-colors",
 				"[&::-webkit-details-marker]:hidden",
+				templ.KV("px-4 py-3", prp.Icon == nil),
+				templ.KV("pl-2 pr-4 py-2", prp.Icon != nil),
+			}
+			if prp.Actions != nil {
+				onclick="if (event.target.closest('button, a')) event.preventDefault()"
 			}
 		>
-			<span class="min-w-0">{ prp.Title }</span>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 16 16"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-				class="size-4 shrink-0 text-foreground-default-secondary transition-transform duration-200 ease-in-out group-open:rotate-180"
-			>
-				<path d="M4 6l4 4 4-4"></path>
-			</svg>
+			<span class="flex min-w-0 items-center gap-2">
+				if prp.Icon != nil {
+					<span class="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-background text-foreground-default-secondary [&_svg]:size-4 [&_img]:size-4 [&_img]:object-contain">
+						@prp.Icon
+					</span>
+				}
+				<span class="min-w-0">{ prp.Title }</span>
+			</span>
+			<span class="flex shrink-0 items-center gap-2">
+				if prp.Actions != nil {
+					<span class="flex items-center gap-2 font-normal text-foreground-default-secondary">
+						@prp.Actions
+					</span>
+				}
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+					class="size-4 shrink-0 text-foreground-default-secondary transition-transform duration-200 ease-in-out group-open:rotate-180"
+				>
+					<path d="M4 6l4 4 4-4"></path>
+				</svg>
+			</span>
 		</summary>
 		<div class="grid transition-[grid-template-rows] duration-200 ease-in-out grid-rows-[0fr] group-open:grid-rows-[1fr]">
 			// break-words keeps unbroken tokens inside the panel instead of

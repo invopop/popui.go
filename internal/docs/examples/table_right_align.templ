@@ -1,36 +1,31 @@
 package examples
 
-import (
-	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
-)
+import "github.com/invopop/popui.go"
 
 templ TableRightAlignExample() {
-	@popui.Table(props.Table{
-		Class: "[&_th:last-child]:text-right [&_td:last-child]:text-right",
-	}) {
+	@popui.Table() {
 		<thead>
 			<tr>
 				<th>Item</th>
-				<th>Quantity</th>
-				<th>Amount</th>
+				<th data-numeric data-align="end">Quantity</th>
+				<th data-numeric data-align="end">Amount</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<td>Product A</td>
-				<td>3</td>
-				<td>$89.97</td>
+				<td data-numeric data-align="end">3</td>
+				<td data-numeric data-align="end">$89.97</td>
 			</tr>
 			<tr>
 				<td>Product B</td>
-				<td>1</td>
-				<td>$39.99</td>
+				<td data-numeric data-align="end">1</td>
+				<td data-numeric data-align="end">$39.99</td>
 			</tr>
 			<tr>
 				<td>Product C</td>
-				<td>2</td>
-				<td>$99.98</td>
+				<td data-numeric data-align="end">2</td>
+				<td data-numeric data-align="end">$99.98</td>
 			</tr>
 		</tbody>
 	}

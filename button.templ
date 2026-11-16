@@ -128,7 +128,9 @@ templ Button(p ...props.Button) {
 					data-suffix-length={ strconv.Itoa(btn.CopySuffixLength) }
 					value={ btn.Copy }
 				/>
-				<span data-copy-text class="font-mono"></span>
+				// The text is rendered here so it's in place from the first
+				// paint; popui.js only keeps it in sync with the value.
+				<span data-copy-text class="font-mono">{ copyText(btn.Copy, btn.CopyPrefixLength, btn.CopySuffixLength) }</span>
 				<span data-copy-icon-duplicate class="shrink-0">
 					@icons.Duplicate()
 				</span>
@@ -139,6 +141,17 @@ templ Button(p ...props.Button) {
 			{ children... }
 		</button>
 	}
+}
+
+// copyText shortens a ButtonCopy's value to "prefix...suffix" for display,
+// as formatButtonCopyText in popui.js does when the value changes.
+func copyText(value string, prefix, suffix int) string {
+	prefix, suffix = max(prefix, 0), max(suffix, 0)
+	runes := []rune(value)
+	if prefix+suffix == 0 || len(runes) <= prefix+suffix {
+		return value
+	}
+	return string(runes[:prefix]) + "..." + string(runes[len(runes)-suffix:])
 }
 
 func buttonBaseClasses() string {

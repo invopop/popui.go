@@ -1,0 +1,51 @@
+package components
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+	"github.com/invopop/popui.go/props"
+)
+
+templ Period() {
+	@modules.Example(modules.ExampleProps{
+		Description:   "The button names the period, and the arrows beside it step to the one before or after. The panel offers rolling periods, as the last 30 days, and tabs of days, weeks, months, quarters and years: click a window to pick it, or drag across several, or shift-click, to pick the run between. Windows still to come can't be picked. It defaults to the last 365 days, which isn't submitted, so addresses stay short.",
+		Code:          examples.LoadExample("period.templ"),
+		Stacked:       true,
+		IframeContent: periodFrame(),
+	})
+	@modules.Section("Reading the value", "reading") {
+		<p class="text-base text-foreground-default-secondary">The value is submitted as a short string: <code>365d</code>, <code>all</code>, <code>2026-11-02</code>, <code>2026-W44</code>, <code>2026-11</code>, <code>2026-Q4</code> or <code>2026</code>, or a run of one unit as <code>2026-01..2026-03</code>. <code>period.Parse</code> reads it, and <code>Range</code> returns the start of its first day and of the day after its last, in the location of the time it's given as today.</p>
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Period",
+			Description: "Period renders the period button, its arrows and its panel. All interactive state lives in the `periodSelect` Alpine controller that ships with popui.",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Sets the unique identifier of the root element."},
+				{Name: "Class", Type: "string", Default: "", Description: "Adds CSS classes that are merged with the base styling."},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Applies additional HTML attributes to the root element, such as htmx attributes triggered by its `change` event."},
+				{Name: "Name", Type: "string", Default: "period", Description: "Sets the field the value is submitted under."},
+				{Name: "Value", Type: "string", Default: "Default", Description: "Sets the period picked."},
+				{Name: "Default", Type: "string", Default: "365d", Description: "Sets the period shown when none is picked. It isn't submitted."},
+				{Name: "Today", Type: "time.Time", Default: "now", Description: "Sets the current time in the time zone the data is read in, which decides the days rolling periods cover and which windows are still to come."},
+				{Name: "Rolling", Type: "[]int", Default: "7, 30, 90, 365", Description: "Lists the numbers of days offered as rolling periods."},
+				{Name: "NoAll", Type: "bool", Default: "false", Description: "Leaves out All time."},
+				{Name: "Disabled", Type: "bool", Default: "false", Description: "Greys the picker out, as while another mode sets the period, such as a list following new rows. The value is still submitted."},
+			},
+		})
+	}
+}
+
+// periodFrame is the iframe document for the period example, where its
+// panel has room to open.
+templ periodFrame() {
+	@popui.HTML() {
+		@popui.Head(props.Head{Title: "Period", AlpineJS: true})
+		@popui.Body() {
+			<div class="p-6 h-[480px]">
+				@examples.PeriodExample()
+			</div>
+		}
+	}
+}

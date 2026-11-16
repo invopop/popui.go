@@ -1,0 +1,34 @@
+package examples
+
+import (
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ DetailsActionsExample() {
+	<div class="w-[400px]">
+		@popui.Details() {
+			@popui.Detail(props.Detail{Label: "Role", Value: "Director"})
+			@popui.Detail(props.Detail{
+				Label:        "Entry ID",
+				Value:        "ee42413c-79fc-42d0-a7f7-65f76990ab20",
+				PrefixLength: 8,
+				SuffixLength: 4,
+				Actions: []props.DetailAction{
+					{Icon: icons.Duplicate(), Copy: "ee42413c-79fc-42d0-a7f7-65f76990ab20", Attributes: templ.Attributes{"aria-label": "Copy"}},
+					{Icon: icons.ExternalLink(), URL: templ.SafeURL("https://app.invopop.com/silo-entry/ee42413c-79fc-42d0-a7f7-65f76990ab20"), Attributes: templ.Attributes{"aria-label": "Open in a new tab"}},
+				},
+			})
+		}
+		@popui.Details(props.Details{Layout: props.DetailsLayoutStacked, Class: "mt-4"}) {
+			@popui.Detail(props.Detail{
+				Label: "Endpoint",
+				Value: "0009:552100554",
+				Actions: []props.DetailAction{
+					{Icon: icons.Duplicate(), Copy: "0009:552100554", Attributes: templ.Attributes{"aria-label": "Copy"}},
+				},
+			})
+		}
+	</div>
+}

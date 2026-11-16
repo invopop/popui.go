@@ -15,10 +15,24 @@ templ Input() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Input Types",
-		Description: "Input supports various types including text, email, password, date, and more. Search, date, and time inputs show a clear button while they hold a value; date, time, week, and month inputs open their native picker from a calendar icon button.",
+		Description: "Input supports various types including text, email, password, date, and more. Date, time, datetime-local, week, and month inputs show their value in ISO format and open the system picker from a calendar icon button; search inputs show a clear button while they hold a value.",
 		Code:        examples.LoadExample("input_types.templ"),
 	}) {
 		@examples.InputTypesExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Dates and Times",
+		Description: "Date and time inputs hold their value in ISO format, such as 2026-09-20 or 17:30, so it can be read, copied, and pasted directly. Datetimes hold an RFC 3339 timestamp with a zone, such as 2026-09-20T12:30:00Z. The calendar button opens the system picker, including the time for datetimes; picking writes the value back, keeping the zone, and values are never converted to the browser's timezone. Each field is validated against its format on submit.",
+		Code:        examples.LoadExample("input_dates.templ"),
+	}) {
+		@examples.InputDatesExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Local Format",
+		Description: "Set Local to show the browser's own date and time control, formatted for its locale, with a clear button while it holds a value. Date, time, week, and month values are submitted in the same ISO format either way; local datetimes have no zone.",
+		Code:        examples.LoadExample("input_local.templ"),
+	}) {
+		@examples.InputLocalExample()
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "With Label",
@@ -77,13 +91,14 @@ templ Input() {
 				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the input element"},
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with input styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
-				{Name: "Type", Type: "string", Default: "text", Description: "Input type: text, email, password, tel, url, date, time, week, month, search, file"},
+				{Name: "Type", Type: "string", Default: "text", Description: "Input type: text, email, password, tel, url, date, time, datetime-local, week, month, search, file"},
 				{Name: "Placeholder", Type: "string", Default: "", Description: "Placeholder text displayed when input is empty"},
 				{Name: "Value", Type: "string", Default: "", Description: "Initial or current value of the input"},
 				{Name: "Name", Type: "string", Default: "", Description: "Name attribute for form submission"},
 				{Name: "Label", Type: "string", Default: "", Description: "Simple label text displayed above the input"},
 				{Name: "Tooltip", Type: "props.Tooltip", Default: "", Description: "Tooltip card shown on hover of a question mark icon after the label; only used when Label is set"},
 				{Name: "Prefix", Type: "string", Default: "", Description: "Text or symbol displayed before the input field"},
+				{Name: "Local", Type: "bool", Default: "false", Description: "For date, time, datetime-local, week, and month inputs, shows the browser's own control formatted for its locale, instead of a text field holding the ISO value with the system picker behind a calendar button"},
 				{Name: "Autofocus", Type: "bool", Default: "false", Description: "Automatically focuses the input on page load"},
 				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the input"},
 				{Name: "Readonly", Type: "bool", Default: "false", Description: "Makes the input read-only"},

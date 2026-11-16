@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/fs"
 	"path"
+	"sync"
 )
 
 // We use the tailwindcss CLI directly here for performance and to avoid
@@ -25,7 +26,10 @@ const (
 //go:embed assets/*
 var Assets embed.FS
 
-var versionCache = map[string]string{}
+var (
+	versionCache   = map[string]string{}
+	versionCacheMu sync.RWMutex
+)
 
 // Versioned will find the file inside the provided filesystem and
 // add a version hash as a query parameter so that when the asset is loaded
@@ -42,8 +46,18 @@ var versionCache = map[string]string{}
 //
 // A simple version cache is used, and will only be renewed upon reloading
 // the application. Paths must be unique for this to work correctly.
+// Versioned is safe for concurrent use.
 func Versioned(content fs.FS, file ...string) string {
 	p := path.Join(file...)
+	versionCacheMu.RLock()
+	v, ok := versionCache[p]
+	versionCacheMu.RUnlock()
+	if ok {
+		return v
+	}
+
+	versionCacheMu.Lock()
+	defer versionCacheMu.Unlock()
 	if v, ok := versionCache[p]; ok {
 		return v
 	}
@@ -59,7 +73,7 @@ func Versioned(content fs.FS, file ...string) string {
 		return p
 	}
 
-	v := fmt.Sprintf("%x", h.Sum(nil))[0:8]
+	v = fmt.Sprintf("%x", h.Sum(nil))[0:8]
 	vp := p + "?v=" + v
 	versionCache[p] = vp
 	return vp

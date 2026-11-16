@@ -8,6 +8,144 @@ this file for that identifier** — every removed name appears here verbatim,
 with the replacement and a before/after snippet.
 
 Entries are grouped by the release that removed them, newest first.
+Dependency upgrades that change how your app behaves are listed here too.
+
+## November 2026 Date and time inputs show ISO values
+
+`popui.Input` with `Type` `date`, `time`, `datetime-local`, `week` or
+`month` now renders a monospace text field holding the ISO 8601 value,
+such as `2026-09-20`, with the system picker behind its calendar button,
+instead of the browser's locale-formatted control. Date, time, week and
+month values are submitted exactly as before. `datetime-local` fields now
+hold an RFC 3339 timestamp with a zone, such as `2026-09-20T12:30:00Z`,
+so handlers that parse the zone-less `2026-09-20T12:30` need updating.
+
+The field is `type="text"`, so code that selects `input[type="date"]` or
+uses `valueAsDate` or `valueAsNumber` on it no longer finds the native
+control. Set `Local` to keep it:
+
+```go
+// Before: native control, formatted for the browser's locale
+popui.Input(props.Input{Type: "date", Name: "issued"})
+
+// After: the same control
+popui.Input(props.Input{Type: "date", Name: "issued", Local: true})
+```
+
+## November 2026 JSON UI schemas move out of panels
+
+`jsonui.Panel.Schemas` is removed, and panels with a `"schemas"` key are
+rejected with `json: unknown field "schemas"`. Schemas describe the data
+rather than the UI, so they're kept apart from panels and given to the
+renderer, which lets one set of schemas serve every panel that edits the
+data and the code that saves it.
+
+In Go, build a `jsonui.Validator` once and pass it in `Options.Validator`:
+
+```go
+// Before
+panel := `{"data": {...}, "schemas": {"config": {...}}, "components": [...]}`
+err := jsonui.Options{}.Render(ctx, []byte(panel), w)
+v, err := jsonui.NewValidator(doc.Schemas) // to check saved data
+
+// After
+v, err := jsonui.NewValidator(map[string]json.RawMessage{"config": configSchema})
+panel := `{"data": {...}, "components": [...]}`
+err = jsonui.Options{Validator: v}.Render(ctx, []byte(panel), w)
+errs, err := v.ValidateJSON(data) // the same validator checks saved data
+```
+
+In the browser, pass them to `popuiRender` as the `schemas` option, an
+object or its JSON:
+
+```js
+// Before
+popuiRender(JSON.stringify({ ...panel, schemas }), { actions });
+
+// After
+popuiRender(JSON.stringify(panel), { actions, schemas });
+```
+
+## November 2026 Echo v4.16.3 and Go 1.26
+
+PopUI's `htmx` and `flash` packages import Echo, so upgrading PopUI
+raises your app to Echo v4.16.3 or later, which needs Go 1.26.
+
+Since Echo v4.16.3, `c.RealIP()` ignores the `X-Forwarded-For` and
+`X-Real-IP` headers unless `e.IPExtractor` is set, and returns the
+address of the connection instead. Behind a load balancer or proxy,
+every request then appears to come from the proxy, which affects
+logging, rate limiting and anything else that reads the client's
+address. Set an extractor that trusts only your own proxies:
+
+```go
+// Before (Echo v4.15 and earlier): forwarded headers trusted by default
+e := echo.New()
+
+// After: behind proxies in private networks that set X-Forwarded-For
+e := echo.New()
+e.IPExtractor = echo.ExtractIPFromXFFHeader()
+
+// Or trust a specific range, such as a CDN's
+e.IPExtractor = echo.ExtractIPFromXFFHeader(echo.TrustIPRange(cdnRange))
+
+// Or, with no proxy in front of the app
+e.IPExtractor = echo.ExtractIPDirect()
+```
+
+Use `echo.ExtractIPFromRealIPHeader` with the same trust options for
+proxies that set `X-Real-IP`. See Echo's [client IP
+migration](https://github.com/labstack/echo#client-ip-security-migration-since-v4163).
+
+## November 2026 Details
+
+Deprecated, still available until a later release removes them:
+
+| Deprecated | Replacement |
+|---|---|
+| `popui.DescriptionList`, `props.DescriptionList` | `popui.Details`, `props.Details` |
+| `popui.DescriptionListItem`, `props.DescriptionListItem` | `popui.Detail`, `props.Detail` |
+| `props.DescriptionListAction` | `props.DetailAction` |
+| `popui.DT`, `popui.DD`, `props.DT`, `props.DD` | `props.Detail.Label`, and the value as children of `popui.Detail` |
+
+In JSON UI, `description_list` and `description_list_item` are now
+`details` and `detail`, and `dt` and `dd` are gone.
+
+### DescriptionList → Details
+
+`Details` fill their container and are inline by default: labels in a
+column beside their values, close together. `DescriptionList` was 400px
+wide with labels above values. Set `Layout: "stacked"` for that, and a
+width with `Class` if it needs one.
+
+```templ
+// before
+@popui.DescriptionList(props.DescriptionList{Class: "w-full space-y-1"}) {
+	@popui.DescriptionListItem(props.DescriptionListItem{Inline: true, Label: "Name", Value: "Acme"})
+}
+// after
+@popui.Details() {
+	@popui.Detail(props.Detail{Label: "Name", Value: "Acme"})
+}
+```
+
+### DT / DD → Detail children
+
+A `Detail`'s children are its value. `DescriptionListItem` placed them
+between the label and the value, for its own `DT` and `DD`.
+
+```templ
+// before
+@popui.DescriptionListItem(props.DescriptionListItem{Label: "Email"}) {
+	@popui.DD() {
+		<a href="mailto:john@example.com">john@example.com</a>
+	}
+}
+// after
+@popui.Detail(props.Detail{Label: "Email"}) {
+	<a href="mailto:john@example.com">john@example.com</a>
+}
+```
 
 ## October 2026 Accordion simplification (PR #85)
 

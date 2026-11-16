@@ -1,0 +1,41 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Stats() {
+	@modules.Example(modules.ExampleProps{
+		Description: "A large Stat leads the group. With Align \"end\", the others keep to the end of the group with their figures aligned to it, also when they wrap below the lead.",
+		Code:        examples.LoadExample("stats.templ"),
+	}) {
+		@examples.StatsExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Stats",
+			Description: "A wrapping row of Stat children (dl element). In JSON UI: \"stats\".",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the group"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the group's styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Align", Type: "string", Default: "\"start\"", Description: "\"end\" keeps the stats at the end of the group, figures aligned to it, while a large stat leads at the start"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Stat",
+			Description: "A figure with a label above it. Digits have equal widths so figures line up. In JSON UI: \"stat\".",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the stat"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the stat's styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Label", Type: "string", Default: "", Description: "What the figure is, shown above it"},
+				{Name: "Value", Type: "string", Default: "", Description: "The figure. Without one, the children are shown as the value."},
+				{Name: "Size", Type: "string", Default: "\"md\"", Description: "\"lg\" for the headline figure, which leads the group, or \"md\" (StatSizeLarge, StatSizeMedium)"},
+			},
+		})
+	}
+}

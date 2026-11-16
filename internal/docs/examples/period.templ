@@ -1,0 +1,12 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ PeriodExample() {
+	<form class="flex justify-end" onsubmit="event.preventDefault()">
+		@popui.Period(props.Period{Name: "period"})
+	</form>
+}

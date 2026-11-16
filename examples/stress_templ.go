@@ -1401,7 +1401,7 @@ func Stress() templ.Component {
 								}()
 							}
 							ctx = templ.InitializeContext(ctx)
-							templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{Label: stressName, Value: stressToken}).Render(ctx, templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = popui.Detail(props.Detail{Label: stressName, Value: stressToken}).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -1409,11 +1409,11 @@ func Stress() templ.Component {
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
-							templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+							templ_7745c5c3_Err = popui.Detail(props.Detail{
 								Label:  "Inline row",
 								Value:  stressToken,
 								Inline: true,
-								Actions: []props.DescriptionListAction{
+								Actions: []props.DetailAction{
 									{Copy: stressToken, Icon: icons.Duplicate()},
 								},
 							}).Render(ctx, templ_7745c5c3_Buffer)
@@ -1424,7 +1424,7 @@ func Stress() templ.Component {
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
-							templ_7745c5c3_Err = popui.DescriptionListItem(props.DescriptionListItem{
+							templ_7745c5c3_Err = popui.Detail(props.Detail{
 								Label:  stressName,
 								Value:  stressSentence,
 								Inline: true,
@@ -1434,13 +1434,13 @@ func Stress() templ.Component {
 							}
 							return nil
 						})
-						templ_7745c5c3_Err = popui.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var62), templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = popui.Details(props.Details{Layout: props.DetailsLayoutStacked}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var62), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = popui.Section(props.Section{Title: "DescriptionList — plain + inline detail rows", ID: "dl"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var61), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = popui.Section(props.Section{Title: "Details — stacked + inline detail rows", ID: "dl"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var61), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

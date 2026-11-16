@@ -57,7 +57,7 @@ func Typography() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Headings",
-			Description: "Title and Subtitle components for page and section headings.",
+			Description: "Title and Subtitle components for page and section headings. A Title with Size \"base\" heads a section within a card or panel.",
 			Code:        examples.LoadExample("typography_headings.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -109,7 +109,7 @@ func Typography() templ.Component {
 		})
 		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
 			Title:       "Paragraphs",
-			Description: "Standard paragraph and description text components.",
+			Description: "Standard paragraph and description text components, with sizes and tones from the type scale.",
 			Code:        examples.LoadExample("typography_paragraphs.templ"),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -212,6 +212,7 @@ func Typography() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+					{Name: "Size", Type: "string", Default: "\"lg\"", Description: "\"lg\" for a page or card, or \"base\" for a section within one, in a medium weight"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -263,6 +264,9 @@ func Typography() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+					{Name: "Size", Type: "string", Default: "\"base\"", Description: "Text size: \"sm\", \"base\", \"lg\" or \"xl\" (TextSize constants)"},
+					{Name: "Tone", Type: "string", Default: "\"default\"", Description: "Text colour: \"default\", \"secondary\" or \"tertiary\" (TextTone constants)"},
+					{Name: "Numeric", Type: "bool", Default: "false", Description: "Digits in equal widths so figures line up, for amounts"},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -279,6 +283,7 @@ func Typography() templ.Component {
 					{Name: "ID", Type: "string", Default: "", Description: "Unique identifier"},
 					{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes"},
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes"},
+					{Name: "Size", Type: "string", Default: "\"base\"", Description: "Text size: \"sm\" or \"base\""},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

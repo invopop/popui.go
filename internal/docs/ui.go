@@ -114,6 +114,12 @@ var groups = []*Group{
 				Template: components.Calendar(),
 			},
 			{
+				Title:    "Period",
+				Desc:     "Picks the window of time a list or report shows: rolling days, or days, weeks, months, quarters or years, alone or in a run.",
+				Path:     "period",
+				Template: components.Period(),
+			},
+			{
 				Title:    "Checkbox",
 				Desc:     "Checkbox inputs with optional toggle switch variant.",
 				Path:     "checkbox",
@@ -126,10 +132,22 @@ var groups = []*Group{
 				Template: components.Menu(),
 			},
 			{
-				Title:    "DescriptionList",
-				Desc:     "Semantic HTML definition list for displaying term-description pairs.",
-				Path:     "description-list",
-				Template: components.DescriptionList(),
+				Title:    "Details",
+				Desc:     "Labelled values, such as a document's or a party's, beside or above their labels.",
+				Path:     "details",
+				Template: components.Details(),
+			},
+			{
+				Title:    "Stats",
+				Desc:     "Figures with a label above them, such as a document's totals, in a wrapping row.",
+				Path:     "stats",
+				Template: components.Stats(),
+			},
+			{
+				Title:    "Charts",
+				Desc:     "Metrics, column charts, bar lists, segmented bars and sparklines, drawn on the server in the theme's colors.",
+				Path:     "charts",
+				Template: components.Chart(),
 			},
 			{
 				Title:    "Fieldset",
