@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/a-h/templ"
 	"github.com/invopop/popui.go/props"
 )
 
@@ -22,11 +23,11 @@ func renderTabs(t *testing.T, p props.Tabs) string {
 func TestTabsLinks(t *testing.T) {
 	out := renderTabs(t, props.Tabs{Variant: tabsPrimary, Active: "doc", Tabs: []props.TabItem{
 		{Value: "summary", Label: "Summary", Href: "/e/1"},
-		{Value: "doc", Label: "Document", Href: "/e/1/document"},
+		{Value: "doc", Label: "Document", Href: "/e/1/document", Attributes: templ.Attributes{"hx-target": "#main"}},
 	}})
 	for _, want := range []string{
-		`role="tablist" class="[^"]*\bh-10\b[^"]*border-b`,
-		`<a href="/e/1/document" role="tab"[^>]*data-state="active" aria-selected="true" aria-current="page"`,
+		`role="tablist" class="[^"]*\bh-10\b`,
+		`<a href="/e/1/document" role="tab"[^>]*data-state="active" aria-selected="true" aria-current="page" hx-target="#main"`,
 		`<a href="/e/1" role="tab"[^>]*data-state="inactive" aria-selected="false">`,
 	} {
 		if !regexp.MustCompile(want).MatchString(out) {

@@ -2073,6 +2073,10 @@
           "type": "string",
           "format": "uri-reference",
           "description": "Href makes the trigger a link, for tabs that are each a page of\ntheir own: the page being shown is the one whose Value is the Tabs'\nActive, and following another loads its page instead of switching\npanels."
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are added to the trigger, such as htmx's on a link that\nloads its page into part of this one."
         }
       },
       "additionalProperties": false,

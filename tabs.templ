@@ -56,6 +56,7 @@ templ Tabs(p ...props.Tabs) {
 						if t.Value == active {
 							aria-current="page"
 						}
+						{ t.Attributes... }
 					>
 						@tabTrigger(prp.Variant, t)
 					</a>
@@ -74,6 +75,7 @@ templ Tabs(p ...props.Tabs) {
 						@click={ model + " = '" + jsSingleQuoteEscape(t.Value) + "'" }
 						:data-state={ model + " === '" + jsSingleQuoteEscape(t.Value) + "' ? 'active' : 'inactive'" }
 						:aria-selected={ model + " === '" + jsSingleQuoteEscape(t.Value) + "'" }
+						{ t.Attributes... }
 					>
 						@tabTrigger(prp.Variant, t)
 					</button>

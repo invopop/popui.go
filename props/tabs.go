@@ -20,6 +20,9 @@ type TabItem struct {
 	// Active, and following another loads its page instead of switching
 	// panels.
 	Href templ.SafeURL
+	// Attributes are added to the trigger, such as htmx's on a link that
+	// loads its page into part of this one.
+	Attributes templ.Attributes
 }
 
 // Tabs is a self-contained tabbed view: it owns the Alpine scope that tracks
