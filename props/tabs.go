@@ -40,10 +40,14 @@ type Tabs struct {
 	Class      string
 	Attributes templ.Attributes
 	// Variant is "default" (underline), "pill", or "primary": the tabs of a
-	// page, where the active tab is joined to the page's content below it
-	// and raised over the others with a shadow. Primary tabs go straight
-	// under the page's header, on a white work area.
+	// page, in a row of cells along the top of its content. The active tab
+	// has the content's background and opens the line under the row, and
+	// the others are tinted. Primary tabs go on a white work area, from its
+	// leading edge.
 	Variant string `jsonschema:"enum=,enum=default,enum=pill,enum=primary"`
+	// Size is the height of a primary row: 40px by default, or 48px when
+	// "lg", for the row at the top of a page. Other variants ignore it.
+	Size string `jsonschema:"enum=,enum=lg"`
 	// Model is the Alpine variable holding the active tab Value. Defaults to
 	// "tab" — match it on the child Tabs (their default is also "tab", so
 	// usually neither needs setting).

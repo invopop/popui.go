@@ -2204,7 +2204,15 @@
             "pill",
             "primary"
           ],
-          "description": "Variant is \"default\" (underline), \"pill\", or \"primary\": the tabs of a\npage, where the active tab is joined to the page's content below it\nand raised over the others with a shadow. Primary tabs go straight\nunder the page's header, on a white work area."
+          "description": "Variant is \"default\" (underline), \"pill\", or \"primary\": the tabs of a\npage, in a row of cells along the top of its content. The active tab\nhas the content's background and opens the line under the row, and\nthe others are tinted. Primary tabs go on a white work area, from its\nleading edge."
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "lg"
+          ],
+          "description": "Size is the height of a primary row: 40px by default, or 48px when\n\"lg\", for the row at the top of a page. Other variants ignore it."
         },
         "model": {
           "type": "string",
@@ -5091,6 +5099,7 @@
               "class",
               "attributes",
               "variant",
+              "size",
               "model",
               "active",
               "tabs"

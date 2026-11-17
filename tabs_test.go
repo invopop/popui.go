@@ -20,12 +20,12 @@ func renderTabs(t *testing.T, p props.Tabs) string {
 }
 
 func TestTabsLinks(t *testing.T) {
-	out := renderTabs(t, props.Tabs{Variant: "primary", Active: "doc", Tabs: []props.TabItem{
+	out := renderTabs(t, props.Tabs{Variant: tabsPrimary, Active: "doc", Tabs: []props.TabItem{
 		{Value: "summary", Label: "Summary", Href: "/e/1"},
 		{Value: "doc", Label: "Document", Href: "/e/1/document"},
 	}})
 	for _, want := range []string{
-		`role="tablist" class="[^"]*popui-tabs-primary`,
+		`role="tablist" class="[^"]*\bh-10\b[^"]*border-b`,
 		`<a href="/e/1/document" role="tab"[^>]*data-state="active" aria-selected="true" aria-current="page"`,
 		`<a href="/e/1" role="tab"[^>]*data-state="inactive" aria-selected="false">`,
 	} {
@@ -52,5 +52,24 @@ func TestTabsStateBeforeAlpine(t *testing.T) {
 		if !regexp.MustCompile(want).MatchString(out) {
 			t.Errorf("missing %s in:\n%s", want, out)
 		}
+	}
+}
+
+// Primary tabs are a row of cells: the active one has the content's
+// background and covers the row's line, and the row is taller when large.
+func TestTabsPrimary(t *testing.T) {
+	tabs := []props.TabItem{{Value: "a", Label: "First"}, {Value: "b", Label: "Second", Count: 2}}
+	out := renderTabs(t, props.Tabs{Variant: tabsPrimary, Size: "lg", Tabs: tabs})
+	for _, want := range []string{
+		`role="tablist" class="[^"]*\bh-12\b`,
+		`role="tab" class="[^"]*data-\[state=active\]:-mb-px[^"]*"[^>]*data-state="active"`,
+		`<span class="tabular-nums shrink-0 font-normal text-foreground-default-secondary">\(2\)</span>`,
+	} {
+		if !regexp.MustCompile(want).MatchString(out) {
+			t.Errorf("missing %s in:\n%s", want, out)
+		}
+	}
+	if regexp.MustCompile(`role="tablist" class="[^"]*\bh-10\b`).MatchString(out) {
+		t.Errorf("a large row isn't also the default height:\n%s", out)
 	}
 }

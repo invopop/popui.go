@@ -362,8 +362,9 @@ Shadow system is minimal — buttons use their own shadows, and floating
 surfaces use the elevation scale below. Cards and in-flow containers rely
 on borders, except on a white work area, where a border alone doesn't set
 them apart: there cards are `Elevated` and side panels are the `panel`
-variant of `Accordion`, both with `shadow-sm`, and the page's `primary`
-tabs carry the work area's shadow.
+variant of `Accordion`, both with `shadow-sm`. The page's `primary` tabs
+have no shadow: the active tab has the work area's background and the
+others are tinted.
 
 | Token | Use |
 |-------|-----|

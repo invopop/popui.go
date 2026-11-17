@@ -7,10 +7,10 @@ import (
 )
 
 templ TabsPrimaryExample() {
-	<div class="w-full rounded-lg border border-border bg-background pt-3 overflow-hidden">
-		@popui.Tabs(props.Tabs{Variant: "primary", Active: "document", Tabs: []props.TabItem{
-			{Value: "overview", Label: "Overview"},
+	<div class="w-full rounded-lg border border-border bg-background overflow-hidden">
+		@popui.Tabs(props.Tabs{Variant: "primary", Size: "lg", Active: "document", Tabs: []props.TabItem{
 			{Value: "document", Label: "Document"},
+			{Value: "overview", Label: "Overview"},
 			{Value: "files", Label: "Files", Count: 2},
 			{Value: "add", Title: "Add a tab", Icon: icons.Add()},
 		}}) {

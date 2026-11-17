@@ -29,7 +29,7 @@ templ Tabs() {
 	}
 	@modules.Example(modules.ExampleProps{
 		Title:       "Primary",
-		Description: "The primary variant is for the tabs of a page, straight under its header: the active tab is joined to the work area below and raised over the others with a shadow.",
+		Description: "The primary variant is for the tabs of a page, in a row of cells along the top of its content: the active tab has the content's background and opens the line under the row, and the others are tinted. Size \"lg\" makes the row 48px tall, for the top of a page.",
 		Code:        examples.LoadExample("tabs_primary.templ"),
 	}) {
 		@examples.TabsPrimaryExample()
@@ -64,6 +64,7 @@ templ Tabs() {
 				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with base styles"},
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the tabs container"},
 				{Name: "Variant", Type: "string", Default: "default", Description: "Style variant: \"default\" for underline tabs, \"pill\" for pill-style tabs, or \"primary\" for the tabs of a page"},
+				{Name: "Size", Type: "string", Default: "", Description: "Height of a primary row: 40px by default, or 48px when \"lg\". Other variants ignore it."},
 				{Name: "Model", Type: "string", Default: "tab", Description: "The Alpine variable holding the active tab Value. Match it on the child Tabs (their default is also \"tab\")."},
 				{Name: "Active", Type: "string", Default: "first tab", Description: "Tab Value selected on first render. Defaults to the first tab's Value."},
 				{Name: "Tabs", Type: "[]props.TabItem", Default: "", Description: "The ordered trigger row."},
