@@ -225,3 +225,18 @@ func jsonuiRender(doc string) templ.Component {
 		return jsonui.Options{}.Render(ctx, []byte(doc), w)
 	})
 }
+
+const jsonuiPatchExample = `var panel jsonui.Panel
+if err := json.Unmarshal(data, &panel); err != nil {
+	return err
+}
+patch := &jsonui.Patch{
+	Hide:  []string{"payment-terms"},
+	Order: []string{"totals", "customer", "supplier"},
+}
+patched, missing, err := panel.Apply(patch)
+if err != nil {
+	return err
+}
+// missing lists the keys the panel doesn't have.
+c, err := patched.Component(jsonui.Options{})`

@@ -51,6 +51,7 @@ templ jsonUI() {
 			@modules.APITable(modules.APITableProps{
 				Items: []modules.APITableItem{
 					{Name: "is", Type: "string", Required: true, Description: "The component to render, from the list below, or `text` for plain text."},
+					{Name: "key", Type: "string", Description: "A name for the node, unique in the panel, that patches refer to, e.g. `payment-terms`. It isn't rendered."},
 					{Name: "props", Type: "object", Description: "The component's props, as in the props package. Field names match case-insensitively and unknown fields are errors."},
 					{Name: "children", Type: "[]node", Description: "Nodes rendered inside the component."},
 					{Name: "bind", Type: "object", Description: "Prop names mapped to data paths, e.g. `{\"title\": \"invoice.code\"}`, resolved when rendering. Some props also follow the data as it changes, such as `disabled` on form controls and buttons other than multiple selects, and an option's `value`, `label` and `disabled`. On a `text` node, a single data path whose value is shown and kept up to date."},
@@ -146,6 +147,22 @@ templ jsonUI() {
 					{Name: "Validator", Type: "*Validator", Default: "nil", Description: "Validates the panel data against JSON Schemas as it changes. Build it once with `NewValidator` and reuse it for every panel and save of the data."},
 				},
 			})
+		}
+		@modules.Section("Patches", "json-ui-patches") {
+			@popui.Description() {
+				A host can let its users adapt a panel they didn't write, such as an app's panel in a workspace, without editing it: what changes is kept apart, as a patch, and applied before rendering. A patch refers to nodes by their key rather than their place, so it still applies to later versions of the panel, and it can only take away or rearrange what's there, so a patched panel is as safe as the panel. This is a first, minimal version: adding nodes isn't supported yet.
+			}
+			@modules.APITable(modules.APITableProps{
+				Title: "jsonui.Patch",
+				Items: []modules.APITableItem{
+					{Name: "hide", Type: "[]string", Description: "Keys of the nodes to leave out, with their children."},
+					{Name: "order", Type: "[]string", Description: "Keys in the order their nodes should appear. Nodes only trade places with others listed that share their parent, so those not listed stay where they are, and keys with different parents can share the list."},
+				},
+			})
+			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiPatchExample, Language: "go"})
+			@popui.Description() {
+				Keys the panel no longer has are skipped and returned, so the host can say that part of a patch no longer applies. A panel's Keys method lists what a patch can refer to.
+			}
 		}
 		@modules.Section("Rendering in Go", "json-ui-go") {
 			@modules.CodeBlock(modules.CodeBlockProps{Code: jsonuiGoExample, Language: "go"})

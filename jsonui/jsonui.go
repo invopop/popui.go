@@ -31,6 +31,11 @@
 // "layout" or a cell's "numeric", and components gain props for what
 // panels need. A node's "style" key is reserved for styles that hosts name
 // for their panels.
+//
+// Hosts that let users adapt a panel they didn't write keep what's changed
+// apart from it, as a Patch: nodes are given a "key", and a patch names the
+// keys to hide or put in another order, so it still applies when the panel
+// changes around them.
 package jsonui
 
 import (
@@ -83,6 +88,10 @@ type Node struct {
 	// HTML's global "is" attribute, which names the custom element to use;
 	// "type" is left to the props, where inputs and buttons use it.
 	Component string `json:"is"`
+	// Key names the node within its panel, so that a Patch can refer to
+	// it whatever its place in the tree, e.g. "payment-terms". Keys are
+	// unique in a panel, and aren't rendered.
+	Key string `json:"key,omitempty"`
 	// Props is decoded into the component's props struct.
 	Props json.RawMessage `json:"props,omitempty"`
 	// Children are rendered as the component's `{ children... }`.
@@ -273,6 +282,9 @@ func Names() []string {
 func (d *Panel) Component(opts Options) (templ.Component, error) {
 	if d.Components == nil {
 		return nil, errors.New("panel: missing components")
+	}
+	if _, err := d.keys(); err != nil {
+		return nil, err
 	}
 	b := &panelBuilder{opts: opts}
 	schemas := ""
