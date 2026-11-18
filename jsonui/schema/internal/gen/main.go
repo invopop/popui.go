@@ -135,7 +135,9 @@ func render() ([]byte, error) {
 			},
 		},
 	}
+	key := &jsonschema.Schema{Type: typeString, Description: nodeComment("Key"), Pattern: jsonui.KeyPattern}
 	listing := func(n *jsonschema.Schema) {
+		n.Properties.Set("key", key)
 		n.Properties.Set("each", each)
 		n.Properties.Set("show", show)
 	}

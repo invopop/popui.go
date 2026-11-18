@@ -2465,6 +2465,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -2566,6 +2571,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -2649,6 +2659,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -2736,6 +2751,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -2818,6 +2838,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -2904,6 +2929,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -2984,6 +3014,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3080,6 +3115,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -3163,6 +3203,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3254,6 +3299,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -3337,6 +3387,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3422,6 +3477,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3514,6 +3574,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3609,6 +3674,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -3690,6 +3760,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3773,6 +3848,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -3850,6 +3930,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -3934,6 +4019,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4020,6 +4110,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4119,6 +4214,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -4201,6 +4301,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4288,6 +4393,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -4372,6 +4482,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -4449,6 +4564,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4532,6 +4652,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4617,6 +4742,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4709,6 +4839,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -4796,6 +4931,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -4874,6 +5014,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -4956,6 +5101,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -5042,6 +5192,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -5098,6 +5253,11 @@
         "bind": {
           "type": "string",
           "description": "Alpine expression shown with x-text. A plain data path such as \"customer.name\" is also resolved from object data at render time."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -5195,6 +5355,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -5280,6 +5445,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -5361,6 +5531,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -5446,6 +5621,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -5524,6 +5704,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
@@ -5607,6 +5792,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -5689,6 +5879,11 @@
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
         },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
+        },
         "each": {
           "type": "string",
           "description": "Each repeats the node for every item of the list at a data path, e.g.\n\"connections\". The node and its children refer to the current item as\n\"item\" and its position as \"index\", e.g. {\"value\": \"item.id\"} in\n\"bind\". The node must render a single element."
@@ -5757,6 +5952,11 @@
           },
           "type": "object",
           "description": "On maps DOM events, with optional Alpine modifiers such as\n\"submit.prevent\", to an action, the name of one of the panel's\nhandlers, or a list of either to run in order, e.g.\n{\"click\": {\"action\": \"alert\", \"message\": \"Hi {{customer.name}}\"}} or\n{\"change\": \"update\"}."
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "description": "Key names the node within its panel, so that a Patch can refer to\nit whatever its place in the tree, e.g. \"payment-terms\". Keys are\nunique in a panel, and aren't rendered."
         },
         "each": {
           "type": "string",
