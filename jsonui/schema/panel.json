@@ -326,6 +326,10 @@
         "disabled": {
           "type": "boolean"
         },
+        "elevated": {
+          "type": "boolean",
+          "description": "Elevated gives the card a soft shadow, for cards on a white work\narea, where the border alone doesn't set them apart."
+        },
         "order": {
           "type": "integer",
           "description": "Order positions the card inside a reorderable CardDeck, 1-based, and\nrenders as `data-order`. The deck sorts its cards by it on load and\nrenumbers every card to 1..n after each move, so the attribute, the\nDOM sequence and the visible sequence are always the same list — read\nit back to persist an order. Cards without one sink to the end of the\ndeck, keeping the sequence they were rendered in. Ignored outside a\nreorderable deck, where the rendered sequence is already the order."
@@ -2059,6 +2063,15 @@
         "title": {
           "type": "string",
           "description": "Title is the trigger's accessible name and tooltip. Set it on an\nicon-only tab, where there is no Label to read out."
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Href makes the trigger a link, for tabs that are each a page of\ntheir own: the page being shown is the one whose Value is the Tabs'\nActive, and following another loads its page instead of switching\npanels."
+        },
+        "attributes": {
+          "$ref": "#/$defs/Attributes",
+          "description": "Attributes are added to the trigger, such as htmx's on a link that\nloads its page into part of this one."
         }
       },
       "additionalProperties": false,
@@ -2187,9 +2200,18 @@
           "enum": [
             "",
             "default",
-            "pill"
+            "pill",
+            "primary"
           ],
-          "description": "\"default\" (underline) or \"pill\""
+          "description": "Variant is \"default\" (underline), \"pill\", or \"primary\": the tabs of a\npage, in a row of cells along the top of its content. The active tab\nhas the content's background and opens the line under the row, and\nthe others are tinted. Primary tabs go on a white work area, from its\nleading edge."
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "",
+            "lg"
+          ],
+          "description": "Size is the height of a primary row: 40px by default, or 48px when\n\"lg\", for the row at the top of a page. Other variants ignore it."
         },
         "model": {
           "type": "string",
@@ -2847,6 +2869,7 @@
               "attributes",
               "href",
               "disabled",
+              "elevated",
               "order"
             ]
           },
@@ -5076,6 +5099,7 @@
               "class",
               "attributes",
               "variant",
+              "size",
               "model",
               "active",
               "tabs"
