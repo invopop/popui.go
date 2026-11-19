@@ -33,6 +33,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
+| Sections of a card in columns, with solid or dashed lines between them | `Grid` > `Cell` (lines are each cell's `Borders`) |
 | Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
 | Headline figures, such as totals | `Stats` > `Stat` (`Size: "lg"` for the one that leads) |
 | Metric display | `Metric` (with its change and trend), or `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
