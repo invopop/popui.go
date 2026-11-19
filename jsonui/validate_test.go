@@ -22,6 +22,16 @@ func mustValidator(t *testing.T, schemas string) *Validator {
 	return v
 }
 
+// mustRenderWith renders a panel validated against schemas.
+func mustRenderWith(t *testing.T, schemas, doc string) string {
+	t.Helper()
+	html, err := render(t, Options{Validator: mustValidator(t, schemas)}, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return html
+}
+
 func validateJSON(t *testing.T, v *Validator, data string) map[string]string {
 	t.Helper()
 	errs, err := v.ValidateJSON([]byte(data))
@@ -160,18 +170,62 @@ func TestNewValidatorErrors(t *testing.T) {
 			t.Errorf("%s: got %v, want %q", schemas, err, want)
 		}
 	}
-	// Panels report them too.
-	_, err := render(t, Options{}, `{"data": {}, "schemas": {"config": {"$ref": "file:///etc/passwd"}}, "components": []}`)
-	if err == nil || !strings.Contains(err.Error(), "schemas config") {
+}
+
+// TestPanelsWithoutSchemas checks that schemas are only accepted in the
+// options, not in panels.
+func TestPanelsWithoutSchemas(t *testing.T) {
+	_, err := render(t, Options{}, `{"data": {}, "schemas": {"config": {"type": "object"}}, "components": []}`)
+	if err == nil || !strings.Contains(err.Error(), `unknown field "schemas"`) {
 		t.Errorf("got %v", err)
+	}
+}
+
+// TestEmptyValidator checks that a validator without schemas renders
+// panels as if there were none, so they don't need popui.wasm.
+func TestEmptyValidator(t *testing.T) {
+	doc := `{"data": {"name": "x"}, "components": [{"is": "text", "bind": "name"}]}`
+	for _, schemas := range []map[string]json.RawMessage{nil, {}} {
+		v, err := NewValidator(schemas)
+		if err != nil {
+			t.Fatal(err)
+		}
+		html, err := render(t, Options{Validator: v}, doc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(html, "jsonui-errors") {
+			t.Errorf("errors tracked with an empty validator in:\n%s", html)
+		}
+	}
+	// Fields still track the errors actions report, without schemas.
+	v := mustValidator(t, `{}`)
+	html, err := render(t, Options{Validator: v}, `{"data": {"name": ""}, "components": [{"is": "input", "model": "name"}]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertContains(t, html, `x-jsonui-errors=""`)
+}
+
+// TestValidatorReused checks that one validator renders several panels.
+func TestValidatorReused(t *testing.T) {
+	opts := Options{Validator: mustValidator(t, `{"config": {"type": "object"}}`)}
+	for _, doc := range []string{
+		`{"data": {"config": {"to": ""}}, "components": [{"is": "input", "model": "config.to"}]}`,
+		`{"components": [{"is": "text", "text": "no data or fields"}]}`,
+	} {
+		html, err := render(t, opts, doc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assertContains(t, html, `x-jsonui-errors="{&#34;config&#34;:{&#34;type&#34;:&#34;object&#34;}}"`)
 	}
 }
 
 // TestFields checks error placement and explicit component presentation.
 func TestFields(t *testing.T) {
-	html := mustRender(t, `{
+	html := mustRenderWith(t, emailSchema, `{
 		"data": {"config": {"connection_id": "", "to": "", "mode": "text", "priority": ""}, "items": [{"v": ""}]},
-		"schemas": `+emailSchema+`,
 		"components": [
 			{"is": "input", "model": "config.connection_id", "props": {"label": "Connection"}},
 			{"is": "input", "model": "config.to", "props": {"label": "Recipient"}},
@@ -220,12 +274,13 @@ func TestSchemaIndependentPresentation(t *testing.T) {
 		"allOf":  `{"allOf":[{"properties":{"mode":{"title":"Schema label","enum":["html","text"]}}}]}`,
 	} {
 		t.Run(name, func(t *testing.T) {
-			base := `{"data":{"config":{"mode":"text"}},"schemas":{"config":` + schema + `},"components":`
-			html := mustRender(t, base+`[{"is":"select","model":"config.mode"}]}`)
+			schemas := `{"config":` + schema + `}`
+			base := `{"data":{"config":{"mode":"text"}},"components":`
+			html := mustRenderWith(t, schemas, base+`[{"is":"select","model":"config.mode"}]}`)
 			if strings.Contains(html, "<option") || strings.Contains(html, "<label") {
 				t.Fatalf("schema supplied presentation: %s", html)
 			}
-			html = mustRender(t, base+`[{"is":"select","model":"config.mode","props":{"label":"Output format","options":[{"value":"html","label":"HTML"},{"value":"text","label":"Plain text"}]}}]}`)
+			html = mustRenderWith(t, schemas, base+`[{"is":"select","model":"config.mode","props":{"label":"Output format","options":[{"value":"html","label":"HTML"},{"value":"text","label":"Plain text"}]}}]}`)
 			assertContains(t, html, `>Output format</label>`, `<option value="html">HTML</option>`, `<option value="text" selected>Plain text</option>`)
 		})
 	}
@@ -244,9 +299,8 @@ func TestFieldsWithoutSchemas(t *testing.T) {
 }
 
 func TestValidateAction(t *testing.T) {
-	html := mustRender(t, `{
+	html := mustRenderWith(t, `{"config": {"type": "object"}}`, `{
 		"data": {"config": {}},
-		"schemas": {"config": {"type": "object"}},
 		"components": [{"is": "button", "on": {"click": [{"action": "validate"}, {"action": "dispatch", "event": "save"}]}}]
 	}`)
 	assertContains(t, html, `{&#34;action&#34;:&#34;validate&#34;}`)

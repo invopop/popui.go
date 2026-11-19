@@ -18,26 +18,31 @@ import (
 	"golang.org/x/text/message"
 )
 
-// Panels describe what their data must be with JSON Schemas, one for each
-// part of the data they validate, e.g. the "config" a step saves:
+// Panels check their data against JSON Schemas, one for each part of the
+// data they validate, e.g. the "config" a step saves. The schemas aren't
+// part of the panel: they describe the data, wherever it comes from, so
+// they're kept and reused apart from any UI, and given to the renderer with
+// Options.Validator:
 //
-//	{
+//	v, err := jsonui.NewValidator(map[string]json.RawMessage{
+//	  "config": json.RawMessage(`{
+//	    "type": "object",
+//	    "required": ["to"],
+//	    "properties": {"to": {"type": "string", "format": "email"}}
+//	  }`),
+//	})
+//	opts := jsonui.Options{Validator: v}
+//	c, err := opts.Build([]byte(`{
 //	  "data": {"config": {"to": ""}},
-//	  "schemas": {
-//	    "config": {
-//	      "type": "object",
-//	      "required": ["to"],
-//	      "properties": {"to": {"type": "string", "format": "email"}}
-//	    }
-//	  },
 //	  "components": [{"is": "input", "model": "config.to", "props": {"label": "To"}}]
-//	}
+//	}`))
 //
 // The data is validated as it changes, and each error is shown with the form
-// control whose model is the path it's about. The same schemas can be used
-// wherever the data is saved, so the browser and the server agree, and tell
-// anyone writing the data without the form, such as an LLM, what it must be.
-// Labels and options belong to the components, independently of the schemas.
+// control whose model is the path it's about. The same validator checks the
+// data wherever it's saved, so the browser and the server agree, and the
+// schemas tell anyone writing the data without the form, such as an LLM,
+// what it must be. Labels and options belong to the components,
+// independently of the schemas.
 
 // FieldError is a problem with the value at a data path, such as
 // "config.to", or "config" for the object itself.
@@ -52,23 +57,31 @@ const (
 	msgEmail    = "Must be an email address"
 )
 
-// schemaURL is the base URL of the schemas in a panel, which never
-// reach outside it.
+// schemaURL is the base URL of a validator's schemas, which never reach
+// outside it.
 const schemaURL = "jsonui:schemas"
 
-// Validator validates panel data against the panel's schemas.
+// Validator validates panel data against JSON Schemas keyed by data path.
+// It's safe for concurrent use, so one validator can be built once and
+// shared by every render and save of the data it describes.
 type Validator struct {
 	paths   []string
 	schemas map[string]*jsonschema.Schema
 	// raw are the schemas as JSON values, used to resolve errorMessage overrides.
 	raw map[string]any
+	// json is the compact JSON of the schemas, which jsonui.js validates
+	// the data in the browser with.
+	json string
 }
 
-// NewValidator compiles a panel's schemas, keyed by data path. Schemas
-// can only refer to definitions inside themselves with "$ref", as panels
-// may come from anywhere and must not make the renderer fetch anything.
+// NewValidator compiles schemas keyed by the data path they validate,
+// such as "config". Schemas can only refer to definitions inside
+// themselves with "$ref", so validating never fetches anything. A schema's
+// "errorMessage" replaces the messages of its errors: one message, or one
+// for each keyword, such as {"format": "Enter an email address"}.
 func NewValidator(schemas map[string]json.RawMessage) (*Validator, error) {
 	v := &Validator{schemas: map[string]*jsonschema.Schema{}, raw: map[string]any{}}
+	compact := make(map[string]json.RawMessage, len(schemas))
 	for path, raw := range schemas {
 		if !safePath(path) {
 			return nil, fmt.Errorf("schemas: %q is not a data path", path)
@@ -88,16 +101,26 @@ func NewValidator(schemas map[string]json.RawMessage) (*Validator, error) {
 		if err != nil {
 			return nil, fmt.Errorf("schemas %s: %w", path, schemaError(err))
 		}
+		var buf bytes.Buffer
+		if err := json.Compact(&buf, raw); err != nil {
+			return nil, fmt.Errorf("schemas %s: %w", path, err)
+		}
+		compact[path] = buf.Bytes()
 		v.paths = append(v.paths, path)
 		v.schemas[path] = s
 		v.raw[path] = doc
 	}
 	sort.Strings(v.paths) // stable error order
+	data, err := json.Marshal(compact)
+	if err != nil {
+		return nil, err
+	}
+	v.json = string(data)
 	return v, nil
 }
 
-// noLoader refuses to load schemas from anywhere: panels' schemas must be
-// complete.
+// noLoader refuses to load schemas from anywhere: a validator's schemas
+// must be complete.
 type noLoader struct{}
 
 func (noLoader) Load(url string) (any, error) {

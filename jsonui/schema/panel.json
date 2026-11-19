@@ -735,6 +735,10 @@
           "type": "array",
           "description": "Fields is the tree to pick from."
         },
+        "scope": {
+          "type": "string",
+          "description": "Scope narrows the panel to one Group of the tree: the group's path\n(\"Invoice\", or \"Invoice.Lines\" one level down, an array on the way\nmarked as the panel shows it: \"Invoice.lines[].meta\"), whose fields then\nstand at the root, with the group's name as the first crumb, and\nwhose paths read from there — customer_name, doc.supplier.name. For a\ntree with a group per document schema on a page that learns which\nschema applies only once it is running: the component root carries\nthe scope as an Alpine property, so an x-effect among Attributes —\n\"scope = schemaGroup\" — sets it from the page's own state, and\nchanges it as that state does. A scope that names no group leaves\nthe whole tree on show."
+        },
         "format": {
           "type": "string",
           "description": "Format wraps a picked path, %s standing for the path: \"{{.doc.%s}}\"\nturns supplier.name into {{.doc.supplier.name}}. Defaults to \"%s\". A\nfield with a Value of its own is emitted as is."
@@ -989,6 +993,10 @@
         "prefix": {
           "type": "string",
           "description": "Prefix adds a text just before the input field inside a @Description."
+        },
+        "local": {
+          "type": "boolean",
+          "description": "Local shows date, time, datetime-local, week, and month inputs in the\nbrowser's own control, formatted for its locale. By default they're\ntext fields holding the ISO 8601 value as written, such as\n\"2026-09-20\", with the system picker behind a calendar button;\ndatetime-local inputs then hold an RFC 3339 timestamp with a zone, such\nas \"2026-09-20T12:30:00Z\". Other values are submitted the same either\nway."
         },
         "autofocus": {
           "type": "boolean"
@@ -1808,19 +1816,6 @@
         "init": {
           "$ref": "#/$defs/Handler",
           "description": "Init is run once when the panel starts, like an \"on\" handler: an\naction, the name of one of the panel's handlers, or a list of\neither, e.g. \"update\" so the host receives the initial data."
-        },
-        "schemas": {
-          "additionalProperties": {
-            "$ref": "https://json-schema.org/draft/2020-12/schema"
-          },
-          "propertyNames": {
-            "not": {
-              "pattern": "(^|\\.)(__proto__|prototype|constructor)(\\.|$)"
-            },
-            "pattern": "^[A-Za-z_$][\\w$]*(\\.[\\w$]+)*$"
-          },
-          "type": "object",
-          "description": "Schemas map data paths, such as \"config\", to the JSON Schema their\nvalue must match. The data is validated as it changes, and errors are\nshown with the form control whose \"model\" is their path, or after the\npanel for paths without one. Labels and options are defined by\ncomponents independently of the schemas. Schemas can only\nrefer to themselves with \"$ref\". A schema's \"errorMessage\" replaces the\nmessages of its errors: one message, or one for each keyword, such as\n{\"format\": \"Enter an email address\"}."
         }
       },
       "additionalProperties": false,
@@ -2575,7 +2570,7 @@
       "required": [
         "action"
       ],
-      "description": "Validate the panel data against its schemas, showing every error, and stop the actions after it while there are errors or validation can't run."
+      "description": "Validate the panel data against the schemas it was rendered with, showing every error, and stop the actions after it while there are errors or validation can't run."
     },
     "node.avatar": {
       "properties": {
@@ -3910,6 +3905,7 @@
               "tooltip",
               "size",
               "prefix",
+              "local",
               "autofocus",
               "readonly",
               "required",

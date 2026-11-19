@@ -64,6 +64,12 @@ type Options struct {
 	// event attributes in props, Alpine expressions in text binds and any
 	// action name. Only use it for panels from a fully trusted source.
 	Trusted bool
+	// Validator checks the panel data against JSON Schemas as it changes,
+	// showing each error with the form control whose "model" is its path,
+	// or after the panel for paths without one. Schemas describe the data
+	// rather than the panel, so they're kept apart from it and the same
+	// validator can check the data when it's saved. Nil validates nothing.
+	Validator *Validator
 }
 
 // Build parses a strict JSON panel into a renderable component using the
