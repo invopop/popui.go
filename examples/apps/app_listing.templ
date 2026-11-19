@@ -1,0 +1,345 @@
+package apps
+
+import (
+	"fmt"
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/flash"
+	"github.com/invopop/popui.go/props"
+	"strings"
+)
+
+// appListingFormID lets the header Save button submit the listing form via
+// the HTML form= attribute.
+const appListingFormID = "app-listing-form"
+
+// AppListing is the marketplace-facing content of the app: what workspace
+// admins read in the Console's app directory. The App tab keeps identity and
+// integration settings; this tab keeps the copy, links and pricing.
+templ AppListing(org *Org, app *Application, form *ListingForm, err error) {
+	@appsLayout(org) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{Label: app.Name},
+			},
+		}) {
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			@popui.Button(props.Button{
+				ID:      "apps-listing-save",
+				Type:    "submit",
+				Variant: "primary",
+				Form:    appListingFormID,
+			}) {
+				Save
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:              app.Name,
+				HideTitleSeparator: true,
+			}) {
+				@appTabs(org, ApplicationModelToForm(app), "listing")
+				<form id={ appListingFormID } class="flex flex-col gap-4" hx-encoding="multipart/form-data" hx-put={ orgURL(org, "apps", app.ID, "listing") } hx-target={ popui.AppTarget } hx-indicator="#apps-listing-save">
+					@listingForm(app, form, err)
+				</form>
+			}
+		}
+	}
+}
+
+templ listingForm(app *Application, form *ListingForm, err error) {
+	@popui.Fieldset() {
+		if err != nil {
+			@popui.InputError(props.Error{Text: err.Error()})
+		}
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			@popui.Textarea(props.Textarea{
+				Label:       "About",
+				Name:        "about",
+				Value:       form.About,
+				Rows:        5,
+				Placeholder: "What your company does, who the app is for, and what it does inside Invopop",
+				Attributes:  templ.Attributes{"maxlength": "1000"},
+				Tooltip: props.Tooltip{
+					Delay:       tooltipDelay,
+					Title:       "About",
+					Description: "Up to 1000 characters. One or two sentences on your product or company, then a short description of what the app does in Invopop. Avoid marketing jargon and unprovable claims.",
+				},
+			})
+			@popui.Input(props.Input{
+				Label:       "Built by",
+				Name:        "publisher",
+				Value:       form.Publisher,
+				Placeholder: "Name of the organisation that maintains the app",
+				Attributes:  templ.Attributes{"maxlength": "80"},
+				Tooltip: props.Tooltip{
+					Delay:       tooltipDelay,
+					Title:       "Built by",
+					Description: "Shown under the app name in the directory. Defaults to your organisation; change it only when the app is published under a partner brand.",
+				},
+			})
+		}
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Key features",
+				Description: "Up to three. The first states the main value; the others detail a use case each. Drag to reorder.",
+				Horizontal:  true,
+			})
+			@featureDeck(form)
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Countries",
+				Description: "Where the app is relevant; the directory filters by country. Leave empty for worldwide",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Select(props.Select{
+					Name:        "countries",
+					Multiple:    true,
+					Searchable:  true,
+					Placeholder: "Worldwide",
+					Options:     countryOptions(form),
+				})
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Links",
+				Description: "Public pages linked from the listing",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					@popui.Input(props.Input{
+						Label:       "Website",
+						Name:        "website_url",
+						Value:       form.WebsiteURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Website",
+							Description: "Your company's site. It should clearly represent the business behind the app.",
+						},
+					})
+					@popui.Input(props.Input{
+						Label:       "Privacy policy",
+						Name:        "privacy_url",
+						Value:       form.PrivacyURL,
+						Placeholder: "https://",
+						Required:    true,
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Privacy policy",
+							Description: "Required before an app can be made public: where users read how the app and your company handle their data.",
+						},
+					})
+					@popui.Input(props.Input{
+						Label:       "Terms of service",
+						Name:        "terms_url",
+						Value:       form.TermsURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Terms of service",
+							Description: "Optional. The terms that apply to both your company and the app.",
+						},
+					})
+					@popui.Input(props.Input{
+						Label:       "FAQ page",
+						Name:        "faq_url",
+						Value:       form.FAQURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "FAQ page",
+							Description: "Optional. Frequently asked questions about the app.",
+						},
+					})
+				</div>
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Support",
+				Description: "How users reach you about the app",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					@popui.Input(props.Input{
+						Label:       "Support email",
+						Name:        "support_email",
+						Type:        "email",
+						Value:       form.SupportEmail,
+						Placeholder: "support@example.com",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Support email",
+							Description: "Mailbox users can write to about the app. Provide this, the support page, or both.",
+						},
+					})
+					@popui.Input(props.Input{
+						Label:       "Support page",
+						Name:        "support_url",
+						Value:       form.SupportURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Support page",
+							Description: "Help centre, contact form or documentation where users can get help.",
+						},
+					})
+				</div>
+			}
+		</div>
+	}
+}
+
+// featureDeck renders the key features as a reorderable deck of up to three
+// slots. The slots exist in the markup from the start (so every upload field
+// keeps its own id) and the listingFeatures Alpine controller shows, hides
+// and clears them: Add reveals the next free slot, Remove empties and hides
+// one, and an empty deck shows a placeholder card. Hidden slots post an
+// empty title, which the server drops.
+templ featureDeck(form *ListingForm) {
+	{{ slots := form.slots() }}
+	<div x-data={ "listingFeatures(" + featureShownJSON(slots) + ")" }>
+		@popui.CardDeck(props.CardDeck{Reorderable: true, Name: "feature_order"}) {
+			@popui.CardDeckHead() {
+				<span class="flex items-center gap-1">
+					Features
+					<span class="tabular-nums" x-text="'(' + count + '/' + max + ')'"></span>
+				</span>
+				<div class="flex items-center gap-1 shrink-0">
+					@popui.Button(props.Button{
+						Size:       props.ButtonSizeSmall,
+						Type:       "button",
+						Attributes: templ.Attributes{"@click": "add", ":disabled": "count >= max"},
+					}) {
+						@icons.Add()
+						Add feature
+					}
+					@popui.CardDeckReorderButton(props.CardDeckReorderButton{
+						Attributes: templ.Attributes{"x-show": "count > 1 || reordering", "x-cloak": ""},
+					})
+				</div>
+			}
+			<template x-if="count === 0">
+				@popui.Card(props.Card{Class: "p-6 items-center text-center gap-1"}) {
+					<span class="text-base font-medium text-foreground">No key features yet</span>
+					<span class="text-sm text-foreground-default-secondary">Add up to three. Each one is a title, a short description and a screenshot shown on the listing.</span>
+				}
+			</template>
+			for i, ft := range slots {
+				{{ n := fmt.Sprint(i + 1) }}
+				@popui.Card(props.Card{
+					Class: "gap-3 p-3",
+					Attributes: templ.Attributes{
+						"data-card-id": "feature-" + n,
+						"data-feature": fmt.Sprint(i),
+						"x-show":       "shown[" + fmt.Sprint(i) + "]",
+						"x-cloak":      "",
+					},
+				}) {
+					<div class="flex items-center justify-between">
+						<span class="text-sm font-medium text-foreground-default-secondary">Feature <span x-text={ "position(" + fmt.Sprint(i) + ")" }></span></span>
+						@popui.Button(props.Button{
+							Size:    props.ButtonSizeIconSmall,
+							Type:    "button",
+							Variant: props.ButtonVariantTransparent,
+							Attributes: templ.Attributes{
+								"@click":     "remove(" + fmt.Sprint(i) + ")",
+								"aria-label": "Remove feature",
+							},
+						}) {
+							@icons.Close()
+						}
+					</div>
+					@popui.Input(props.Input{
+						Label:       "Title",
+						Name:        "feature_titles[]",
+						Value:       ft.Title,
+						Placeholder: "e.g. Register invoices with the AEAT in real time",
+						Attributes:  templ.Attributes{"maxlength": "80"},
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Feature title",
+							Description: "Up to 80 characters. A plain-language phrase stating the value, not the mechanism.",
+						},
+					})
+					@popui.Textarea(props.Textarea{
+						Label:       "Description",
+						Name:        "feature_descriptions[]",
+						Value:       ft.Description,
+						Rows:        3,
+						Placeholder: "How the feature works, how it benefits the user, and any limitations",
+						Attributes:  templ.Attributes{"maxlength": "300"},
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Feature description",
+							Description: "Up to 300 characters. Must match what the image shows.",
+						},
+					})
+					<div class="flex flex-col gap-2">
+						@popui.Label(props.Label{
+							Tooltip: props.Tooltip{
+								Delay:       tooltipDelay,
+								Title:       "Feature image",
+								Description: "Screenshot of the feature in the Console, at least 1600px wide, PNG or JPG, under 5MB, with no real customer data.",
+							},
+						}) {
+							Image
+						}
+						@popui.FileUpload(props.InputFile{
+							Name:          "feature_images[]",
+							Accept:        "image/png,image/jpeg",
+							AvatarURL:     ft.ImageURL,
+							AvatarAlt:     "Feature " + n + " screenshot",
+							Text:          uploadText(ft.ImageURL, "No image uploaded"),
+							PreviewSquare: true,
+						})
+						<input type="hidden" name="feature_image_urls[]" value={ ft.ImageURL }/>
+					</div>
+				}
+			}
+		}
+	</div>
+}
+
+// featureShownJSON seeds the listingFeatures controller: a slot starts
+// visible when it has a title.
+func featureShownJSON(slots []Feature) string {
+	parts := make([]string, len(slots))
+	for i, ft := range slots {
+		parts[i] = fmt.Sprint(strings.TrimSpace(ft.Title) != "")
+	}
+	return "[" + strings.Join(parts, ",") + "]"
+}
+
+// countryOptions maps the supported countries to select options, marking
+// those already chosen, with the flag emoji as a visual cue in the label.
+func countryOptions(form *ListingForm) []props.SelectOption {
+	opts := make([]props.SelectOption, 0, len(countries))
+	for _, c := range countries {
+		opts = append(opts, props.SelectOption{
+			Value:       c.Key,
+			Label:       c.Key,
+			Description: c.Name,
+			Selected:    form.hasCountry(c.Key),
+		})
+	}
+	return opts
+}
