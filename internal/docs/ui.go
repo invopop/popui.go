@@ -78,6 +78,12 @@ var groups = []*Group{
 				Template: components.CardDeck(),
 			},
 			{
+				Title:    "Grid",
+				Desc:     "Columns of cells with solid or dashed lines between them, such as the sections of a document's card.",
+				Path:     "grid",
+				Template: components.Grid(),
+			},
+			{
 				Title:    "Separator",
 				Desc:     "Horizontal divider with a dashed line for visual separation.",
 				Path:     "separator",

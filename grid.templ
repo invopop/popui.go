@@ -1,0 +1,62 @@
+package popui
+
+import (
+	"context"
+	"io"
+
+	"github.com/invopop/popui.go/props"
+	"github.com/invopop/popui.go/tailwind"
+)
+
+// Grid lays out Cell children in columns, such as the sections of a
+// document's card, stacking them in one column on narrow screens. Lines
+// between the cells are the cells' own Borders.
+templ Grid(opts ...props.Grid) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		data-grid
+		class={ tailwind.Merge(gridClass(p), p.Class) }
+		{ p.Attributes... }
+	>
+		@withGridLayout(newGridLayout(p)) {
+			{ children... }
+		}
+	</div>
+}
+
+// Cell is a section of a Grid, which may span its columns and rows, with
+// solid or dashed lines on its edges.
+templ Cell(opts ...props.GridCell) {
+	{{ p := props.First(opts) }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ tailwind.Merge("popui-cell flex flex-col gap-2 p-4 min-w-0 border-border", cellClass(cellLayout(ctx), p), p.Class) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// withGridLayout renders its children knowing the layout of the grid
+// they're in, which places their spans and borders.
+func withGridLayout(g gridLayout) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
+		children := templ.GetChildren(ctx)
+		ctx = context.WithValue(templ.ClearChildren(ctx), gridLayoutKey{}, g)
+		return children.Render(ctx, w)
+	})
+}
+
+// cellLayout returns the layout of the grid a cell is in, or a default
+// grid's for a cell outside one.
+func cellLayout(ctx context.Context) gridLayout {
+	if g, ok := ctx.Value(gridLayoutKey{}).(gridLayout); ok {
+		return g
+	}
+	return newGridLayout(props.Grid{})
+}

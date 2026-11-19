@@ -33,6 +33,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Right panel / detail pane | `Aside` |
 | Content card | `Card` > `CardHeader` + `CardContent` |
 | Stack of related cards on a tinted ground | `CardDeck` > `CardDeckHead` + `Card` children |
+| Sections of a card in columns, with solid or dashed lines between them | `Grid` > `Cell` (lines are each cell's `Borders`) |
 | Drag-to-reorder stack of cards | `CardDeck` with `Reorderable` > `CardDeckHead` + `CardDeckReorderButton` |
 | Headline figures, such as totals | `Stats` > `Stat` (`Size: "lg"` for the one that leads) |
 | Metric display | `Metric` (with its change and trend), or `Card` + a plain `ul` grid of stat tiles (see the Card docs "Dashboard" example) |
@@ -59,11 +60,13 @@ Before writing any UI element, check whether PopUI already covers it:
 | File-type badge (xml/pdf/png) | `Avatar` with `Color: "document-*"`, mono initials |
 | Breadcrumb navigation | `Breadcrumbs` > `Breadcrumb` |
 | Expandable section | `Accordion` with `Title`, grouped via `AccordionGroup` |
+| Panel beside a page's content | `Accordion` with `Variant: "panel"`, an `Icon` and `Actions` |
 | Dropdown/context actions | `Menu` > `MenuItem` (+ `MenuSeparator` between groups) |
 | Floating content panel | `Popover` |
 | Key-value data display | `Details` > `Detail` (`Layout: "stacked"` for labels above values) |
 | Section heading inside a card or panel | `Title` with `Size: "base"` |
 | Tab navigation | `Tabs` |
+| Tabs of a page, each a page of its own | `Tabs` with `Variant: "primary"` and an `Href` on each `TabItem` |
 | Horizontal divider | `Separator` |
 | Workflow/invoice status | `TagStatus` |
 | Toast / success message | `Toast` |
@@ -357,7 +360,11 @@ Common spacings in use:
 
 Shadow system is minimal — buttons use their own shadows, and floating
 surfaces use the elevation scale below. Cards and in-flow containers rely
-entirely on borders.
+on borders, except on a white work area, where a border alone doesn't set
+them apart: there cards are `Elevated` and side panels are the `panel`
+variant of `Accordion`, both with `shadow-sm`. The page's `primary` tabs
+have no shadow: the active tab has the work area's background and the
+others are tinted.
 
 | Token | Use |
 |-------|-----|
@@ -418,7 +425,7 @@ File attachments are the `File` family: `FileDownload` > `FileDownloadInfo`.
 - Cards can render as links via `Href` prop
 - Cards support `Disabled` state
 - `CardHeader` takes an `Avatar` (or custom component) as a child slot
-- Card borders use `border` token; no shadows on cards
+- Card borders use `border` token; no shadows on cards, except `Elevated` cards on a white work area
 
 ### Inputs & Forms
 
@@ -768,7 +775,7 @@ templ AppWithTableExample() {
 - Don't use font-bold (700) — the system uses 400, 500, 600 only
 - Don't use `rounded-full` / pill shapes for product UI elements
 - Don't use Geist Mono for UI labels, navigation, or headings — Inter only
-- Don't add box-shadows to cards or containers — only buttons use shadows
+- Don't add box-shadows to cards or containers with utilities — use `Elevated` on a `Card` or the `panel` variant of `Accordion` when they're on a white work area
 - Don't add color sections or gradient backgrounds — the product UI is white/neutral throughout
 - Don't place Footer content left-aligned — Footer is always `justify-end`
 - Don't use inline hex colors or opacity variants — the token system handles all states

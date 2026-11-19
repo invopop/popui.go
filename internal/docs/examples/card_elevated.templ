@@ -1,0 +1,14 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ CardElevatedExample() {
+	@popui.Card(props.Card{Elevated: true, Class: "max-w-sm p-4"}) {
+		@popui.CardContent() {
+			A card on a white work area, set apart with a shadow.
+		}
+	}
+}

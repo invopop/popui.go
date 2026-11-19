@@ -1,0 +1,146 @@
+package popui
+
+import (
+	"slices"
+
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/props"
+)
+
+// gridBreakpoint holds a grid's classes for the width its columns start
+// at. They're written out in full so Tailwind finds them. Arrays of
+// counts are indexed by the count, and of borders by style: solid, then
+// dashed. Solid lines are borders, and dashed ones the cell's background,
+// drawn by the popui-cell styles.
+type gridBreakpoint struct {
+	cols, span, rows [5]string
+	// right and left are side borders while there are columns, and
+	// bottom and top are what they become while the cells are stacked.
+	right, left, bottom, top [2]string
+}
+
+var gridBreakpoints = map[string]*gridBreakpoint{
+	props.GridStackSmall: {
+		cols:   [5]string{"", "sm:grid-cols-1", "sm:grid-cols-2", "sm:grid-cols-3", "sm:grid-cols-4"},
+		span:   [5]string{"", "", "sm:col-span-2", "sm:col-span-3", "sm:col-span-4"},
+		rows:   [5]string{"", "", "sm:row-span-2", "sm:row-span-3", "sm:row-span-4"},
+		right:  [2]string{"sm:border-r", "sm:[--popui-cell-r:var(--popui-dash-y)]"},
+		left:   [2]string{"sm:border-l", "sm:[--popui-cell-l:var(--popui-dash-y)]"},
+		bottom: [2]string{"max-sm:border-b", "max-sm:[--popui-cell-b:var(--popui-dash-x)]"},
+		top:    [2]string{"max-sm:border-t", "max-sm:[--popui-cell-t:var(--popui-dash-x)]"},
+	},
+	props.GridStackMedium: {
+		cols:   [5]string{"", "md:grid-cols-1", "md:grid-cols-2", "md:grid-cols-3", "md:grid-cols-4"},
+		span:   [5]string{"", "", "md:col-span-2", "md:col-span-3", "md:col-span-4"},
+		rows:   [5]string{"", "", "md:row-span-2", "md:row-span-3", "md:row-span-4"},
+		right:  [2]string{"md:border-r", "md:[--popui-cell-r:var(--popui-dash-y)]"},
+		left:   [2]string{"md:border-l", "md:[--popui-cell-l:var(--popui-dash-y)]"},
+		bottom: [2]string{"max-md:border-b", "max-md:[--popui-cell-b:var(--popui-dash-x)]"},
+		top:    [2]string{"max-md:border-t", "max-md:[--popui-cell-t:var(--popui-dash-x)]"},
+	},
+	props.GridStackLarge: {
+		cols:   [5]string{"", "lg:grid-cols-1", "lg:grid-cols-2", "lg:grid-cols-3", "lg:grid-cols-4"},
+		span:   [5]string{"", "", "lg:col-span-2", "lg:col-span-3", "lg:col-span-4"},
+		rows:   [5]string{"", "", "lg:row-span-2", "lg:row-span-3", "lg:row-span-4"},
+		right:  [2]string{"lg:border-r", "lg:[--popui-cell-r:var(--popui-dash-y)]"},
+		left:   [2]string{"lg:border-l", "lg:[--popui-cell-l:var(--popui-dash-y)]"},
+		bottom: [2]string{"max-lg:border-b", "max-lg:[--popui-cell-b:var(--popui-dash-x)]"},
+		top:    [2]string{"max-lg:border-t", "max-lg:[--popui-cell-t:var(--popui-dash-x)]"},
+	},
+	props.GridStackXLarge: {
+		cols:   [5]string{"", "xl:grid-cols-1", "xl:grid-cols-2", "xl:grid-cols-3", "xl:grid-cols-4"},
+		span:   [5]string{"", "", "xl:col-span-2", "xl:col-span-3", "xl:col-span-4"},
+		rows:   [5]string{"", "", "xl:row-span-2", "xl:row-span-3", "xl:row-span-4"},
+		right:  [2]string{"xl:border-r", "xl:[--popui-cell-r:var(--popui-dash-y)]"},
+		left:   [2]string{"xl:border-l", "xl:[--popui-cell-l:var(--popui-dash-y)]"},
+		bottom: [2]string{"max-xl:border-b", "max-xl:[--popui-cell-b:var(--popui-dash-x)]"},
+		top:    [2]string{"max-xl:border-t", "max-xl:[--popui-cell-t:var(--popui-dash-x)]"},
+	},
+	// A grid that never stacks has its columns and side borders at
+	// every width.
+	props.GridStackNone: {
+		cols:  [5]string{"", "grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4"},
+		span:  [5]string{"", "", "col-span-2", "col-span-3", "col-span-4"},
+		rows:  [5]string{"", "", "row-span-2", "row-span-3", "row-span-4"},
+		right: [2]string{"border-r", "[--popui-cell-r:var(--popui-dash-y)]"}, //nolint:goconst // written out for Tailwind
+		left:  [2]string{"border-l", "[--popui-cell-l:var(--popui-dash-y)]"},
+	},
+}
+
+// Borders on the top and bottom edges, which stay put when the grid
+// stacks.
+var (
+	gridBorderTop    = [2]string{"border-t", "[--popui-cell-t:var(--popui-dash-x)]"}
+	gridBorderBottom = [2]string{"border-b", "[--popui-cell-b:var(--popui-dash-x)]"}
+)
+
+// gridLayout is what a cell needs to know of the grid it's in: the
+// breakpoint its columns start at, and how many there are.
+type gridLayout struct {
+	bp      *gridBreakpoint
+	columns int
+}
+
+// gridLayoutKey is the context key for the gridLayout of the grid a cell
+// is in.
+type gridLayoutKey struct{}
+
+// newGridLayout returns the grid's layout, with its columns and breakpoint
+// defaulting to 2 and "md".
+func newGridLayout(p props.Grid) gridLayout {
+	g := gridLayout{bp: gridBreakpoints[p.Stack], columns: p.Columns}
+	if g.bp == nil {
+		g.bp = gridBreakpoints[props.GridStackMedium]
+	}
+	if g.columns < 1 || g.columns > 4 {
+		g.columns = 2
+	}
+	return g
+}
+
+// gridClass returns the classes of the grid's columns.
+func gridClass(p props.Grid) string {
+	g := newGridLayout(p)
+	if p.Stack == props.GridStackNone {
+		return classes.Join("grid", g.bp.cols[g.columns])
+	}
+	return classes.Join("grid grid-cols-1", g.bp.cols[g.columns])
+}
+
+// cellClass returns the classes of a cell in the grid: its spans, at most
+// the grid's columns, and its borders.
+func cellClass(g gridLayout, p props.GridCell) string {
+	bp := g.bp
+	list := []string{bp.span[min(clampCount(p.Span), g.columns)], bp.rows[clampCount(p.Rows)]}
+	has := func(edge string) bool {
+		return slices.ContainsFunc(p.Borders, func(b props.Border) bool { return b.Edge == edge })
+	}
+	for _, b := range p.Borders {
+		s := 0
+		if b.Style == props.BorderDashed {
+			s = 1
+		}
+		switch b.Edge {
+		case props.EdgeTop:
+			list = append(list, gridBorderTop[s])
+		case props.EdgeBottom:
+			list = append(list, gridBorderBottom[s])
+		case props.EdgeRight:
+			list = append(list, bp.right[s])
+			if !has(props.EdgeBottom) {
+				list = append(list, bp.bottom[s])
+			}
+		case props.EdgeLeft:
+			list = append(list, bp.left[s])
+			if !has(props.EdgeTop) {
+				list = append(list, bp.top[s])
+			}
+		}
+	}
+	return classes.Join(list...)
+}
+
+// clampCount keeps a span within the 1 to 4 a grid may have.
+func clampCount(n int) int {
+	return min(max(n, 1), 4)
+}

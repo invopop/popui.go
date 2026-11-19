@@ -26,6 +26,13 @@ templ Accordion() {
 	}) {
 		@examples.AccordionIconExample()
 	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Panels",
+		Description: "The panel variant is for the panels beside a page's content, on a white work area: a compact header divided from the content, a plain icon, and a shadow.",
+		Code:        examples.LoadExample("accordion_panel.templ"),
+	}) {
+		@examples.AccordionPanelExample()
+	}
 	@modules.Section("API Reference", "api") {
 		@modules.APITable(modules.APITableProps{
 			Title:       "Accordion",
@@ -36,7 +43,8 @@ templ Accordion() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes to apply to the details element"},
 				{Name: "Open", Type: "bool", Default: "false", Description: "Whether the accordion is initially expanded"},
 				{Name: "Title", Type: "string", Default: "", Description: "Text shown in the trigger"},
-				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Shown in a small tile before the title, such as an icon or an image"},
+				{Name: "Variant", Type: "string", Default: "default", Description: "\"default\", or \"panel\" for a panel beside a page's content: compact, with a divided header, a plain icon and a shadow"},
+				{Name: "Icon", Type: "templ.Component", Default: "", Description: "Shown before the title, such as an icon or an image: in a small tile, or plain on the panel variant"},
 				{Name: "Actions", Type: "templ.Component", Default: "", Description: "Shown after the title, before the chevron. Clicking a button or link there doesn't open or close the accordion"},
 			},
 		})

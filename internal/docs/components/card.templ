@@ -21,6 +21,13 @@ templ Card() {
 		@examples.CardWithHeaderExample()
 	}
 	@modules.Example(modules.ExampleProps{
+		Title:       "Elevated",
+		Description: "On a white work area a card's border doesn't set it apart, so Elevated gives it a soft shadow.",
+		Code:        examples.LoadExample("card_elevated.templ"),
+	}) {
+		@examples.CardElevatedExample()
+	}
+	@modules.Example(modules.ExampleProps{
 		Title:       "Disabled State",
 		Description: "Cards can be disabled to indicate they are not interactive.",
 		Code:        examples.LoadExample("card_disabled.templ"),
@@ -58,6 +65,7 @@ templ Card() {
 				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 				{Name: "Href", Type: "templ.SafeURL", Default: "", Description: "URL to navigate to when card is clicked (renders as anchor)"},
 				{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the card and applies disabled styling"},
+				{Name: "Elevated", Type: "bool", Default: "false", Description: "Gives the card a soft shadow, for cards on a white work area"},
 				{Name: "Order", Type: "int", Default: "0", Description: "1-based position inside a reorderable CardDeck, rendered as data-order. The deck sorts by it on load and renumbers every card to 1..n after each move"},
 			},
 		})

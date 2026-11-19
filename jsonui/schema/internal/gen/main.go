@@ -81,8 +81,14 @@ func render() ([]byte, error) {
 	}
 
 	defs := jsonschema.Definitions{}
+	// Definitions are named after their Go types, without the package, so
+	// two types of the same name would share one.
+	var clashes []string
 	merge := func(s *jsonschema.Schema) {
 		for k, v := range s.Definitions {
+			if old, ok := defs[k]; ok && !sameSchema(old, v) {
+				clashes = append(clashes, k)
+			}
 			defs[k] = v
 		}
 	}
@@ -185,6 +191,10 @@ func render() ([]byte, error) {
 
 	for _, d := range defs {
 		dropUnsupported(d)
+	}
+	if len(clashes) > 0 {
+		slices.Sort(clashes)
+		return nil, fmt.Errorf("types of the same name have different schemas: %s", strings.Join(slices.Compact(clashes), ", "))
 	}
 	out := &jsonschema.Schema{
 		Version:     jsonschema.Version,
@@ -385,4 +395,11 @@ func lowerCamel(s string) string {
 		n-- // keep the start of the next word capitalised
 	}
 	return strings.ToLower(string(r[:n])) + string(r[n:])
+}
+
+// sameSchema reports whether two schemas are the same.
+func sameSchema(a, b *jsonschema.Schema) bool {
+	ja, errA := json.Marshal(a)
+	jb, errB := json.Marshal(b)
+	return errA == nil && errB == nil && string(ja) == string(jb)
 }
