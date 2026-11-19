@@ -32,6 +32,15 @@ type Input struct {
 	// Prefix adds a text just before the input field inside a @Description.
 	Prefix string
 
+	// Local shows date, time, datetime-local, week, and month inputs in the
+	// browser's own control, formatted for its locale. By default they're
+	// text fields holding the ISO 8601 value as written, such as
+	// "2026-09-20", with the system picker behind a calendar button;
+	// datetime-local inputs then hold an RFC 3339 timestamp with a zone, such
+	// as "2026-09-20T12:30:00Z". Other values are submitted the same either
+	// way.
+	Local bool
+
 	Autofocus bool
 	Readonly  bool
 	Required  bool

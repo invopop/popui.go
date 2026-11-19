@@ -152,6 +152,32 @@ func FieldPicker() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = examples.FieldPickerScopeExample().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = modules.Example(modules.ExampleProps{
+			Title:       "Scoping to One Schema",
+			Description: "A page rendered for every workflow carries a group per schema, but a given workflow is about one of them, and a page often learns which only once it is running. Scope names a group — its path, as read while browsing the whole tree — and the panel opens on that group's fields alone: at the root, under the group's name, with paths that read from there, so an app's variables are the first thing on show and the document sits beneath them. The component root carries `scope` as an Alpine property, so an x-effect among Attributes sets it from the page's state and follows it; a scope naming no group shows the whole tree.",
+			Code:        examples.LoadExample("field_picker_scope.templ"),
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = examples.FieldPickerOnSelectExample().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -162,11 +188,11 @@ func FieldPicker() templ.Component {
 			Title:       "Reacting to a Pick",
 			Description: "Every pick raises a `field-select` DOM event on the component root, carrying the path, the value emitted, the field's type, and whether it was inserted into a target. The root is also x-modelable, so an Alpine x-model on it two-way binds the value.",
 			Code:        examples.LoadExample("field_picker_on_select.templ"),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -188,11 +214,11 @@ func FieldPicker() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("Building a GOBL tree", "gobl").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("Building a GOBL tree", "gobl").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -219,6 +245,7 @@ func FieldPicker() templ.Component {
 					{Name: "Align", Type: "string", Default: "", Description: "Which edge of the trigger the panel hangs from: the left, or the right with `props.FieldPickerAlignEnd` — for a trigger at the right of its row"},
 					{Name: "Root", Type: "string", Default: "\"root\"", Description: "Label of the first breadcrumb, naming what the tree describes: `bill/invoice`, `envelope`"},
 					{Name: "Fields", Type: "[]props.Field", Default: "", Description: "The tree to pick from, usually built with `goblfields.Build`"},
+					{Name: "Scope", Type: "string", Default: "", Description: "Path of a Group to narrow the panel to: its fields stand at the root under its name, with paths that read from there. Settable at any time through `scope` on the component root — `x-effect=\"scope = schemaGroup\"` among Attributes. A path naming no group shows the whole tree"},
 					{Name: "Format", Type: "string", Default: "\"%s\"", Description: "What a picked path is wrapped in, `%s` standing for the path: `{{.doc.%s}}` turns `supplier.name` into `{{.doc.supplier.name}}`. A field with a Value of its own is emitted as is"},
 					{Name: "Target", Type: "string", Default: "", Description: "CSS selector for an input, textarea or contenteditable element. When set, a pick is inserted there at the caret, replacing any selection, with the caret left after it"},
 					{Name: "ScalarsOnly", Type: "bool", Default: "false", Description: "Makes objects and arrays browse-only: they can be opened but not picked, and one with nothing underneath is left out. For templates, where a picked object would print as a Go map dump"},
@@ -273,7 +300,7 @@ func FieldPicker() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = modules.Section("API Reference", "api").Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

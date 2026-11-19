@@ -294,13 +294,21 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
   })
 
   // Opens the native picker for inputs whose calendar indicator is replaced
-  // by the popui calendar button.
+  // by the popui calendar button. ISO fields open the hidden native input
+  // behind the button, seeded with the field's value.
   document.addEventListener('click', (e) => {
     const btn = e.target.closest ? e.target.closest('[data-input-picker]') : null
     if (!btn) return
-    const input = btn.parentElement.querySelector('input[data-pickable]')
+    const field = btn.parentElement.querySelector('input[data-iso]')
+    const picker = field ? btn.parentElement.querySelector('input[data-iso-picker]') : null
+    const input = picker || btn.parentElement.querySelector('input[data-pickable]')
     if (!input) return
-    input.focus()
+    if (picker) {
+      picker.value = isoToPicker(field)
+      field.focus()
+    } else {
+      input.focus()
+    }
     if (typeof input.showPicker === 'function') {
       try {
         input.showPicker()
@@ -308,6 +316,93 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         // showPicker can throw (e.g. cross-origin iframe); focus is enough.
       }
     }
+  })
+
+  // ------------------------------------------------------------------
+  // ISO date and time inputs
+  // ------------------------------------------------------------------
+
+  // Matches an RFC 3339 timestamp, splitting it into the wall-clock digits a
+  // datetime-local input accepts and the zone suffix.
+  const ISO_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})[Tt](\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)([Zz]|[+\-]\d{2}:\d{2})$/
+
+  // Returns an ISO field's value as its hidden picker takes it: the same
+  // value, except datetimes, which drop their zone. Nothing is converted,
+  // so the browser's timezone never shifts the digits.
+  function isoToPicker(field) {
+    const v = field.value.trim()
+    if (field.dataset.iso !== 'datetime-local') return v
+    const m = ISO_DATETIME_RE.exec(v)
+    return m ? m[1] + 'T' + m[2] : ''
+  }
+
+  // Writes the value picked into the ISO field, keeping a datetime's zone
+  // (Z when it had none) and writing its seconds so it stays RFC 3339.
+  document.addEventListener('change', (e) => {
+    const picker = e.target
+    if (!(picker instanceof HTMLInputElement) || !picker.hasAttribute('data-iso-picker')) return
+    const field = picker.parentElement.querySelector('input[data-iso]')
+    if (!field) return
+    let v = picker.value
+    if (v && field.dataset.iso === 'datetime-local') {
+      const m = ISO_DATETIME_RE.exec(field.value.trim())
+      if (v.length === 16) v += ':00'
+      v += m ? m[3] : 'Z'
+    }
+    if (v === field.value) return
+    field.value = v
+    field.dispatchEvent(new Event('input', { bubbles: true }))
+    field.dispatchEvent(new Event('change', { bubbles: true }))
+  })
+
+  // isoWeekInvalid returns why an ISO week is not a week of its year, as
+  // with week 53 of a year with 52, or '' when it is. The field's pattern
+  // checks everything else, including the days of each month, so only
+  // week fields hold a custom validity message.
+  function isoWeekInvalid(v) {
+    const m = /^(\d{4})-W53$/.exec(v)
+    if (!m) return ''
+    // A year has 53 weeks when it starts on a Thursday, or on a Wednesday
+    // in a leap year. setUTCFullYear, unlike Date.UTC, keeps years 0-99 as
+    // written.
+    const y = Number(m[1])
+    const jan1 = new Date(0)
+    jan1.setUTCFullYear(y, 0, 1)
+    const day = jan1.getUTCDay()
+    const leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+    return day === 4 || (leap && day === 3) ? '' : `${m[1]} has 52 weeks`
+  }
+
+  function checkISOWeek(field) {
+    if (field.dataset.iso === 'week') field.setCustomValidity(isoWeekInvalid(field.value.trim()))
+  }
+
+  // Checks every ISO week, and hides the calendar button of fields whose
+  // picker the browser can't open: types it has no control for, such as
+  // week in Safari and Firefox, or no showPicker, as the hidden picker
+  // can't be clicked.
+  function initISOInputs() {
+    document.querySelectorAll('input[data-iso]').forEach((field) => {
+      checkISOWeek(field)
+      const picker = field.parentElement.querySelector('input[data-iso-picker]')
+      if (picker && (picker.type !== field.dataset.iso || typeof picker.showPicker !== 'function')) {
+        const btn = field.parentElement.querySelector('[data-input-picker]')
+        if (btn) btn.hidden = true
+      }
+    })
+  }
+
+  document.addEventListener('input', (e) => {
+    const t = e.target
+    if (t instanceof HTMLInputElement && t.hasAttribute('data-iso')) checkISOWeek(t)
+  })
+
+  // A form reset restores values without input events, after the reset
+  // event, so weeks are checked again once it's done.
+  document.addEventListener('reset', (e) => {
+    const form = e.target
+    if (!(form instanceof HTMLFormElement)) return
+    setTimeout(() => form.querySelectorAll('input[data-iso="week"]').forEach(checkISOWeek))
   })
 
   // ------------------------------------------------------------------
@@ -365,13 +460,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
     initButtonCopies()
     attachTableResizers()
     initInputClears()
+    initISOInputs()
   })
 
-  // Rewires ButtonCopies, table resizers and input clear buttons inserted by HTMX content swaps.
+  // Rewires ButtonCopies, table resizers, input clear buttons and ISO inputs inserted by HTMX content swaps.
   document.addEventListener('htmx:afterSettle', () => {
     initButtonCopies()
     attachTableResizers()
     initInputClears()
+    initISOInputs()
   })
 
   // Clears button loading spinners when the page becomes visible again.
@@ -1510,6 +1607,9 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
       // so the scorer reads them without going through Alpine's proxies —
       // two thousand fields times a few properties per keystroke adds up.
       const list = []
+      // The tree as received, before scoping: build() draws the entries on
+      // show from it, so a change of scope starts from the whole tree.
+      const raw = []
       // rows is a getter, and the template asks for it once per row (every
       // row's highlight compares against activeIndex, which reads rows), so
       // without a cache one keystroke would rank the whole tree eighty times.
@@ -1534,6 +1634,15 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
         disabled: !!(init && init.disabled),
         // Browse-only objects and arrays: they open but are not picked.
         scalarsOnly: !!(init && init.scalarsOnly),
+        // What the root crumb says of the whole tree.
+        root: (init && init.root) || '',
+        // The path of the group the panel is narrowed to, if any: its
+        // fields stand at the root and their paths read from there. The
+        // consumer may set it at any time — an x-effect among the root's
+        // attributes, say — and the panel rebuilds.
+        scope: (init && init.scope) || '',
+        // The index in raw of the group scope names, -1 when it names none.
+        scoped: -1,
         query: '',
         open: false,
         // The objects drilled into, root first, as entry indices.
@@ -1549,14 +1658,14 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
 
         init() {
           const el = init && init.source ? document.getElementById(init.source) : null
-          let raw = []
+          let received = []
           if (el) {
-            try { raw = JSON.parse(el.textContent) || [] } catch (e) { raw = [] }
+            try { received = JSON.parse(el.textContent) || [] } catch (e) { received = [] }
           } else if (init && Array.isArray(init.fields)) {
-            raw = init.fields
+            received = init.fields
           }
-          list.length = 0
-          raw.forEach((e) => list.push({
+          raw.length = 0
+          received.forEach((e) => raw.push({
             name: e.n || '',
             type: e.y || '',
             description: e.d || '',
@@ -1568,27 +1677,16 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             children: !!(e.f & 4),
             group: !!(e.f & 8),
             divider: !!(e.f & 16),
-            path: '',
-            // The path the field emits: its path without the groups on the
-            // way, since a group is a heading over fields, not one of them.
-            key: '',
-            lower: '',
-            depth: 0,
-            kids: [],
           }))
-          list.forEach((entry, i) => {
-            const parent = entry.parent >= 0 ? list[entry.parent] : null
-            entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
-            const base = parent ? parent.key : ''
-            entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
-            entry.lower = entry.path.toLowerCase()
-            entry.segments = entry.lower.split('.').map((segment) => segment.replace(/\[\]$/, ''))
-            entry.depth = parent ? parent.depth + 1 : 1
-            if (parent) parent.kids.push(i)
-            else this.roots.push(i)
+          this.build()
+          // A new scope is a new tree: the level browsed and the filter
+          // belong to the old one.
+          this.$watch('scope', () => {
+            this.build()
+            this.trail = []
+            this.query = ''
+            this.activePath = ''
           })
-          this.entries = list
-          rowsKey = null
 
           if (this.target) {
             this._onSelectionChange = () => {
@@ -1609,6 +1707,71 @@ const CONSOLE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@invopop/console-ui-sdk@0.
             }
             document.addEventListener('template-prompt', this._onPrompt)
           }
+        },
+        // Draws the entries on show from the raw tree: the whole of it, or,
+        // with a scope naming one of its groups, that group's descendants
+        // alone, re-rooted so their paths read from the group. The scope
+        // is the group's full path, groups above it included, as the user
+        // reads it while browsing the whole tree.
+        build() {
+          // Built as entry.path is below, arrays marked [], so the scope
+          // matches the path the user reads.
+          const paths = []
+          raw.forEach((e) => { paths.push((e.parent >= 0 ? paths[e.parent] + '.' : '') + e.name + (e.array ? '[]' : '')) })
+          const top = this.scope ? raw.findIndex((e, i) => e.group && paths[i] === this.scope) : -1
+          this.scoped = top
+          // The entries kept, each with its new index: every one without a
+          // scope, and with one the group's descendants, found in one pass
+          // since a parent always precedes its children.
+          const index = new Map()
+          raw.forEach((e, i) => {
+            if (top === -1 || e.parent === top || index.has(e.parent)) index.set(i, index.size)
+          })
+          list.length = 0
+          this.roots = []
+          index.forEach((at, i) => {
+            const e = raw[i]
+            const parent = e.parent === top ? -1 : index.get(e.parent)
+            list.push({
+              name: e.name,
+              type: e.type,
+              description: e.description,
+              own: e.own,
+              icon: e.icon,
+              parent: typeof parent === 'number' ? parent : -1,
+              array: e.array,
+              always: e.always,
+              children: e.children,
+              group: e.group,
+              divider: e.divider,
+              path: '',
+              // The path the field emits: its path without the groups on the
+              // way, since a group is a heading over fields, not one of them.
+              key: '',
+              lower: '',
+              depth: 0,
+              kids: [],
+            })
+          })
+          list.forEach((entry, i) => {
+            const parent = entry.parent >= 0 ? list[entry.parent] : null
+            entry.path = (parent ? parent.path + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            const base = parent ? parent.key : ''
+            entry.key = entry.group ? base : (base ? base + '.' : '') + entry.name + (entry.array ? '[]' : '')
+            entry.lower = entry.path.toLowerCase()
+            entry.segments = entry.lower.split('.').map((segment) => segment.replace(/\[\]$/, ''))
+            entry.depth = parent ? parent.depth + 1 : 1
+            if (parent) parent.kids.push(i)
+            else this.roots.push(i)
+          })
+          this.entries = list
+          rowsKey = null
+        },
+        // What the root crumb says: the scoped group's name, or the name the
+        // consumer gave the whole tree.
+        get rootLabel() {
+          if (this.scoped >= 0) return raw[this.scoped].name
+          return this.root || 'root'
         },
         destroy() {
           if (this._onSelectionChange) document.removeEventListener('selectionchange', this._onSelectionChange)

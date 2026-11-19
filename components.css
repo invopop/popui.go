@@ -258,9 +258,11 @@ div[contenteditable='true'] .tag {
   background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='16' height='16' rx='4' fill='%2330333B'/%3E%3Cpath d='M6.5 8.25004L10 11.75L13.5 8.25' stroke='%23E6E7EB' stroke-width='1.1'/%3E%3C/svg%3E");
 }
 
-/* The input clear button is display:flex for icon centering, which would
-   otherwise defeat the hidden attribute popui.js toggles it with. */
-[data-input-clear][hidden] {
+/* The input clear and picker buttons are display:flex for icon centering,
+   which would otherwise defeat the hidden attribute popui.js toggles them
+   with. */
+[data-input-clear][hidden],
+[data-input-picker][hidden] {
   display: none;
 }
 
@@ -272,8 +274,8 @@ input[data-clearable]::-webkit-search-cancel-button {
   display: none;
 }
 
-/* Pickable inputs (date, time, week, month) replace the native calendar
-   indicator with the popui calendar button. */
+/* Local pickable inputs (date, time, datetime-local, week, month) replace
+   the native calendar indicator with the popui calendar button. */
 input[data-pickable]::-webkit-calendar-picker-indicator {
   display: none;
 }
@@ -533,6 +535,26 @@ form {
    needs to cover the scrolling cells. */
 .popui-table-row-hover tbody tr:hover td {
   background-color: var(--color-background-default-secondary);
+}
+
+/* Clickable rows — a body row that carries click wiring advertises it with a
+   pointer cursor automatically, so consumers don't have to remember to add
+   cursor-pointer by hand. "Click wiring" is detected from the attributes the
+   supported stacks put on the row: onclick (plain JS), the HTMX verbs, and
+   Alpine's @click / x-on:click. Rows whose listener is attached
+   programmatically (no attribute to see) can opt in with data-clickable. */
+.popui-table-row-hover tbody tr:is(
+  [onclick],
+  [data-clickable],
+  [hx-get],
+  [hx-post],
+  [hx-put],
+  [hx-patch],
+  [hx-delete],
+  [x-on\:click],
+  [\@click]
+) {
+  cursor: pointer;
 }
 
 /* Resizable — drag handle on the right edge of each header cell (attached by

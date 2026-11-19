@@ -2,13 +2,10 @@ package examples
 
 import (
 	"github.com/invopop/popui.go"
-	"github.com/invopop/popui.go/props"
 )
 
 templ TableClickableExample() {
-	@popui.Table(props.Table{
-		Class: "[&_tr:hover_td]:bg-background-default-secondary [&_tr:hover_td]:cursor-pointer",
-	}) {
+	@popui.Table() {
 		<thead>
 			<tr>
 				<th>Product</th>
@@ -17,21 +14,29 @@ templ TableClickableExample() {
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td>Widget A</td>
+			// The row handles the click; the button in the first cell gives
+			// keyboard and screen reader users a real control. Enter or Space
+			// on it fires a click that bubbles up to the row's handler.
+			<tr onclick="alert('Widget A')">
+				<td><button type="button" class="text-left">Widget A</button></td>
 				<td>Available</td>
 				<td>$29.99</td>
 			</tr>
-			<tr>
-				<td>Widget B</td>
+			<tr onclick="alert('Widget B')">
+				<td><button type="button" class="text-left">Widget B</button></td>
 				<td>Out of Stock</td>
 				<td>$39.99</td>
 			</tr>
-			<tr>
-				<td>Widget C</td>
+			// Rows whose listener is attached programmatically opt in
+			// with data-clickable to get the same pointer cursor.
+			<tr id="popui-clickable-row" data-clickable>
+				<td><button type="button" class="text-left">Widget C</button></td>
 				<td>Available</td>
 				<td>$49.99</td>
 			</tr>
 		</tbody>
 	}
+	<script>
+		document.getElementById("popui-clickable-row").addEventListener("click", function() { alert("Widget C"); });
+	</script>
 }
