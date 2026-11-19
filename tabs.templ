@@ -171,7 +171,9 @@ func tabTriggerClasses(variant string) string {
 		// The others are tinted cells with a line between them. The active
 		// tab has the content's background and is a pixel taller, which
 		// covers the row's line under it and joins it to the content.
-		return "shrink-0 px-4 border-r border-border bg-background-default-secondary font-medium text-foreground hover:bg-background-default-tertiary data-[state=active]:bg-background data-[state=active]:-mb-px focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-border-selected-bold"
+		// Cells keep their width until the row runs out of room, then
+		// shrink and truncate their labels like the other variants.
+		return "px-4 border-r border-border bg-background-default-secondary font-medium text-foreground hover:bg-background-default-tertiary data-[state=active]:bg-background data-[state=active]:-mb-px focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-border-selected-bold"
 	}
 	return tailwind.Merge(
 		classes.If(variant != "pill", "relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"),
