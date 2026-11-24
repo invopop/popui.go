@@ -137,7 +137,7 @@ func TestTableColumnsKeepsPageStyle(t *testing.T) {
 		Columns:    []props.TableColumn{{Title: "A", Width: 100}},
 		Attributes: templ.Attributes{styleAttribute: "color:red"},
 	})
-	if !strings.Contains(tableTag.FindString(got), `style="--popui-col-1:100px;color:red"`) {
+	if !strings.Contains(tableTag.FindString(got), `style="--popui-col-1:100px;color:red;"`) {
 		t.Errorf("got %s", tableTag.FindString(got))
 	}
 }

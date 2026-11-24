@@ -1,12 +1,14 @@
 package jsonui
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"maps"
 	"strconv"
 
 	"github.com/a-h/templ"
+	templruntime "github.com/a-h/templ/runtime"
 	popui "github.com/invopop/popui.go"
 	"github.com/invopop/popui.go/props"
 )
@@ -81,23 +83,21 @@ func cellComponent(tag string) func(...Cell) templ.Component {
 // its children.
 func element(tag, class string, colspan int, attrs templ.Attributes) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
-		if _, err := io.WriteString(w, "<"+tag); err != nil {
-			return err
-		}
+		// The opening tag is buffered so that any script functions the
+		// attributes need are written to w before it, as templ does.
+		var open bytes.Buffer
+		open.WriteString("<" + tag)
 		if class != "" {
-			if _, err := io.WriteString(w, ` class="`+templ.EscapeString(class)+`"`); err != nil {
-				return err
-			}
+			open.WriteString(` class="` + templ.EscapeString(class) + `"`)
 		}
 		if colspan > 1 {
-			if _, err := io.WriteString(w, ` colspan="`+strconv.Itoa(colspan)+`"`); err != nil {
-				return err
-			}
+			open.WriteString(` colspan="` + strconv.Itoa(colspan) + `"`)
 		}
-		if err := templ.RenderAttributes(ctx, w, attrs); err != nil {
+		if err := templruntime.RenderAttributes(ctx, &open, w, tag, attrs); err != nil {
 			return err
 		}
-		if _, err := io.WriteString(w, ">"); err != nil {
+		open.WriteString(">")
+		if _, err := open.WriteTo(w); err != nil {
 			return err
 		}
 		if err := templ.GetChildren(ctx).Render(ctx, w); err != nil {
