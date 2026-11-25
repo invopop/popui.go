@@ -140,7 +140,7 @@ func SignaturePad(opts ...props.SignaturePad) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.clear()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": templ.JSUnsafeFuncCall("popuiSignPad.clear()")}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -171,7 +171,7 @@ func SignaturePad(opts ...props.SignaturePad) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.use()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": templ.JSUnsafeFuncCall("popuiSignPad.use()")}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
