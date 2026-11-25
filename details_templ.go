@@ -680,7 +680,7 @@ func detailActionButton(a props.DetailAction, size string) templ.Component {
 						"type":            "button",
 						"aria-label":      "Copy",
 						"data-popui-copy": a.Copy,
-						"onclick":         "navigator.clipboard.writeText(this.getAttribute('data-popui-copy'))",
+						"onclick":         templ.JSUnsafeFuncCall("navigator.clipboard.writeText(this.getAttribute('data-popui-copy'))"),
 					},
 					a.Attributes,
 				),

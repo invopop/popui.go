@@ -61,7 +61,7 @@ func SignaturePadExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Attributes: templ.Attributes{"onclick": "popuiSignPad.open()"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Attributes: templ.Attributes{"onclick": templ.JSUnsafeFuncCall("popuiSignPad.open()")}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

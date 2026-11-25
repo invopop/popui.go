@@ -38,12 +38,12 @@ templ SignaturePad(opts ...props.SignaturePad) {
 			<div id="popui-sign-draw-view" hidden>
 				<div class="popui-sign-pad-wrap">
 					<canvas id="popui-sign-pad" class="popui-sign-canvas"></canvas>
-					@Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.clear()"}}) {
+					@Button(props.Button{Variant: props.ButtonVariantSecondary, Size: props.ButtonSizeSmall, Type: "button", Class: "popui-sign-clear-btn", Attributes: templ.Attributes{"onclick": templ.JSUnsafeFuncCall("popuiSignPad.clear()")}}) {
 						{ p.ClearLabel }
 					}
 				</div>
 			</div>
-			@Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": "popuiSignPad.use()"}}) {
+			@Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Class: "popui-sign-use-btn", Attributes: templ.Attributes{"onclick": templ.JSUnsafeFuncCall("popuiSignPad.use()")}}) {
 				{ p.UseLabel }
 			}
 		</div>

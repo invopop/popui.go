@@ -1,6 +1,7 @@
 package props
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -25,7 +26,16 @@ func (p Popover) GenerateID() Popover {
 	return p
 }
 
-// ShowPopover returns a JavaScript expression that opens the popover with the given ID.
+// ShowPopover returns a JavaScript expression that opens the popover with the
+// given ID. The ID is written as a JavaScript string, so no ID can add script
+// of its own.
 func ShowPopover(id string) string {
-	return "document.getElementById('" + id + "').showPopover()"
+	return "document.getElementById(" + jsString(id) + ").showPopover()"
+}
+
+// jsString writes s as a JavaScript string literal. JSON's encoding is one,
+// and escapes <, > and & too.
+func jsString(s string) string {
+	b, _ := json.Marshal(s) // a string always encodes
+	return string(b)
 }
