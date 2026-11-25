@@ -11,8 +11,8 @@ import (
 )
 
 // TestHandlersSurviveSanitization guards the on* handlers popui builds
-// itself: templ replaces any given as a plain string with a comment, which
-// leaves the control doing nothing.
+// itself. templ replaces an on* handler given as a plain string with a
+// comment, which leaves the control doing nothing.
 func TestHandlersSurviveSanitization(t *testing.T) {
 	tests := []struct {
 		name string
@@ -22,6 +22,8 @@ func TestHandlersSurviveSanitization(t *testing.T) {
 		{"file upload", FileUpload(props.InputFile{ID: "avatar"}), "document.getElementById(this.dataset.popuiFile).click()"},
 		{"file download preview", FileDownload(props.FileDownload{Preview: props.ShowPopover("preview")}), "if (!event.target.closest("},
 		{"signature pad", SignaturePad(props.SignaturePad{}), "popuiSignPad.clear()"},
+		{"signature pad use", SignaturePad(props.SignaturePad{}), "popuiSignPad.use()"},
+		{"detail copy", detailActionButton(props.DetailAction{Copy: "secret-value"}, "sm"), "navigator.clipboard.writeText(this.getAttribute('data-popui-copy'))"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
