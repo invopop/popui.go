@@ -65,6 +65,7 @@ Before writing any UI element, check whether PopUI already covers it:
 | Floating content panel | `Popover` |
 | Key-value data display | `Details` > `Detail` (`Layout: "stacked"` for labels above values) |
 | Section heading inside a card or panel | `Title` with `Size: "base"` |
+| Progress through a wizard or multi-step flow | `Steps` > `Step` (+ `SubStep` for the parts of a step) |
 | Tab navigation | `Tabs` |
 | Tabs of a page, each a page of its own | `Tabs` with `Variant: "primary"` and an `Href` on each `TabItem` |
 | Horizontal divider | `Separator` |
@@ -109,6 +110,7 @@ Some requests sound custom but map directly to PopUI components:
 | "a settings section / form card" | `Fieldset` with `Variant: "card"` (tinted body); add a `TitleGroup` above it for a titled section |
 | "an empty state / zero state" | `PageState` |
 | "a success toast" | `Toast` with `Type: "success"` |
+| "a stepper / wizard progress / timeline of steps" | `Steps` > `Step` with `Status`, `SubStep` under it |
 | "a collapsible / expandable section" | `Accordion` (with `Icon` and `Actions` for a list of steps) |
 | "a copy button for an ID or hash" | `Button` with `Copy` (PrefixLength/SuffixLength truncate the display) |
 
@@ -517,6 +519,7 @@ Breadcrumbs
 | `PageState` | Empty/error state with illustration, title, description, CTA |
 | `Slider` | Range input |
 | `Tabs` | Tab navigation component |
+| `Steps` / `Step` / `SubStep` | Numbered timeline of a flow's steps: a tick for `completed`, an outlined number for `current`, sub-steps branching under a step. `Orientation: "horizontal"` is a bar of markers alone, `"responsive"` switches to it below 768px |
 
 ### JSON UI panels
 

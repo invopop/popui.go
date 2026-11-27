@@ -62,6 +62,18 @@ func TestStats(t *testing.T) {
 	}
 }
 
+// TestSteps checks that a timeline's steps and sub-steps are rendered
+// with their status.
+func TestSteps(t *testing.T) {
+	html := mustRender(t, `{"components": [{"is": "steps", "props": {"label": "Progress"}, "children": [
+		{"is": "step", "props": {"label": "Details", "status": "completed"}},
+		{"is": "step", "props": {"label": "Sign", "status": "current"}, "children": [
+			{"is": "sub_step", "props": {"label": "Identity", "current": true}}
+		]}
+	]}]}`)
+	assertContains(t, html, `aria-label="Progress"`, `data-status="completed"`, `data-status="current"`, `popui-substep">Identity</li>`)
+}
+
 // TestTextOptions checks the text sizes and tones of paragraphs and titles.
 func TestTextOptions(t *testing.T) {
 	html := mustRender(t, `{"components": [

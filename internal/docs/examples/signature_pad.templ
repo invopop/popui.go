@@ -7,15 +7,15 @@ import (
 
 templ SignaturePadExample() {
 	@popui.SignaturePad(props.SignaturePad{
-		Signer:      "Jane Smith",
-		Action:      "/sign",
-		Title:       "Sign",
-		TabTyped: "Click to sign",
-		TabDraw:     "Draw your signature",
+		Signer:     "Jane Smith",
+		Action:     "/sign",
+		Title:      "Sign",
+		TabTyped:   "Click to sign",
+		TabDraw:    "Draw your signature",
 		UseLabel:   "Use signature",
 		ClearLabel: "Clear",
 	})
-	@popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Attributes: templ.Attributes{"onclick": "popuiSignPad.open()"}}) {
+	@popui.Button(props.Button{Type: "button", Variant: props.ButtonVariantPrimary, Attributes: templ.Attributes{"onclick": templ.JSUnsafeFuncCall("popuiSignPad.open()")}}) {
 		Sign document
 	}
 	<script>

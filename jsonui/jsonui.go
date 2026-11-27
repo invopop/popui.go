@@ -220,6 +220,9 @@ func init() {
 	register("detail", popui.Detail)
 	register("stats", popui.Stats)
 	register("stat", popui.Stat)
+	register("steps", popui.Steps)
+	register("step", popui.Step)
+	register("sub_step", popui.SubStep)
 
 	// Status & identity
 	register("status_badge", popui.StatusBadge)

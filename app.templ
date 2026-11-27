@@ -53,6 +53,7 @@ templ App(opts ...props.App) {
 				Stylesheets: p.Stylesheets,
 				Scripts:     p.Scripts,
 			}) {
+				@appOverscroll()
 				if p.FillViewport {
 					@appViewportFill()
 				}
@@ -67,6 +68,18 @@ templ App(opts ...props.App) {
 			}
 		}
 	}
+}
+
+// appOverscroll stops scrolling that reaches the end of an element from
+// carrying on to the page. Without it, macOS bounces the whole page when a
+// panel is scrolled quickly past its end, and everything on it moves, a
+// header included; in a Console or Desk frame the page is all there is.
+// The elements themselves still scroll as before. Emitted into the head of
+// every App, whether or not it uses PopUI's stylesheet.
+templ appOverscroll() {
+	<style>
+		html, body { overscroll-behavior: none; }
+	</style>
 }
 
 // appViewportFill pins the document to the viewport so App's `h-full` grid

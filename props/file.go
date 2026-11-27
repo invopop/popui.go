@@ -17,7 +17,10 @@ type FileDownload struct {
 	// inside another container.
 	Borderless bool
 	// Hover highlights the whole row with a background color on hover.
-	Hover   bool
+	Hover bool
+	// Preview is a JavaScript expression run when the row is clicked, such
+	// as one from ShowPopover. It is rendered as trusted script, so it must
+	// never be built from user input.
 	Preview string
 }
 
@@ -28,7 +31,7 @@ func (f FileDownload) PreviewAttributes() templ.Attributes {
 	}
 	attrs := templ.Attributes{}
 	maps.Copy(attrs, f.Attributes)
-	attrs["onclick"] = "if (!event.target.closest('a,button')) { " + f.Preview + " }"
+	attrs["onclick"] = templ.JSUnsafeFuncCall("if (!event.target.closest('a,button')) { " + f.Preview + " }")
 	return attrs
 }
 

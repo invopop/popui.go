@@ -758,7 +758,8 @@ func FileUpload(p ...props.InputFile) templ.Component {
 			Type:    "button",
 			Size:    "sm",
 			Attributes: templ.Attributes{
-				"onclick": "document.getElementById('" + file.ID + "').click();",
+				"data-popui-file": file.ID,
+				"onclick":         templ.JSUnsafeFuncCall("document.getElementById(this.dataset.popuiFile).click()"),
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
