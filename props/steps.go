@@ -42,6 +42,26 @@ type Step struct {
 	// tick, "current" for the one in progress, or "upcoming" for those
 	// still to come. Default is "upcoming".
 	Status string `jsonschema:"enum=,enum=upcoming,enum=current,enum=completed"`
+	// StatusLabel says the status to screen readers, which don't see the
+	// marker, in the page's language. Default is "Completed" for a
+	// completed step and "Upcoming" for an upcoming one. The current
+	// step is announced as such without one.
+	StatusLabel string
+}
+
+// StatusText is what a screen reader is told about the step's status:
+// its StatusLabel, or the default for its Status.
+func (s Step) StatusText() string {
+	switch {
+	case s.StatusLabel != "":
+		return s.StatusLabel
+	case s.Status == StepStatusCompleted:
+		return "Completed"
+	case s.Status == StepStatusCurrent:
+		return ""
+	default:
+		return "Upcoming"
+	}
 }
 
 // SubStep defines the props for the SubStep component.

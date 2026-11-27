@@ -1336,6 +1336,15 @@ form {
     min-width: 0;
     overflow-wrap: break-word;
   }
+  /* The status in words, for screen readers alone. */
+  .popui-step-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   /* The current step's label stands out, unless one of its sub-steps is
      the current one. */
   .popui-step[data-status="current"]:not(:has(.popui-substep[data-current])) > .popui-step-row > .popui-step-label,

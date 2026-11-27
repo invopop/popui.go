@@ -10,8 +10,9 @@ import (
 	"github.com/invopop/popui.go/props"
 )
 
-// TestSteps checks that steps say their status, that a completed step
-// has a tick in place of its number, and that the list of sub-steps has
+// TestSteps checks that steps say their status, in words too for screen
+// readers, except the current one, which aria-current announces, that a
+// completed step has a tick in place of its number, and that the list of sub-steps has
 // nothing in it, whitespace included, for a step without any, as it is
 // hidden while empty.
 func TestSteps(t *testing.T) {
@@ -19,7 +20,7 @@ func TestSteps(t *testing.T) {
 	children := templ.Join(
 		Step(props.Step{Label: "Details", Status: props.StepStatusCompleted}),
 		Step(props.Step{Label: "Sign", Status: props.StepStatusCurrent}),
-		Step(props.Step{Label: "Done"}),
+		Step(props.Step{Label: "Done", StatusLabel: "Pendiente"}),
 	)
 	ctx := templ.WithChildren(context.Background(), children)
 	if err := Steps(props.Steps{Label: "Progress", Orientation: props.StepsOrientationResponsive}).Render(ctx, &buf); err != nil {
@@ -32,7 +33,9 @@ func TestSteps(t *testing.T) {
 		`<li data-status="current" aria-current="step" class="popui-step">`,
 		`<li class="popui-step">`,
 		`<span class="popui-step-marker" aria-hidden="true"></span>`,
-		`<span class="popui-step-label">Sign</span>`,
+		`<span class="popui-step-label">Sign</span> </div>`,
+		`<span class="popui-step-label">Details</span> <span class="popui-step-status">Completed</span>`,
+		`<span class="popui-step-label">Done</span> <span class="popui-step-status">Pendiente</span>`,
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %s in:\n%s", want, out)

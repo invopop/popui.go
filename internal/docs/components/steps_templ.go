@@ -146,6 +146,7 @@ func Steps() templ.Component {
 					{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
 					{Name: "Label", Type: "string", Default: "", Description: "What the step is, shown beside its marker"},
 					{Name: "Status", Type: "string", Default: "\"upcoming\"", Description: "\"completed\", \"current\" or \"upcoming\" (StepStatusCompleted, StepStatusCurrent, StepStatusUpcoming)"},
+					{Name: "StatusLabel", Type: "string", Default: "", Description: "The status in words for screen readers, in the page's language. Default is \"Completed\" or \"Upcoming\"; the current step is announced as such without one."},
 				},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

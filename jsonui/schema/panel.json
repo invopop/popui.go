@@ -2080,6 +2080,10 @@
             "completed"
           ],
           "description": "Status is \"completed\" for a step that is done, whose marker is a\ntick, \"current\" for the one in progress, or \"upcoming\" for those\nstill to come. Default is \"upcoming\"."
+        },
+        "statusLabel": {
+          "type": "string",
+          "description": "StatusLabel says the status to screen readers, which don't see the\nmarker, in the page's language. Default is \"Completed\" for a\ncompleted step and \"Upcoming\" for an upcoming one. The current\nstep is announced as such without one."
         }
       },
       "additionalProperties": false,
@@ -4972,7 +4976,8 @@
               "class",
               "attributes",
               "label",
-              "status"
+              "status",
+              "statusLabel"
             ]
           },
           "type": "object",

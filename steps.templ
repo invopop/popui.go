@@ -30,8 +30,9 @@ templ Steps(opts ...props.Steps) {
 }
 
 // Step is one step of Steps: a marker with its number, or a tick once
-// the step is completed, and a label. SubStep children are the parts of
-// the step, shown under it.
+// the step is completed, and a label. The marker is hidden from screen
+// readers, which are told the status in words instead. SubStep children
+// are the parts of the step, shown under it.
 templ Step(opts ...props.Step) {
 	{{ p := props.First(opts) }}
 	<li
@@ -54,6 +55,9 @@ templ Step(opts ...props.Step) {
 				}
 			</span>
 			<span class="popui-step-label">{ p.Label }</span>
+			if status := p.StatusText(); status != "" {
+				<span class="popui-step-status">{ status }</span>
+			}
 		</div>
 		<ol class="popui-substeps">{ children... }</ol>
 	</li>
