@@ -24,7 +24,10 @@ linters:
     paths:
       - third_party$
       - builtin$
+      # Example apps and prototypes under examples/ are sample code with
+      # fixture data, not library code.
       - examples$
+      - examples/
 formatters:
   enable:
     - gofmt
@@ -35,3 +38,4 @@ formatters:
       - third_party$
       - builtin$
       - examples$
+      - examples/

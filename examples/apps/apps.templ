@@ -1,0 +1,785 @@
+package apps
+
+import (
+	"fmt"
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/classes"
+	"github.com/invopop/popui.go/flash"
+	"github.com/invopop/popui.go/props"
+	"strings"
+)
+
+// Form ids let the header Save buttons submit the forms further down the page
+// via the HTML form= attribute.
+const (
+	appFormID     = "app-form"
+	appSudoFormID = "app-sudo-form"
+)
+
+templ AppsIndex(org *Org, apps *ApplicationCollection, showDeactivated bool) {
+	@appsLayout(org) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{Label: "Applications"},
+			},
+		}) {
+			@popui.Button(props.Button{
+				Variant:    "primary",
+				Attributes: navAttrs(baseURL(org, "apps", "new")),
+			}) {
+				@icons.Add()
+				Create app
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title:       "Manage applications",
+				Description: "Applications created and published by your organization.",
+				// The tab strip below the title replaces the title separator.
+				HideTitleSeparator: true,
+			}) {
+				@navTabs() {
+					@navTab(tabProps{
+						Active:     !showDeactivated,
+						Attributes: navAttrs(baseURL(org, "apps")),
+					}) {
+						Active apps ({ fmt.Sprint(len(apps.Enabled())) })
+					}
+					@navTab(tabProps{
+						Active:     showDeactivated,
+						Attributes: navAttrs(baseURL(org, "apps") + "?deactivated=1"),
+					}) {
+						Deactivated apps ({ fmt.Sprint(len(apps.Disabled())) })
+					}
+				}
+				@popui.Section() {
+					// Rows navigate to the app, so the whole row reads as clickable.
+					@popui.Table(props.Table{
+						Variant: "card",
+						Class:   "[&_tr:hover_td]:bg-background-default-secondary [&_tr:hover_td]:cursor-pointer [&_td>div]:gap-4",
+					}) {
+						<colgroup>
+							<col style="width: 40%;"/>
+							<col style="width: 60%;"/>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							if list := applicationList(apps, showDeactivated); len(list) > 0 {
+								for _, app := range list {
+									@appRow(org, app)
+								}
+							} else {
+								<tr>
+									<td colspan="2" class="text-center">No applications</td>
+								</tr>
+							}
+						</tbody>
+					}
+				}
+			}
+		}
+	}
+}
+
+templ AppsEdit(org *Org, form *ApplicationForm, err error) {
+	@appsLayout(org) {
+		{{
+			title := form.Name
+			if title == "" {
+				title = "Create app"
+			}
+		}}
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{Label: title},
+			},
+		}) {
+			// The form is long, so its primary action lives in the header where it
+			// stays reachable; the HTML form= attribute ties the button to it.
+			{{ fm := flash.GetMessage(ctx) }}
+			if fm != nil {
+				@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+			}
+			@popui.Button(props.Button{
+				ID:      "apps-save",
+				Type:    "submit",
+				Variant: "primary",
+				Form:    appFormID,
+			}) {
+				Save
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title: title,
+				// The tab strip below the title replaces the title separator.
+				HideTitleSeparator: true,
+			}) {
+				@appTabs(org, form, "")
+				if form.persisted() {
+					<form id={ appFormID } class="flex flex-col gap-4" hx-encoding="multipart/form-data" hx-put={ orgURL(org, "apps", form.ID) } hx-target={ popui.AppTarget } hx-indicator="#apps-save">
+						@appsForm(form, err)
+					</form>
+				} else {
+					<form id={ appFormID } class="flex flex-col gap-4" hx-encoding="multipart/form-data" hx-post={ orgURL(org, "apps") } hx-target={ popui.AppTarget } hx-indicator="#apps-save">
+						@appsForm(form, err)
+					</form>
+				}
+			}
+		}
+	}
+}
+
+templ AppsEditAvailability(org *Org, form *ApplicationForm, err error) {
+	@appsLayout(org) {
+		@popui.Header(props.Header{
+			Breadcrumbs: []props.Breadcrumb{
+				{
+					Label:      "Applications",
+					Href:       templ.SafeURL(baseURL(org, "apps")),
+					Attributes: navAttrs(baseURL(org, "apps")),
+				},
+				{Label: form.Name},
+			},
+		}) {
+			// Only the sudo section is editable here; the enable/disable buttons
+			// submit on their own, so the header Save is sudo-only.
+			if isSudo(ctx) {
+				{{ fm := flash.GetMessage(ctx) }}
+				if fm != nil {
+					@popui.Notification(props.Notification{Type: fm.Type, Text: fm.Text})
+				}
+				@popui.Button(props.Button{
+					ID:      "sudo-save",
+					Type:    "submit",
+					Variant: "primary",
+					Form:    appSudoFormID,
+				}) {
+					Save
+				}
+			}
+		}
+		@popui.Main(props.Main{Center: true, Class: mainClass}) {
+			@popui.Article(props.Article{
+				Title: form.Name,
+				// The tab strip below the title replaces the title separator.
+				HideTitleSeparator: true,
+			}) {
+				@appTabs(org, form, "availability")
+				<form hx-put={ orgURL(org, "apps", form.ID, "availability") } hx-target={ popui.AppTarget }>
+					<input type="hidden" name="id" value={ form.ID }/>
+					if form.Disabled {
+						<div class="flex">
+							@popui.Button(props.Button{Size: props.ButtonSizeLarge}) {
+								Enable application
+							}
+						</div>
+					} else {
+						<div class="w-full flex flex-col gap-3">
+							@popui.TitleGroup(props.TitleGroup{
+								Title:       "Danger zone",
+								Description: "Existing workflows may no longer work if this application is disabled",
+								Horizontal:  true,
+							})
+							@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+								<input type="hidden" name="disabled" value="true"/>
+								<div class="flex">
+									@popui.Button(props.Button{
+										Size:    props.ButtonSizeLarge,
+										Variant: "danger",
+									}) {
+										Disable application
+									}
+								</div>
+							}
+						</div>
+					}
+				</form>
+				if isSudo(ctx) {
+					<form id={ appSudoFormID } class="flex flex-col gap-4" hx-put={ orgURL(org, "apps", form.ID, "sudo") } hx-target={ popui.AppTarget } hx-indicator="#sudo-save">
+						<input type="hidden" name="id" value={ form.ID }/>
+						@appSudoFieldset(form, err)
+					</form>
+				}
+			}
+		}
+	}
+}
+
+// appTabs is the tab strip shared by every page of one application. The
+// selected tab is one of "", "listing", "actions", "workflows",
+// "documents", "integration" or "availability".
+templ appTabs(org *Org, form *ApplicationForm, selectedTab string) {
+	{{ counts := tabCounts(form.ID) }}
+	@navTabs() {
+		@navTab(tabProps{
+			Active:     selectedTab == "",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID)),
+		}) {
+			App
+		}
+		@navTab(tabProps{
+			Active:     selectedTab == "listing",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID, "listing")),
+		}) {
+			Listing
+		}
+		@navTab(tabProps{
+			Active:     selectedTab == "actions",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID, "actions")),
+		}) {
+			Actions
+			if counts.Actions > 0 {
+				<span class="tabular-nums">({ fmt.Sprint(counts.Actions) })</span>
+			}
+		}
+		@navTab(tabProps{
+			Active:     selectedTab == "workflows",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID, "workflows")),
+		}) {
+			Workflows
+			if counts.Workflows > 0 {
+				<span class="tabular-nums">({ fmt.Sprint(counts.Workflows) })</span>
+			}
+		}
+		@navTab(tabProps{
+			Active:     selectedTab == "documents",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID, "documents")),
+		}) {
+			Documents
+			if counts.Documents > 0 {
+				<span class="tabular-nums">({ fmt.Sprint(counts.Documents) })</span>
+			}
+		}
+		@navTab(tabProps{
+			Active:     selectedTab == "integration",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID, "integration")),
+		}) {
+			Integration
+		}
+		@navTab(tabProps{
+			Active:     selectedTab == "availability",
+			Attributes: navAttrs(baseURL(org, "apps", form.ID, "availability")),
+		}) {
+			Availability
+		}
+	}
+}
+
+templ appsForm(form *ApplicationForm, err error) {
+	@popui.Fieldset() {
+		if err != nil {
+			@popui.InputError(props.Error{Text: err.Error()})
+		}
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				@popui.Input(props.Input{
+					Label:       "Name",
+					Name:        "name",
+					Value:       form.Name,
+					Required:    true,
+					Placeholder: "Name of the application",
+					Attributes:  templ.Attributes{"maxlength": "35"},
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "Name",
+						Description: "The public name of the app, up to 35 characters, shown in the Console's app directory, in workflow steps and on invoices it produces. Avoid generic words like \"app\" or \"free\".",
+					},
+				})
+				@popui.Input(props.Input{
+					Label:       "App ID",
+					Name:        "id",
+					Value:       form.ID,
+					Readonly:    form.persisted(),
+					Placeholder: "application",
+					Tooltip: props.Tooltip{
+						Delay:       tooltipDelay,
+						Title:       "App ID",
+						Description: "A short lowercase key (e.g. `gov-es`) that prefixes every action ID and appears in URLs and API payloads. It cannot be changed once the app is created.",
+					},
+				})
+				// A one-line summary shown in app lists, capped at 120 characters.
+				<div class="md:col-span-2">
+					@popui.Input(props.Input{
+						Label:       "Description",
+						Name:        "description",
+						Value:       form.Description,
+						Placeholder: "Description of the application",
+						Attributes:  templ.Attributes{"maxlength": "120"},
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Description",
+							Description: "One sentence, up to 120 characters, shown under the name in the app directory. Longer documentation belongs in the Info URL page.",
+						},
+					})
+				</div>
+				// Icon and logo are uploaded rather than linked; the current URL
+				// travels in a hidden input so an untouched form keeps it.
+				<div class="flex flex-col gap-2">
+					@popui.Label(props.Label{
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Icon",
+							Description: "Square image shown at small sizes: sidebars, workflow steps and the app list. Use a simple mark, ideally SVG or PNG at 128×128.",
+						},
+					}) {
+						Icon
+					}
+					@popui.FileUpload(props.InputFile{
+						Name:      "icon",
+						Accept:    "image/*",
+						AvatarURL: form.IconURL,
+						AvatarAlt: "App icon",
+						Text:      uploadText(form.IconURL, "No icon uploaded"),
+					})
+					<input type="hidden" name="icon_url" value={ form.IconURL }/>
+				</div>
+				<div class="flex flex-col gap-2">
+					@popui.Label(props.Label{
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Logo",
+							Description: "Wider image used where there is room: the app's detail page and configuration screens. SVG or PNG on a transparent background works best.",
+						},
+					}) {
+						Logo
+					}
+					@popui.FileUpload(props.InputFile{
+						Name:          "logo",
+						Accept:        "image/*",
+						AvatarURL:     form.LogoURL,
+						AvatarAlt:     "App logo",
+						Text:          uploadText(form.LogoURL, "No logo uploaded"),
+						PreviewSquare: true,
+					})
+					<input type="hidden" name="logo_url" value={ form.LogoURL }/>
+				</div>
+			</div>
+			<input type="hidden" name="rev" value={ form.Rev }/>
+		}
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Categories",
+				Description: "Select all that apply",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				@popui.Select(props.Select{
+					Name:        "categories",
+					Multiple:    true,
+					Searchable:  true,
+					Placeholder: "Select categories",
+					Options:     categoryOptions(form),
+				})
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Channels",
+				Description: "Named scopes for the app's communication channels; actions attach to the default or a named channel",
+				Horizontal:  true,
+			})
+			// The deck is the editor itself: its head carries the column label and
+			// the add action, each card is one channel row.
+			<div x-data="appChannelList">
+				@templ.JSONScript("app-channels", channelPairs(form))
+				@popui.CardDeck() {
+					@popui.CardDeckHead() {
+						<span>Key / Label</span>
+						@popui.Button(props.Button{
+							Size:       props.ButtonSizeSmall,
+							Type:       "button",
+							Attributes: templ.Attributes{"@click": "addRow"},
+						}) {
+							@icons.Add()
+							Add row
+						}
+					}
+					<template x-for="(item, idx) in items" :key="idx">
+						@popui.Card(props.Card{Class: "flex-row items-center gap-2"}) {
+							<div class="flex-1">
+								<input
+									type="text"
+									name="channel_keys[]"
+									placeholder="my-channel"
+									x-model="item.key"
+									:readonly="item.locked"
+									:class="item.locked ? 'bg-background-default-secondary text-foreground-default-tertiary' : ''"
+									class={ classes.FormField() }
+								/>
+							</div>
+							<div class="flex-1">
+								<input
+									type="text"
+									name="channel_labels[]"
+									placeholder="My Channel"
+									x-model="item.label"
+									class={ classes.FormField() }
+								/>
+							</div>
+							@popui.Button(props.Button{
+								Size:    props.ButtonSizeIconSmall,
+								Type:    "button",
+								Variant: props.ButtonVariantTransparent,
+								Attributes: templ.Attributes{
+									"@click":     "remove(idx)",
+									"aria-label": "Remove channel",
+								},
+							}) {
+								@icons.Close()
+							}
+						}
+					</template>
+				}
+			</div>
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "URLs",
+				Description: "Pages the console embeds to configure, launch and document the app",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					@popui.Input(props.Input{
+						Label:       "Config URL",
+						Name:        "config_url",
+						Value:       form.ConfigURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Config URL",
+							Description: "Page the Console embeds when a workspace configures the app. Leave empty if the app needs no per-workspace settings.",
+						},
+					})
+					@popui.Input(props.Input{
+						Label:       "Launch URL",
+						Name:        "launch_url",
+						Value:       form.LaunchURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Launch URL",
+							Description: "Address loaded in the Console sidebar launcher so users can open the app in place. Optional.",
+						},
+					})
+					@popui.Input(props.Input{
+						Label:       "Info URL",
+						Name:        "info_url",
+						Value:       form.InfoURL,
+						Placeholder: "https://",
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Info URL",
+							Description: "Markdown page rendered inside the Console to document the app. Optional.",
+						},
+					})
+				</div>
+			}
+		</div>
+		<div class="w-full flex flex-col gap-3">
+			@popui.Separator()
+			@popui.TitleGroup(props.TitleGroup{
+				Title:       "Tags",
+				Description: "Displayed as a badge alongside the app (e.g. BETA)",
+				Horizontal:  true,
+			})
+			@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+				<div x-data="appTagList">
+					@templ.JSONScript("app-tags", form.Tags)
+					<ul x-show="tags.length" style="display: none;" class="flex flex-wrap gap-1">
+						<template x-for="tag in tags">
+							<li class="inline-flex items-center gap-1 px-2 py-0.5 bg-background-default-secondary rounded text-sm">
+								<input type="hidden" name="tags[]" :value="tag"/>
+								<span x-text="tag"></span>
+								<button type="button" @click="remove(tag)">×</button>
+							</li>
+						</template>
+					</ul>
+					<div class="flex gap-2 items-center">
+						<div class="flex-1">
+							@popui.Input(props.Input{
+								Name:        "newTag",
+								Required:    false,
+								Placeholder: "Enter a tag",
+								Attributes: templ.Attributes{
+									"x-model":                "newTag",
+									"@keydown.enter.prevent": "add",
+									"@keyup":                 "validate",
+								},
+							})
+						</div>
+						<div class="flex">
+							@popui.Button(props.Button{
+								Size: props.ButtonSizeLarge,
+								Type: "button",
+								Attributes: templ.Attributes{
+									"@click":    "add",
+									":disabled": "addDisabled",
+								},
+							}) {
+								Add
+							}
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+		if form.persisted() {
+			<div class="w-full flex flex-col gap-3">
+				@popui.Separator()
+				@popui.TitleGroup(props.TitleGroup{
+					Title:      "Metadata",
+					Horizontal: true,
+				})
+				@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard}) {
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						@popui.Input(props.Input{
+							Label:    "Created at",
+							Name:     "created_at",
+							Value:    form.CreatedAt,
+							Readonly: true,
+						})
+						@popui.Input(props.Input{
+							Label:    "Updated at",
+							Name:     "updated_at",
+							Value:    form.UpdatedAt,
+							Readonly: true,
+						})
+					</div>
+				}
+			</div>
+		}
+	}
+}
+
+// appSudoFieldset holds the sudo-only availability controls: which orgs may see
+// a private app, and how the app is exposed to everyone else. It lives on the
+// Availability tab rather than the config form so a normal admin saving the
+// config cannot clear it.
+templ appSudoFieldset(form *ApplicationForm, err error) {
+	<div class="w-full flex flex-col gap-3">
+		@popui.Separator()
+		@popui.TitleGroup(props.TitleGroup{
+			Title:       "Sudo",
+			Description: "Who can see and enroll in this app",
+			Horizontal:  true,
+		})
+		@popui.Fieldset(props.Fieldset{Variant: props.FieldsetVariantCard, Class: "gap-0 bg-background-default-secondary"}) {
+			if err != nil {
+				@popui.InputError(props.Error{Text: err.Error()})
+			}
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+				<div x-data="appAllowOrgIDList">
+					@templ.JSONScript("app-allow-org-ids", form.AllowOrgIDs)
+					@popui.Label(props.Label{
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Allowed org IDs",
+							Description: "Organizations allowed to enroll in this app besides its owner. Leave empty to let visibility alone decide.",
+						},
+					}) {
+						Allowed org IDs
+					}
+					@popui.CardDeck(props.CardDeck{Class: "mb-2", Attributes: templ.Attributes{"x-show": "ids.length", "style": "display: none;"}}) {
+						<template x-for="id in ids">
+							@popui.Card(props.Card{Class: "flex-row items-center justify-between"}) {
+								<input type="hidden" name="allow_org_ids[]" :value="id"/>
+								<span class="text-sm font-mono" x-text="id"></span>
+								<button
+									type="button"
+									aria-label="Remove org ID"
+									class="w-6 text-lg text-foreground-default-secondary hover:text-foreground-critical"
+									@click="remove(id)"
+								>×</button>
+							}
+						</template>
+					}
+					<div class="flex gap-2 items-center">
+						<div class="flex-1">
+							@popui.Input(props.Input{
+								Name:        "newID",
+								Required:    false,
+								Placeholder: "Enter a UUID",
+								Attributes: templ.Attributes{
+									"x-model":                "newID",
+									"@keydown.enter.prevent": "add",
+									"@keyup":                 "validate",
+								},
+							})
+						</div>
+						<div class="flex">
+							@popui.Button(props.Button{
+								Size: props.ButtonSizeLarge,
+								Type: "button",
+								Attributes: templ.Attributes{
+									"@click":    "add",
+									":disabled": "addDisabled",
+								},
+							}) {
+								Add
+							}
+						</div>
+					</div>
+				</div>
+				// Visibility (sudo-only). Private apps are owner-only and hidden from
+				// public lists; public apps are open to anyone; gated apps are visible
+				// but require an app-access subscription (of the chosen gate feature)
+				// to enroll.
+				<div x-data={ fmt.Sprintf("{ visibility: '%s' }", form.Visibility) }>
+					@popui.Select(props.Select{
+						Label:      "Visibility",
+						ID:         "visibility",
+						Name:       "visibility",
+						Attributes: templ.Attributes{"x-model": "visibility"},
+						Tooltip: props.Tooltip{
+							Delay:       tooltipDelay,
+							Title:       "Visibility",
+							Description: "Private: owner org only, hidden from lists. Public: anyone can see and enroll. Gated: anyone can see it, but enrolling needs an app-access subscription.",
+						},
+					}) {
+						<option value="private" selected?={ form.Visibility == AppVisibilityPrivate }>Private (owner only)</option>
+						<option value="public" selected?={ form.Visibility == AppVisibilityPublic }>Public (open to anyone)</option>
+						<option value="gated" selected?={ form.Visibility == AppVisibilityGated }>Gated (requires a subscription)</option>
+					}
+					<div class="mt-3 max-w-xs" x-show="visibility === 'gated'">
+						@popui.Select(props.Select{
+							Label: "Gate feature",
+							ID:    "gate_feature",
+							Name:  "gate_feature",
+							Tooltip: props.Tooltip{
+								Delay:       tooltipDelay,
+								Title:       "Gate feature",
+								Description: "Which app-access feature a gated app is billed under (country or integration). It also filters the app picker on product and subscription forms.",
+							},
+						}) {
+							<option value="" selected?={ form.GateFeature == "" }>None</option>
+							<option value="country" selected?={ form.GateFeature == FeatureCountry }>Country</option>
+							<option value="integration" selected?={ form.GateFeature == FeatureIntegration }>Integration</option>
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+templ appRow(org *Org, app *Application) {
+	<tr { navAttrs(baseURL(org, "apps", app.ID))... }>
+		<td>
+			<div class="flex items-center">
+				if app.IconURL != "" {
+					@popui.Avatar(props.Avatar{Class: "h-6 w-6"}) {
+						@popui.Image(props.Image{Src: app.IconURL})
+					}
+				} else {
+					@popui.Avatar(props.Avatar{Class: "h-6 w-6", Initial: firstLetter(app.Name)})
+				}
+				<div class="flex flex-col">
+					<span class="text-base font-medium">{ app.Name }</span>
+					<span class="font-mono text-sm text-foreground-default-secondary">{ app.ID }</span>
+				</div>
+			</div>
+		</td>
+		<td>{ app.Description }</td>
+	</tr>
+}
+
+// tabCount holds the per-tab counters shown as "Actions (4)". In access these
+// come from the controller (action and credential collections are already
+// loaded for the page); here they are looked up from the fixtures.
+type tabCount struct {
+	Actions   int
+	Workflows int
+	Documents int
+}
+
+func tabCounts(appID string) tabCount {
+	app := sampleApps.Get(appID)
+	if app == nil {
+		return tabCount{}
+	}
+	return tabCount{
+		Actions:   len(actionsFor(app).List),
+		Workflows: workflowsFor(app).Count(),
+		Documents: documentsFor(app).Count(),
+	}
+}
+
+func applicationList(ac *ApplicationCollection, showDeactivated bool) []*Application {
+	if showDeactivated {
+		return ac.Disabled()
+	}
+	return ac.Enabled()
+}
+
+// categoryOptions maps the available application categories to select options,
+// marking those already chosen on the form.
+func categoryOptions(form *ApplicationForm) []props.SelectOption {
+	cats := ApplicationCategories()
+	opts := make([]props.SelectOption, 0, len(cats))
+	for _, opt := range cats {
+		opts = append(opts, props.SelectOption{
+			Value:       opt.Key,
+			Label:       opt.Name,
+			Description: opt.Desc,
+			Selected:    form.hasCategory(opt.Key),
+		})
+	}
+	return opts
+}
+
+// scopeOptions maps the available API scopes to select options, marking those
+// already granted on the form. The key doubles as the chip label.
+func scopeOptions(form *ApplicationForm) []props.SelectOption {
+	scps := ScopeOptions()
+	opts := make([]props.SelectOption, 0, len(scps))
+	for _, scp := range scps {
+		opts = append(opts, props.SelectOption{
+			Value:       scp.Key,
+			Label:       scp.Key,
+			Description: scp.Description,
+			Selected:    form.hasScope(scp.Key),
+		})
+	}
+	return opts
+}
+
+// uploadText is the caption inside an image upload field: the file name of
+// the current image, or a fallback when none is set.
+func uploadText(url, fallback string) string {
+	if url == "" {
+		return fallback
+	}
+	if i := strings.LastIndex(url, "/"); i >= 0 && i < len(url)-1 {
+		return url[i+1:]
+	}
+	return url
+}
+
+func firstLetter(s string) string {
+	if s == "" {
+		return ""
+	}
+	return s[0:1]
+}
+
+templ appsLayout(org *Org) {
+	@Layout(org, "apps") {
+		{ children... }
+	}
+}

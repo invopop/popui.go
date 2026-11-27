@@ -1,0 +1,32 @@
+package apps
+
+// tabProps configures a single nav tab (see navTab): whether it is the active
+// tab and the HTMX attributes that load its content.
+type tabProps struct {
+	Active     bool
+	Attributes templ.Attributes
+}
+
+// navTabs / navTab are copied from access's admin/tabs.templ. They reproduce
+// popui's underline tab styling while keeping each tab an HTMX navigation
+// (hx-get + push-url) so tabs stay deep-linkable and load lazily, which the
+// Alpine-only popui.Tabs does not support.
+templ navTabs() {
+	<div role="tablist" class="inline-flex w-full mb-4 gap-6 overflow-visible border-b border-border">
+		{ children... }
+	</div>
+}
+
+templ navTab(p tabProps) {
+	<button
+		type="button"
+		role="tab"
+		class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-base cursor-pointer relative text-foreground-default-secondary pb-2 data-[state=active]:text-foreground-selected data-[state=active]:font-medium data-[state=active]:border-b data-[state=active]:border-foreground-selected data-[state=active]:-bottom-px"
+		if p.Active {
+			data-state="active"
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</button>
+}

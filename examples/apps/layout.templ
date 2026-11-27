@@ -1,0 +1,287 @@
+package apps
+
+import (
+	"context"
+	"github.com/invopop/icons"
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+// Layout mirrors admin.Layout in access: the admin shell with its sidebar.
+// Only the Applications entry navigates in this prototype; the rest are
+// there so the page reads like the real admin.
+templ Layout(org *Org, selected string) {
+	@popui.App(props.App{
+		Title: "Invopop Access - Admin",
+		HTMX:  true,
+		// Pin the shell to the viewport so the sidebar stays put and only the
+		// main content scrolls.
+		FillViewport: true,
+		Head:         layoutHead(),
+	}) {
+		@popui.Sidebar(props.Sidebar{Title: "Admin"}) {
+			@popui.SidebarHeader() {
+				@icons.Invopop()
+				Admin
+			}
+			@popui.SidebarContent() {
+				@popui.SidebarSection(props.SidebarSection{Title: "Account"}) {
+					@sidebarItem("#", selected == "profile") {
+						@icons.User()
+						Profile
+					}
+					@sidebarItem("#", selected == "security") {
+						@icons.Lock()
+						Security
+					}
+				}
+				@popui.SidebarSection(props.SidebarSection{Title: org.Name}) {
+					@sidebarItem("#", selected == "workspaces") {
+						@icons.Header()
+						Workspaces
+					}
+					@sidebarItem("#", selected == "billing") {
+						@icons.Billing()
+						Billing
+					}
+					@sidebarItem("#", selected == "positions") {
+						@icons.Team()
+						Members
+					}
+					@sidebarItem("#", selected == "org") {
+						@icons.Company()
+						Organization
+					}
+					@sidebarItem("#", selected == "domains") {
+						@icons.Domain()
+						Domains
+					}
+					if isSudo(ctx) {
+						@sidebarItem("#", selected == "sso") {
+							@icons.Lock()
+							Single Sign-On
+						}
+					}
+				}
+				if isSudo(ctx) {
+					@popui.SidebarSection(props.SidebarSection{Title: "Developers"}) {
+						@sidebarItem(baseURL(org, "apps"), selected == "apps") {
+							@icons.Puzzle()
+							Applications
+						}
+					}
+					@popui.SidebarSection(props.SidebarSection{Title: "Sudo"}) {
+						@sidebarItem("#", selected == "orgs") {
+							@icons.Search()
+							Orgs
+						}
+						@sidebarItem("#", selected == "users") {
+							@icons.User()
+							Users
+						}
+						@sidebarItem("#", selected == "billing-accounts") {
+							@icons.Billing()
+							Billing Accounts
+						}
+						@sidebarItem("#", selected == "products") {
+							@icons.Tag()
+							Products
+						}
+					}
+				}
+			}
+			@popui.SidebarFooter() {
+				@popui.SidebarSection() {
+					@sidebarItem("/", false) {
+						@icons.Logout()
+						Sign out
+					}
+				}
+			}
+		}
+		{ children... }
+	}
+}
+
+// layoutHead carries what access ships in admin.js for these pages: the
+// Alpine controllers behind the channel, tag, allowed-org and action-ID
+// editors. They are registered on alpine:init so they survive HTMX swaps.
+templ layoutHead() {
+	<style>
+		[x-cloak] { display: none !important; }
+		.htmx-indicator { display: none; }
+		.htmx-request .htmx-indicator { display: inline; }
+		.htmx-request.htmx-indicator { display: inline; }
+	</style>
+	<script>
+		document.addEventListener("alpine:init", () => {
+			// Composes "<app_id>[.<channel>].<verb>[.<qualifier>]" for a new action.
+			Alpine.data("actionId", (appID) => ({
+				channel: "",
+				choice: "",
+				custom: "",
+				qualifier: "",
+				get verb() {
+					return this.choice === "__other__" ? this.custom : this.choice;
+				},
+				get composed() {
+					return [appID, this.channel, this.verb, this.qualifier].filter(Boolean).join(".");
+				},
+			}));
+
+			// Key feature slots on the Listing tab: fixed markup, shown/hidden here.
+			Alpine.data("listingFeatures", (shown) => ({
+				shown,
+				max: shown.length,
+				get count() {
+					return this.shown.filter(Boolean).length;
+				},
+				// 1-based position of a slot among the visible ones, in deck order.
+				position(i) {
+					const cards = [...this.$root.querySelectorAll("[data-feature]")]
+						.filter((c) => this.shown[c.dataset.feature]);
+					return cards.findIndex((c) => c.dataset.feature == i) + 1;
+				},
+				add() {
+					const i = this.shown.indexOf(false);
+					if (i === -1) return;
+					this.shown[i] = true;
+					this.$nextTick(() => {
+						const input = this.$root.querySelector('[data-feature="' + i + '"] input[name="feature_titles[]"]');
+						if (input) input.focus();
+					});
+				},
+				remove(i) {
+					const card = this.$root.querySelector('[data-feature="' + i + '"]');
+					card.querySelectorAll("input:not([type=file]), textarea").forEach((el) => (el.value = ""));
+					const img = card.querySelector("img");
+					if (img) img.remove();
+					this.shown[i] = false;
+				},
+			}));
+
+			Alpine.data("appTagList", () => ({
+				tags: [],
+				newTag: "",
+				errors: "",
+				addDisabled: true,
+				init() {
+					let tags = JSON.parse(document.getElementById("app-tags").textContent);
+					if (tags) this.tags = tags;
+				},
+				add() {
+					if (this.newTag == "" || this.errors != "") return;
+					if (!this.tags.includes(this.newTag)) this.tags.push(this.newTag);
+					this.newTag = "";
+					this.addDisabled = true;
+				},
+				remove(tag) {
+					this.tags = this.tags.filter((t) => t != tag);
+				},
+				validate() {
+					if (this.newTag == "") { this.addDisabled = true; return; }
+					const regex = /^(?:[A-Z]+|[a-z0-9][a-z0-9-+]*[a-z0-9])$/;
+					this.errors = this.newTag.match(regex) ? "" : "invalid format";
+					this.addDisabled = !!this.errors;
+				},
+			}));
+
+			Alpine.data("appOriginList", () => ({
+				origins: [],
+				newOrigin: "",
+				errors: "",
+				addDisabled: true,
+				init() {
+					let origins = JSON.parse(document.getElementById("app-allowed-origins").textContent);
+					if (origins) this.origins = origins;
+				},
+				add() {
+					if (this.newOrigin == "" || this.errors != "") return;
+					const origin = new URL(this.newOrigin).origin;
+					if (!this.origins.includes(origin)) this.origins.push(origin);
+					this.newOrigin = "";
+					this.addDisabled = true;
+				},
+				remove(origin) {
+					this.origins = this.origins.filter((o) => o != origin);
+				},
+				validate() {
+					if (this.newOrigin == "") { this.addDisabled = true; return; }
+					try {
+						const u = new URL(this.newOrigin);
+						this.errors = u.protocol === "https:" || u.hostname === "localhost" ? "" : "https required";
+					} catch { this.errors = "invalid origin"; }
+					this.addDisabled = !!this.errors;
+				},
+			}));
+
+			Alpine.data("appAllowOrgIDList", () => ({
+				ids: [],
+				newID: "",
+				errors: "",
+				addDisabled: true,
+				init() {
+					let ids = JSON.parse(document.getElementById("app-allow-org-ids").textContent);
+					if (ids) this.ids = ids;
+				},
+				add() {
+					if (this.newID == "" || this.errors != "") return;
+					if (!this.ids.includes(this.newID)) this.ids.push(this.newID);
+					this.newID = "";
+					this.addDisabled = true;
+				},
+				remove(id) {
+					this.ids = this.ids.filter((i) => i != id);
+				},
+				validate() {
+					if (this.newID == "") { this.addDisabled = true; return; }
+					const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-7][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+					this.errors = this.newID.match(regex) ? "" : "invalid format";
+					this.addDisabled = !!this.errors;
+				},
+			}));
+
+			Alpine.data("appChannelList", () => ({
+				items: [],
+				init() {
+					let items = JSON.parse(document.getElementById("app-channels").textContent);
+					if (items) this.items = items;
+				},
+				addRow() {
+					let incomplete = this.items.findIndex((i) => i.key === "" || i.label === "");
+					if (incomplete !== -1) { this.focusRow(incomplete); return; }
+					this.items.push({ key: "", label: "", locked: false });
+					this.$nextTick(() => this.focusRow(this.items.length - 1));
+				},
+				focusRow(idx) {
+					let keys = this.$el.querySelectorAll('input[name="channel_keys[]"]');
+					if (keys[idx]) keys[idx].focus();
+				},
+				remove(idx) {
+					this.items.splice(idx, 1);
+				},
+			}));
+		});
+	</script>
+}
+
+templ sidebarItem(href string, active bool) {
+	@popui.SidebarItem(props.SidebarItem{Href: templ.URL(href), Selected: active}) {
+		{ children... }
+	}
+}
+
+type sudoKey struct{}
+
+// withSudo records whether the viewer has the sudo scope. The prototype
+// defaults to sudo (the Applications area is sudo-only in access); append
+// ?sudo=0 to any URL to preview the non-sudo rendering.
+func withSudo(ctx context.Context, sudo bool) context.Context {
+	return context.WithValue(ctx, sudoKey{}, sudo)
+}
+
+// isSudo mirrors admin.isSudo: scope.FromContext(ctx).Contains(scope.Sudo).
+func isSudo(ctx context.Context) bool {
+	v, ok := ctx.Value(sudoKey{}).(bool)
+	return !ok || v
+}
