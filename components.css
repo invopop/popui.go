@@ -1255,3 +1255,208 @@ form {
   background-size: 100% 1px, 1px 100%, 100% 1px, 1px 100%;
   background-repeat: no-repeat;
 }
+
+/* Steps — a timeline of numbered steps. The numbers are a CSS counter, so
+   a step doesn't need to know its place. Lines join the markers: each
+   step's row draws the stretch above and below its marker, and each
+   sub-step a stretch of the trunk with a branch to its label. The last
+   sub-step of the last step turns into its label with a curve instead, as
+   the line ends there. Layered as components so Class can restyle. */
+@layer components {
+  .popui-steps {
+    --popui-steps-line: var(--color-border-default-secondary);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: popui-step;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    letter-spacing: var(--tracking-normal);
+    color: var(--color-foreground-default-secondary);
+  }
+  .popui-step {
+    counter-increment: popui-step;
+  }
+  .popui-step-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 4rem;
+    padding-block: 0.5rem;
+  }
+  .popui-step-row::before,
+  .popui-step-row::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    height: calc(50% - 0.75rem);
+    border-left: 1px solid var(--popui-steps-line);
+  }
+  .popui-step-row::before { top: 0; }
+  .popui-step-row::after { bottom: 0; }
+  .popui-step:first-child > .popui-step-row::before,
+  .popui-step:last-child:not(:has(.popui-substep)) > .popui-step-row::after {
+    display: none;
+  }
+  .popui-step-marker {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    background-color: var(--color-background-default-tertiary);
+    color: var(--color-foreground);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+  }
+  .popui-step-marker:empty::before {
+    content: counter(popui-step);
+  }
+  .popui-step[data-status="current"] > .popui-step-row > .popui-step-marker {
+    border-color: var(--color-foreground);
+    background-color: var(--color-background);
+  }
+  /* A completed step's marker takes the accent color, as a primary button
+     does. */
+  .popui-step[data-status="completed"] > .popui-step-row > .popui-step-marker {
+    background-color: var(--color-background-accent);
+    color: var(--color-foreground-inverse);
+  }
+  .popui-step-label {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  /* The current step's label stands out, unless one of its sub-steps is
+     the current one. */
+  .popui-step[data-status="current"]:not(:has(.popui-substep[data-current])) > .popui-step-row > .popui-step-label,
+  .popui-substep[data-current] {
+    color: var(--color-foreground);
+    font-weight: 500;
+  }
+  .popui-substeps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .popui-substeps:empty {
+    display: none;
+  }
+  .popui-substep {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 4rem;
+    padding: 0.5rem 0 0.5rem 3.5625rem;
+    overflow-wrap: break-word;
+  }
+  .popui-substep::before,
+  .popui-substep::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+  }
+  .popui-substep::before {
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--popui-steps-line);
+  }
+  .popui-substep::after {
+    top: 50%;
+    width: 2rem;
+    border-top: 1px solid var(--popui-steps-line);
+  }
+  .popui-step:last-child .popui-substep:last-child::before {
+    bottom: calc(50% - 1px);
+    width: 2rem;
+    border-bottom: 1px solid var(--popui-steps-line);
+    border-bottom-left-radius: 0.75rem;
+  }
+  .popui-step:last-child .popui-substep:last-child::after {
+    display: none;
+  }
+
+  /* The bar: markers alone, spread along a line. Labels and sub-steps
+     stay for screen readers. */
+  .popui-steps[data-orientation="horizontal"] {
+    --popui-steps-line: var(--color-border);
+    flex-direction: row;
+    align-items: center;
+  }
+  .popui-steps[data-orientation="horizontal"] > .popui-step {
+    display: flex;
+    align-items: center;
+  }
+  .popui-steps[data-orientation="horizontal"] > .popui-step:not(:first-child) {
+    flex: 1;
+  }
+  .popui-steps[data-orientation="horizontal"] > .popui-step:not(:first-child)::before {
+    content: "";
+    flex: 1;
+    border-top: 1px solid var(--popui-steps-line);
+  }
+  .popui-steps[data-orientation="horizontal"] .popui-step-row {
+    position: static;
+    min-height: 0;
+    padding: 0;
+  }
+  .popui-steps[data-orientation="horizontal"] .popui-step-row::before,
+  .popui-steps[data-orientation="horizontal"] .popui-step-row::after {
+    display: none;
+  }
+  .popui-steps[data-orientation="horizontal"] .popui-step-label,
+  .popui-steps[data-orientation="horizontal"] .popui-substeps {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (max-width: 767px) {
+    .popui-steps[data-orientation="responsive"] {
+      --popui-steps-line: var(--color-border);
+      flex-direction: row;
+      align-items: center;
+    }
+    .popui-steps[data-orientation="responsive"] > .popui-step {
+      display: flex;
+      align-items: center;
+    }
+    .popui-steps[data-orientation="responsive"] > .popui-step:not(:first-child) {
+      flex: 1;
+    }
+    .popui-steps[data-orientation="responsive"] > .popui-step:not(:first-child)::before {
+      content: "";
+      flex: 1;
+      border-top: 1px solid var(--popui-steps-line);
+    }
+    .popui-steps[data-orientation="responsive"] .popui-step-row {
+      position: static;
+      min-height: 0;
+      padding: 0;
+    }
+    .popui-steps[data-orientation="responsive"] .popui-step-row::before,
+    .popui-steps[data-orientation="responsive"] .popui-step-row::after {
+      display: none;
+    }
+    .popui-steps[data-orientation="responsive"] .popui-step-label,
+    .popui-steps[data-orientation="responsive"] .popui-substeps {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+}

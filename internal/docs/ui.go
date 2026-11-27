@@ -252,6 +252,12 @@ var groups = []*Group{
 				Template: components.Table(),
 			},
 			{
+				Title:    "Steps",
+				Desc:     "A timeline of the numbered steps of a flow, such as a wizard, with the parts of a step under it.",
+				Path:     "steps",
+				Template: components.Steps(),
+			},
+			{
 				Title:    "Tabs",
 				Desc:     "Interactive tab navigation component with default and pill variants.",
 				Path:     "tabs",
