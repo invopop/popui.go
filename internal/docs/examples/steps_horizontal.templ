@@ -1,0 +1,16 @@
+package examples
+
+import (
+	"github.com/invopop/popui.go"
+	"github.com/invopop/popui.go/props"
+)
+
+templ StepsHorizontalExample() {
+	<div class="w-80">
+		@popui.Steps(props.Steps{Label: "Progress", Orientation: props.StepsOrientationHorizontal}) {
+			@popui.Step(props.Step{Label: "Company details", Status: props.StepStatusCompleted})
+			@popui.Step(props.Step{Label: "Legal representative", Status: props.StepStatusCurrent})
+			@popui.Step(props.Step{Label: "Sign the agreement"})
+		}
+	</div>
+}

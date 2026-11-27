@@ -1,0 +1,67 @@
+// Package components provides documentation pages for PopUI components.
+package components
+
+import (
+	_ "embed"
+	"github.com/invopop/popui.go/internal/docs/examples"
+	"github.com/invopop/popui.go/internal/docs/modules"
+)
+
+templ Steps() {
+	@modules.Example(modules.ExampleProps{
+		Description: "A timeline of the steps of a flow, beside its pages. A completed step has a tick in the accent color, and the current one an outlined number. SubStep children are the parts of a step: the current one's label stands out in place of its step's.",
+		Code:        examples.LoadExample("steps.templ"),
+	}) {
+		@examples.StepsExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Status",
+		Description: "Steps are numbered in order. Each is \"completed\", \"current\" or, by default, \"upcoming\".",
+		Code:        examples.LoadExample("steps_status.templ"),
+	}) {
+		@examples.StepsStatusExample()
+	}
+	@modules.Example(modules.ExampleProps{
+		Title:       "Horizontal",
+		Description: "With the \"horizontal\" Orientation the steps are a bar of markers alone, for the top of a narrow page. Labels and sub-steps stay for screen readers. \"responsive\" is the timeline on wide screens and the bar below 768px.",
+		Code:        examples.LoadExample("steps_horizontal.templ"),
+	}) {
+		@examples.StepsHorizontalExample()
+	}
+	@modules.Section("API Reference", "api") {
+		@modules.APITable(modules.APITableProps{
+			Title:       "Steps",
+			Description: "A timeline of Step children (ol element). In JSON UI: \"steps\".",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the list"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the list's styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Label", Type: "string", Default: "", Description: "Names the list for screen readers, such as \"Progress\""},
+				{Name: "Orientation", Type: "string", Default: "\"vertical\"", Description: "\"vertical\" for the timeline, \"horizontal\" for a bar of markers, or \"responsive\" for the timeline on wide screens and the bar on narrow ones (StepsOrientationVertical, StepsOrientationHorizontal, StepsOrientationResponsive)"},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "Step",
+			Description: "A numbered marker and a label (li element). Its children are SubSteps. In JSON UI: \"step\".",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the step"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the step's styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Label", Type: "string", Default: "", Description: "What the step is, shown beside its marker"},
+				{Name: "Status", Type: "string", Default: "\"upcoming\"", Description: "\"completed\", \"current\" or \"upcoming\" (StepStatusCompleted, StepStatusCurrent, StepStatusUpcoming)"},
+				{Name: "StatusLabel", Type: "string", Default: "", Description: "The status in words for screen readers, in the page's language. Default is \"Completed\" or \"Upcoming\"; the current step is announced as such without one."},
+			},
+		})
+		@modules.APITable(modules.APITableProps{
+			Title:       "SubStep",
+			Description: "A part of a Step, branching off the timeline under it (li element). In JSON UI: \"sub_step\".",
+			Items: []modules.APITableItem{
+				{Name: "ID", Type: "string", Default: "", Description: "Unique identifier for the sub-step"},
+				{Name: "Class", Type: "string", Default: "", Description: "Additional CSS classes to merge with the sub-step's styles"},
+				{Name: "Attributes", Type: "templ.Attributes", Default: "", Description: "Additional HTML attributes (data-*, aria-*, etc.)"},
+				{Name: "Label", Type: "string", Default: "", Description: "What the sub-step is"},
+				{Name: "Current", Type: "bool", Default: "false", Description: "Marks the sub-step in progress, whose label stands out in place of its step's"},
+			},
+		})
+	}
+}
